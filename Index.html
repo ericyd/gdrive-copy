@@ -1,0 +1,97 @@
+<!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
+<?!= HtmlService.createHtmlOutputFromFile('Stylesheet').getContent(); ?>
+
+<html>
+  <head>
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+  <script>
+    WebFont.load({
+      google: {
+        families: ['Lato', 'Kreon']
+      }
+    });
+  </script>
+  
+  </head>
+  <body>
+ 
+  
+  <div class="container" id="container">
+  
+    <h1>
+       Copy a google drive folder and all its contents <br />
+    </h1>
+    
+    <div id="description">
+       Just input the folder sharing url and a new folder name, and it will copy to your home folder in Google drive.<br />
+       This app will recursively copy the folder structure, and is designed to work well for deep folder structures.<br />
+       To select the folder to copy, find the folder in your Google Drive, then:
+       <ol>
+         <li>Right click your folder</li>
+         <li>Select ''Get link''</li>
+       </ol>
+       <br />
+    </div>
+    
+    <div class="block result-display" id="results">
+      <div class="hidden" id="error-message">
+        Verify that you have permission to access this folder and that the specified folder ID (if any) is correct.  
+      </div>
+      
+      
+      
+      
+      
+      <div id="formDiv">
+          <form id="thisForm" name="thisForm">
+          <div class="form-title">Folder to copy (input <b>sharing url</b>)</div>
+          <input type="textbox" id="folderId" name="folderId" class="textbox" /> <br />
+          
+          <br /><br />
+          
+          <div class="form-title">New folder name: <br /></div>
+          <input type="textbox" id="newFolder" name="newFolder" class="textbox"/> <br /><br />
+
+          <button type="button" id="copyFolderButton" class="action">Copy folder</button>
+          
+          </form>
+          
+      </div>
+      
+      <div id="working">
+          Copying.... <img src="http://ericyd.com/pics/loading.gif" /><br /><br />
+          
+      </div>
+      <span id="status">Status:</span>
+      <div id="notes">
+      
+      </div>
+      
+      
+      <div id="complete">
+        Successfully copied folder to your <a href="http://drive.google.com">Google Drive</a>.
+      </div>
+      
+      </div> 
+      
+    </div><!--end .container-->
+    
+    <div id="gray-background">
+      <div id="promotion">
+         <b>Just need to transfer ownership of a folder?</b> Check out <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa">my other project</a> (only available through the Chrome browser)<br />
+         Check out this project's source code on Github (almost there!) <br />
+         Check out my website: <a href="http://ericyd.com">ericyd.com</a> <br />
+         Comments? Questions? Concerns? Email me: eric@ericyd.com. <br />
+      </div>
+    </div>
+  </body>
+</html>
+
+<!-- Store data passed to template here, so it is available to the
+     imported JavaScript. -->
+<script>
+
+</script>
+
+<!-- Use a templated HTML printing scriptlet to import JavaScript. -->
+<?!= HtmlService.createHtmlOutputFromFile('JavaScript').getContent(); ?>
