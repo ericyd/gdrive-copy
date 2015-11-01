@@ -42,9 +42,13 @@ document.getElementById("copyFolderButton").onclick = function() {
        
        // Get the index of the string at which the folderId starts
        var idStart = fId.search(regex);
-       
-       // Slice the string starting 3 indices after "id=", which means that it takes away "id=" and leaves the rest
-       fId = fId.slice(idStart+3);
+       var foldersStart = fId.search("folders");
+       if (idStart > 0) {
+         // Slice the string starting 3 indices after "id=", which means that it takes away "id=" and leaves the rest
+         fId = fId.slice(idStart+3);  
+       } else if (foldersStart > 0) {
+         fId = fId.slice(foldersStart + 8);  
+       }
        
        // Find the ampersand in the remaining string, which is the delimiter between the folderId and the sharing privileges
        var amp = fId.indexOf("&");
