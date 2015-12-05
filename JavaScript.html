@@ -10,6 +10,10 @@ $(document).ready(function() {
   $("#working").hide();
   $("#notes").hide();
   $("#status").hide();
+  $("#complete").hide();
+  $("#please-review").hide();
+  $("#dialog-message").hide();
+  
 
   $("#copyFolderButton").click(function() {
     $("#description").hide("blind");
@@ -17,6 +21,24 @@ $(document).ready(function() {
     $("#notes").show("blind");
     $("#status").show("blind");
   });
+  
+  $("#explain-permissions").click(openDialog);
+  $("#permissions").click(function() {
+    if ($(this).is(":checked")) {
+      openDialog();
+    }
+  });
+  
+  function openDialog() {
+    $( "#dialog-message" ).dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  }
 
 });
 
@@ -50,6 +72,7 @@ document.getElementById("copyFolderButton").onclick = function() {
          fId = fId.slice(foldersStart + 8);  
        }
        
+       
        // Find the ampersand in the remaining string, which is the delimiter between the folderId and the sharing privileges
        var amp = fId.indexOf("&");
        
@@ -73,12 +96,13 @@ document.getElementById("copyFolderButton").onclick = function() {
          var folderId = results[0];
          var folderName = results[1];
          var newFolderName = results[2];
+         var copyPermissions = results[3];
              
          document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Initializing copy from "' + folderName + '" to "' + newFolderName + '".';
          document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Recreating folder structure ... ';
              
          //getFolders(folderId, folderTree, newFolderName);
-         createFolders(folderId, newFolderName, folderTree);
+         createFolders(folderId, newFolderName, folderTree, copyPermissions);
              
          //copyFiles(results[0], results[1]);
        })
@@ -89,7 +113,7 @@ document.getElementById("copyFolderButton").onclick = function() {
        .getValues( thisForm );
 }
 
-function createFolders(folderId, newFolderName, folderTree) {
+function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
 //function createFolders(folderId, newFolderName, parentId, folderTree) {
   google.script.run
     .withSuccessHandler(function(results) {
@@ -97,13 +121,15 @@ function createFolders(folderId, newFolderName, folderTree) {
         // each object is an array with two elements
         // first element is original folder Id
         // second element is new folder Id, corresponding to original
-        var folderTree = results[1];
         var folderId = results[0];
+        var folderTree = results[1];
+        var copyPermissions = results[2];
+        var added = results[3];
             
         document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<b>Done</b>';
         document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'Beginning file copying (this can take a while)';
         
-        copyFiles(folderTree, folderId);
+        copyFiles(folderTree, folderId, copyPermissions, added);
         
   
     })
@@ -112,7 +138,7 @@ function createFolders(folderId, newFolderName, folderTree) {
       document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'Please try again. Make sure you have correct permissions to copy this folder, and please input the entire sharing URL, not just the folder ID';
       document.getElementById("working").style.display = "none";
     })
-    .createFolders(folderId, newFolderName, "None", folderTree);
+    .createFolders(folderId, newFolderName, "None", folderTree, copyPermissions, []);
 }
 
 
@@ -122,7 +148,7 @@ function createFolders(folderId, newFolderName, folderTree) {
    This copies all the files
 */
 
-function copyFiles(folderTree, folderId) {
+function copyFiles(folderTree, folderId, copyPermissions, added) {
     
     var pair = folderTree.shift();
     var fromId = pair[0];
@@ -137,13 +163,14 @@ function copyFiles(folderTree, folderId) {
         document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + ' <b>Done</b>';
         
         if (folderTree.length > 0) {
-          copyFiles(folderTree, folderId);
+          copyFiles(folderTree, folderId, copyPermissions, added);
         } else {
           document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Folder copy is complete.';
           
           document.getElementById("working").style.display = "none";
           document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.";
           document.getElementById("complete").style.display = "block";
+          document.getElementById("please-review").style.display = "block";
           
         }
       })
@@ -159,11 +186,12 @@ function copyFiles(folderTree, folderId) {
           document.getElementById("working").style.display = "none";
           document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/open?id=" + folderId + "'>Google Drive</a>.";
           document.getElementById("complete").style.display = "block";
+          document.getElementById("please-review").style.display = "block";
           
         }
         
       })
-      .copyFiles(fromId, toId);
+      .copyFiles(fromId, toId, copyPermissions, added);
 }
 
 </script>
