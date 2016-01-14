@@ -1,4 +1,5 @@
-var uglify = require('uglify');
+var gulp = require('gulp');
+var htmlmin = require('htmlmin');
 
 gulp.task('default', function(){
     // Default task
@@ -22,5 +23,11 @@ gulp.task('css', function() {
 gulp.task('html', function() {
     // process html
     gulp.src('./src/Index.html')
+        // .pipe(htmlmin({
+        //     collapseWhitespace: true,
+        //     removeComments: true,
+        //     removeCommentsFromCDATA: true,
+        //     conservativeCollapse: true,
+        // }))
         .pipe(gulp.dest('dist'));
 });
