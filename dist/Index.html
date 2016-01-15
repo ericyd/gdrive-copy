@@ -1,16 +1,27 @@
 <!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
-<?!= HtmlService.createHtmlOutputFromFile('Stylesheet').getContent(); ?>
+<?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+
+
 
 <html>
   <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
-  <script>
-    WebFont.load({
-      google: {
-        families: ['Lato', 'Kreon']
-      }
-    });
-  </script>
+    
+    <!-- This CSS package applies Google styling; it should always be included. -->
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+    
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+    <script>
+      WebFont.load({
+        google: {
+          families: ['Lato', 'Kreon']
+        }
+      });
+    </script>
   
   </head>
   <body>
@@ -127,4 +138,4 @@
 </script>
 
 <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
-<?!= HtmlService.createHtmlOutputFromFile('JavaScript').getContent(); ?>
+<?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
