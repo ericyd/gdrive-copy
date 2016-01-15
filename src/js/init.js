@@ -44,7 +44,3 @@ $(document).ready(function() {
 
 
 </script>
-
-
-
-
