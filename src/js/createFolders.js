@@ -17,12 +17,12 @@ function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
         
         // build status-table
         statusTable = "<table class='table table-striped'>";
+        statusTable += "<tr><th>Folder path</th><th>Status</th></tr>";
         for (i = 0; i < folderTree.length; i++) {
           statusTable += "<tr>";
           statusTable += "<td>" + folderTree[i][2] + "</td>";
           statusTable += "<td id='" + folderTree[i][1] + "'><span class='waiting'>Waiting...</span></td>";
           statusTable += "</tr>";
-          
         }
         statusTable += "</table>";
         document.getElementById("status-table").innerHTML = statusTable; 
