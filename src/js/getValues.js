@@ -1,4 +1,3 @@
-<script>
 /*
    This function gets the folderId from the sharing URL given from Google Drive
    It passes that ID to the getFolders
@@ -56,4 +55,3 @@ function getValues() {
   })
   .getValues( thisForm );
 }
-</script>

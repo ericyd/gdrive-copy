@@ -1,4 +1,3 @@
-<script>
 function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
 //function createFolders(folderId, newFolderName, parentId, folderTree) {
   google.script.run
@@ -36,4 +35,3 @@ function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
     })
     .createFolders(folderId, newFolderName, "None", folderTree, copyPermissions, []);
 }
-</script>

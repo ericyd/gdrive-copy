@@ -1,9 +1,7 @@
-<!-- This CSS package applies Google styling; it should always be included. -->
-<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+/* Variables */
+$red: #FF0000;
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-<style>
 body {
   margin:1em 0 0 0;
 }
@@ -14,7 +12,7 @@ body {
 }
 
 .error {
-  color: #FF0000;
+  color:$red;
 }
 
 .hidden {
@@ -174,4 +172,3 @@ h1{
     font-style: italic;
     color: #404040;
 }
-</style>

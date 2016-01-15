@@ -1,4 +1,3 @@
-<script>
 /* 
    This copies all the files
 */
@@ -48,4 +47,3 @@ function copyFiles(folderTree, folderId, copyPermissions, added) {
       })
       .copyFiles(fromId, toId, copyPermissions, added);
 }
-</script>
