@@ -25,11 +25,9 @@ function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
           statusTable += "</tr>";
         }
         statusTable += "</table>";
-        document.getElementById("status-table").innerHTML = statusTable; 
+        $("#status-table").html(statusTable).show("blind"); 
         
         copyFiles(folderTree, folderId, copyPermissions, added);
-        
-  
     })
     .withFailureHandler(function(msg) {
       document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'failed to create folder: ' + msg;

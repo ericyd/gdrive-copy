@@ -12,13 +12,16 @@ $(document).ready(function() {
   $("#complete").hide();
   $("#please-review").hide();
   $("#dialog-message").hide();
+  $("#status-table").hide();
   
-
+  
   $("#copyFolderButton").click(function() {
     $("#description").hide("blind");
     $("#working").show("blind");
     $("#notes").show("blind");
     $("#status").show("blind");
+    
+    getValues();
   });
   
   $("#explain-permissions").click(openDialog);
