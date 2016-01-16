@@ -19,10 +19,17 @@ gulp.task('js', function() {
     gulp.src('./src/js/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
-        // .pipe(uglify())
         .pipe(concat('js.html'))
         .pipe(insert.wrap('<script>', '</script>'))
         .pipe(gulp.dest('dist'));
+    
+    gulp.src('./src/js/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'))
+        .pipe(uglify())
+        .pipe(concat('js.min.html'))
+        .pipe(insert.wrap('<script>', '</script>'))
+        .pipe(gulp.dest('dist/min'));
         
     gulp.src('./src/Code.gs')
         .pipe(jshint())
@@ -33,11 +40,18 @@ gulp.task('js', function() {
 gulp.task('css', function() {
     // process css
     gulp.src('./src/css/main.scss')
-        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer({browsers: ['last 2 versions']}))
         .pipe(concat('css.html'))
         .pipe(insert.wrap('<style>', '</style>'))
         .pipe(gulp.dest('dist'));
+    
+    gulp.src('./src/css/main.scss')
+        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(autoprefixer({browsers: ['last 2 versions']}))
+        .pipe(concat('css.min.html'))
+        .pipe(insert.wrap('<style>', '</style>'))
+        .pipe(gulp.dest('dist/min'));
         
     gulp.src('./src/css/main.scss')
         .pipe(sass().on('error', sass.logError))

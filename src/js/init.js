@@ -15,6 +15,7 @@ $(document).ready(function() {
     $("#status").show("blind");
     
     getValues();
+    console.log("getValues initialized");
   });
   
   $("#explain-permissions").click(openDialog);

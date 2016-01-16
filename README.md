@@ -17,7 +17,8 @@ In addition, the app user will become the owner of the new folder and all sub-fo
 
 ## Disclaimers
 
-This process deletes all original information regarding creation date and revision history. 
+1. This process deletes all original information regarding creation date and revision history.
+2. Despite being able to access the web app from Firefox or other browsers, the app only works in Chrome or Chromium at this time. 
 
 ## Bugs? Comments? Questions?
 
