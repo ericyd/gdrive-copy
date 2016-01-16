@@ -47,13 +47,14 @@ function createFolders(folderId, newFolderName, parentId, folderTree, copyPermis
   var folders = oldFolder.getFolders();
   var pair = [];
   var results = [];
+  var newFolder;
 
   // If the folder doesn't have a parent (top folder only), create a new one with the new folder name
   // otherwise, create a folder within the parent folder using the original folder's name
   if (parentId == "None") {
-    var newFolder = DriveApp.createFolder(newFolderName);
+    newFolder = DriveApp.createFolder(newFolderName);
   } else {
-    var newFolder = DriveApp.getFolderById(parentId).createFolder(newFolderName);
+    newFolder = DriveApp.getFolderById(parentId).createFolder(newFolderName);
   }
   var newFolderId = newFolder.getId();
   
