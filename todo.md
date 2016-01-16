@@ -8,5 +8,8 @@
     1. Onclick, hide everything except folder ID and new folder name
     2. Slide form to upper left of screen
     3. Fade in status table in center of screen
-3. Icons
-    1. Update icons with more attractive color scheme (e.g. white background)
+3. Styling
+    1. Integrate Bootstrap fully into site; redo css in favor of Bootstrap presets
+    2. Update icons for Google Chrome Store listing with more attractive color scheme (e.g. white background)
+    
+    
