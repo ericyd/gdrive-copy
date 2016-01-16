@@ -5,6 +5,7 @@ var uglify = require('gulp-uglify');
 var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
 var insert = require('gulp-insert');
+var autoprefixer = require('gulp-autoprefixer');
 
 gulp.task('default', function(){
     // Default task
@@ -18,7 +19,7 @@ gulp.task('js', function() {
     gulp.src('./src/js/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(concat('js.html'))
         .pipe(insert.wrap('<script>', '</script>'))
         .pipe(gulp.dest('dist'));
@@ -31,10 +32,16 @@ gulp.task('js', function() {
 
 gulp.task('css', function() {
     // process css
-    gulp.src('./src/css/main.css')
+    gulp.src('./src/css/main.scss')
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(autoprefixer({browsers: ['last 2 versions']}))
         .pipe(concat('css.html'))
         .pipe(insert.wrap('<style>', '</style>'))
+        .pipe(gulp.dest('dist'));
+        
+    gulp.src('./src/css/main.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(concat('css.css'))
         .pipe(gulp.dest('./dist'));
 });
 

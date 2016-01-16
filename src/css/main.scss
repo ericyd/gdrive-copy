@@ -1,8 +1,5 @@
-/* Variables */
-$red: #FF0000;
-$font-family-serif: 'Kreon', serif;
-$font-family-sans-serif: 'Lato', sans-serif;
-
+@import "../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap";
+@import "custom-variables";
 
 body {
   margin:1em 0 0 0;

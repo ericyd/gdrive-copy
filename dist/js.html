@@ -1,4 +1,181 @@
-<script>function copyFiles(e,t,n,o){var l=e.shift(),d=l[0],c=l[1],i=l[2];document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+'<br />Copying files to "'+i+'"...',google.script.run.withSuccessHandler(function(){document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+" <b>Done</b>",e.length>0?copyFiles(e,t,n,o):(document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<br />Folder copy is complete.",document.getElementById("working").style.display="none",document.getElementById("complete").innerHTML="Successfully copied folder to your <a href='https://drive.google.com/drive/folders/"+t+"' target='_blank'>Google Drive</a>.",document.getElementById("complete").style.display="block",document.getElementById("please-review").style.display="block")}).withFailureHandler(function(n){document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<br />failure copying files: "+n,e.length>0?copyFiles(e):(document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<br />Folder copy is complete.",document.getElementById("working").style.display="none",document.getElementById("complete").innerHTML="Successfully copied folder to your <a href='https://drive.google.com/open?id="+t+"'>Google Drive</a>.",document.getElementById("complete").style.display="block",document.getElementById("please-review").style.display="block")}).copyFiles(d,c,n,o)}
-function createFolders(e,t,n,s){google.script.run.withSuccessHandler(function(e){var t=e[0],n=e[1],s=e[2],a=e[3];for(document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<b>Done</b>",document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<br />Beginning file copying (this can take a while)",statusTable="<table class='table table-striped'>",statusTable+="<tr><th>Folder path</th><th>Status</th></tr>",i=0;i<n.length;i++)statusTable+="<tr>",statusTable+="<td>"+n[i][2]+"</td>",statusTable+="<td id='"+n[i][1]+"'><span class='waiting'>Waiting...</span></td>",statusTable+="</tr>";statusTable+="</table>",$("#status-table").html(statusTable).show("blind"),copyFiles(n,t,s,a)}).withFailureHandler(function(e){document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<br />failed to create folder: "+e,document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<br />Please try again. Make sure you have correct permissions to copy this folder, and please input the entire sharing URL, not just the folder ID",document.getElementById("working").style.display="none"}).createFolders(e,t,"None",n,s,[])}
-function getValues(){var e=[],n=thisForm.folderId.value,t=n.search("id="),r=n.search("folders");t>0?n=n.slice(t+3):r>0&&(n=n.slice(r+8));var o=n.indexOf("&");o>0&&(n=n.slice(0,o)),thisForm.folderId.value=n,google.script.run.withSuccessHandler(function(n){var t=n[0],r=n[1],o=n[2],i=n[3];document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+'<br />Initializing copy from "'+r+'" to "'+o+'".',document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<br />Recreating folder structure ... ",createFolders(t,o,e,i)}).withFailureHandler(function(e){document.getElementById("notes").innerHTML=document.getElementById("notes").innerHTML+"<br />failure<br />"+e}).getValues(thisForm)}
-$(document).ready(function(){function i(){$("#dialog-message").dialog({modal:!0,buttons:{Ok:function(){$(this).dialog("close")}}})}$("#working").hide(),$("#notes").hide(),$("#status").hide(),$("#complete").hide(),$("#please-review").hide(),$("#dialog-message").hide(),$("#status-table").hide(),$("#copyFolderButton").click(function(){$("#description").hide("blind"),$("#working").show("blind"),$("#notes").show("blind"),$("#status").show("blind"),getValues()}),$("#explain-permissions").click(i),$("#permissions").click(function(){$(this).is(":checked")&&i()})});</script>
+<script>/* 
+   This copies all the files
+*/
+
+function copyFiles(folderTree, folderId, copyPermissions, added) {
+    
+    var pair = folderTree.shift();
+    var fromId = pair[0];
+    var toId = pair[1];
+    var folderName = pair[2];
+    
+    document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Copying files to "' + folderName + '"...';
+    
+    google.script.run
+      .withSuccessHandler(function() {
+        // Respond to success conditions here.
+        document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + ' <b>Done</b>';
+        
+        if (folderTree.length > 0) {
+          copyFiles(folderTree, folderId, copyPermissions, added);
+        } else {
+          document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Folder copy is complete.';
+          
+          document.getElementById("working").style.display = "none";
+          document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.";
+          document.getElementById("complete").style.display = "block";
+          document.getElementById("please-review").style.display = "block";
+          
+        }
+      })
+      .withFailureHandler(function(msg) {
+        // Respond to failure conditions here.
+        document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'failure copying files: ' + msg;
+        
+        if (folderTree.length > 0) {
+          copyFiles(folderTree);
+        } else {
+          document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Folder copy is complete.';
+          
+          document.getElementById("working").style.display = "none";
+          document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/open?id=" + folderId + "'>Google Drive</a>.";
+          document.getElementById("complete").style.display = "block";
+          document.getElementById("please-review").style.display = "block";
+          
+        }
+        
+      })
+      .copyFiles(fromId, toId, copyPermissions, added);
+}
+function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
+//function createFolders(folderId, newFolderName, parentId, folderTree) {
+  google.script.run
+    .withSuccessHandler(function(results) {
+        // folder tree is an array
+        // each object is an array with two elements
+        // first element is original folder Id
+        // second element is new folder Id, corresponding to original
+        var folderId = results[0];
+        var folderTree = results[1];
+        var copyPermissions = results[2];
+        var added = results[3];
+            
+        document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<b>Done</b>';
+        document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'Beginning file copying (this can take a while)';
+        
+        // build status-table
+        statusTable = "<table class='table table-striped'>";
+        statusTable += "<tr><th>Folder path</th><th>Status</th></tr>";
+        for (i = 0; i < folderTree.length; i++) {
+          statusTable += "<tr>";
+          statusTable += "<td>" + folderTree[i][2] + "</td>";
+          statusTable += "<td id='" + folderTree[i][1] + "'><span class='waiting'>Waiting...</span></td>";
+          statusTable += "</tr>";
+        }
+        statusTable += "</table>";
+        $("#status-table").html(statusTable).show("blind"); 
+        
+        copyFiles(folderTree, folderId, copyPermissions, added);
+    })
+    .withFailureHandler(function(msg) {
+      document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'failed to create folder: ' + msg;
+      document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'Please try again. Make sure you have correct permissions to copy this folder, and please input the entire sharing URL, not just the folder ID';
+      document.getElementById("working").style.display = "none";
+    })
+    .createFolders(folderId, newFolderName, "None", folderTree, copyPermissions, []);
+}
+/*
+   This function gets the folderId from the sharing URL given from Google Drive
+   It passes that ID to the getFolders
+*/ 
+
+function getValues() {
+  
+  var folderTree = [];
+ 
+  // Set a temporary variable to the value passed into the "folderId" field
+  var fId = thisForm.folderId.value;
+  
+  // Get the index of the string at which the folderId starts
+  var idStart = fId.search("id=");
+  var foldersStart = fId.search("folders");
+  if (idStart > 0) {
+    // Slice the string starting 3 indices after "id=", which means that it takes away "id=" and leaves the rest
+    fId = fId.slice(idStart+3);  
+  } else if (foldersStart > 0) {
+    fId = fId.slice(foldersStart + 8);  
+  }
+  
+  
+  // Find the ampersand in the remaining string, which is the delimiter between the folderId and the sharing privileges
+  var amp = fId.indexOf("&");
+  
+  // Slice the string up to the ampersand
+  if (amp > 0) {
+    fId = fId.slice(0,amp);
+  }
+  
+  // Set the folderId element within thisForm (retrieved from doGet) to the new, sliced fId variable
+  thisForm.folderId.value = fId;
+  
+  
+  
+  // Get values of folder Ids and pass them to other functions
+  google.script.run
+  .withSuccessHandler(function(results) {
+    
+    var folderId = results[0];
+    var folderName = results[1];
+    var newFolderName = results[2];
+    var copyPermissions = results[3];
+        
+    document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Initializing copy from "' + folderName + '" to "' + newFolderName + '".';
+    document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Recreating folder structure ... ';
+        
+    createFolders(folderId, newFolderName, folderTree, copyPermissions);
+
+  })
+  .withFailureHandler(function(msg) {
+    // Respond to failure conditions here.
+    document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'failure<br />' + msg;
+  })
+  .getValues( thisForm );
+}
+$(document).ready(function() {
+  $("#working").hide();
+  $("#notes").hide();
+  $("#status").hide();
+  $("#complete").hide();
+  $("#please-review").hide();
+  $("#dialog-message").hide();
+  $("#status-table").hide();
+  
+  
+  $("#copyFolderButton").click(function() {
+    $("#description").hide("blind");
+    $("#working").show("blind");
+    $("#notes").show("blind");
+    $("#status").show("blind");
+    
+    getValues();
+  });
+  
+  $("#explain-permissions").click(openDialog);
+  $("#permissions").click(function() {
+    if ($(this).is(":checked")) {
+      openDialog();
+    }
+  });
+  
+  function openDialog() {
+    $( "#dialog-message" ).dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  }
+
+});</script>

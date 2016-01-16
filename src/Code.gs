@@ -84,9 +84,10 @@ function createFolders(folderId, newFolderName, parentId, folderTree, copyPermis
   // get the full pathname for printing status
   var fullPath = getFullPath("", newFolderId);
   fullPath = fullPath + newFolderName;
-  
+  Logger.log("finished top folder");
   // Loop through children
   while (folders.hasNext()) {
+    Logger.log("first child folder");
     var child = folders.next();
     var childId = child.getId();
     var childName = child.getName();
