@@ -11,11 +11,7 @@ $(document).ready(function() {
   $("#copyFolderButton").click(function() {
     $("#description").hide("blind");
     $("#working").show("blind");
-    $("#notes").show("blind");
-    $("#status").show("blind");
-    
     getValues();
-    console.log("getValues initialized");
   });
   
   $("#explain-permissions").click(openDialog);

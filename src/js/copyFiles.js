@@ -9,19 +9,17 @@ function copyFiles(folderTree, folderId, copyPermissions, added) {
     var toId = pair[1];
     var folderName = pair[2];
     
-    document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Copying files to "' + folderName + '"...';
+    $("#" + toId).html("Copying files <i class='fa fa-spinner fa-spin'></i>").addClass("disabled");
     
     google.script.run
       .withSuccessHandler(function() {
         // Respond to success conditions here.
-        document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + ' <b>Done</b>';
+        $("#" + toId).html("Complete").addClass("bg-success").removeClass("disabled");
         
         if (folderTree.length > 0) {
           copyFiles(folderTree, folderId, copyPermissions, added);
         } else {
-          document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Folder copy is complete.';
-          
-          document.getElementById("working").style.display = "none";
+          $("#working").hide("blind");
           document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.";
           document.getElementById("complete").style.display = "block";
           document.getElementById("please-review").style.display = "block";
@@ -30,15 +28,14 @@ function copyFiles(folderTree, folderId, copyPermissions, added) {
       })
       .withFailureHandler(function(msg) {
         // Respond to failure conditions here.
-        document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'failure copying files: ' + msg;
+        
+        $("#errors").append("<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error copying files to folder '" + toId + "'.<br /><b>Error message:</b> " + msg + ".</div>");
         
         if (folderTree.length > 0) {
           copyFiles(folderTree);
         } else {
-          document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Folder copy is complete.';
-          
-          document.getElementById("working").style.display = "none";
-          document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/open?id=" + folderId + "'>Google Drive</a>.";
+          $("#working").hide("blind");
+          document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.";
           document.getElementById("complete").style.display = "block";
           document.getElementById("please-review").style.display = "block";
           

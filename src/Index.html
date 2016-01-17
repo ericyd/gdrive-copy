@@ -54,14 +54,6 @@
        <br />
     </div>
     
-    <div class="block result-display" id="results">
-      <div class="hidden" id="error-message">
-        Verify that you have permission to access this folder and that the specified folder ID (if any) is correct.  
-      </div>
-      
-      
-      
-      
       
       <div id="formDiv">
           <form id="thisForm" name="thisForm">
@@ -99,28 +91,22 @@
       
       <div id="working">
           Copying folder structure <i class="fa fa-spinner fa-spin"></i><br /><br />
-          
-      </div>
-      <span id="status">Status:</span>
-      <div id="notes">
-      
       </div>
       
-      <div id="status-table">
-        
-      </div>
+      <!--These divs get filled programatically at runtime-->
+      <div id="errors"></div>
+      <div id="status-table"></div>
       
-      
+      <!--These divs display when complete-->
       <div id="complete">
-        Successfully copied folder to your <a href="http://drive.google.com">Google Drive</a>.
+          Successfully copied folder to your <a href="http://drive.google.com">Google Drive</a>.
       </div>
       
       <div id="please-review">
         If you have a moment, please <a href="https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews" target="_blank">rate and review this app</a>.
       </div>
       
-      
-      </div> 
+       
       
     </div><!--end .container-->
     

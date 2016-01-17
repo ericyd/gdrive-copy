@@ -43,15 +43,12 @@ function getValues() {
     var newFolderName = results[2];
     var copyPermissions = results[3];
         
-    document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Initializing copy from "' + folderName + '" to "' + newFolderName + '".';
-    document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />Recreating folder structure ... ';
-        
     createFolders(folderId, newFolderName, folderTree, copyPermissions);
 
   })
   .withFailureHandler(function(msg) {
     // Respond to failure conditions here.
-    document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'failure<br />' + msg;
+    $("#errors").append("<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error getting the folder information:<br />" + msg + "</div>");
   })
   .getValues( thisForm );
 }

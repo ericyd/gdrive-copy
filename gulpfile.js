@@ -16,13 +16,21 @@ gulp.task('build', ['js','html','css']);
 
 gulp.task('js', function() {
     // process js
+    
+    // non-minified
     gulp.src('./src/js/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(concat('js.html'))
         .pipe(insert.wrap('<script>', '</script>'))
         .pipe(gulp.dest('dist'));
+        
+    gulp.src('./src/Code.gs')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'))
+        .pipe(gulp.dest('dist'));
     
+    // minified
     gulp.src('./src/js/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
@@ -34,11 +42,17 @@ gulp.task('js', function() {
     gulp.src('./src/Code.gs')
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
-        .pipe(gulp.dest('dist'));
+        .pipe(uglify())
+        .pipe(concat('Code.min.gs'))
+        .pipe(gulp.dest('dist/min'));
+        
+    return;
 });
 
 gulp.task('css', function() {
     // process css
+    
+    // non-minified
     gulp.src('./src/css/main.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer({browsers: ['last 2 versions']}))
@@ -47,16 +61,19 @@ gulp.task('css', function() {
         .pipe(gulp.dest('dist'));
     
     gulp.src('./src/css/main.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(concat('css.css'))
+        .pipe(gulp.dest('./dist'));
+    
+    // minified
+    gulp.src('./src/css/main.scss')
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
         .pipe(autoprefixer({browsers: ['last 2 versions']}))
         .pipe(concat('css.min.html'))
         .pipe(insert.wrap('<style>', '</style>'))
         .pipe(gulp.dest('dist/min'));
         
-    gulp.src('./src/css/main.scss')
-        .pipe(sass().on('error', sass.logError))
-        .pipe(concat('css.css'))
-        .pipe(gulp.dest('./dist'));
+    return;
 });
 
 gulp.task('html', function() {
@@ -69,4 +86,6 @@ gulp.task('html', function() {
         //     conservativeCollapse: true,
         // }))
         .pipe(gulp.dest('dist'));
+        
+    return;
 });

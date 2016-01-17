@@ -10,9 +10,9 @@ function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
         var folderTree = results[1];
         var copyPermissions = results[2];
         var added = results[3];
-            
-        document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<b>Done</b>';
-        document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'Beginning file copying (this can take a while)';
+        
+        // Update status for user
+        $("#working").html("Folders structure copied successfully.<br />Copying files...");
         
         // build status-table
         statusTable = "<table class='table table-striped'>";
@@ -20,18 +20,21 @@ function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
         for (i = 0; i < folderTree.length; i++) {
           statusTable += "<tr>";
           statusTable += "<td>" + folderTree[i][2] + "</td>";
-          statusTable += "<td id='" + folderTree[i][1] + "'><span class='waiting'>Waiting...</span></td>";
+          statusTable += "<td id='" + folderTree[i][1] + "'><i>Waiting...</i></td>";
           statusTable += "</tr>";
         }
         statusTable += "</table>";
         $("#status-table").html(statusTable).show("blind"); 
         
+        // When complete, being copyFiles routine
         copyFiles(folderTree, folderId, copyPermissions, added);
     })
     .withFailureHandler(function(msg) {
-      document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'failed to create folder: ' + msg;
-      document.getElementById("notes").innerHTML = document.getElementById("notes").innerHTML + '<br />' + 'Please try again. Make sure you have correct permissions to copy this folder, and please input the entire sharing URL, not just the folder ID';
-      document.getElementById("working").style.display = "none";
+      var errormsg = "<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error creating folder structure.<br />";
+      errormsg += "<b>Error message:</b> " + msg + ".<br>";
+      errormsg += "Please try again. Make sure you have correct permissions to copy this folder, and please input the entire sharing URL, not just the folder ID</div>";
+      $("#errors").append(errormsg);
+      $("#working").hide("blind");
     })
     .createFolders(folderId, newFolderName, "None", folderTree, copyPermissions, []);
 }
