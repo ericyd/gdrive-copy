@@ -9,27 +9,35 @@ $(document).ready(function() {
   
   
   $("#copyFolderButton").click(function() {
+    // Bootstrap button action binding
+    var $btn = $(this).button('loading');
+    //$btn.button('reset')
     $("#description").hide("blind");
     $("#working").show("blind");
     getValues();
+    
   });
   
-  $("#explain-permissions").click(openDialog);
+  // $("#explain-permissions").click(openDialog);
   $("#permissions").click(function() {
     if ($(this).is(":checked")) {
-      openDialog();
+      $('#dialog-message').modal('show');
+      // openDialog();
     }
   });
   
-  function openDialog() {
-    $( "#dialog-message" ).dialog({
-      modal: true,
-      buttons: {
-        Ok: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    });
-  }
+  // function openDialog() {
+  //   $( "#dialog-message" ).dialog({
+  //     modal: true,
+  //     buttons: {
+  //       Ok: function() {
+  //         $( this ).dialog( "close" );
+  //       }
+  //     }
+  //   });
+  // }
+  
 
 });
+
+

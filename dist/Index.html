@@ -1,17 +1,15 @@
 <!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
 <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
 
-
-
 <html>
   <head>
-    
+
     <!-- This CSS package applies Google styling; it should always be included. -->
-    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+    <!--<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">-->
     <!--Include Font Awesome CDN for icons-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -24,17 +22,14 @@
         }
       });
     </script>
-    
-    <link rel="stylesheet" href="css.css">
   
   </head>
   <body>
- 
   
   <div class="container" id="container">
   
     <h1>
-       Copy a google drive folder and all its contents <br />
+       Copy a google drive folder and all its contents
     </h1>
 
     <div id="description">
@@ -54,78 +49,112 @@
        <br />
     </div>
     
-      
-      <div id="formDiv">
-          <form id="thisForm" name="thisForm">
-          <div class="form-title">Folder to copy (input <b>folder url</b>)</div>
-          <input type="textbox" id="folderId" name="folderId" class="textbox" /> <br />
-          
-          <br /><br />
-          
-          <div class="form-title">New folder name: <br /></div>
-          <input type="textbox" id="newFolder" name="newFolder" class="textbox"/> <br /><br />
-          
-          <span id="explain-permissions" class="checkbox-title">?</span>
-          <label class="checkbox-title" for="permissions">Copy sharing permissions</label><input type="checkbox" id="permissions" name="permissions" />
-          <br /><br />
-
-          <button type="button" id="copyFolderButton" class="action">Copy folder</button>
-          
-          </form>
-          
-      </div>
-      
-      <div id="dialog-message" title="Copy Sharing Permissions">
-        <p>
-          Selecting this box will create the new folder/sub-folders/documents with the same sharing permissions (e.g. "Edit", "View") as the original documents.  
-        </p>
-
-        Notes:
-        <ul>
-          <li>Anyone that was an owner of the original document/folder will simply be given "Edit" rights.  If you need to transfer ownership of the folder, please see my <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">Transfer Ownership</a> tool.</li>
-          <li>This will send <b><i>several</i></b> emails to each owner, editor and viewer.  Please <b><i>do not</i></b> select this option if the emails will annoy your collaborators.</li>
-          <li>It will take slightly longer to copy the folder with this option enabled</li>
-        </ul>          
-      </div>
-      
-      
-      <div id="working">
-          Copying folder structure <i class="fa fa-spinner fa-spin"></i><br /><br />
-      </div>
-      
-      <!--These divs get filled programatically at runtime-->
-      <div id="errors"></div>
-      <div id="status-table"></div>
-      
-      <!--These divs display when complete-->
-      <div id="complete">
-          Successfully copied folder to your <a href="http://drive.google.com">Google Drive</a>.
-      </div>
-      
-      <div id="please-review">
-        If you have a moment, please <a href="https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews" target="_blank">rate and review this app</a>.
-      </div>
-      
-       
-      
-    </div><!--end .container-->
     
-    <div id="gray-background">
-      <div id="promotion">
-         <b>Just need to transfer ownership of a folder?</b> Check out <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">my other project</a><br />
-         Check out this project's source code on <a href="https://github.com/edauenhauer/google-drive-copy-folder" target="_blank">Github</a><br />
-         Check out my website: <a href="http://ericyd.com" target="_blank">ericyd.com</a> <br />
-         Comments? Questions? Concerns? Email me: eric@ericyd.com. <br />
+    <!--Form-->
+    <div id="formDiv">
+      <form id="thisForm" name="thisForm"  class="form-horizontal">
+      
+        <div class="form-group">
+          <label for="folderId" class="col-sm-3 control-label">Folder to copy<br />(input <b>folder url</b>)</label>
+          <div class="col-sm-9">
+            <input type="textbox" id="folderId" name="folderId" class="form-control" placeholder="Folder ID">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="newFolder" class="col-sm-3 control-label">New folder name</label>
+          <div class="col-sm-9">
+            <input type="textbox" id="newFolder" name="newFolder" class="form-control" placeholder="New folder name">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <span id="explain-permissions" class="checkbox-title" data-toggle="modal" data-target="#dialog-message">?</span>
+            <label class="checkbox-title" for="permissions">Copy sharing permissions &nbsp;<input type="checkbox" id="permissions" name="permissions" /></label>  
+          </div>
+        </div>
+        
+        
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <button type="button" id="copyFolderButton" data-loading-text="Copying..." class="btn btn-primary" autocomplete="off">Copy folder</button>
+          </div>
+        </div>
+
+      </form>
+      
+        
+    </div>
+      
+    <!-- Modal -->
+    <div class="modal fade" id="dialog-message" tabindex="-1" role="dialog" aria-labelledby="Copy Sharing Permissions">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="dialog-title">Copy Sharing Permissions</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              Selecting this box will create the new folder/sub-folders/documents with the same sharing permissions (e.g. "Edit", "View") as the original documents.  
+            </p>
+    
+            Notes:
+            <ul>
+              <li>Anyone that was an owner of the original document/folder will simply be given "Edit" rights.  If you need to transfer ownership of the folder, please see my <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">Transfer Ownership</a> tool.</li>
+              <li>This will send <b><i>several</i></b> emails to each owner, editor and viewer.  Please <b><i>do not</i></b> select this option if the emails will annoy your collaborators.</li>
+              <li>It will take slightly longer to copy the folder with this option enabled</li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
       </div>
     </div>
+      
+     
+    <!--This displays on #copyFolderButton click-->
+    <div id="working">
+        Copying folder structure <i class="fa fa-spinner fa-spin"></i><br /><br />
+    </div>
+    
+    <!--These divs display when complete-->
+    <div id="complete" class='alert alert-success' role='alert'>
+        Successfully copied folder to your <a href="http://drive.google.com">Google Drive</a>.
+    </div>
+    
+    <div id="please-review" class="panel panel-default">
+      <div class="panel-heading">Have an extra 30 seconds?</div>
+      <div class="panel-body">
+        Please take a moment to <a href="https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews" target="_blank">rate and review this app</a> in the Chrome Web Store.
+      </div>
+    </div>
+    
+    <!--These divs get filled programatically at runtime-->
+    <div id="errors"></div>
+    <div id="status-table"></div>
+       
+      
+  </div><!--end .container-->
+  
+  <footer class="footer">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-offset-1 col-sm-11">
+          <p><b>Just need to transfer ownership of a folder?</b> Check out <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">my other project</a></p>
+          <p>Check out this project's source code on <a href="https://github.com/edauenhauer/google-drive-copy-folder" target="_blank">Github</a></p>
+          <p>Check out my website: <a href="http://ericyd.com" target="_blank">ericyd.com</a></p>
+          <p>Comments? Questions? Concerns? Email me: eric@ericyd.com.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
   </body>
 </html>
-
-<!-- Store data passed to template here, so it is available to the
-     imported JavaScript. -->
-<script>
-
-</script>
 
 <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
 <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>

@@ -48,7 +48,7 @@ function getValues() {
   })
   .withFailureHandler(function(msg) {
     // Respond to failure conditions here.
-    $("#errors").append("<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error getting the folder information:<br />" + msg + "</div>");
+    $("#errors").append("<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error getting the folder information.<br />" + msg + ".<br />Please make sure you are using Google Chrome or Chromium.</div>");
   })
   .getValues( thisForm );
 }
