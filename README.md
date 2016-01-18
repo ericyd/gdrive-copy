@@ -15,11 +15,14 @@ This app will recursively copy all contents and sub-folders within a Google Driv
 
 In addition, the app user will become the owner of the new folder and all sub-folders and contents.  This makes it especially handy for making a new copy of shared information when someone leaves an organization.
 
-## Disclaimers
+## Notes 
 
-1. This process deletes all original information regarding creation date and revision history.
-2. Despite being able to access the web app from Firefox or other browsers, the app only works in Chrome or Chromium at this time. 
+* This app does not currently work in browsers other than Chrome or Chromium.
+* If you use the "Copy Sharing Permissions" option, please note that it will send **several** emails to each owner, editor and viewer.
+* This app requires several permissions.  The permissions to access your Documents and Spreadsheets, as well as know your identity and email address, are all related to the Copy Permissions option.  If you do not select this option, this app will not read your identity and it will only interact with your Drive by copying files, not by identifying sharing permissions.  You can view the source code on the Github page, listed below.
 
 ## Bugs? Comments? Questions?
 
 Please contact the author at eric_yd@yahoo.com
+
+Please review!!!

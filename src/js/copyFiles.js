@@ -19,10 +19,10 @@ function copyFiles(folderTree, folderId, copyPermissions, added) {
         if (folderTree.length > 0) {
           copyFiles(folderTree, folderId, copyPermissions, added);
         } else {
-          $("#working").hide("blind");
-          document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.";
-          document.getElementById("complete").style.display = "block";
-          document.getElementById("please-review").style.display = "block";
+          $("#status-title").html("Folder copy complete");
+          $("#complete").html("Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.");
+          $("#complete").show("blind");
+          $("#please-review").show("blind");
           
         }
       })
@@ -34,10 +34,10 @@ function copyFiles(folderTree, folderId, copyPermissions, added) {
         if (folderTree.length > 0) {
           copyFiles(folderTree);
         } else {
-          $("#working").hide("blind");
-          document.getElementById("complete").innerHTML = "Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.";
-          document.getElementById("complete").style.display = "block";
-          document.getElementById("please-review").style.display = "block";
+          $("#status-title").html("Folder copy complete");
+          $("#complete").html("Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.");
+          $("#complete").show("blind");
+          $("#please-review").show("blind");
           
         }
         

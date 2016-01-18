@@ -1,20 +1,37 @@
 @import "custom-variables";
 @import "../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap";
 
-// .form-title {
-//   display:block;
-//   font-size:1.5em; 
-//   line-height:1.3em; 
-//   font-family: $font-family-sans-serif;
-// }
-// 
-// .checkbox-title {
-//   display:inline;
-//   font-size:1.5em; 
-//   line-height:1.3em; 
-//   font-family: $font-family-sans-serif;
-//   margin:0 0.5em 0 0;
-// }
+/* 
+Sticky footer
+https://css-tricks.com/snippets/css/sticky-footer/
+*/
+html, body {
+    height: 100%;
+}
+.container {
+    width: 70%;
+    min-height: 100%;
+    /* equal to footer height */
+    margin-bottom: -$footer-height; 
+}
+.container:after {
+    content: "";
+    display: block;
+}
+.footer, .container:after {
+    height: $footer-height; 
+}
+
+.footer {
+  width: 100%;
+  padding: 1em 0 1em 0;
+  background:$footer-color;
+}
+
+.footer > .container-fluid > .row > div {
+    border-right: 1px solid darken($footer-color, 20%); 
+  
+}
 
 #explain-permissions {
   border: 1px solid #404040;
@@ -25,97 +42,22 @@
   
 }
 
-// h1{
-//   font-size:2.5em; 
-//   font-family:$font-family-serif; 
-//   padding: 0 0 15px 0;
+// #container {
+//   display:block; 
+//   margin:0 auto 0 auto; 
+//   padding:5%; 
+//   border:0; 
+//   border-left: 1px solid #888888; 
+//   border-right: 1px solid #888888; 
+//   box-shadow: 0px 0px 5px #888888; 
+//   width:70%; 
+//   height:100%;
 // }
-
-
-// .description {
-//   font-family: $font-family-sans-serif;
-//   font-size:  18px;
-//   
-// }
-
-#container {
-  display:block; 
-  margin:0 auto 0 auto; 
-  padding:5%; 
-  border:0; 
-  border-left: 1px solid #888888; 
-  border-right: 1px solid #888888; 
-  box-shadow: 0px 0px 5px #888888; 
-  width:70%; 
-  height:100%;
-}
 
 #description {
-  // font-size:1.5em; 
-  // line-height:1.3em; 
   font-family:$font-family-sans-serif; 
   padding: 10px 0 10px 0;
 }
-
-// #status {
-//   display:none; 
-//   font-size:1.5em; 
-//   line-height:1.3em; 
-//   font-family:'Lato', sans-serif;
-// }
-
-#working {
-  // font-size:1.5em; 
-  // line-height:1.3em; 
-  // font-family:'Lato', sans-serif;
-  display:none;
-  // margin: 0 auto 0 auto; 
-  // text-align:center;
-}
-
-// #notes {
-//    display:none; 
-//    width:90%; 
-//    height:150px; 
-//    overflow: auto;
-//    margin: 0 auto 0 auto; 
-//    text-align:left; 
-//    border: 1px solid #888888;
-// }
-
-// #complete {
-//   font-size:1.5em; 
-//   line-height:1.3em; 
-//   font-family:'Lato', sans-serif; 
-//   margin: 10px 0 10px 0; 
-//   padding: 10px; 
-//   background-color:#A8DA83; 
-//   color:#294F00; 
-//   border: 1px solid #294F00;
-// }
-
-// #please-review {
-//   font-size:1.5em; 
-//   line-height:1.3em; 
-//   font-family:'Lato', sans-serif; 
-//   margin: 10px 0 10px 0; 
-//   padding: 10px; 
-//   background-color:#f1f1f3; 
-//   color:#000; 
-//   border: 1px solid #9090a2;
-// }
-
-// #formDiv {
-//   margin: 0 auto 0 auto; 
-//   text-align:center;
-// }
-
-// #copyFolderButton {
-//   padding: 10px; 
-//   height:2em;
-//   font-size:1.5em;
-//   font-family:'Lato', sans-serif;
-// }
 
 #troubleshooting {
    font-size:1em; 
@@ -127,40 +69,6 @@
    border: 1px solid #6e1508;
 }
 
-// .gray-background {
-//   // display:block; 
-//   // margin:30px 0 0 0; 
-//   // border:0; 
-//   // width:100%; 
-//   background:#bdbcbb;
-// }
-
-.footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  padding: 1em 0 1em 0;
-  /* Set the fixed height of the footer here */
-  // height: 60px;
-  background:#bdbcbb;
+th {
+    font-weight: bold;
 }
-
-footer p {
-    // padding: 2px 0 2px 0;
-    margin: 2px 0 2px 0;
-}
-
-// #promotion {
-//    padding:20px 10% 20px 10%; 
-//    display:block; 
-//    margin:0 auto 0 auto;
-// }
-// 
-// .textbox {
-//    display:block; 
-//    width:400px; 
-//    margin: 0 auto 0 auto;
-//    font-size:1.5em; 
-//    height:1.5em; 
-//    font-family:'Lato', sans-serif;
-// }
