@@ -4,16 +4,14 @@
 <html>
   <head>
 
-    <!-- This CSS package applies Google styling; it should always be included. -->
-    <!--<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">-->
     <!--Include Font Awesome CDN for icons-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
+    <!--jQuery and jQuery UI for "blind" effect-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
+    <!--Webfont loader for Google Apps Scripts-->
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
     <script>
       WebFont.load({
@@ -83,18 +81,21 @@
         </div>
 
       </form>
-      
-        
+
     </div>
       
     <!-- Modal -->
     <div class="modal fade" id="dialog-message" tabindex="-1" role="dialog" aria-labelledby="Copy Sharing Permissions">
-      <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-dialog" role="document">
         <div class="modal-content">
+          
+          <!--Modal title-->
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="dialog-title">Copy Sharing Permissions</h4>
           </div>
+          
+          <!--Modal text-->
           <div class="modal-body">
             <p>
               Selecting this box will create the new folder/sub-folders/documents with the same sharing permissions (e.g. "Edit", "View") as the original documents.  
@@ -107,19 +108,18 @@
               <li>It will take slightly longer to copy the folder with this option enabled</li>
             </ul>
           </div>
+          
+          <!--Modal buttons-->
           <div class="modal-footer">
-            <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
             <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
           </div>
+          
         </div>
       </div>
     </div>
       
      
-    <!--This displays on #copyFolderButton click-->
-    <div id="working">
-        Copying folder structure <i class="fa fa-spinner fa-spin"></i><br /><br />
-    </div>
+    
     
     <!--These divs display when complete-->
     <div id="complete" class='alert alert-success' role='alert'>
@@ -135,19 +135,55 @@
     
     <!--These divs get filled programatically at runtime-->
     <div id="errors"></div>
-    <div id="status-table"></div>
+    <div id="status">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="panel-title">
+            <h4 id="status-title">Copying folder structure <i class="fa fa-spinner fa-spin"></i></h4>
+          </div>
+        </div>
+        <div class="panel-body">
+          <table id="status-table" class='table table-striped'>
+            <tr>
+              <th>Folder path</th>
+              <th>Status</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
        
       
   </div><!--end .container-->
   
+  
+  <!--Footer-->
   <footer class="footer">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-offset-1 col-sm-11">
-          <p><b>Just need to transfer ownership of a folder?</b> Check out <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">my other project</a></p>
-          <p>Check out this project's source code on <a href="https://github.com/edauenhauer/google-drive-copy-folder" target="_blank">Github</a></p>
-          <p>Check out my website: <a href="http://ericyd.com" target="_blank">ericyd.com</a></p>
-          <p>Comments? Questions? Concerns? Email me: eric@ericyd.com.</p>
+        
+        <!--Promotion for Transfer Ownership-->
+        <div class="col-sm-offset-2 col-sm-2">
+          <b>Transfer folder ownership</b><br /> 
+          Check out <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">my other project</a>
+        </div>
+        
+        <!--Github-->
+        <div class="col-sm-2">
+          <b>Source code</b><br />
+          <a href="https://github.com/edauenhauer/google-drive-copy-folder" target="_blank">Github</a>
+        </div>
+        
+        <!--ericyd.com-->
+        <div class="col-sm-2">
+          <b>Developer's website</b><br />
+          <a href="http://ericyd.com" target="_blank">ericyd.com</a>
+        </div>
+        
+        <!--email-->
+        <div class="col-sm-2">
+          <b>Comments? Questions? Concerns?</b><br />
+          eric@ericyd.com
         </div>
       </div>
     </div>
