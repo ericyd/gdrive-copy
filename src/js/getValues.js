@@ -3,6 +3,9 @@
    It passes that ID to the getFolders
 */ 
 
+var $ = jQuery = require('jquery');
+
+
 function getValues() {
   
   var folderTree = [];

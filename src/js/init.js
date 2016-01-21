@@ -1,3 +1,5 @@
+var $ = jQuery = require('jquery');
+
 $(document).ready(function() {
   // $("#working").hide();
   // $("#notes").hide();

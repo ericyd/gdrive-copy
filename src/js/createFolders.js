@@ -1,3 +1,6 @@
+var $ = jQuery = require('jquery');
+
+
 function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
 //function createFolders(folderId, newFolderName, parentId, folderTree) {
   google.script.run

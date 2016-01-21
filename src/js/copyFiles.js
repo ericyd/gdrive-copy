@@ -2,6 +2,9 @@
    This copies all the files
 */
 
+var $ = jQuery = require('jquery');
+
+
 function copyFiles(folderTree, folderId, copyPermissions, added) {
     
     var pair = folderTree.shift();
