@@ -6,11 +6,6 @@ var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
 var insert = require('gulp-insert');
 var autoprefixer = require('gulp-autoprefixer');
-var browserify = require('browserify');
-var changed = require('gulp-changed');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var globby = require('globby');  
 
 gulp.task('default', function(){
     // Default task
@@ -29,36 +24,19 @@ gulp.task('watch', function(){
 
 gulp.task('js', function() {
     // process js
-    globby(['./src/js/*.js', './node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js', './node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js', './node_modules/jquery-ui/effect-blind.js']).then(function(entries) {
-        var b = browserify({
-            entries: entries,
-            debug: true
-        });
-        
-        b.bundle()
-        .pipe(source('js.js'))
-        .pipe(buffer())
+    gulp.src(['./src/js/*.js', './node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js', './node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js'])
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(uglify())
         .pipe(concat('js.html'))
         .pipe(insert.wrap('<script>', '</script>'))
         .pipe(gulp.dest('dist'));
-    });
-    
-    // gulp.src(['./src/js/*.js', './node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js', './node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js'])
-    //     .pipe(jshint())
-    //     .pipe(jshint.reporter('default'))
-    //     .pipe(uglify())
-    //     .pipe(concat('js.html'))
-    //     .pipe(insert.wrap('<script>', '</script>'))
-    //     .pipe(gulp.dest('dist'));
         
     gulp.src('./src/Code.gs')
-        .pipe(changed('dist'))
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(uglify())
+        .pipe(concat('Code.gs'))
         .pipe(gulp.dest('dist'));
         
     return;
@@ -79,7 +57,6 @@ gulp.task('css', function() {
 gulp.task('html', function() {
     // process html  
     gulp.src('./src/Index.html')
-        .pipe(changed('dist'))
         .pipe(htmlmin({
             collapseWhitespace: true,
             removeComments: true,
