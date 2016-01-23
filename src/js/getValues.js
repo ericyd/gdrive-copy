@@ -4,7 +4,7 @@
 */ 
 
 var $ = jQuery = require('jquery');
-
+// require('./createFolders.js');
 
 function getValues() {
   

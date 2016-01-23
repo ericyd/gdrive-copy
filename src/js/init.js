@@ -1,4 +1,8 @@
 var $ = jQuery = require('jquery');
+require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js');
+require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js');
+require('../../node_modules/jquery-ui/effect-blind.js');
+// require('./getValues.js');
 
 $(document).ready(function() {
   // $("#working").hide();

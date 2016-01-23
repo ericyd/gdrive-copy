@@ -3,7 +3,7 @@
 */
 
 var $ = jQuery = require('jquery');
-
+require('../../node_modules/jquery-ui/effect-blind.js');
 
 function copyFiles(folderTree, folderId, copyPermissions, added) {
     
@@ -26,7 +26,6 @@ function copyFiles(folderTree, folderId, copyPermissions, added) {
           $("#complete").html("Successfully copied folder to your <a href='https://drive.google.com/drive/folders/" + folderId + "' target='_blank'>Google Drive</a>.");
           $("#complete").show("blind");
           $("#please-review").show("blind");
-          
         }
       })
       .withFailureHandler(function(msg) {

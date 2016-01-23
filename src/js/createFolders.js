@@ -1,4 +1,5 @@
 var $ = jQuery = require('jquery');
+// require('./copyFiles.js');
 
 
 function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
