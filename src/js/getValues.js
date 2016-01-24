@@ -4,9 +4,9 @@
 */ 
 
 var $ = jQuery = require('jquery');
-// require('./createFolders.js');
+var createFolders = require('./createFolders.js');
 
-function getValues() {
+exports.run = function () {
   
   var folderTree = [];
  
@@ -38,7 +38,7 @@ function getValues() {
   
   
   // Get values of folder Ids and pass them to other functions
-  google.script.run
+  return google.script.run
   .withSuccessHandler(function(results) {
     
     var folderId = results[0];
@@ -46,7 +46,7 @@ function getValues() {
     var newFolderName = results[2];
     var copyPermissions = results[3];
         
-    createFolders(folderId, newFolderName, folderTree, copyPermissions);
+    createFolders.run(folderId, newFolderName, folderTree, copyPermissions);
 
   })
   .withFailureHandler(function(msg) {
@@ -54,4 +54,7 @@ function getValues() {
     $("#errors").append("<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error getting the folder information.<br />" + msg + ".<br />Please make sure you are using Google Chrome or Chromium.</div>");
   })
   .getValues( thisForm );
+  
+  
 }
+

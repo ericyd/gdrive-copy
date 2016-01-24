@@ -1,10 +1,9 @@
 var $ = jQuery = require('jquery');
-// require('./copyFiles.js');
+var copyFiles = require('./copyFiles.js');
 
-
-function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
+exports.run = function(folderId, newFolderName, folderTree, copyPermissions) {
 //function createFolders(folderId, newFolderName, parentId, folderTree) {
-  google.script.run
+  return google.script.run
     .withSuccessHandler(function(results) {
         // folder tree is an array
         // each object is an array with two elements
@@ -29,7 +28,7 @@ function createFolders(folderId, newFolderName, folderTree, copyPermissions) {
         $("#status-table").append(statusTable); 
         
         // When complete, begin copyFiles routine
-        copyFiles(folderTree, folderId, copyPermissions, added);
+        copyFiles.run(folderTree, folderId, copyPermissions, added);
     })
     .withFailureHandler(function(msg) {
       var errormsg = "<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error creating folder structure.<br />";
