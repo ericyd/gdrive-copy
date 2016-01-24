@@ -1,8 +1,28 @@
+/*
+  This function traverses the folder tree and recreates the folder structure
+    in the new folder
+    
+  arguments:
+  
+     folderId is the ID of the root src folder
+     
+     newFolderName is a string representing the name of the new (copied) folder
+     
+     folderTree is an array
+        each object is an array with two elements
+        first element is original folder Id
+        second element is new folder Id, corresponding to original
+        third element is the path name for the folder
+        
+     copyPermissions is a boolean indicating whether or not to copy original sharing permissions 
+     
+*/
+
 var $ = jQuery = require('jquery');
 var copyFiles = require('./copyFiles.js');
 
 exports.run = function(folderId, newFolderName, folderTree, copyPermissions) {
-//function createFolders(folderId, newFolderName, parentId, folderTree) {
+  
   return google.script.run
     .withSuccessHandler(function(results) {
         // folder tree is an array

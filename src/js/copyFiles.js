@@ -1,5 +1,21 @@
 /* 
-   This copies all the files
+   This copies all the files from 
+   
+   arguments:
+   
+   folderTree is an array
+        each object is an array with two elements
+        first element is original folder Id
+        second element is new folder Id, corresponding to original
+        third element is the path name for the folder
+        
+    todo: is folderId a necessary argument?    
+    folderId is the ID of the root src folder
+    
+    copyPermissions is a boolean indicating whether or not to copy original sharing permissions
+    
+    added is an array of email addresses for collaborators with whom the files 
+        have already been shared due to parent folder privileges 
 */
 
 var $ = jQuery = require('jquery');
@@ -12,12 +28,16 @@ exports.run = function(folderTree, folderId, copyPermissions, added) {
 
 function copyFiles(folderTree, folderId, copyPermissions, added) {
     
+    // deconstruct element from folderTree
     var pair = folderTree.shift();
     var fromId = pair[0];
     var toId = pair[1];
     var folderName = pair[2];
     
+    
     $("#" + toId).html("Copying files <i class='fa fa-spinner fa-spin'></i>").addClass("disabled");
+    
+    
     
     google.script.run
       .withSuccessHandler(function() {
@@ -33,6 +53,9 @@ function copyFiles(folderTree, folderId, copyPermissions, added) {
           $("#please-review").show("blind");
         }
       })
+      
+      
+      
       .withFailureHandler(function(msg) {
         // Respond to failure conditions here.
         
@@ -49,5 +72,8 @@ function copyFiles(folderTree, folderId, copyPermissions, added) {
         }
         
       })
+      
+      
+      
       .copyFiles(fromId, toId, copyPermissions, added);
 }

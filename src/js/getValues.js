@@ -1,6 +1,10 @@
 /*
-   This function gets the folderId from the sharing URL given from Google Drive
-   It passes that ID to the getFolders
+   This function retrieves input values from the form and sends them to createFolders
+   
+   First, it parses the input passed to the folderId input.
+   It will parse a pure folder ID, a folder sharing URL, or a folder URL from the browser
+   
+   Next, it will send the folderId, the boolean copyPermissions, and the newFolderName to createFolders
 */ 
 
 var $ = jQuery = require('jquery');

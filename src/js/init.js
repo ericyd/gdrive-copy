@@ -1,3 +1,7 @@
+/*
+  This function contains initialization code and event bindings for page elements
+*/
+
 var $ = jQuery = require('jquery');
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js');
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js');
