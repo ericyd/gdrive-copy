@@ -3,10 +3,8 @@
     2. Slide form to upper left of screen
     3. Fade in status table in center of screen
 3. Styling
-    1. Integrate Bootstrap fully into site; redo css in favor of Bootstrap presets
+    1. ~~Integrate Bootstrap fully into site; redo css in favor of Bootstrap presets~~
     2. Update icons for Google Chrome Store listing with more attractive color scheme (e.g. white background)
-4. fix browserify
-    1. maybe integrate watchify?
 1. ~~Status box~~
     1. ~~Onclick, show spinner icon with "Getting folder structure"~~
     2. ~~When folder structure is retrieved, create table with two cols:~~
