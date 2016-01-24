@@ -45,7 +45,8 @@ exports.run = function(folderId, newFolderName, folderTree, copyPermissions) {
           statusTable += "<td id='" + folderTree[i][1] + "'><i>Waiting...</i></td>";
           statusTable += "</tr>";
         }
-        $("#status-table").append(statusTable); 
+        $(statusTable).hide().appendTo("#status-table").show('blind');
+        // $("#status-table").append(statusTable); 
         
         // When complete, begin copyFiles routine
         copyFiles.run(folderTree, folderId, copyPermissions, added);
