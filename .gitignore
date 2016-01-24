@@ -2,5 +2,3 @@ Thumbs.db
 node_modules
 *.log
 .vscode
-dist/css.css
-src/tmp
