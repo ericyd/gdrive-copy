@@ -4,6 +4,8 @@ Google Drive Copy Folder
 This is a Google Drive Web app hosted at the [Chrome Web Store](https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl). 
 This app will recursively copy all contents and sub-folders within a Google Drive folder.  As long as you have viewing rights on a folder, you can copy it in its entirety to your own Google Drive.  The folder will be placed in your Google Drive, and you can move it from there.
 
+To launch app: click "Visit Website" button at top of window in the [Chrome Web Store](https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl).
+
 ## Usage 
 
 1. Open Google Drive
