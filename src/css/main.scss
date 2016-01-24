@@ -8,24 +8,41 @@ https://css-tricks.com/snippets/css/sticky-footer/
 html, body {
     height: 100%;
 }
+
 .container {
     width: 70%;
     min-height: 100%;
     /* equal to footer height */
     margin-bottom: -$footer-height; 
+    @media only screen and (max-width:768px) {
+        margin-bottom: -$footer-height-sm;
+    }
 }
+
 .container:after {
     content: "";
     display: block;
 }
+
 .footer, .container:after {
-    height: $footer-height; 
+    height: $footer-height;
+    @media only screen and (max-width:768px) {
+        height: $footer-height-sm;
+    } 
 }
 
 .footer {
   width: 100%;
   padding: 1em 0 1em 0;
   background:$footer-color;
+  
+  .col-sm-2 {
+    font-size: 0.8em;
+    
+    @media only screen and (max-width:768px) {
+        padding-top: 1em;
+    } 
+  }
 }
 
 .footer > .container-fluid > .row > div {
@@ -42,31 +59,9 @@ html, body {
   
 }
 
-// #container {
-//   display:block; 
-//   margin:0 auto 0 auto; 
-//   padding:5%; 
-//   border:0; 
-//   border-left: 1px solid #888888; 
-//   border-right: 1px solid #888888; 
-//   box-shadow: 0px 0px 5px #888888; 
-//   width:70%; 
-//   height:100%;
-// }
-
 #description {
   font-family:$font-family-sans-serif; 
   padding: 10px 0 10px 0;
-}
-
-#troubleshooting {
-   font-size:1em; 
-   line-height:1.3em; 
-   font-family:'Lato', sans-serif; 
-   padding: 10px; 
-   background-color:#d18377; 
-   color:#6e1508; 
-   border: 1px solid #6e1508;
 }
 
 th {
