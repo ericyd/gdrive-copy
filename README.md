@@ -1,4 +1,4 @@
-Copy Folder
+Google Drive Copy Folder
 ===========
 
 This is a Google Drive Web app hosted at the [Chrome Web Store](https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl). 
