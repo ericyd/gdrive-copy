@@ -192,3 +192,11 @@ function getFullPath(fullPath, folderId) {
   }
   return fullPath;
 }
+
+
+
+
+// Returns token for use with Google Picker
+function getOAuthToken() {
+    return ScriptApp.getOAuthToken();
+}
