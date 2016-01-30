@@ -22,8 +22,10 @@ exports.run = function (selectedFolder) {
     var folderName = results[1];
     var newFolderName = results[2];
     var copyPermissions = results[3];
+    var dest = results[4];
+    var parentId = results[5];
         
-    createFolders.run(folderId, newFolderName, folderTree, copyPermissions);
+    createFolders.run(folderId, newFolderName, folderTree, copyPermissions, dest, parentId);
 
   })
   .withFailureHandler(function(msg) {
