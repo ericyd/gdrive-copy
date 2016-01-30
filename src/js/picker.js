@@ -1,6 +1,6 @@
 var $ = jQuery = require('jquery');
 
-var selectedFolder = {};
+exports.selectedFolder = {};
 var pickerApiLoaded = false;
 var picker;
 
