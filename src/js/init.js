@@ -7,7 +7,7 @@ require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.j
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js');
 require('../../node_modules/jquery-ui/effect-blind.js');
 var getValues = require('./getValues');
-var pickerMod = require('./picker');
+var picker = require('./picker');
 
 
 $(document).ready(function() {
@@ -24,7 +24,7 @@ $("#thisForm").submit(function( event ) {
   //$btn.button('reset') // call to reset to original condition
   $("#description").hide("blind");
   $("#status").show("blind");
-  getValues.run();
+  getValues.run(picker.selectedFolder);
   event.preventDefault();
 });
 
@@ -35,5 +35,5 @@ $("#permissions").click(function() {
 });
 
 $("#selectFolderButton").click(function() {
-  pickerMod.showPicker();
+  picker.showPicker();
 })
