@@ -7,6 +7,7 @@ require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.j
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js');
 require('../../node_modules/jquery-ui/effect-blind.js');
 var getValues = require('./getValues');
+var pickerMod = require('./picker');
 
 
 $(document).ready(function() {
@@ -32,3 +33,7 @@ $("#permissions").click(function() {
     $('#dialog-message').modal('show');
   }
 });
+
+$("#selectFolderButton").click(function() {
+  pickerMod.showPicker();
+})
