@@ -25,17 +25,21 @@ function doGet(e) {
  */
 
 // Gets the values from the form for folderId and newFolderId and returns them
-function getValues(theForm) {
-  var folderId = theForm.folderId;
-  var folderName = DriveApp.getFolderById(folderId).getName();
+function getValues(theForm, selectedFolder) {
+  var folderId = selectedFolder.id;
+  var folderName = selectedFolder.name;
+  var parentId = selectedFolder.parentId;
   var newFolderName = theForm.newFolder;
   var permissions = theForm.permissions;
+  var dest = theForm.copyLocationOptions;
   var results = [];
   
   results.push(folderId);
   results.push(folderName);
   results.push(newFolderName);
   results.push(permissions);
+  results.push(dest);
+  results.push(parentId);
   
   return results;
 }
