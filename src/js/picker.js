@@ -59,6 +59,7 @@ function pickerCallback(data) {
         selectedFolder.name = doc[google.picker.Document.NAME];
         selectedFolder.newName = "Copy of " + selectedFolder.name;
         $("#newFolder").val(selectedFolder.newName);
+        $("#folderName").text(selectedFolder.name);
     } else if (action == google.picker.Action.CANCEL) {
         google.script.host.close();
     }
