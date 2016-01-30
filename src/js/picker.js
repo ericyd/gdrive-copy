@@ -2,7 +2,7 @@ var $ = jQuery = require('jquery');
 
 exports.selectedFolder = {};
 var pickerApiLoaded = false;
-var picker;
+var pickerBuilder;
 
 function onApiLoad() {
     gapi.load('picker', {
@@ -22,7 +22,7 @@ function createPicker(token) {
             .setMimeTypes('application/vnd.google-apps.folder')
             .setSelectFolderEnabled(true);
 
-        picker = new google.picker.PickerBuilder()
+        pickerBuilder = new google.picker.PickerBuilder()
             .addView(foldersView)
             .hideTitleBar()
             .setOAuthToken(token)
@@ -34,12 +34,13 @@ function createPicker(token) {
 
     } else {
         // todo: handle errors
+        
     }
 }
 
 
 exports.showPicker = function () {
-    return picker.setVisible(true);
+    return pickerBuilder.setVisible(true);
 }
 
 /**
@@ -52,6 +53,7 @@ exports.showPicker = function () {
     
 function pickerCallback(data) {
     var action = data[google.picker.Response.ACTION];
+    
     if (action == google.picker.Action.PICKED) {
         var doc = data[google.picker.Response.DOCUMENTS][0];
         selectedFolder.id = doc[google.picker.Document.ID];
@@ -60,6 +62,7 @@ function pickerCallback(data) {
         selectedFolder.newName = "Copy of " + selectedFolder.name;
         $("#newFolder").val(selectedFolder.newName);
         $("#folderName").text(selectedFolder.name);
+        
     } else if (action == google.picker.Action.CANCEL) {
         google.script.host.close();
     }
