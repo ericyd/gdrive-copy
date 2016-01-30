@@ -21,7 +21,7 @@
 var $ = jQuery = require('jquery');
 var copyFiles = require('./copyFiles.js');
 
-exports.run = function(folderId, newFolderName, folderTree, copyPermissions) {
+exports.run = function(folderId, newFolderName, folderTree, copyPermissions, dest, parentId) {
   
   return google.script.run
     .withSuccessHandler(function(results) {
@@ -58,5 +58,5 @@ exports.run = function(folderId, newFolderName, folderTree, copyPermissions) {
       $("#errors").append(errormsg);
       $("#status-title").html("Error");
     })
-    .createFolders(folderId, newFolderName, "None", folderTree, copyPermissions, []);
+    .createFolders(folderId, newFolderName, parentId, folderTree, copyPermissions, [], dest);
 }

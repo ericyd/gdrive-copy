@@ -46,7 +46,7 @@ function getValues(theForm, selectedFolder) {
 
 
 
-function createFolders(folderId, newFolderName, parentId, folderTree, copyPermissions, added) {
+function createFolders(folderId, newFolderName, parentId, folderTree, copyPermissions, added, dest) {
   var oldFolder = DriveApp.getFolderById(folderId);
   var folders = oldFolder.getFolders();
   var pair = [];
@@ -55,9 +55,12 @@ function createFolders(folderId, newFolderName, parentId, folderTree, copyPermis
 
   // If the folder doesn't have a parent (top folder only), create a new one with the new folder name
   // otherwise, create a folder within the parent folder using the original folder's name
-  if (parentId == "None") {
+  if (dest == "rootDir") {
     newFolder = DriveApp.createFolder(newFolderName);
+  } else if(dest == "sameDir") {
+    newFolder = DriveApp.getFolderById(parentId).createFolder(newFolderName);
   } else {
+    // Change to new dest id when third option is added
     newFolder = DriveApp.getFolderById(parentId).createFolder(newFolderName);
   }
   var newFolderId = newFolder.getId();
