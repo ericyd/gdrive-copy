@@ -52,13 +52,16 @@
     <div id="formDiv">
       <form id="thisForm" name="thisForm"  class="form-horizontal">
       
+        <!--Select Folder-->
         <div class="form-group">
-          <label for="folderId" class="col-sm-3 control-label">Folder to copy<br />(input <b>folder url</b>)</label>
+          <label for="folderId" class="col-sm-3 control-label">Folder to copy</label>
           <div class="col-sm-9">
-            <input type="textbox" id="folderId" name="folderId" class="form-control" placeholder="Folder ID">
+            <button type="button" id="selectFolderButton" class="btn btn-primary" autocomplete="off">Select Folder</button>
+            <div id="folderName"></div>
           </div>
         </div>
         
+        <!--Insert folder name-->
         <div class="form-group">
           <label for="newFolder" class="col-sm-3 control-label">New folder name</label>
           <div class="col-sm-9">
@@ -66,10 +69,37 @@
           </div>
         </div>
         
+        <!--Copy permissions?-->
         <div class="form-group">
           <div class="col-sm-offset-3 col-sm-9">
-            <span id="explain-permissions" class="checkbox-title" data-toggle="modal" data-target="#dialog-message">?</span>
-            <label class="checkbox-title" for="permissions">Copy sharing permissions &nbsp;<input type="checkbox" id="permissions" name="permissions" /></label>  
+            <label class="checkbox-title" for="permissions">Copy sharing permissions &nbsp;<input type="checkbox" id="permissions" name="permissions" /></label>
+            <i id="explain-permissions" class="fa fa-question-circle" data-toggle="modal" data-target="#dialog-message"></i>  
+          </div>
+        </div>
+        
+        <!--Copy to-->
+        <div class="form-group">
+          <label class="col-sm-3 control-label">Copy folder to</label>
+          <div class="col-sm-9">
+            <div class="radio">
+              <label>
+                <input type="radio" name="copyLocationOptions" id="sameDir" value="same" checked>
+                Same as source folder
+              </label>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="copyLocationOptions" id="rootDir" value="root">
+                Root directory (i.e. at the top of "My Drive")
+              </label>
+            </div>
+            <!--This will require another picker; let's get the first one working first-->
+            <!--<div class="radio disabled">
+              <label>
+                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
+                Select another
+              </label>
+            </div>-->
           </div>
         </div>
         
