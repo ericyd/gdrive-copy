@@ -16,7 +16,7 @@ gulp.task('default', function(){
     // Default task
 });
 
-gulp.task('build', ['js','gs', 'html','css']);
+gulp.task('build', ['jslint', 'js','gs', 'html','css']);
 
 gulp.task('watch', function(){ 
     var watcher = gulp.watch(['./src/**/*'], ['build']);
@@ -41,8 +41,6 @@ gulp.task('js', function() {
         return b.bundle()
             .pipe(source('js.html'))
             .pipe(buffer())
-            .pipe(jshint())
-            .pipe(jshint.reporter('default'))
             .pipe(uglify())
             .pipe(insert.wrap('<script>', '</script>'))
             .pipe(gulp.dest('dist'));
@@ -91,3 +89,12 @@ gulp.task('html', function() {
         }))
         .pipe(gulp.dest('dist'));
 });
+
+
+
+
+gulp.task('jslint', function() {
+    return gulp.src('./src/js/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+})
