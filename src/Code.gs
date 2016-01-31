@@ -19,27 +19,29 @@ function doGet(e) {
 }
 
 
+
 /**
  * Get contents of folder and copy to new folder
  * If sub folders exist, it will recursively copy sub-folders too
  */
 
 // Gets the values from the form for folderId and newFolderId and returns them
-function getValues(theForm, selectedFolder) {
-  var folderId = selectedFolder.id;
-  var folderName = selectedFolder.name;
-  var parentId = selectedFolder.parentId;
+function getValues(theForm) {
+  // var folderId = selectedFolder.id;
+  // var folderName = selectedFolder.name;
+  // var parentId = selectedFolder.parentId;
   var newFolderName = theForm.newFolder;
   var permissions = theForm.permissions;
   var dest = theForm.copyLocationOptions;
   var results = [];
   
-  results.push(folderId);
-  results.push(folderName);
+  
+  // results.push(folderId);
+  // results.push(folderName);
   results.push(newFolderName);
   results.push(permissions);
   results.push(dest);
-  results.push(parentId);
+  // results.push(parentId);
   
   return results;
 }
@@ -55,9 +57,9 @@ function createFolders(folderId, newFolderName, parentId, folderTree, copyPermis
 
   // If the folder doesn't have a parent (top folder only), create a new one with the new folder name
   // otherwise, create a folder within the parent folder using the original folder's name
-  if (dest == "rootDir") {
+  if (dest == "root") {
     newFolder = DriveApp.createFolder(newFolderName);
-  } else if(dest == "sameDir") {
+  } else if(dest == "same") {
     newFolder = DriveApp.getFolderById(parentId).createFolder(newFolderName);
   } else {
     // Change to new dest id when third option is added
