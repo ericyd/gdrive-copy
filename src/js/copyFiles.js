@@ -22,7 +22,7 @@ var $ = jQuery = require('jquery');
 require('../../node_modules/jquery-ui/effect-blind.js');
 
 
-exports.run = function(folderTree, folderId, copyPermissions, added) {
+exports.copy = function(folderTree, folderId, copyPermissions, added) {
     return copyFiles(folderTree, folderId, copyPermissions, added);
 }
 
