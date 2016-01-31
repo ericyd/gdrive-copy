@@ -37,7 +37,6 @@ gulp.task('js', function() {
             debug: true
         });
         
-        var append = '</script><script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>';    
 
         return b.bundle()
             .pipe(source('js.html'))
@@ -45,7 +44,7 @@ gulp.task('js', function() {
             .pipe(jshint())
             .pipe(jshint.reporter('default'))
             .pipe(uglify())
-            .pipe(insert.wrap('<script>', append))
+            .pipe(insert.wrap('<script>', '</script>'))
             .pipe(gulp.dest('dist'));
     });    
 })
