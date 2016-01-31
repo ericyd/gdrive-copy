@@ -11,6 +11,7 @@ var picker = require('./picker');
 
 
 $(document).ready(function() {
+  picker.onApiLoad();
   $("#status").hide();
   $("#complete").hide();
   $("#please-review").hide();
@@ -24,7 +25,7 @@ $("#thisForm").submit(function( event ) {
   //$btn.button('reset') // call to reset to original condition
   $("#description").hide("blind");
   $("#status").show("blind");
-  getValues.run(picker.selectedFolder);
+  getValues.get();
   event.preventDefault();
 });
 
@@ -33,6 +34,7 @@ $("#permissions").click(function() {
     $('#dialog-message').modal('show');
   }
 });
+
 
 $("#selectFolderButton").click(function() {
   picker.showPicker();
