@@ -20,28 +20,24 @@ function doGet(e) {
 
 
 
-/**
- * Get contents of folder and copy to new folder
- * If sub folders exist, it will recursively copy sub-folders too
- */
+// This is an initialization function to get values from the form and pass them to other functions
 
-// Gets the values from the form for folderId and newFolderId and returns them
+// todo: since this no longer queries DriveApp (thanks to Picker), I could move this to client-side js and save some time
 function getValues(theForm) {
-  // var folderId = selectedFolder.id;
-  // var folderName = selectedFolder.name;
-  // var parentId = selectedFolder.parentId;
+  // get values from form
   var newFolderName = theForm.newFolder;
-  var permissions = theForm.permissions;
+  var permissions;
+  if (theForm.permissions == "yes") {
+    permissions = true;
+  } else {
+    permissions = false;
+  }
   var dest = theForm.copyLocationOptions;
   var results = [];
   
-  
-  // results.push(folderId);
-  // results.push(folderName);
   results.push(newFolderName);
   results.push(permissions);
   results.push(dest);
-  // results.push(parentId);
   
   return results;
 }
