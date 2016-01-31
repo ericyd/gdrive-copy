@@ -21,7 +21,7 @@
 var $ = jQuery = require('jquery');
 var copyFiles = require('./copyFiles.js');
 
-exports.run = function(folderId, newFolderName, folderTree, copyPermissions, dest, parentId) {
+exports.create = function(folderId, newFolderName, folderTree, copyPermissions, dest, parentId) {
   
   return google.script.run
     .withSuccessHandler(function(results) {
@@ -49,7 +49,7 @@ exports.run = function(folderId, newFolderName, folderTree, copyPermissions, des
         // $("#status-table").append(statusTable); 
         
         // When complete, begin copyFiles routine
-        copyFiles.run(folderTree, folderId, copyPermissions, added);
+        copyFiles.copy(folderTree, folderId, copyPermissions, added);
     })
     .withFailureHandler(function(msg) {
       var errormsg = "<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error creating folder structure.<br />";
