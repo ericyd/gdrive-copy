@@ -14,6 +14,10 @@ To launch app: click "Visit Website" button at top of window in the [Chrome Web 
 
 In addition, the app user will become the owner of the new folder and all sub-folders and contents.  This makes it especially handy for making a new copy of shared information when someone leaves an organization.
 
+## Privacy
+
+This app does not expose your files in any way.  The copying takes place exclusively through Google Drive, meaning that no one except the user running the app will have access to the copied files.  The only exception to this is if a user copies sharing permissions, in which case collaborators will be able to see the new files just like before.
+
 ## Notes 
 
 * This app does not currently work in browsers other than Chrome or Chromium.
