@@ -39,10 +39,10 @@ exports.create = function() {
         // each object is an array with two elements
         // first element is original folder Id
         // second element is new folder Id, corresponding to original
-        var folderId = results[0];
-        var folderTree = results[1];
-        var copyPermissions = results[2];
-        var added = results[3];
+        var folderId = results.folderId;
+        var folderTree = results.folderTree;
+        var copyPermissions = results.copyPermissions;
+        var added = results.added;
         var statusTable = "";
         
         // Update status for user
@@ -56,7 +56,6 @@ exports.create = function() {
           statusTable += "</tr>";
         }
         $(statusTable).hide().appendTo("#status-table").show('blind');
-        // $("#status-table").append(statusTable); 
         
         // When complete, begin copyFiles routine
         copyFiles.copy(folderTree, folderId, copyPermissions, added);
