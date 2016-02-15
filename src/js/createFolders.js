@@ -20,8 +20,18 @@
 
 var $ = jQuery = require('jquery');
 var copyFiles = require('./copyFiles.js');
+var picker = require('./picker');
 
-exports.create = function(folderId, newFolderName, folderTree, copyPermissions, dest, parentId) {
+exports.create = function() {
+  
+  var selectedFolder = picker.getSelectedFolder();
+  var folderId = selectedFolder.id;
+  var parentId = selectedFolder.parentId;
+  
+  var folderTree = [];
+  var newFolderName = $("#newFolder").val();
+  var copyPermissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
+  var dest = $("#destination-group input:checked").val();
   
   return google.script.run
     .withSuccessHandler(function(results) {
