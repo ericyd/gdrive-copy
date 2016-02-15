@@ -6,12 +6,21 @@
  */
 
 function createFolders(folderId, newFolderName, parentId, folderTree, copyPermissions, added, dest) {
+  
+  /** 
+   * Create variables for script
+   */
+  
   var oldFolder = DriveApp.getFolderById(folderId);
   var folders = oldFolder.getFolders();
-  var pair = [];
-  var results = [];
-  var newFolder;
-
+  var pair, results, newFolder;
+  
+  
+  
+  /** 
+   * Create new folder from source folder
+   */ 
+  
   // If the folder doesn't have a parent (top folder only), create a new one with the new folder name
   // otherwise, create a folder within the parent folder using the original folder's name
   if (dest == "root") {
@@ -23,6 +32,8 @@ function createFolders(folderId, newFolderName, parentId, folderTree, copyPermis
     newFolder = DriveApp.getFolderById(parentId).createFolder(newFolderName);
   }
   var newFolderId = newFolder.getId();
+  
+  
   
   // Copy Permissions if option is selected
   if (copyPermissions) {
@@ -48,13 +59,12 @@ function createFolders(folderId, newFolderName, parentId, folderTree, copyPermis
     }
   } //if (copyPermissions)
   
-  // get the full pathname for printing status
-  var fullPath = getFullPath("", newFolderId);
-  fullPath = fullPath + newFolderName;
-  Logger.log("finished top folder");
+  
+  
+  
+  
   // Loop through children
   while (folders.hasNext()) {
-    Logger.log("first child folder");
     var child = folders.next();
     var childId = child.getId();
     var childName = child.getName();
@@ -62,17 +72,23 @@ function createFolders(folderId, newFolderName, parentId, folderTree, copyPermis
     createFolders(childId, childName, newFolder.getId(), folderTree, copyPermissions, added);
   }
   
-  // create folderTree for file copying
-  pair.push(folderId);
-  pair.push(newFolderId);
-  pair.push(fullPath);
+  
+  
+  /** 
+   * Build folderTree for file copying
+   * and add relevant info to results
+   */
+  
+  pair = [ folderId, newFolderId, newFolderName ];
   folderTree.push(pair);
   
-  // push results for file copying
-  results.push(newFolderId);
-  results.push(folderTree);
-  results.push(copyPermissions);
-  results.push(added);
+  
+  results = {
+    newFolderId: newFolderId, 
+    folderTree: folderTree, 
+    copyPermissions: copyPermissions, 
+    added: added
+  }
   
   return results;
 }
