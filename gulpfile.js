@@ -51,10 +51,11 @@ gulp.task('js', function() {
 
 gulp.task('gs', function() {
     // jshint and minify Code.gs
-    return gulp.src('./src/Code.gs')
+    return gulp.src('./src/gs/*.js')
         .pipe(changed('dist'))
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
+        .pipe(concat('Code.gs'))
         .pipe(uglify())
         .pipe(gulp.dest('dist'));
     
