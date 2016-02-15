@@ -62,3 +62,9 @@ html, body {
 th {
     font-weight: bold;
 }
+
+
+// Hide elements that are programatically shown throughout script processing
+#status, #complete, #please-review, #dialog-message {
+    display: none;
+}
