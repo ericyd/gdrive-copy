@@ -13,30 +13,17 @@ var picker = require('./picker');
 
 exports.get = function () {
   
-  var folderTree = [];
+  // get properties of selected folder
+  var selectedFolder = picker.getSelectedFolder();
+  var folderId = selectedFolder.id;
+  var parentId = selectedFolder.parentId;
   
-  // Get values of folder Ids and pass them to other functions
-  return google.script.run
-  .withSuccessHandler(function(results) {
-    var selectedFolder = picker.getSelectedFolder();
-    
-    var folderId = selectedFolder.id;
-    var folderName = selectedFolder.name;
-    var parentId = selectedFolder.parentId;
-    
-    var newFolderName = results[0];
-    var copyPermissions = results[1];
-    var dest = results[2];
-
-        
-    createFolders.create(folderId, newFolderName, folderTree, copyPermissions, dest, parentId);
-
-  })
-  .withFailureHandler(function(msg) {
-    // Respond to failure conditions here.
-    $("#errors").append("<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error getting the folder information.<br />" + msg + ".<br />Please make sure you are using Google Chrome or Chromium.</div>");
-  })
-  .getValues( thisForm );
+  var folderTree = [];
+  var newFolderName = $("#newFolder").val();
+  var copyPermissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
+  var dest = $("#destination-group input:checked").val();
+  createFolders.create(folderId, newFolderName, folderTree, copyPermissions, dest, parentId);
+  
   
   
 }

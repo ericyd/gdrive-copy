@@ -1,27 +1,3 @@
-// This is an initialization function to get values from the form and pass them to other functions
-
-// todo: since this no longer queries DriveApp (thanks to Picker), I could move this to client-side js and save some time
-function getValues(theForm) {
-  // get values from form
-  var newFolderName = theForm.newFolder;
-  var permissions;
-  if (theForm.permissions == "yes") {
-    permissions = true;
-  } else {
-    permissions = false;
-  }
-  var dest = theForm.copyLocationOptions;
-  var results = [];
-  
-  results.push(newFolderName);
-  results.push(permissions);
-  results.push(dest);
-  
-  return results;
-}
-
-
-
 /**
  * Copies files from a single source folder to a single
  * destination folder.  Optionally copies sharing permissions
