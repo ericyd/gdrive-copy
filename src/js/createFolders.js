@@ -25,13 +25,11 @@ var picker = require('./picker');
 exports.create = function() {
   
   var selectedFolder = picker.getSelectedFolder();
-  var folderId = selectedFolder.id;
-  var parentId = selectedFolder.parentId;
+  selectedFolder.newFolderName = $("#newFolder").val();
+  selectedFolder.folderTree = [];
+  selectedFolder.copyPermissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
+  selectedFolder.dest = $("#destination-group input:checked").val();
   
-  var folderTree = [];
-  var newFolderName = $("#newFolder").val();
-  var copyPermissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
-  var dest = $("#destination-group input:checked").val();
   
   return google.script.run
     .withSuccessHandler(function(results) {
@@ -67,5 +65,5 @@ exports.create = function() {
       $("#errors").append(errormsg);
       $("#status-title").html("Error");
     })
-    .createFolders(folderId, newFolderName, parentId, folderTree, copyPermissions, [], dest);
+    .createFolders(selectedFolder);
 }
