@@ -91,12 +91,12 @@ function pickerCallback(data) {
     
     if (action == google.picker.Action.PICKED) {
         var doc = data[google.picker.Response.DOCUMENTS][0];
-        selectedFolder.id = doc[google.picker.Document.ID];
-        selectedFolder.parentId = doc[google.picker.Document.PARENT_ID];
-        selectedFolder.name = doc[google.picker.Document.NAME];
-        selectedFolder.newName = "Copy of " + selectedFolder.name;
-        $("#newFolder").val(selectedFolder.newName);
-        $("#folderName").text(selectedFolder.name);
+        selectedFolder.srcId = doc[google.picker.Document.ID];
+        selectedFolder.srcParentId = doc[google.picker.Document.PARENT_ID];
+        selectedFolder.srcName = doc[google.picker.Document.NAME];
+        selectedFolder.destName = "Copy of " + selectedFolder.name;
+        $("#newFolder").val(selectedFolder.destName);
+        $("#folderName").text(selectedFolder.srcName);
         
     } else if (action == google.picker.Action.CANCEL) {
         google.script.host.close();
