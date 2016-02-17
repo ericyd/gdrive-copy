@@ -2,10 +2,51 @@
  * Traverses the folder tree of source folder and
  * creates copy of folder tree in destination folder.
  *
- * @param {Object} e 
+ * @param {Object} selectedFolder
  */
 
-function createFolders(folderId, newFolderName, parentId, folderTree, copyPermissions, added, dest) {
+/* eric's notes for function flow
+
+
+*/
+
+
+function createFolders(selectedFolder) {
+    var timeIsUp,       // {boolean}
+        currTime;       // {number}
+    
+    
+    const MAX_RUNNING_TIME = 5.7 * 60 * 1000;   // 5.7 minutes in milliseconds
+    const START_TIME = (new Date()).getTime();
+    
+    
+    // get src folder and create dest folder if no continuation tokens exist
+    
+    
+    while ( srcChildren.hasNext() && !timeIsUp ) {
+        
+        // get folder and folder's children for current iteration
+        srcNextChild = srcChildren.next();
+        grandchildren = srcNextChild.getFolders();
+        
+        // create dest copy of nextChild
+        destNextChild = newFolder = DriveApp.getFolderById(parentId).createFolder(newFolderName);
+        
+        // get time information; max runtime = 6 mins
+        currTime = (new Date()).getTime();
+        timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
+        
+        // add srcFolderId, destFolderId, and srcFolderName to folderTree
+        
+        
+        
+    } 
+    
+    
+}
+
+
+function DEPRECATEDcreateFolders(folderId, newFolderName, parentId, folderTree, copyPermissions, added, dest) {
   
   /** 
    * Create variables for script
