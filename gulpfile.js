@@ -87,6 +87,7 @@ gulp.task('html', function() {
             removeComments: true,
             removeCommentsFromCDATA: true,
             conservativeCollapse: true,
+            minifyJS: true
         }))
         .pipe(gulp.dest('dist'));
 });
