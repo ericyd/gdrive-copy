@@ -84,8 +84,8 @@ function initialize(selectedFolder) {
     // save srcId, destId, copyPermissions, spreadsheetId to userProperties
     saveProperties(selectedFolder);
     
-    // create trigger to call copy() in 10 seconds
-    createTrigger(10);
+    // create trigger to call copy() in X seconds
+    createTrigger(2);
     
     
     return {
