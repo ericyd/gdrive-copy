@@ -30,10 +30,12 @@ function saveProperties(propertiesToSave) {
  */
 function createTrigger(seconds) {
     // create trigger for 'seconds' seconds from now
-    return ScriptApp.newTrigger('copy')
+    ScriptApp.newTrigger('copy')
         .timeBased()
         .after(seconds*1000)	
         .create();
+        
+    return;
 }
 
 
