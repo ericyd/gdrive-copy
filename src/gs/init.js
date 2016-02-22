@@ -38,24 +38,57 @@ function initialize(selectedFolder) {
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
         
     
-    // If the folder doesn't have a parent (top folder only), create a new one with the new folder name
-    // otherwise, create a folder within the parent folder using the original folder's name
-    if (selectedFolder.destLocation == "root") {
+    // create destination folder
+    try {
+        destFolder = Drive.Files.insert({
+            "description": "Copy of " + selectedFolder.srcName + ", created " + today,
+            "title": selectedFolder.destName,
+            "parents": [
+                {
+                    "kind": "drive#fileLink",
+                    "id": selectedFolder.destLocation == "same" ? selectedFolder.srcParentId : DriveApp.getRootFolder().getId()
+                }
+            ],
+            "mimeType": "application/vnd.google-apps.folder"
+        });
         
-        destFolder = DriveApp.createFolder(selectedFolder.destName);
-        spreadsheet = DriveApp.getFileById("17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg").makeCopy("Copy Folder Log " + today, destFolder);
+    }
+    
+    catch(err) {
         
-    } else {
+        Logger.log(err.message);
         
-        destFolder = DriveApp.getFolderById(selectedFolder.srcParentId).createFolder(selectedFolder.destName);
-        spreadsheet = DriveApp.getFileById("17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg").makeCopy("Copy Folder Log " + today, destFolder);
+    }
+    
+    
+    
+    // create logger spreadsheet
+    try {
+        spreadsheet = Drive.Files.copy(
+            {
+            "title": "Copy Folder Log " + today,
+            "parents": [
+                {
+                    "kind": "drive#fileLink",
+                    "id": destFolder.id
+                }
+            ]
+            },
+            "17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg"
+        );
+        
+    }
+    
+    catch(err) {
+        
+        Logger.log(err.message);
         
     }
     
     
     // Get IDs of destination folder and logger spreadsheet 
-    selectedFolder.destId = destFolder.getId();
-    selectedFolder.spreadsheetId = spreadsheet.getId();
+    selectedFolder.destId = destFolder.id;
+    selectedFolder.spreadsheetId = spreadsheet.id;
     
     
    
