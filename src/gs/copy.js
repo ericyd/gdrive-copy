@@ -1,3 +1,13 @@
+//todo: delete trigger after it runs - there is a max for the script
+
+
+
+
+
+
+
+
+
 /**
  * Copy folders and files from source to destination.
  * Get parameters from userProperties,
@@ -18,7 +28,7 @@ function copy() {
         userProperties = PropertiesService.getUserProperties(); // {object} instance of Properties class
         
     properties = userProperties.getProperties();
-    
+    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     
     // get child folders from srcId
     var query = '"' + properties.srcId + '" in parents and trashed = false and ' +
@@ -38,20 +48,126 @@ function copy() {
     var MAX_RUNNING_TIME = 5.7 * 60 * 1000;   // 5.7 minutes in milliseconds
     var START_TIME = (new Date()).getTime();
     
-    for (var key in properties) {
-        Logger.log('key: ' + key + ", value: " + properties[key]);
-    }
+    // for (var key in properties) {
+    //     Logger.log('key: ' + key + ", value: " + properties[key]);
+    // }
     
-    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
+    
     
     // if no current objects exist to copy, get new ones
     if ( folders.items.length > 0 ) {
         
         for (var i = 0; i < folders.items.length; i ++) {
+            Logger.log("in for loop");
+            // Drive.Files.copy({
+            //         "fileId": folders.items[i].id,
+            //         "resource": {
+            //             "description": folders.items[i].description,
+            //             "parents": [
+            //                 {
+            //                     "id": properties.destId // parent of DESTINATION folder...this will be harder to get...    
+            //                 } 
+            //             ],
+            //             // is this all I need to copy permissions?
+            //             "permissions": folders.items[i].permissions
+            //             
+            //         }
+            //     });
+            
+            
+            try {
+                var r = Drive.Files.insert({
+                    "title": folders.items[i].title,
+                    "parents": [
+                        {
+                            "kind": "drive#fileLink",
+                            "id": properties.destId
+                        }
+                    ],
+                    "mimeType": "application/vnd.google-apps.folder"
+                });
+                
+
+                Logger.log("destId: " + properties.destId);
+                Logger.log("inserted a file, wrong mimetype id = " + r.id);
+                ss.getRange(2+i, 3, 1, 1).setValue("inserted a folder, no request variable");
+            }
+            catch(err) {
+                Logger.log("inserted a file, wrong mimetype");
+                Logger.log(err.message);
+                ss.getRange(2+i, 3, 1, 1).setValue("error " + err.message);
+            }
+            
+            try {
+                var r = Drive.Files.copy(folders.items[i].id, {
+                    "title": folders.items[i].title,
+                    "parents": [
+                        {
+                            "kind": "drive#fileLink",
+                            "id": properties.destId
+                        }
+                    ],
+                    "mimeType": "application/vnd.google-apps.folder"
+                }
+                );
+                
+
+                Logger.log("copying with similar to insert " + r.id);
+                ss.getRange(2+i, 6, 1, 1).setValue("copied similar to insert");
+            }
+            catch(err) {
+                Logger.log("copying with similar to insert");
+                Logger.log(err.message);
+                ss.getRange(2+i, 6, 1, 1).setValue("error " + err.message);
+            }
+            
+            
+            try {
+                var r = Drive.Files.copy({
+                    "params": {
+                        "fileId": folders.items[i].id
+                    },
+                    "body": {
+                        "title": folders.items[i].title,
+                        "parents": [
+                            {
+                                "id": properties.destId
+                            }
+                        ],
+                        "mimeType": "application/vnd.google-apps.folder"
+                    }
+                });
+                
+                Logger.log("params property, body instead of request");
+                ss.getRange(2+i, 5, 1, 1).setValue("copied a file");
+            }
+            catch(err) {
+                Logger.log("params property, body instead of request");
+                Logger.log(err.message);
+                ss.getRange(2+i, 5, 1, 1).setValue("error " + err.message);
+            }
+            
+            
+            try {
+                Drive.Files.copy(folders.items[i].id,
+                    {
+                        "parents": [
+                            {
+                                "id": properties.destId
+                            }
+                        ]
+                    }
+                );
+                Logger.log("pass individual arguments, not object")
+            } catch(err) {
+                Logger.log("pass individual arguments, not object")
+                Logger.log(err.message);
+            }
+            
             //sheet.getRange(row, column, numRows, numColumns)
-             //ss.getRange(2+i, 1, 1, 1).setValue(properties.srcChildFolders.items[i].id);
-             ss.getRange(2+i, 1, 1, 1).setValue(i);
-             ss.getRange(2+i, 2, 1, 1).setValue(folders.items[i].id);
+            //ss.getRange(2+i, 1, 1, 1).setValue(properties.srcChildFolders.items[i].id);
+            ss.getRange(2+i, 1, 1, 1).setValue(i);
+            ss.getRange(2+i, 2, 1, 1).setValue(folders.items[i].id);
              
         }
         
