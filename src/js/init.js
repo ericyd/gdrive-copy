@@ -4,37 +4,109 @@ require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.j
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js');
 require('../../node_modules/jquery-ui/effect-blind.js');
 var picker = require('./picker');
-var createFolders = require('./createFolders');
 
 
 // event bindings
 $(function() {
-  
-  // Form submission
-  $("#thisForm").submit(function( event ) {
-    // Bootstrap button action binding
-    var $btn = $("#copyFolderButton").button('loading');
-    $("#description").hide("blind");
-    $("#status").show("blind");
-    createFolders.create();
-    event.preventDefault();
-  });
-  
-  
-  
-  // Display modal when question mark is selected
-  $("#permissions").click(function() {
-    if ($(this).is(":checked")) {
-      $('#dialog-message').modal('show');
+
+    /**
+     * Bind form submission action.
+     * Disable form elements,
+     * Hide description text for app,
+     * Show status spinner,
+     * run initialization method.
+     * 
+     * @param {Object} event 
+     */
+    $("#folderForm").submit(function( event ) {
+        var $btn = $("#copyFolderButton").button('loading');
+        $("#newFolder").prop('disabled', true);
+        $("#description").hide("blind");
+        $("#status").show("blind");
+        
+        // Get values from form and selected folder to initialize copy        
+        var selectedFolder = picker.getSelectedFolder();
+        selectedFolder.destName = $("#newFolder").val();
+        selectedFolder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
+        selectedFolder.destLocation = $("#destination-group input:checked").val();
+        
+        google.script.run
+            .withSuccessHandler(success)
+            .withFailureHandler(showError)
+            .initialize(selectedFolder);
+        
+        event.preventDefault();
+    });
+
+
+
+    // Display modal when question mark is selected
+    $("#permissions").click(function() {
+        if ($(this).is(":checked")) {
+            $('#dialog-message').modal('show');
+        }
+    });
+
+
+
+    // Bind showPicker()
+    $("#selectFolderButton").click(function() {
+        picker.showPicker();
+    });
+
+    
+    /**
+     * Hide 'status' indicator, and show success message.
+     * Include links to logger spreadsheet and destination folder
+     * so user can monitor progress of the copy.
+     * Alert user that they can safely close the window now.
+     * 
+     * @param {Object} results contains id string for logger spreadsheet and destination folder
+     */
+    function success(results) {
+        $("#status").hide("blind");
+        
+        // for (var i = 0; i < results.folders.length; i ++) {
+        //     console.log(results.folders[i].id)
+        // }
+        
+        // $("#errors").html(results.text[0].id);
+        
+        // link to spreadsheet and  dest Folder
+        var copyLogLink = "<a href='https://docs.google.com/spreadsheets/d/" + results.spreadsheetId +"' target='_blank'>copy log</a>";
+        $("#copy-log-link").html(copyLogLink);
+        
+        var destFolderLink = "<a href='https://drive.google.com/drive/u/0/folders/" + results.destId + "' target='_blank'>here</a>";
+        $("#dest-folder-link").html(destFolderLink);
+        
+        // alert that they can close window now
+        $("#complete").show("blind");
+        $("#please-review").show("blind");
+        
+        return;
     }
-  });
-  
-  
-  
-  // Bind showPicker()
-  $("#selectFolderButton").click(function() {
-    picker.showPicker();
-  })
+    
+    
+    
+    /**
+     * Build an 'alert' div that contains
+     * error message output from Google Apps Script
+     * and suggestions for fixing the error
+     * 
+     * @param {string} msg error message produced by Google Apps Script from initialize() call
+     */ 
+    function showError(msg) {
+        
+        $("#status").hide("blind");
+        
+        var errormsg = "<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error initializing the copy folder request.<br />";
+        errormsg += "<b>Error message:</b> " + msg + ".<br>";
+        errormsg += "Please try again. Make sure you have correct permissions to copy this folder, and make sure you are using Google Chrome or Chromium when using this app.</div>";
+        $("#errors").append(errormsg);
+        $("#status-title").html("Error");
+        
+        return;
+    }
 
 
 });
