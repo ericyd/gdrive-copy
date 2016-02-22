@@ -43,14 +43,14 @@
     
     <!--Form-->
     <div id="formDiv">
-      <form id="thisForm" name="thisForm"  class="form-horizontal">
+      <form id="folderForm" name="folderForm"  class="form-horizontal">
       
         <!--Select Folder-->
         <div class="form-group">
           <label for="folderId" class="col-sm-3 control-label">Folder to copy</label>
           <div class="col-sm-9">
             <button type="button" id="selectFolderButton" class="btn btn-primary" autocomplete="off">Select Folder</button>
-            <span id="folderName"></span>
+            <span class="folderName"></span>
           </div>
         </div>
         
@@ -154,7 +154,10 @@
     
     <!--These divs display when complete-->
     <div id="complete" class='alert alert-success' role='alert'>
-        Successfully copied folder to your <a href="http://drive.google.com">Google Drive</a>.
+        Now copying folder "<span class="folderName"></span>".<br />
+        You may close this window and the copying will continue in the background.<br />
+        To check the progress of the copying, please check the <span id="copy-log-link"></span>. This log is located inside the newly created folder<br />
+        The copy of <span class="folderName"></span> can be found <span id="dest-folder-link"></span>. 
     </div>
     
     <div id="please-review" class="panel panel-default">
@@ -166,22 +169,8 @@
     
     <!--These divs get filled programatically at runtime-->
     <div id="errors"></div>
-    <div id="status">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <div class="panel-title">
-            <h4 id="status-title">Copying folder structure <i class="fa fa-spinner fa-spin"></i></h4>
-          </div>
-        </div>
-        <div class="panel-body">
-          <table id="status-table" class='table table-striped'>
-            <tr>
-              <th>Folder path</th>
-              <th>Status</th>
-            </tr>
-          </table>
-        </div>
-      </div>
+    <div id="status">      
+        <h4 id="status-title">Initializing copy request (this should just take a few moments) <i class="fa fa-spinner fa-spin"></i></h4>
     </div>
        
       
