@@ -6,12 +6,11 @@
 function saveProperties(propertiesToSave) {
     
     var userProperties = PropertiesService.getUserProperties();
-    var propsObj = userProperties.getProperties();
     
     for (var key in propertiesToSave) {
         
         // skip loop if the property is from prototype
-        if(!propsObj.hasOwnProperty(key)) continue;
+        if(!propertiesToSave.hasOwnProperty(key)) continue;
         
         userProperties.setProperty(key, propertiesToSave[key]);
         
