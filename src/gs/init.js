@@ -35,6 +35,7 @@ function doGet(e) {
 function initialize(selectedFolder) {
     var destFolder,     // {Object} instance of Folder class representing destination folder
         spreadsheet,    // {Object} instance of Spreadsheet class
+        mapToDest = {}, // {Object} map of source ids (keys) to destination ids (values)
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
         
     
@@ -91,7 +92,13 @@ function initialize(selectedFolder) {
     selectedFolder.spreadsheetId = spreadsheet.id;
     
     
-   
+    
+    // initialize mapToDest with top level source and destination folder
+    mapToDest[selectedFolder.srcId] = selectedFolder.destId;
+
+    selectedFolder.mapToDest = JSON.stringify(mapToDest);
+    
+    
     // 
     /*
     Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
@@ -118,7 +125,13 @@ function initialize(selectedFolder) {
     saveProperties(selectedFolder);
     
     // create trigger to call copy() in X seconds
-    createTrigger(2);
+    
+    /*
+    
+    BRING THIS BACK FOR FINAL IMPLEMENTATION
+    
+    */
+    //createTrigger(2);
     
     
     return {
