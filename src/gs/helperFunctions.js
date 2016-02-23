@@ -1,7 +1,9 @@
 /**
- * Loop through keys in properties argument and save each to the userProperties for the script
+ * Loop through keys in properties argument,
+ * converting any JSON objects to strings.
+ * On completetion, save propertiesToSave to userProperties
  * 
- * @param {object} properties contains all properties that need to be saved to userProperties
+ * @param {object} propertiesToSave contains all properties that need to be saved to userProperties
  */
 function saveProperties(propertiesToSave) {
     
@@ -12,9 +14,13 @@ function saveProperties(propertiesToSave) {
         // skip loop if the property is from prototype
         if(!propertiesToSave.hasOwnProperty(key)) continue;
         
-        userProperties.setProperty(key, propertiesToSave[key]);
+        if ( typeof propertiesToSave[key] === 'object' ) {
+            propertiesToSave[key] = JSON.stringify(propertiesToSave[key]);
+        }
         
     }
+    
+    userProperties.setProperties(propertiesToSave);
     
     return;
 

@@ -15,7 +15,10 @@
  * then call timeout methods, saveProperties and createTrigger.
  */
 function copy() {
-    Logger.log("copy called");
+    // CONSTANTS
+    var MAX_RUNNING_TIME = 5.7 * 60 * 1000;   // 5.7 minutes in milliseconds
+    var START_TIME = (new Date()).getTime();
+    
     
     var timeIsUp,       // {boolean} true if max execution time is reached while executing script
         permissions,    // {boolean} true if sharing permissions should be copied from source to destination
@@ -25,12 +28,44 @@ function copy() {
         destId,         // {string} identification for top level destination folder
         ss,             // {object} instance of Sheet class
         properties,     // {object} properties of current run
-        newfile,        // {Object} JSON metadata for newly created folder or file
-        userProperties = PropertiesService.getUserProperties(); // {object} instance of Properties class
+        newfile;        // {Object} JSON metadata for newly created folder or file
         
-    properties = userProperties.getProperties();
-    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
-    properties.mapToDest = JSON.parse(properties.mapToDest);
+        
+    properties = loadProperties();
+    
+    
+    // get current children, or if none exist, query next folder from properties.remaining
+    // todo: in real instances, currChildre.items could exist but still have length = 0, in which case I would also want to skip
+    // maybe initialize currChildren with properties items = [] , so I can test for length > 0 directly   ?
+    if ( properties.currChildren.items ) {
+        
+    } else {
+        
+        
+    }
+    
+    
+    
+    /*
+    Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
+    */
+    // do {
+    //     folders = Drive.Files.list({
+    //         q: query,
+    //         maxResults: 1000,
+    //         pageToken: pageToken
+    //     });
+    //     if (folders.items && folders.items.length > 0) {
+    //         for (var i = 0; i < folders.items.length; i++) {
+    //             var folder = folders.items[i];
+    //             Logger.log('%s (ID: %s)', folder.title, folder.id);
+    //         }
+    //     } else {
+    //         Logger.log('No folders found.');
+    //     }
+    //     pageToken = folders.nextPageToken;
+    // } while (pageToken);
+    
     
     // get child folders from srcId
     var query = '"' + properties.srcId + '" in parents and trashed = false and ' +
@@ -47,8 +82,7 @@ function copy() {
     
         
     
-    var MAX_RUNNING_TIME = 5.7 * 60 * 1000;   // 5.7 minutes in milliseconds
-    var START_TIME = (new Date()).getTime();
+    
     
     
     // if no current objects exist to copy, get new ones
@@ -75,7 +109,7 @@ function copy() {
         }
         
         // stringify the JSON again before saving it
-        properties.mapToDest = JSON.stringify(properties.mapToDest);
+        properties.map = JSON.stringify(properties.map);
         
     }
     
@@ -85,15 +119,45 @@ function copy() {
     
     
     
+    /**
+     * Get userProperties for current users.
+     * Get properties object from userProperties.
+     * JSON.parse() and values that need parsing
+     * 
+     * @return {object} properties JSON object with current user's properties
+     */
+    function loadProperties() {
+        var userProperties, properties;
+        
+        userProperties = PropertiesService.getUserProperties(); // {object} instance of Properties class
+        properties = userProperties.getProperties();
+        
+        properties.map = JSON.parse(properties.map);
+        properties.remaining = JSON.parse(properties.remaining);
+        properties.currChildren = JSON.parse(properties.currChildren);
+        
+        ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
+        
+        return properties;
+    }
     
     
     
-    
-    
+    /**
+     * Try to insert folder with information from src file.
+     * Success: 
+     *   1. Add key/value to properties.map with src/dest folder ID pair
+     *   2. Add dest folder ID to properties.remaining array
+     *   3. Add note to Logger spreadsheet with destination folder ID
+     * Failure:
+     *   1. Log failure in spreadsheet with src ID
+     * 
+     * @pararm {Object} file File Resource with metadata from source folder
+     */
     function insertFolder(file) {
         Logger.log("src parents id " + file.parents[0].id);
         Logger.log("typeof file.parents[0].id " + typeof file.parents[0].id);
-        Logger.log("dest parents id " + properties.mapToDest[(file.parents[0].id).toString()]);
+        Logger.log("dest parents id " + properties.map[(file.parents[0].id).toString()]);
         
         try {
             var r = Drive.Files.insert({
@@ -102,7 +166,7 @@ function copy() {
                 "parents": [
                     {
                         "kind": "drive#fileLink",
-                        "id": properties.mapToDest[file.parents[0].id]
+                        "id": properties.map[file.parents[0].id]
                     }
                 ],
                 "mimeType": "application/vnd.google-apps.folder"
@@ -120,7 +184,15 @@ function copy() {
     }
     
     
-    
+    /**
+     * Try to copy file to destination parent.
+     * Success:
+     *   1. Log success in spreadsheet with file ID
+     * Failure:
+     *   1. Log error in spreadsheet with source ID
+     * 
+     * @param {Object} file File Resource with metadata from source file
+     */
     function copyFile(file) {
         try {
             var r = Drive.Files.copy(
@@ -129,7 +201,7 @@ function copy() {
                 "parents": [
                     {
                         "kind": "drive#fileLink",
-                        "id": properties.mapToDest[file.parents[0].id]
+                        "id": properties.map[file.parents[0].id]
                     }
                 ]
                 },

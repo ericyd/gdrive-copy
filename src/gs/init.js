@@ -35,7 +35,8 @@ function doGet(e) {
 function initialize(selectedFolder) {
     var destFolder,     // {Object} instance of Folder class representing destination folder
         spreadsheet,    // {Object} instance of Spreadsheet class
-        mapToDest = {}, // {Object} map of source ids (keys) to destination ids (values)
+        map = {},       // {Object} map of source ids (keys) to destination ids (values)
+        remaining = [], // {Array} list of folder IDs that still need to be processed
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
         
     
@@ -94,31 +95,13 @@ function initialize(selectedFolder) {
     
     
     // initialize mapToDest with top level source and destination folder
-    mapToDest[selectedFolder.srcId] = selectedFolder.destId;
+    map[selectedFolder.srcId] = selectedFolder.destId;
+    remaining.push(selectedFolder.srcId);
 
-    selectedFolder.mapToDest = JSON.stringify(mapToDest);
+    selectedFolder.map = JSON.stringify(map);
+    selectedFolder.remaining = JSON.stringify(remaining);
+    selectedFolder.currChildren = JSON.stringify({});
     
-    
-    // 
-    /*
-    Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
-    */
-    // do {
-    //     folders = Drive.Files.list({
-    //         q: query,
-    //         maxResults: 1000,
-    //         pageToken: pageToken
-    //     });
-    //     if (folders.items && folders.items.length > 0) {
-    //         for (var i = 0; i < folders.items.length; i++) {
-    //             var folder = folders.items[i];
-    //             Logger.log('%s (ID: %s)', folder.title, folder.id);
-    //         }
-    //     } else {
-    //         Logger.log('No folders found.');
-    //     }
-    //     pageToken = folders.nextPageToken;
-    // } while (pageToken);
     
     
     // save srcId, destId, copyPermissions, spreadsheetId to userProperties
