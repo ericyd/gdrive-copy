@@ -28,6 +28,6 @@ This app does not expose your files in any way.  The copying takes place exclusi
 
 ## Bugs? Comments? Questions?
 
-Please contact the author at eric_yd@yahoo.com
+Please contact the author at eric@ericyd.com
 
 [Please review!!!](https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews)
