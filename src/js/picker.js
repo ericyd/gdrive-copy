@@ -27,10 +27,7 @@ var pickerApiLoaded = false;
 var pickerBuilder;
 
 
-// Allow other modules to access selectedFolder
-exports.getSelectedFolder = function() {
-    return selectedFolder;
-}
+exports.folder = selectedFolder;
 
 
 
@@ -97,6 +94,9 @@ function pickerCallback(data) {
         selectedFolder.destName = "Copy of " + selectedFolder.srcName;
         $("#newFolder").val(selectedFolder.destName);
         $(".folderName").text(selectedFolder.srcName);
+        
+        $("#folderSelect").hide();
+        $("#selectedFolderInfo").show();
         
     } else if (action == google.picker.Action.CANCEL) {
         google.script.host.close();

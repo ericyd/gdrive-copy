@@ -36,8 +36,7 @@ function copy() {
     
     // get current children, or if none exist, query next folder from properties.remaining
     // todo: in real instances, currChildre.items could exist but still have length = 0, in which case I would also want to skip
-    // maybe initialize currChildren with properties items = [] , so I can test for length > 0 directly   ?
-    if ( properties.currChildren.items ) {
+    if ( properties.currChildren.items && properties.currChildren.items.length > 0) {
         
     } else {
         

@@ -25,34 +25,18 @@ $(function() {
         $("#status").show("blind");
         
         // Get values from form and selected folder to initialize copy        
-        var selectedFolder = picker.getSelectedFolder();
-        selectedFolder.destName = $("#newFolder").val();
-        selectedFolder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
-        selectedFolder.destLocation = $("#destination-group input:checked").val();
+        picker.folder.destName = $("#newFolder").val();
+        picker.folder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
+        picker.folder.destLocation = $("#destination-group input:checked").val();
         
         google.script.run
             .withSuccessHandler(success)
             .withFailureHandler(showError)
-            .initialize(selectedFolder);
+            .initialize(picker.folder);
         
         event.preventDefault();
     });
 
-
-
-    // Display modal when question mark is selected
-    $("#permissions").click(function() {
-        if ($(this).is(":checked")) {
-            $('#dialog-message').modal('show');
-        }
-    });
-
-
-
-    // Bind showPicker()
-    $("#selectFolderButton").click(function() {
-        picker.showPicker();
-    });
 
     
     /**
@@ -64,13 +48,8 @@ $(function() {
      * @param {Object} results contains id string for logger spreadsheet and destination folder
      */
     function success(results) {
+        
         $("#status").hide("blind");
-        
-        // for (var i = 0; i < results.folders.length; i ++) {
-        //     console.log(results.folders[i].id)
-        // }
-        
-        // $("#errors").html(results.text[0].id);
         
         // link to spreadsheet and  dest Folder
         var copyLogLink = "<a href='https://docs.google.com/spreadsheets/d/" + results.spreadsheetId +"' target='_blank'>copy log</a>";
@@ -109,4 +88,98 @@ $(function() {
     }
 
 
+ 
+
+    // Display modal when question mark is selected
+    $("#permissions").click(function() {
+        if ($(this).is(":checked")) {
+            $('#dialog-message').modal('show');
+        }
+    });
+
+
+
+    // Bind showPicker()
+    $("#selectFolderButton").click(function() {
+        picker.showPicker();
+    });
+    
+
 });
+
+
+var folderTextbox = document.getElementById("folderTextbox");
+
+
+
+/*
+    run google.script.run function to Drive.Files.get(fileID)
+    Success: 
+    1. hide picker "select folder" button and folderTextbox 
+    2. show selected Folder name
+    3. save returned item to picker.folder
+    4. show "select different folder" button
+    $("#folderSelect").hide();
+    $("#selectedFolderInfo").show();
+    Failure:
+    1. Show error
+    */ 
+folderTextbox.onkeyup = function(e) {
+    
+    if (folderTextbox.value !== "") {
+        var id = parseId( folderTextbox.value );
+        
+        google.script.run
+            .withSuccessHandler(function (metadata) {
+                // save metadata to picker.folder
+                picker.folder.srcId = metadata.id;
+                picker.folder.srcParentId = metadata.parents[0].id;
+                picker.folder.srcName = metadata.title;
+                picker.folder.destName = "Copy of " + metadata.title;
+                $("#newFolder").val(picker.folder.destName);
+                $(".folderName").text(picker.folder.srcName);
+                
+                // hide selection elements and show info
+                $("#folderSelect").hide();
+                $("#selectedFolderInfo").show();
+            })
+            .withFailureHandler(function (msg) {
+                $("#getFolderErrors").text("Error: " + msg);
+            })
+            .getMetadata(id);
+        
+    }
+    
+}
+
+/**
+ * Parses folder URL string and returns folder ID string
+ * 
+ * @param {string} url the folder URL for the selected folder
+ * @return {string} id the folder ID for the selected folder
+ */
+function parseId(url) {
+    var id, amp; 
+       
+    // Get the index of the string at which the folderId starts
+    var idStart = url.search("id=");
+    var foldersStart = url.search("folders");
+    
+    if (idStart > 0) {
+        id = url.slice(idStart+3);  
+    } else if (foldersStart > 0) {
+        id = url.slice(foldersStart + 8);  
+    }
+    
+    
+    // Find the ampersand in the remaining string, which is the delimiter between the folderId and the sharing privileges
+    amp = id.indexOf("&");
+    
+    // Slice the string up to the ampersand
+    if (amp > 0) {
+        id = id.slice(0,amp);
+    }
+    
+    return id;
+    
+}
