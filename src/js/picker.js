@@ -76,27 +76,24 @@ exports.showPicker = function() {
 
 
 /**
-    * A callback function that extracts the chosen document's metadata from the
-    * response object. For details on the response object, see
-    * https://developers.google.com/picker/docs/result
-    *
-    * @param {object} data The response object.
-    */
+ * A callback function that extracts the chosen document's metadata from the
+ * response object. For details on the response object, see
+ * https://developers.google.com/picker/docs/result
+ *
+ * @param {object} data The response object.
+ */
     
 function pickerCallback(data) {
     var action = data[google.picker.Response.ACTION];
     
     if (action == google.picker.Action.PICKED) {
         var doc = data[google.picker.Response.DOCUMENTS][0];
-        selectedFolder.srcId = doc[google.picker.Document.ID];
-        selectedFolder.srcParentId = doc[google.picker.Document.PARENT_ID];
-        selectedFolder.srcName = doc[google.picker.Document.NAME];
-        selectedFolder.destName = "Copy of " + selectedFolder.srcName;
-        $("#newFolder").val(selectedFolder.destName);
-        $(".folderName").text(selectedFolder.srcName);
-        
-        $("#folderSelect").hide();
-        $("#selectedFolderInfo").show();
+        setSelectedFolder({
+            "srcId": doc[google.picker.Document.ID],
+            "srcParentId": doc[google.picker.Document.PARENT_ID],
+            "srcName": doc[google.picker.Document.NAME],
+            "destName": "Copy of " + selectedFolder.srcName
+        });
         
     } else if (action == google.picker.Action.CANCEL) {
         google.script.host.close();
@@ -105,6 +102,30 @@ function pickerCallback(data) {
 
 
 
+/**
+ * save passed values to selectedFolder
+ * 
+ * @param {object} properties selectedFolder properties to save
+ */
+function setSelectedFolder(properties) {
+    // save properties
+    selectedFolder.srcId = properties.srcId;
+    selectedFolder.srcParentId = properties.srcParentId;
+    selectedFolder.srcName = properties.srcName;
+    selectedFolder.destName = properties.destName;
+    
+    // update display
+    $("#getFolderErrors").text("");
+    $("#newFolder").val(selectedFolder.destName);
+    $(".folderName").text(selectedFolder.srcName);
+    
+    $("#folderSelect").hide();
+    $("#selectedFolderInfo").show();
+    
+}
+
+exports.setSelectedFolder = setSelectedFolder;
+
 function showError() {
-    // an error occurred with loading the oauth token
+    $("#getFolderErrors").text("Error getting OAuth token for Google Picker.  Please manually input folder URL");
 }

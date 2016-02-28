@@ -132,16 +132,13 @@ folderTextbox.onkeyup = function(e) {
         google.script.run
             .withSuccessHandler(function (metadata) {
                 // save metadata to picker.folder
-                picker.folder.srcId = metadata.id;
-                picker.folder.srcParentId = metadata.parents[0].id;
-                picker.folder.srcName = metadata.title;
-                picker.folder.destName = "Copy of " + metadata.title;
-                $("#newFolder").val(picker.folder.destName);
-                $(".folderName").text(picker.folder.srcName);
-                
-                // hide selection elements and show info
-                $("#folderSelect").hide();
-                $("#selectedFolderInfo").show();
+                picker.setSelectedFolder({
+                    "srcId": metadata.id,
+                    "srcParentId": metadata.parents[0].id,
+                    "srcName": metadata.title,
+                    "destName": "Copy of " + metadata.title
+                });
+
             })
             .withFailureHandler(function (msg) {
                 $("#getFolderErrors").text("Error: " + msg);

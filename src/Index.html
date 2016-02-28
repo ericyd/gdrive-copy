@@ -54,10 +54,12 @@
                 <button type="button" id="selectFolderButton" class="btn btn-primary" autocomplete="off">Select Folder</button> or 
                 <input type="text" id="folderTextbox" class="form-control" placeholder="Paste folder URL">
             </div>
+            
+            <div id="getFolderErrors"></div>
+            
             <!--Display when folder is selected-->
             <div class="hidden" id="selectedFolderInfo">
                 <div class="folderName"></div>
-                <div id="getFolderErrors"></div>
                 <input type="button" id="selectOtherFolder" class="btn btn-default">Select other folder</button>
             </div>
           </div>
@@ -144,7 +146,6 @@
             Notes:
             <ul>
               <li>Anyone that was an owner of the original document/folder will simply be given "Edit" rights.  If you need to transfer ownership of the folder, please see my <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">Transfer Ownership</a> tool.</li>
-              <li>This will send <b><i>several</i></b> emails to each owner, editor and viewer.  Please <b><i>do not</i></b> select this option if the emails will annoy your collaborators.</li>
               <li>It will take slightly longer to copy the folder with this option enabled</li>
             </ul>
           </div>
