@@ -50,7 +50,6 @@ function copy() {
         
         while ( properties.remaining.length > 0 ) {
             
-        
             currFolder = properties.remaining.shift();
             query = '"' + currFolder + '" in parents and trashed = false';
             // Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
@@ -73,8 +72,6 @@ function copy() {
                 
                 
                 if ( timeIsUp ) {
-                    // process timeout routine
-                    onTimeout();
                     break;            
                 }
                 
@@ -82,6 +79,12 @@ function copy() {
                 properties.pageToken = files.nextPageToken;
                 
             } while (properties.pageToken);
+            
+            if ( timeIsUp ) {
+                // process timeout routine
+                onTimeout();
+                break;            
+            }
         
         }
         
