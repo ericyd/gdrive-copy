@@ -28,120 +28,105 @@ function copy() {
         destId,         // {string} identification for top level destination folder
         ss,             // {object} instance of Sheet class
         properties,     // {object} properties of current run
-        newfile;        // {Object} JSON metadata for newly created folder or file
+        query,          // {string} query to generate Files list
+        files,          // {object} list of files within Drive folder
+        item,           // {object} metadata of child item from current iteration
+        newfile,        // {Object} JSON metadata for newly created folder or file
+        timeIsUp = false; // {boolean}
+        
         
         
     properties = loadProperties();
+    query = '"' + properties.srcId + '" in parents and trashed = false';
     
     
     // get current children, or if none exist, query next folder from properties.remaining
     // todo: in real instances, currChildre.items could exist but still have length = 0, in which case I would also want to skip
     if ( properties.currChildren.items && properties.currChildren.items.length > 0) {
-        
+        // todo: process files, substituting new files query with properties.currChildren
+        // todo: probably better to put everything that is currently in "else" into processFiles() 
     } else {
         
+        // Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
         
-    }
-    
-    
-    
-    /*
-    Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
-    */
-    // do {
-    //     folders = Drive.Files.list({
-    //         q: query,
-    //         maxResults: 1000,
-    //         pageToken: pageToken
-    //     });
-    //     if (folders.items && folders.items.length > 0) {
-    //         for (var i = 0; i < folders.items.length; i++) {
-    //             var folder = folders.items[i];
-    //             Logger.log('%s (ID: %s)', folder.title, folder.id);
-    //         }
-    //     } else {
-    //         Logger.log('No folders found.');
-    //     }
-    //     pageToken = folders.nextPageToken;
-    // } while (pageToken);
-    
-    
-    // get child folders from srcId
-    var query = '"' + properties.srcId + '" in parents and trashed = false and ' +
-        'mimeType = "application/vnd.google-apps.folder"';
-        
-    var folders, pageToken;
-    
-    folders = Drive.Files.list({
-        q: query,
-        maxResults: 1000,
-        pageToken: pageToken
-        //fields: items(id,kind,ownedByMe,owners,parents,permissions,title,userPermission,writersCanShare),kind,nextPageToken
-    });
-    
-        
-    
-    
-    
-    
-    // if no current objects exist to copy, get new ones
-    if ( folders.items.length > 0 ) {
-        
-        for (var i = 0; i < folders.items.length; i ++) {
+        do {
             
-            if ( folders.items[i].mimeType == "application/vnd.google-apps.folder") {
-                newfile = insertFolder(folders.items[i]);
+            // get files
+            files = getFiles(query);
+            
+            // loop through and process
+            if (files.items && files.items.length > 0) {
+                
+                processFiles(files.items);
                 
             } else {
-                newfile = copyFile(folders.items[i]);
                 
+                Logger.log('No children found.');
+                // todo: get next folder from properties.remaining
             }
             
-            Logger.log(newfile.id);
             
+            if ( timeIsUp ) {
+                // process timeout routine
+                onTimeout();
+                break;            
+            }
             
-            //sheet.getRange(row, column, numRows, numColumns)
-            //ss.getRange(2+i, 1, 1, 1).setValue(properties.srcChildFolders.items[i].id);
-            ss.getRange(2+i, 1, 1, 1).setValue(i);
-            ss.getRange(2+i, 2, 1, 1).setValue(newfile.id);
-             
-        }
+            // get next page token to continue iteration
+            properties.pageToken = files.nextPageToken;
+            
+        } while (properties.pageToken);
         
-        // stringify the JSON again before saving it
-        properties.map = JSON.stringify(properties.map);
-        
-    }
+    }      
+    
     
     return;
     
     
     
-    
-    
     /**
-     * Get userProperties for current users.
-     * Get properties object from userProperties.
-     * JSON.parse() and values that need parsing
+     * Loops through array of files.items
+     * and sends to the appropriate copy function (insertFolder or copyFile)
      * 
-     * @return {object} properties JSON object with current user's properties
+     * @param {array} items the list of files over which to iterate
      */
-    function loadProperties() {
-        var userProperties, properties;
-        
-        userProperties = PropertiesService.getUserProperties(); // {object} instance of Properties class
-        properties = userProperties.getProperties();
-        
-        properties.map = JSON.parse(properties.map);
-        properties.remaining = JSON.parse(properties.remaining);
-        properties.currChildren = JSON.parse(properties.currChildren);
-        
-        ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
-        
-        return properties;
+    function processFiles(items) {
+        while ( files.items.length > 0 && !timeIsUp ) {
+            item = files.items.pop();
+            currTime = (new Date()).getTime();
+            timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
+            
+            
+            if ( item.mimeType == "application/vnd.google-apps.folder") {
+                newfile = insertFolder(item);    
+            } else {
+                newfile = copyFile(folders.items[i]);
+            }
+            
+            
+            if (newfile.id) {
+                // sheet.getRange(row, column, numRows, numColumns) 
+                ss.getRange(ss.getLastRow(), 1, 1, 3).setValues([
+                    "Copied",
+                    newfile.id, 
+                    newfile.title,
+                    newfile.defaultOpenWithLink
+                ]);    
+                
+            } else {
+                // newfile is error message
+                ss.getRange(ss.getLastRow(), 1, 1, 2).setValue([
+                    "Error",
+                    newfile
+                ]);
+            }
+            
+            
+        }
+        return;
     }
     
-    
-    
+   
     /**
      * Try to insert folder with information from src file.
      * Success: 
@@ -154,9 +139,6 @@ function copy() {
      * @pararm {Object} file File Resource with metadata from source folder
      */
     function insertFolder(file) {
-        Logger.log("src parents id " + file.parents[0].id);
-        Logger.log("typeof file.parents[0].id " + typeof file.parents[0].id);
-        Logger.log("dest parents id " + properties.map[(file.parents[0].id).toString()]);
         
         try {
             var r = Drive.Files.insert({
@@ -171,9 +153,10 @@ function copy() {
                 "mimeType": "application/vnd.google-apps.folder"
             });
             
-            Logger.log(r.id);
+             
+            properties.remaining.push(r.id);
             
-            return r;
+            return;
         }
         
         catch(err) {
@@ -206,7 +189,6 @@ function copy() {
                 },
                 file.id
             );
-            Logger.log(r.id);
             return r;
         }
         
@@ -215,57 +197,102 @@ function copy() {
             return err;   
         }        
     }
-}
+
+
+    /**
+     * Gets files from query and returns fileList with metadata
+     * 
+     * @param {string} query the query to select files from the Drive
+     * @return {object} fileList object where fileList.items is an array of children files
+     */
+    function getFiles(query) {
+        var fileList;
+        
+        fileList = Drive.Files.list({
+                       q: query,
+                       maxResults: 1000,
+                       pageToken: properties.pageToken
+                   });
+            
+        return fileList;    
+    } 
 
 
 
 
 
 
-
-
-
-/**
- * copy permissions from source to destination file/folder
- * 
- * @param {string} srcId identification string for the source folder
- * @param {string} destId identification string for the destination folder
- * @param {string} filetype options: "file" or "folder", so know how to retrieve editors and viewers
-     Maybe unnecessary since folders are treated as files in Advanced Drive API?     
- */
-function copyPermissions(srcId, destId, filetype) {
-    var editors = 0;// get editors
-    var viewers = 0;// get editors
-    var owners = 0; // add owners to editors
+    /**
+     * copy permissions from source to destination file/folder
+     * 
+     * @param {string} srcId identification string for the source folder
+     * @param {string} destId identification string for the destination folder
+     * @param {string} filetype options: "file" or "folder", so know how to retrieve editors and viewers
+         Maybe unnecessary since folders are treated as files in Advanced Drive API?     
+     */
+    function copyPermissions(srcId, destId, filetype) {
+        var editors = 0;// get editors
+        var viewers = 0;// get editors
+        var owners = 0; // add owners to editors
+        
+        // these need adjustment based on my variable declarations
+        if (editors.length > 0) {
+            for (var i = 0; i < editorsemails.length; i++) {
+                Drive.Permissions.insert(
+                    {
+                        'role': 'writer',
+                        'type': 'user',
+                        'value': editorsemails[i]
+                    },
+                    destId,
+                    {
+                        'sendNotificationEmails': 'false'
+                    });
+            }
+        }
     
-    // these need adjustment based on my variable declarations
-    if (editors.length > 0) {
-        for (var i = 0; i < editorsemails.length; i++) {
-            Drive.Permissions.insert(
-                {
-                    'role': 'writer',
-                    'type': 'user',
-                    'value': editorsemails[i]
-                },
-                destId,
-                {
-                    'sendNotificationEmails': 'false'
-                });
+        if (viewers.length > 0) {
+            for (var i = 0; i < viewersemails.length; i++) {
+                Drive.Permissions.insert(
+                    {
+                        'role': 'reader',
+                        'type': 'user',
+                        'value': viewersemails[i]
+                    },
+                    destId, 
+                    {
+                        'sendNotificationEmails': 'false'
+                    });
+            }
         }
     }
 
-    if (viewers.length > 0) {
-        for (var i = 0; i < viewersemails.length; i++) {
-            Drive.Permissions.insert(
-                {
-                    'role': 'reader',
-                    'type': 'user',
-                    'value': viewersemails[i]
-                },
-                destId, 
-                {
-                    'sendNotificationEmails': 'false'
-                });
+
+
+
+    /**
+     * Delete existing triggers, save properties, and create new trigger
+     */
+    function onTimeout() {
+        if ( properties.triggerId !== "undefined" ) {
+            // delete prior trigger
+            deleteTrigger(properties.triggerId);    
         }
+        
+        // save, create trigger
+        properties.currChildren = files;
+        saveProperties(properties, createTrigger);
+        return;
     }
+
+
+
+
+
+
+
+
+
+
+
 }

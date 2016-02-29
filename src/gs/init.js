@@ -36,7 +36,6 @@ function initialize(selectedFolder) {
     var destFolder,     // {Object} instance of Folder class representing destination folder
         spreadsheet,    // {Object} instance of Spreadsheet class
         map = {},       // {Object} map of source ids (keys) to destination ids (values)
-        remaining = [], // {Array} list of folder IDs that still need to be processed
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
         
     
@@ -96,25 +95,15 @@ function initialize(selectedFolder) {
     
     // initialize mapToDest with top level source and destination folder
     map[selectedFolder.srcId] = selectedFolder.destId;
-    remaining.push(selectedFolder.srcId);
 
-    selectedFolder.map = JSON.stringify(map);
-    selectedFolder.remaining = JSON.stringify(remaining);
-    selectedFolder.currChildren = JSON.stringify({});
+    selectedFolder.map = map;
+    selectedFolder.remaining = [selectedFolder.srcId];
+    selectedFolder.currChildren = {};
     
     
     
     // save srcId, destId, copyPermissions, spreadsheetId to userProperties
-    saveProperties(selectedFolder);
-    
-    // create trigger to call copy() in X seconds
-    
-    /*
-    
-    BRING THIS BACK FOR FINAL IMPLEMENTATION
-    
-    */
-    //createTrigger(2);
+    saveProperties(selectedFolder, copy);
     
     
     return {

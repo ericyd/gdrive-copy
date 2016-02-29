@@ -5,7 +5,7 @@
  * 
  * @param {object} propertiesToSave contains all properties that need to be saved to userProperties
  */
-function saveProperties(propertiesToSave) {
+function saveProperties(propertiesToSave, callback) {
     
     var userProperties = PropertiesService.getUserProperties();
     
@@ -22,25 +22,70 @@ function saveProperties(propertiesToSave) {
     
     userProperties.setProperties(propertiesToSave);
     
+    if (callback) {
+        callback();    
+    }
+    
     return;
-
 }
 
 
 
+/**
+ * Get userProperties for current users.
+ * Get properties object from userProperties.
+ * JSON.parse() and values that need parsing
+ * 
+ * @return {object} properties JSON object with current user's properties
+ */
+function loadProperties() {
+    var userProperties, properties;
+    
+    userProperties = PropertiesService.getUserProperties(); // {object} instance of Properties class
+    properties = userProperties.getProperties();
+    
+    properties.map = JSON.parse(properties.map);
+    properties.remaining = JSON.parse(properties.remaining);
+    properties.currChildren = JSON.parse(properties.currChildren);
+    
+    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
+    
+    return properties;
+}
+
+
 
 /**
- * Create a trigger to run copy() in @param seconds seconds
- * @param {number} seconds number of seconds after present to fire the trigger
+ * Create a trigger to run copy() in 61 seconds.
+ * Save trigger ID to userProperties so it can be deleted later
+ * 
  */
-function createTrigger(seconds) {
+function createTrigger() {
     // create trigger for 'seconds' seconds from now
-    ScriptApp.newTrigger('copy')
+    var trigger =  ScriptApp.newTrigger('copy')
         .timeBased()
-        .after(seconds*1000)	
+        .after(61*1000)	
         .create();
         
+    saveProperties({
+        "triggerId": trigger.getUniqueId();
+    }, null);
+        
     return;
+}
+
+
+
+function deleteTrigger(triggerId) {
+  // Loop over all triggers.
+  var allTriggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < allTriggers.length; i++) {
+    // If the current trigger is the correct one, delete it.
+    if (allTriggers[i].getUniqueId() == triggerId) {
+      ScriptApp.deleteTrigger(allTriggers[i]);
+      break;
+    }
+  }
 }
 
 
