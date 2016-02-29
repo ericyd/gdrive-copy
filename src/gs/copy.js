@@ -31,13 +31,14 @@ function copy() {
         query,          // {string} query to generate Files list
         files,          // {object} list of files within Drive folder
         item,           // {object} metadata of child item from current iteration
+        currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
         timeIsUp = false; // {boolean}
         
         
         
     properties = loadProperties();
-    query = '"' + properties.srcId + '" in parents and trashed = false';
+    
     
     
     // get current children, or if none exist, query next folder from properties.remaining
@@ -47,35 +48,42 @@ function copy() {
         // todo: probably better to put everything that is currently in "else" into processFiles() 
     } else {
         
-        // Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
+        while ( properties.remaining.length > 0 ) {
+            
         
-        do {
+            currFolder = properties.remaining.shift();
+            query = '"' + currFolder + '" in parents and trashed = false';
+            // Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
             
-            // get files
-            files = getFiles(query);
-            
-            // loop through and process
-            if (files.items && files.items.length > 0) {
+            do {
                 
-                processFiles(files.items);
+                // get files
+                files = getFiles(query);
                 
-            } else {
+                // loop through and process
+                if (files.items && files.items.length > 0) {
+                    
+                    processFiles(files.items);
+                    
+                } else {
+                    
+                    Logger.log('No children found.');
+                    // todo: get next folder from properties.remaining
+                }
                 
-                Logger.log('No children found.');
-                // todo: get next folder from properties.remaining
-            }
-            
-            
-            if ( timeIsUp ) {
-                // process timeout routine
-                onTimeout();
-                break;            
-            }
-            
-            // get next page token to continue iteration
-            properties.pageToken = files.nextPageToken;
-            
-        } while (properties.pageToken);
+                
+                if ( timeIsUp ) {
+                    // process timeout routine
+                    onTimeout();
+                    break;            
+                }
+                
+                // get next page token to continue iteration
+                properties.pageToken = files.nextPageToken;
+                
+            } while (properties.pageToken);
+        
+        }
         
     }      
     
