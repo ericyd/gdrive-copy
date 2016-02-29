@@ -99,9 +99,15 @@ $(function() {
 
 
 
-    // Bind showPicker()
     $("#selectFolderButton").click(function() {
         picker.showPicker();
+    });
+    
+    
+    $("#selectOtherFolder").click(function() {
+        $("#getFolderErrors").text("");
+        $("#folderSelect").show();
+        $("#selectedFolderInfo").hide();
     });
     
 
@@ -112,18 +118,11 @@ var folderTextbox = document.getElementById("folderTextbox");
 
 
 
-/*
-    run google.script.run function to Drive.Files.get(fileID)
-    Success: 
-    1. hide picker "select folder" button and folderTextbox 
-    2. show selected Folder name
-    3. save returned item to picker.folder
-    4. show "select different folder" button
-    $("#folderSelect").hide();
-    $("#selectedFolderInfo").show();
-    Failure:
-    1. Show error
-    */ 
+/**
+ * If folder URL is added, get folder metadata and display relevant information.
+ * 
+ * @param {object} e event object
+ */
 folderTextbox.onkeyup = function(e) {
     
     if (folderTextbox.value !== "") {
