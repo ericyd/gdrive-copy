@@ -44,51 +44,48 @@ function copy() {
     // get current children, or if none exist, query next folder from properties.remaining
     // todo: in real instances, currChildre.items could exist but still have length = 0, in which case I would also want to skip
     if ( properties.currChildren.items && properties.currChildren.items.length > 0) {
-        // todo: process files, substituting new files query with properties.currChildren
-        // todo: probably better to put everything that is currently in "else" into processFiles() 
-    } else {
         
-        while ( properties.remaining.length > 0 ) {
+        processFiles(properties.currChildren.items) 
+        
+    } 
+    
+    // when currChildren is complete, move on to other queries from properties.remaining
+        
+    while ( properties.remaining.length > 0 && !timeIsUp) {
+        
+        currFolder = properties.remaining.shift();
+        query = '"' + currFolder + '" in parents and trashed = false';
+        // Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
+        
+        do {
             
-            currFolder = properties.remaining.shift();
-            query = '"' + currFolder + '" in parents and trashed = false';
-            // Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
+            // get files
+            files = getFiles(query);
             
-            do {
+            // loop through and process
+            if (files.items && files.items.length > 0) {
                 
-                // get files
-                files = getFiles(query);
+                processFiles(files.items);
                 
-                // loop through and process
-                if (files.items && files.items.length > 0) {
-                    
-                    processFiles(files.items);
-                    
-                } else {
-                    
-                    Logger.log('No children found.');
-                    // todo: get next folder from properties.remaining
-                }
+            } else {
                 
-                
-                if ( timeIsUp ) {
-                    break;            
-                }
-                
-                // get next page token to continue iteration
-                properties.pageToken = files.nextPageToken;
-                
-            } while (properties.pageToken);
-            
-            if ( timeIsUp ) {
-                // process timeout routine
-                onTimeout();
-                break;            
+                Logger.log('No children found.');
+                // todo: get next folder from properties.remaining
             }
+            
+            // get next page token to continue iteration
+            properties.pageToken = files.nextPageToken;
+            
+        } while (properties.pageToken && !timeIsUp);
         
-        }
-        
-    }      
+    
+    }
+    
+    
+    if ( timeIsUp ) {
+        saveState();     
+    }
+            
     
     
     return;
@@ -284,14 +281,14 @@ function copy() {
     /**
      * Delete existing triggers, save properties, and create new trigger
      */
-    function onTimeout() {
+    function saveState() {
         if ( properties.triggerId !== "undefined" ) {
             // delete prior trigger
             deleteTrigger(properties.triggerId);    
         }
         
         // save, create trigger
-        properties.currChildren = files;
+        properties.currChildren = files.items ? files : properties.currChildren;
         saveProperties(properties, createTrigger);
         return;
     }
