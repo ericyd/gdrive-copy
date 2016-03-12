@@ -61,7 +61,6 @@ function loadProperties() {
  * 
  */
 function createTrigger() {
-    // create trigger for 'seconds' seconds from now
     var trigger =  ScriptApp.newTrigger('copy')
         .timeBased()
         .after(61*1000)	

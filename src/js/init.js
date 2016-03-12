@@ -80,7 +80,8 @@ $(function() {
         
         
         // Not sure if this will continue running on window close
-        google.script.run.copy();
+        // currently passed to callback of saveProperties in ./gs/init.js
+        //google.script.run.copy();
         
         return;
     }
