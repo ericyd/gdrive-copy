@@ -19,20 +19,36 @@ $(function() {
      * @param {Object} event 
      */
     $("#folderForm").submit(function( event ) {
-        var $btn = $("#copyFolderButton").button('loading');
-        $("#newFolder").prop('disabled', true);
-        $("#description").hide("blind");
-        $("#status").show("blind");
+        var errormsg;
         
-        // Get values from form and selected folder to initialize copy        
-        picker.folder.destName = $("#newFolder").val();
-        picker.folder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
-        picker.folder.destLocation = $("#destination-group input:checked").val();
+        // validate
+        if (!picker.folder.srcId) {
+            errormsg = "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
+            $("#errors").html(errormsg);
+            
+        } else if ( $("#newFolder").val(); === "" ) {
+            errormsg = "<div class='alert alert-danger' role='alert'>Please enter a new folder name</div>";
+            $("#errors").html(errormsg);
+            
+        } else {
+            
+            var $btn = $("#copyFolderButton").button('loading');
+            $("#newFolder").prop('disabled', true);
+            $("#description").hide("blind");
+            $("#status").show("blind");
+            
+            // Get values from form and selected folder to initialize copy        
+            picker.folder.destName = $("#newFolder").val();
+            picker.folder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
+            picker.folder.destLocation = $("#destination-group input:checked").val();
+            
+            google.script.run
+                .withSuccessHandler(success)
+                .withFailureHandler(showError)
+                .initialize(picker.folder);
+        }
         
-        google.script.run
-            .withSuccessHandler(success)
-            .withFailureHandler(showError)
-            .initialize(picker.folder);
+        
         
         event.preventDefault();
     });
@@ -61,6 +77,10 @@ $(function() {
         // alert that they can close window now
         $("#complete").show("blind");
         $("#please-review").show("blind");
+        
+        
+        // Not sure if this will continue running on window close
+        google.script.run.copy();
         
         return;
     }
