@@ -42,7 +42,6 @@ function copy() {
     
     
     // get current children, or if none exist, query next folder from properties.remaining
-    // todo: in real instances, currChildre.items could exist but still have length = 0, in which case I would also want to skip
     if ( properties.currChildren.items && properties.currChildren.items.length > 0) {
         
         processFiles(properties.currChildren.items) 
@@ -84,6 +83,8 @@ function copy() {
     
     if ( timeIsUp ) {
         saveState();     
+    } else {
+        deleteTrigger(properties.triggerId);
     }
             
     
@@ -118,7 +119,8 @@ function copy() {
                     "Copied",
                     newfile.id, 
                     newfile.title,
-                    newfile.defaultOpenWithLink
+                    newfile.defaultOpenWithLink,
+                    Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yy hh:mm a")
                 ]);    
                 
             } else {
@@ -282,7 +284,7 @@ function copy() {
      * Delete existing triggers, save properties, and create new trigger
      */
     function saveState() {
-        if ( properties.triggerId !== "undefined" ) {
+        if ( properties.triggerId !== undefined ) {
             // delete prior trigger
             deleteTrigger(properties.triggerId);    
         }
