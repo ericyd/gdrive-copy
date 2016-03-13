@@ -1,13 +1,3 @@
-//todo: delete trigger after it runs - there is a max for the script
-
-
-
-
-
-
-
-
-
 /**
  * Copy folders and files from source to destination.
  * Get parameters from userProperties,
@@ -36,9 +26,10 @@ function copy() {
         timeIsUp = false; // {boolean}
         
         
-        
-    properties = loadProperties();
     
+    properties = loadProperties();
+        
+    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     
     
     // get current children, or if none exist, query next folder from properties.remaining
@@ -81,10 +72,14 @@ function copy() {
     }
     
     
+    
     if ( timeIsUp ) {
         saveState();     
     } else {
+        // delete existing triggers and add Progress: Complete
         deleteTrigger(properties.triggerId);
+        ss.getRange(2, 3, 1, 1).setValue("Complete").setBackground("#66b22c");
+        ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yy hh:mm:ss a"));
     }
             
     
@@ -105,30 +100,34 @@ function copy() {
             currTime = (new Date()).getTime();
             timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
             
-            
+            // copy folder or file
             if ( item.mimeType == "application/vnd.google-apps.folder") {
                 newfile = insertFolder(item);    
             } else {
-                newfile = copyFile(folders.items[i]);
+                newfile = copyFile(item);
             }
             
             
+            // report success or failure on spreadsheet log
             if (newfile.id) {
                 // sheet.getRange(row, column, numRows, numColumns) 
-                ss.getRange(ss.getLastRow(), 1, 1, 3).setValues([
+                ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
                     "Copied",
-                    newfile.id, 
                     newfile.title,
-                    newfile.defaultOpenWithLink,
-                    Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yy hh:mm a")
-                ]);    
+                    '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
+                    newfile.id, 
+                    Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yy hh:mm:ss a")
+                ]]);    
                 
             } else {
                 // newfile is error message
-                ss.getRange(ss.getLastRow(), 1, 1, 2).setValue([
-                    "Error",
-                    newfile
-                ]);
+                ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
+                    "Error, " + newfile,
+                    item.title,
+                    '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
+                    item.id,
+                    Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yy hh:mm:ss a")
+                ]]);
             }
             
             
@@ -163,10 +162,11 @@ function copy() {
                 "mimeType": "application/vnd.google-apps.folder"
             });
             
-             
-            properties.remaining.push(r.id);
             
-            return;
+            properties.remaining.push(file.id);
+            properties.map[file.id] = r.id;
+            
+            return r;
         }
         
         catch(err) {
