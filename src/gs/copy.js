@@ -29,6 +29,7 @@ function copy() {
         
         
     
+    
     properties = loadProperties();
         
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");

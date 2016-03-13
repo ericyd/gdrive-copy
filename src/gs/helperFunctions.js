@@ -91,6 +91,13 @@ function loadProperties() {
         Logger.log(err.message);
     }
     
+    try {
+        properties.errorFiles = JSON.parse(properties.errorFiles);
+        Logger.log("JSON.parse properties.errorFiles");
+    } catch(err) {
+        Logger.log(err.message);
+    }
+    
     
     
     return properties;

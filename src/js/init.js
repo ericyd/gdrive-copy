@@ -35,6 +35,8 @@ $(function() {
             
         } else {
             $("#errors").html("");
+            $("#selectOtherFolder").hide("blind");
+            
             var $btn = $("#copyFolderButton").button('loading');
             $("#newFolder").prop('disabled', true);
             $("#description").hide("blind");
@@ -69,7 +71,6 @@ $(function() {
     function success(results) {
         
         $("#status").hide("blind");
-        $("#selectOtherFolder").hide("blind");
         
         // link to spreadsheet and  dest Folder
         var copyLogLink = "<a href='https://docs.google.com/spreadsheets/d/" + results.spreadsheetId +"' target='_blank'>copy log</a>";
