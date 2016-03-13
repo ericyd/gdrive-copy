@@ -31,20 +31,20 @@ function copy() {
     
     
     properties = loadProperties();
-        
+    Logger.log("properties loaded");    
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
     
     
     // get current children, or if none exist, query next folder from properties.remaining
     if ( properties.currChildren.items && properties.currChildren.items.length > 0) {
-        
+        Logger.log("beginning processFiles on currChildren");
         processFiles(properties.currChildren.items) 
         
     } 
     
     // when currChildren is complete, move on to other queries from properties.remaining
-        
+    Logger.log("beginning processFiles on next remaining folder");    
     while ( properties.remaining.length > 0 && !timeIsUp) {
         
         currFolder = properties.remaining.shift();
@@ -83,7 +83,7 @@ function copy() {
     
     
     if ( timeIsUp ) {
-        ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota - copy will resume in 2 minutes");
+        ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in 2 minutes");
         saveState();     
     } else {
         // delete existing triggers and add Progress: Complete
