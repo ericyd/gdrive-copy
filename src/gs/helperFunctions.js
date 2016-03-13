@@ -44,11 +44,28 @@ function loadProperties() {
     userProperties = PropertiesService.getUserProperties(); // {object} instance of Properties class
     properties = userProperties.getProperties();
     
-    properties.map = JSON.parse(properties.map);
-    properties.remaining = JSON.parse(properties.remaining);
-    properties.currChildren = JSON.parse(properties.currChildren);
+    try {
+        properties.map = JSON.parse(properties.map);
+        Logger.log("JSON.parse properties.map");
+    } catch(err) {
+        Logger.log(err.message);
+    }
     
-    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
+    try {
+        properties.currChildren = JSON.parse(properties.currChildren);
+        Logger.log("JSON.parse properties.currChildren");
+    } catch(err) {
+        Logger.log(err.message);
+    }
+    
+    try {
+        properties.remaining = JSON.parse(properties.remaining);
+        Logger.log("JSON.parse properties.remaining");
+    } catch(err) {
+        Logger.log(err.message);
+    }
+    
+    
     
     return properties;
 }
@@ -67,7 +84,7 @@ function createTrigger() {
         .create();
         
     saveProperties({
-        "triggerId": trigger.getUniqueId();
+        "triggerId": trigger.getUniqueId()
     }, null);
         
     return;
@@ -75,6 +92,12 @@ function createTrigger() {
 
 
 
+/**
+ * Loop over all triggers
+ * Delete if trigger ID matches parameter triggerId
+ * 
+ * @param {string} triggerId unique identifier for active trigger
+ */
 function deleteTrigger(triggerId) {
   // Loop over all triggers.
   var allTriggers = ScriptApp.getProjectTriggers();
