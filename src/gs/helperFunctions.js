@@ -26,6 +26,8 @@ function saveProperties(propertiesToSave, callback) {
         callback();    
     }
     
+    Logger.log("properties saved");
+    
     return;
 }
 
@@ -82,6 +84,8 @@ function createTrigger() {
         .timeBased()
         .after(61*1000)	
         .create();
+        
+    Logger.log("trigger created, copy resuming in 61 seconds");
         
     saveProperties({
         "triggerId": trigger.getUniqueId()
