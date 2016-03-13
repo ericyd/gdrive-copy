@@ -23,6 +23,7 @@ function copy() {
         item,           // {object} metadata of child item from current iteration
         currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
+        errorFiles,     // {Array} array of src files that had error
         timeIsUp = false; // {boolean}
         
         
@@ -72,6 +73,11 @@ function copy() {
     }
     
     
+    if ( properties.errorFiles.length > 0 && !timeIsUp) {
+        processFiles(properties.errorFiles);
+    }
+    
+    
     
     if ( timeIsUp ) {
         saveState();     
@@ -116,17 +122,17 @@ function copy() {
                     newfile.title,
                     '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
                     newfile.id, 
-                    Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yy hh:mm:ss a")
+                    Utilities.formatDate(new Date(), "GMT-7", "MM-dd-yy hh:mm:ss a")
                 ]]);    
                 
             } else {
-                // newfile is error message
+                // newfile is error
                 ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
-                    "Error, " + newfile,
+                    "Error, " + newfile + " " + newfile.message,
                     item.title,
                     '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
                     item.id,
-                    Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yy hh:mm:ss a")
+                    Utilities.formatDate(new Date(), "GMT-7", "MM-dd-yy hh:mm:ss a")
                 ]]);
             }
             
@@ -170,8 +176,9 @@ function copy() {
         }
         
         catch(err) {
+            properties.errorFiles.push(file);
             Logger.log(err.message);
-            return err.message;
+            return err;
         }
     }
     
@@ -203,6 +210,7 @@ function copy() {
         }
         
         catch(err) {
+            properties.errorFiles.push(file);
             Logger.log(err.message);
             return err;   
         }        
