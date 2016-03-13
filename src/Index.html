@@ -50,17 +50,17 @@
           <label for="folderId" class="col-sm-3 control-label">Folder to copy</label>
           <div class="col-sm-9">
             <!--Elements to select folder-->
-            <div class="" id="folderSelect">
+            <div class="form-inline" id="folderSelect">
                 <button type="button" id="selectFolderButton" class="btn btn-primary" autocomplete="off">Select Folder</button> or 
-                <input type="text" id="folderTextbox" class="form-control" placeholder="Paste folder URL">
+                <input type="text" id="folderTextbox" class="form-control" placeholder="Paste folder URL (ctrl-V)">
             </div>
             
             <div id="getFolderErrors"></div>
             
             <!--Display when folder is selected-->
-            <div class="hidden" id="selectedFolderInfo">
-                <div class="folderName"></div>
-                <input type="button" id="selectOtherFolder" class="btn btn-default">Select other folder</button>
+            <div id="selectedFolderInfo">
+                <span class="folderName"></span> &nbsp;&nbsp;
+                <button type="button" id="selectOtherFolder" class="btn btn-default">Select other folder</button>
             </div>
           </div>
         </div>
