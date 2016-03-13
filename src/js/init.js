@@ -9,6 +9,8 @@ var picker = require('./picker');
 // event bindings
 $(function() {
 
+    $("#selectedFolderInfo").hide();
+
     /**
      * Bind form submission action.
      * Disable form elements,
@@ -19,6 +21,7 @@ $(function() {
      * @param {Object} event 
      */
     $("#folderForm").submit(function( event ) {
+        
         var errormsg;
         
         // validate
@@ -26,12 +29,12 @@ $(function() {
             errormsg = "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
             $("#errors").html(errormsg);
             
-        } else if ( $("#newFolder").val(); === "" ) {
+        } else if ( $("#newFolder").val() === "" ) {
             errormsg = "<div class='alert alert-danger' role='alert'>Please enter a new folder name</div>";
             $("#errors").html(errormsg);
             
         } else {
-            
+            $("#errors").html("");
             var $btn = $("#copyFolderButton").button('loading');
             $("#newFolder").prop('disabled', true);
             $("#description").hide("blind");
@@ -80,8 +83,8 @@ $(function() {
         
         
         // Not sure if this will continue running on window close
-        // currently passed to callback of saveProperties in ./gs/init.js
-        //google.script.run.copy();
+        
+        google.script.run.copy();
         
         return;
     }
@@ -129,6 +132,7 @@ $(function() {
         $("#getFolderErrors").text("");
         $("#folderSelect").show();
         $("#selectedFolderInfo").hide();
+        $("#folderTextbox").val("");
     });
     
 
@@ -137,15 +141,17 @@ $(function() {
 
 var folderTextbox = document.getElementById("folderTextbox");
 
-
+// when pasting folder URL, get file data after paste has been executed by mouse or keyboard
+folderTextbox.addEventListener('mouseup', getFileData, false);
+folderTextbox.addEventListener('keyup', getFileData, false);
+folderTextbox.addEventListener('paste', getFileData, false);
 
 /**
  * If folder URL is added, get folder metadata and display relevant information.
  * 
  * @param {object} e event object
  */
-folderTextbox.onkeyup = function(e) {
-    
+function getFileData(e) {
     if (folderTextbox.value !== "") {
         var id = parseId( folderTextbox.value );
         
@@ -164,8 +170,8 @@ folderTextbox.onkeyup = function(e) {
                 $("#getFolderErrors").text("Error: " + msg);
             })
             .getMetadata(id);
-        
     }
+    return false;
     
 }
 
