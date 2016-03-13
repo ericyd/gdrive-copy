@@ -24,6 +24,7 @@ function copy() {
         currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
         errorFiles,     // {Array} array of src files that had error
+        timeZone,       // {string} time zone of user
         timeIsUp = false; // {boolean}
         
         
@@ -31,6 +32,7 @@ function copy() {
     properties = loadProperties();
         
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
+    timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
     
     
     // get current children, or if none exist, query next folder from properties.remaining
@@ -80,12 +82,13 @@ function copy() {
     
     
     if ( timeIsUp ) {
+        ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota - copy will resume in 2 minutes");
         saveState();     
     } else {
         // delete existing triggers and add Progress: Complete
         deleteTrigger(properties.triggerId);
         ss.getRange(2, 3, 1, 1).setValue("Complete").setBackground("#66b22c");
-        ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yy hh:mm:ss a"));
+        ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss a"));
     }
             
     
@@ -106,6 +109,7 @@ function copy() {
             currTime = (new Date()).getTime();
             timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
             
+            
             // copy folder or file
             if ( item.mimeType == "application/vnd.google-apps.folder") {
                 newfile = insertFolder(item);    
@@ -122,17 +126,17 @@ function copy() {
                     newfile.title,
                     '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
                     newfile.id, 
-                    Utilities.formatDate(new Date(), "GMT-7", "MM-dd-yy hh:mm:ss a")
+                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
                 ]]);    
                 
             } else {
                 // newfile is error
                 ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
-                    "Error, " + newfile + " " + newfile.message,
+                    "Error, " + newfile,
                     item.title,
                     '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
                     item.id,
-                    Utilities.formatDate(new Date(), "GMT-7", "MM-dd-yy hh:mm:ss a")
+                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
                 ]]);
             }
             
