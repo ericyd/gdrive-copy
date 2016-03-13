@@ -104,7 +104,10 @@ function initialize(selectedFolder) {
     
     
     
+    
     // save srcId, destId, copyPermissions, spreadsheetId to userProperties
+    var userProperties = PropertiesService.getUserProperties();
+    userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
     saveProperties(selectedFolder, null);
     
     

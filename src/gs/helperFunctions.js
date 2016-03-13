@@ -6,21 +6,44 @@
  * @param {object} propertiesToSave contains all properties that need to be saved to userProperties
  */
 function saveProperties(propertiesToSave, callback) {
-    
-    var userProperties = PropertiesService.getUserProperties();
+    var userProperties = PropertiesService.getUserProperties().getProperties();
+    var ss = SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log");
+    //var userProperties = PropertiesService.getUserProperties();
+    var existingProperties = {};
+    try {
+        existingProperties = JSON.parse(ss.getRange(1, 25).getValue());
+    } catch(err) {
+        Logger.log("propsCell error: " + err);
+    }
     
     for (var key in propertiesToSave) {
         
         // skip loop if the property is from prototype
         if(!propertiesToSave.hasOwnProperty(key)) continue;
         
-        if ( typeof propertiesToSave[key] === 'object' ) {
-            propertiesToSave[key] = JSON.stringify(propertiesToSave[key]);
-        }
+        // stringify all the objects and arrays
+        if ( typeof propertiesToSave[key] === "object" ) {
+            try {
+                propertiesToSave[key] = JSON.stringify(propertiesToSave[key]);
+            } catch(err) {
+                Logger.log("propertiesToSave error: key = " + key + ", " + err);
+            }
+        } 
+        
+        
+        // update existingProperties
+        existingProperties[key] = propertiesToSave[key];
         
     }
     
-    userProperties.setProperties(propertiesToSave);
+    try {
+        ss.getRange(1, 25).setValue(JSON.stringify(existingProperties));
+    } catch(err) {
+        Logger.log("setValue error: " + err);
+    }
+    
+    
+    //userProperties.setProperties(propertiesToSave);
     
     if (callback) {
         callback();    
@@ -41,10 +64,11 @@ function saveProperties(propertiesToSave, callback) {
  * @return {object} properties JSON object with current user's properties
  */
 function loadProperties() {
-    var userProperties, properties;
+    var userProperties, properties, ss;
     
-    userProperties = PropertiesService.getUserProperties(); // {object} instance of Properties class
-    properties = userProperties.getProperties();
+    userProperties = PropertiesService.getUserProperties().getProperties(); // {object} properties for current user
+    ss = SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log");
+    properties = JSON.parse(ss.getRange(1,25).getValue());
     
     try {
         properties.map = JSON.parse(properties.map);
@@ -82,7 +106,7 @@ function loadProperties() {
 function createTrigger() {
     var trigger =  ScriptApp.newTrigger('copy')
         .timeBased()
-        .after(61*1000)	
+        .after(121*1000)	
         .create();
         
     Logger.log("trigger created, copy resuming in 61 seconds");
