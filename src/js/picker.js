@@ -92,7 +92,7 @@ function pickerCallback(data) {
             "srcId": doc[google.picker.Document.ID],
             "srcParentId": doc[google.picker.Document.PARENT_ID],
             "srcName": doc[google.picker.Document.NAME],
-            "destName": "Copy of " + selectedFolder.srcName
+            "destName": "Copy of " + doc[google.picker.Document.NAME]
         });
         
     } else if (action == google.picker.Action.CANCEL) {
