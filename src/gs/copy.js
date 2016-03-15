@@ -47,9 +47,14 @@ function copy() {
     Logger.log("beginning processFiles on next remaining folder");    
     while ( properties.remaining.length > 0 && !timeIsUp) {
         
-        currFolder = properties.remaining.shift();
+        // if pages remained in the previous query, use them first
+        if (properties.pageToken) {
+            currFolder = properties.destFolder;
+        } else {
+            currFolder = properties.remaining.shift();
+        }
+        
         query = '"' + currFolder + '" in parents and trashed = false';
-        // Note: pageToken will only be generated IF there are results on the next "page".  So I always want to test for it, but if it isn't present, then that's ok.  However, it can sort of be like my "continuationToken", maybe
         
         do {
             
@@ -305,6 +310,8 @@ function copy() {
         
         // save, create trigger
         properties.currChildren = files.items ? files : properties.currChildren;
+        properties.destFolder = properties.currChildren.items[0].parents[0].id;
+        properties.pageToken = properties.currChildren.nextPageToken;
         saveProperties(properties, createTrigger);
         return;
     }
