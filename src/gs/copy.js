@@ -113,6 +113,7 @@ function copy() {
     function processFiles(items) {
         while ( files.items.length > 0 && !timeIsUp ) {
             item = files.items.pop();
+            Logger.log("items.length remaining = " + items.length);
             currTime = (new Date()).getTime();
             timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
             
@@ -124,7 +125,7 @@ function copy() {
                 newfile = copyFile(item);
             }
             
-            
+            Logger.log("writing status to spreadsheet for newfile");
             // report success or failure on spreadsheet log
             if (newfile.id) {
                 // sheet.getRange(row, column, numRows, numColumns) 
@@ -187,7 +188,7 @@ function copy() {
         }
         
         catch(err) {
-            properties.errorFiles.push(file);
+            // properties.errorFiles.push(file);
             Logger.log(err.message);
             return err;
         }
