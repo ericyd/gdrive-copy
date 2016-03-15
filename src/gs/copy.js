@@ -76,9 +76,9 @@ function copy() {
     }
     
     
-    if ( properties.errorFiles.length > 0 && !timeIsUp) {
-        processFiles(properties.errorFiles);
-    }
+    // if ( properties.errorFiles.length > 0 && !timeIsUp) {
+    //     processFiles(properties.errorFiles);
+    // }
     
     
     
@@ -88,6 +88,7 @@ function copy() {
     } else {
         // delete existing triggers and add Progress: Complete
         deleteTrigger(properties.triggerId);
+        Drive.Files.delete(properties.propertiesDocId);
         ss.getRange(2, 3, 1, 1).setValue("Complete").setBackground("#66b22c");
         ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss a"));
     }
@@ -215,7 +216,7 @@ function copy() {
         }
         
         catch(err) {
-            properties.errorFiles.push(file);
+            // properties.errorFiles.push(file);
             Logger.log(err.message);
             return err;   
         }        

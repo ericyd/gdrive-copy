@@ -7,13 +7,16 @@
  */
 function saveProperties(propertiesToSave, callback) {
     var userProperties = PropertiesService.getUserProperties().getProperties();
-    var ss = SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log");
+    var propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
     //var userProperties = PropertiesService.getUserProperties();
     var existingProperties = {};
-    try {
-        existingProperties = JSON.parse(ss.getRange(1, 25).getValue());
-    } catch(err) {
-        Logger.log("propsCell error: " + err);
+    
+    if (propertiesDoc !== "") {
+        try {
+            existingProperties = JSON.parse(propertiesDoc.getText());
+        } catch(err) {
+            Logger.log("propsCell error: " + err);
+        }
     }
     
     for (var key in propertiesToSave) {
@@ -37,7 +40,7 @@ function saveProperties(propertiesToSave, callback) {
     }
     
     try {
-        ss.getRange(1, 25).setValue(JSON.stringify(existingProperties));
+        propertiesDoc.setText(JSON.stringify(existingProperties));
     } catch(err) {
         Logger.log("setValue error: " + err);
     }
@@ -64,11 +67,11 @@ function saveProperties(propertiesToSave, callback) {
  * @return {object} properties JSON object with current user's properties
  */
 function loadProperties() {
-    var userProperties, properties, ss;
+    var userProperties, properties, propertiesDoc;
     
     userProperties = PropertiesService.getUserProperties().getProperties(); // {object} properties for current user
-    ss = SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log");
-    properties = JSON.parse(ss.getRange(1,25).getValue());
+    propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
+    properties = JSON.parse(propertiesDoc.getText());
     
     try {
         properties.map = JSON.parse(properties.map);
