@@ -311,8 +311,19 @@ function copy() {
         
         // save, create trigger
         properties.currChildren = files.items ? files : properties.currChildren;
-        properties.destFolder = properties.currChildren.items[0].parents[0].id;
-        properties.pageToken = properties.currChildren.nextPageToken;
+        try {
+            properties.destFolder = properties.currChildren.items[0].parents[0].id;
+        } catch(err) {
+            Logger.log("error: properties.destFolder = properties.currChildren.items[0].parents[0].id; " + err);
+        }
+        
+        try {
+            properties.destFolder = properties.currChildren.items[0].parents[0].id;
+        } catch(err) {
+            Logger.log("error: properties.pageToken = properties.currChildren.nextPageToken; " + err);    
+        }
+        
+        
         saveProperties(properties, createTrigger);
         return;
     }
