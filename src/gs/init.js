@@ -36,6 +36,7 @@ function initialize(selectedFolder) {
     var destFolder,     // {Object} instance of Folder class representing destination folder
         spreadsheet,    // {Object} instance of Spreadsheet class
         map = {},       // {Object} map of source ids (keys) to destination ids (values)
+        propertiesDoc,  // {Object} metadata for Google Document created to hold properties
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
         
     
@@ -51,14 +52,10 @@ function initialize(selectedFolder) {
                 }
             ],
             "mimeType": "application/vnd.google-apps.folder"
-        });
-        
+        });   
     }
-    
     catch(err) {
-        
         Logger.log(err.message);
-        
     }
     
     
@@ -76,21 +73,41 @@ function initialize(selectedFolder) {
             ]
             },
             "17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg"
-        );
-        
+        );   
+    }
+    catch(err) {
+        Logger.log(err.message);
     }
     
-    catch(err) {
-        
-        Logger.log(err.message);
-        
+    
+    
+    // create document for storing properties as plain text
+    // this will be deleted upon script completion
+    // create destination folder
+    try {
+        propertiesDoc = Drive.Files.insert({
+            "description": "This document will be deleted after the folder copy is complete.  It is only used to store properties necessary to complete the copying procedure",
+            "title": "DO NOT DELETE OR MODIFY - will be deleted after copying completes",
+            "parents": [
+                {
+                    "kind": "drive#fileLink",
+                    "id": destFolder.id
+                }
+            ],
+            "mimeType": "application/vnd.google-apps.document"
+        });   
     }
+    catch(err) {
+        Logger.log(err.message);
+    }
+    
     
     SpreadsheetApp.openById(spreadsheet.id).getSheetByName("Log").getRange(2,5).setValue('=HYPERLINK("https://drive.google.com/open?id=' + destFolder.id + '","'+ selectedFolder.destName + '")');
     
     // Get IDs of destination folder and logger spreadsheet 
     selectedFolder.destId = destFolder.id;
     selectedFolder.spreadsheetId = spreadsheet.id;
+    selectedFolder.propertiesDocId = propertiesDoc.id;
     
     
     
@@ -108,6 +125,7 @@ function initialize(selectedFolder) {
     // save srcId, destId, copyPermissions, spreadsheetId to userProperties
     var userProperties = PropertiesService.getUserProperties();
     userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
+    userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
     saveProperties(selectedFolder, null);
     
     
