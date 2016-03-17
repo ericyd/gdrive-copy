@@ -6,7 +6,7 @@
  */
 function copy() {
     // CONSTANTS
-    var MAX_RUNNING_TIME = 5.7 * 60 * 1000;   // 5.7 minutes in milliseconds
+    var MAX_RUNNING_TIME = .57 * 60 * 1000;   // 5.7 minutes in milliseconds
     var START_TIME = (new Date()).getTime();
     
     
@@ -39,6 +39,7 @@ function copy() {
     // get current children, or if none exist, query next folder from properties.remaining
     if ( properties.currChildren.items && properties.currChildren.items.length > 0) {
         Logger.log("beginning processFiles on currChildren");
+        properties.destFolder = properties.currChildren.items[0].parents[0].id;
         processFiles(properties.currChildren.items) 
         
     } 
@@ -48,7 +49,7 @@ function copy() {
     while ( properties.remaining.length > 0 && !timeIsUp) {
         
         // if pages remained in the previous query, use them first
-        if (properties.pageToken) {
+        if ( properties.pageToken ) {
             currFolder = properties.destFolder;
         } else {
             currFolder = properties.remaining.shift();
@@ -93,7 +94,7 @@ function copy() {
     } else {
         // delete existing triggers and add Progress: Complete
         deleteTrigger(properties.triggerId);
-        Drive.Files.delete(properties.propertiesDocId);
+        Drive.Files.update({"labels": {"trashed": true}},properties.propertiesDocId);
         ss.getRange(2, 3, 1, 1).setValue("Complete").setBackground("#66b22c");
         ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss a"));
     }
@@ -111,8 +112,8 @@ function copy() {
      * @param {array} items the list of files over which to iterate
      */
     function processFiles(items) {
-        while ( files.items.length > 0 && !timeIsUp ) {
-            item = files.items.pop();
+        while ( items.length > 0 && !timeIsUp ) {
+            item = items.pop();
             Logger.log("items.length remaining = " + items.length);
             currTime = (new Date()).getTime();
             timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
@@ -309,21 +310,11 @@ function copy() {
             deleteTrigger(properties.triggerId);    
         }
         
-        // save, create trigger
-        properties.currChildren = files.items ? files : properties.currChildren;
-        try {
-            properties.destFolder = properties.currChildren.items[0].parents[0].id;
-        } catch(err) {
-            Logger.log("error: properties.destFolder = properties.currChildren.items[0].parents[0].id; " + err);
-        }
+        // save, create trigger, and assign pageToken for continuation
+        properties.currChildren = files && files.items ? files : properties.currChildren;
+        properties.pageToken = properties.currChildren.nextPageToken;
         
-        try {
-            properties.destFolder = properties.currChildren.items[0].parents[0].id;
-        } catch(err) {
-            Logger.log("error: properties.pageToken = properties.currChildren.nextPageToken; " + err);    
-        }
-        
-        
+        // todo: set callback to createTrigger when testing is complete
         saveProperties(properties, createTrigger);
         return;
     }

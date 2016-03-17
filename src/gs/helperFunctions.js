@@ -11,7 +11,7 @@ function saveProperties(propertiesToSave, callback) {
     //var userProperties = PropertiesService.getUserProperties();
     var existingProperties = {};
     
-    if (propertiesDoc !== "") {
+    if (propertiesDoc.getText() !== "") {
         try {
             existingProperties = JSON.parse(propertiesDoc.getText());
         } catch(err) {
