@@ -1,7 +1,8 @@
 // Requires
 var $ = jQuery = require('jquery');
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js');
-require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/modal.js');
+require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js');
+require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/popover.js');
 require('../../node_modules/jquery-ui/effect-blind.js');
 var picker = require('./picker');
 
@@ -114,14 +115,8 @@ $(function() {
     }
 
 
- 
-
-    // Display modal when question mark is selected
-    $("#permissions").click(function() {
-        if ($(this).is(":checked")) {
-            $('#dialog-message').modal('show');
-        }
-    });
+    
+    $('[data-toggle="popover"]').popover();
 
 
 

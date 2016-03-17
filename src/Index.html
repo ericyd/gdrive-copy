@@ -75,7 +75,9 @@
         
         <!--Copy permissions?-->
         <div class="form-group" id="permissions-group">
-          <label class="col-sm-3 control-label checkbox-title" for="permissions">Copy sharing permissions <i id="explain-permissions" class="fa fa-question-circle" data-toggle="modal" data-target="#dialog-message"></i></label>
+          <label class="col-sm-3 control-label checkbox-title" for="permissions">Copy sharing permissions 
+            <i id="explain-permissions" class="fa fa-question-circle" data-toggle="popover" data-content="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals.  Owners of originals will become editors of the copies." data-trigger="focus"></i>
+          </label>
           <div class="col-sm-9">
              <!--<input type="checkbox" id="permissions" name="permissions" />-->
              <div class="radio-inline">
@@ -121,42 +123,6 @@
 
       </form>
 
-    </div>
-    
-    
-    
-      
-    <!-- Modal (explain copy permissions) -->
-    <div class="modal fade" id="dialog-message" tabindex="-1" role="dialog" aria-labelledby="Copy Sharing Permissions">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          
-          <!--Modal title-->
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="dialog-title">Copy Sharing Permissions</h4>
-          </div>
-          
-          <!--Modal text-->
-          <div class="modal-body">
-            <p>
-              Selecting this box will create the new folder/sub-folders/documents with the same sharing permissions (e.g. "Edit", "View") as the original documents.  
-            </p>
-    
-            Notes:
-            <ul>
-              <li>Anyone that was an owner of the original document/folder will simply be given "Edit" rights.  If you need to transfer ownership of the folder, please see my <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">Transfer Ownership</a> tool.</li>
-              <li>It will take slightly longer to copy the folder with this option enabled</li>
-            </ul>
-          </div>
-          
-          <!--Modal buttons-->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-          </div>
-          
-        </div>
-      </div>
     </div>
       
      
