@@ -6,12 +6,11 @@
  */
 function copy() {
     // CONSTANTS
-    var MAX_RUNNING_TIME = .57 * 60 * 1000;   // 5.7 minutes in milliseconds
+    var MAX_RUNNING_TIME = 5.5 * 60 * 1000;   // 5.7 minutes in milliseconds
     var START_TIME = (new Date()).getTime();
     
     
     var timeIsUp,       // {boolean} true if max execution time is reached while executing script
-        permissions,    // {boolean} true if sharing permissions should be copied from source to destination
         currTime,       // {number} integer representing current time in milliseconds
         copyObject,     // {object} all the files and folders to copy
         srcId,          // {string} identification for top level source folder
@@ -124,6 +123,10 @@ function copy() {
                 newfile = insertFolder(item);    
             } else {
                 newfile = copyFile(item);
+            }
+            
+            if (properties.permissions) {
+                copyPermissions(item, newfile);
             }
             
             Logger.log("writing status to spreadsheet for newfile");
@@ -257,40 +260,60 @@ function copy() {
      * copy permissions from source to destination file/folder
      * 
      * @param {string} srcId identification string for the source folder
-     * @param {string} destId identification string for the destination folder
-     * @param {string} filetype options: "file" or "folder", so know how to retrieve editors and viewers
-         Maybe unnecessary since folders are treated as files in Advanced Drive API?     
+     * @param {string} destId identification string for the destination folder   
      */
-    function copyPermissions(srcId, destId, filetype) {
-        var editors = 0;// get editors
-        var viewers = 0;// get editors
-        var owners = 0; // add owners to editors
+    function copyPermissions(src, dest) {
+        var permissions = src.permissions;
+        var owners = src.permissions;
+        var i;
         
-        // these need adjustment based on my variable declarations
-        if (editors.length > 0) {
-            for (var i = 0; i < editorsemails.length; i++) {
-                Drive.Permissions.insert(
-                    {
-                        'role': 'writer',
-                        'type': 'user',
-                        'value': editorsemails[i]
-                    },
-                    destId,
-                    {
-                        'sendNotificationEmails': 'false'
-                    });
+        // copy editors, viewers, and commenters from src file to dest file
+        if (permissions.length > 0){
+            for (i = 0; i < permissions.length; i++) {
+                
+                // if there is no email address, it is only sharable by link.
+                // These permissions will not include an email address, but they will include an ID
+                // insert requests must include either value or id, thus the need to differentiate between permission types
+                if (permissions[i].emailAddress) {
+                    Drive.Permissions.insert(
+                        {
+                            "role": permissions[i].role,
+                            "type": permissions[i].type,
+                            "value": permissions[i].emailAddress,
+                            "additionalRoles": permissions[i].additionalRoles ? [permissions[i].additionalRoles[0]] : []
+                        },
+                        dest.id,
+                        {
+                            'sendNotificationEmails': 'false'
+                        });
+                } else {
+                    Drive.Permissions.insert(
+                        {
+                            "role": permissions[i].role,
+                            "type": permissions[i].type,
+                            "id": permissions[i].id,
+                            "withLink": permissions[i].withLink,
+                            "additionalRoles": permissions[i].additionalRoles ? [permissions[i].additionalRoles[0]] : []
+                        },
+                        dest.id,
+                        {
+                            'sendNotificationEmails': 'false'
+                        });
+                }
             }
         }
-    
-        if (viewers.length > 0) {
-            for (var i = 0; i < viewersemails.length; i++) {
+        
+        
+        // convert old owners to editors
+        if (owners.length > 0){
+            for (i = 0; i < owners.length; i++) {
                 Drive.Permissions.insert(
                     {
-                        'role': 'reader',
-                        'type': 'user',
-                        'value': viewersemails[i]
+                        "role": "user",
+                        "type": "writer",
+                        "value": owners[i].emailAddress,
                     },
-                    destId, 
+                    dest.id,
                     {
                         'sendNotificationEmails': 'false'
                     });
@@ -314,7 +337,6 @@ function copy() {
         properties.currChildren = files && files.items ? files : properties.currChildren;
         properties.pageToken = properties.currChildren.nextPageToken;
         
-        // todo: set callback to createTrigger when testing is complete
         saveProperties(properties, createTrigger);
         return;
     }

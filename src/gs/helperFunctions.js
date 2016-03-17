@@ -116,7 +116,7 @@ function loadProperties() {
 function createTrigger() {
     var trigger =  ScriptApp.newTrigger('copy')
         .timeBased()
-        .after(121*1000)	
+        .after(61*1000)	
         .create();
         
     Logger.log("trigger created, copy resuming in 61 seconds");
