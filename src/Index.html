@@ -1,5 +1,8 @@
 <!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
+<?!= HtmlService.createHtmlOutputFromFile('bootstrap').getContent(); ?>
 <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+
+
 
 <html>
   <head>
@@ -47,8 +50,8 @@
       
         <!--Select Folder-->
         <div class="form-group">
-          <label for="folderId" class="col-sm-3 control-label">Folder to copy</label>
-          <div class="col-sm-9">
+          <label for="folderId" class="col-sm-4 control-label">Folder to copy</label>
+          <div class="col-sm-8">
             <!--Elements to select folder-->
             <div class="form-inline" id="folderSelect">
                 <button type="button" id="selectFolderButton" class="btn btn-primary" autocomplete="off">Select Folder</button> or 
@@ -67,18 +70,20 @@
         
         <!--Insert folder name-->
         <div class="form-group">
-          <label for="newFolder" class="col-sm-3 control-label">New folder name</label>
-          <div class="col-sm-9">
+          <label for="newFolder" class="col-sm-4 control-label">New folder name</label>
+          <div class="col-sm-8">
             <input type="textbox" id="newFolder" name="newFolder" class="form-control" placeholder="New folder name">
           </div>
         </div>
         
         <!--Copy permissions?-->
         <div class="form-group" id="permissions-group">
-          <label class="col-sm-3 control-label checkbox-title" for="permissions">Copy sharing permissions 
-            <i id="explain-permissions" class="fa fa-question-circle" data-toggle="popover" data-content="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals.  Owners of originals will become editors of the copies." data-trigger="focus"></i>
+          <label class="col-sm-4 control-label checkbox-title" for="permissions">Copy sharing permissions<br />
+            <a role="button" href="#" id="explain-permissions" class="btn" data-toggle="tooltip" title="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals.  Owners of originals will become editors of the copies." data-trigger="focus" data-placement="top" data-container="body">
+                <i class="fa fa-question-circle"></i>
+            </a>
           </label>
-          <div class="col-sm-9">
+          <div class="col-sm-8">
              <!--<input type="checkbox" id="permissions" name="permissions" />-->
              <div class="radio-inline">
               <label>
@@ -97,8 +102,8 @@
         
         <!--Copy to-->
         <div class="form-group" id="destination-group">
-          <label class="col-sm-3 control-label">Copy folder to</label>
-          <div class="col-sm-9">
+          <label class="col-sm-4 control-label">Copy folder to</label>
+          <div class="col-sm-8">
             <div class="radio">
               <label>
                 <input type="radio" name="copyLocationOptions" id="sameDir" value="same" checked>
@@ -116,7 +121,7 @@
         
         <!--Submit-->
         <div class="form-group">
-          <div class="col-sm-offset-3 col-sm-9">
+          <div class="col-sm-offset-4 col-sm-8">
             <button type="submit" id="copyFolderButton" data-loading-text="Copying..." class="btn btn-primary" autocomplete="off">Copy folder</button>
           </div>
         </div>

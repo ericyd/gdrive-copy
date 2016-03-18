@@ -116,7 +116,7 @@ $(function() {
 
 
     
-    $('[data-toggle="popover"]').popover();
+    $("#explain-permissions").tooltip();
 
 
 
