@@ -1,5 +1,4 @@
 @import "custom-variables";
-@import "../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap";
 
 /* 
 Sticky footer
@@ -50,9 +49,19 @@ html, body {
   
 }
 
-#explain-permissions:hover {
-    color: $brand-primary;
+#explain-permissions {
+    background:#fff;
+    color:#000;
+    
+    &:hover{
+        color: $brand-primary;    
+    }
+    
+    &:focus {
+        outline:0;
+    }
 }
+
 
 #description {
   font-family:$font-family-sans-serif; 
