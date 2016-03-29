@@ -8,9 +8,9 @@ To launch app: click "Visit Website" button at top of window in the [Chrome Web 
 
 ## Usage 
 
-1. Select your folder with the Google Picker
+1. Select your folder with the Google Picker, or paste a folder URL with Ctrl-C
 2. Choose a name for the new folder
-3. Click "Copy Folder" and wait for the script to complete!
+3. Click "Copy Folder".  When the copy begins, you will be alerted that you can close the window.
 
 In addition, the app user will become the owner of the new folder and all sub-folders and contents.  This makes it especially handy for making a new copy of shared information when someone leaves an organization.
 
@@ -20,8 +20,8 @@ This app does not expose your files in any way.  The copying takes place exclusi
 
 ## Notes 
 
-* This app does not currently work in browsers other than Chrome or Chromium.
-* This app requires several permissions.  The permissions to access your Documents and Spreadsheets, as well as know your identity and email address, are all related to the Copy Permissions option.  If you do not select this option, this app will not read your identity and it will only interact with your Drive by copying files, not by identifying sharing permissions.  You can view the source code on the Github page, listed below.
+* This app performs best in Google Chrome or Chromium.
+* This app requires several permissions to run.  The app needs to run offline so that you can close the window while the copying completes.  You can view the source code on the Github page, listed below, to review the app and launch your own copy of the app if security is a concern.
 * If you'd like to copy sharing permissions from the original folder, select "Yes" for Copy Sharing Permissions
 * By default the folder will copy to the same location as the original folder.  You can copy it to the root directory by selecting "Root directory" under "Copy folder to"
 
