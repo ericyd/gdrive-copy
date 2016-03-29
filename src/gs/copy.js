@@ -36,14 +36,14 @@ function copy() {
     
     
     // get current children, or if none exist, query next folder from properties.remaining
-    if ( properties.currChildren.items && properties.currChildren.items.length > 0) {
-        Logger.log("beginning processFiles on currChildren");
-        properties.destFolder = properties.currChildren.items[0].parents[0].id;
-        processFiles(properties.currChildren.items) 
+    if ( properties.leftovers.items && properties.leftovers.items.length > 0) {
+        Logger.log("beginning processFiles on leftovers");
+        properties.destFolder = properties.leftovers.items[0].parents[0].id;
+        processFiles(properties.leftovers.items) 
         
     } 
     
-    // when currChildren is complete, move on to other queries from properties.remaining
+    // when leftovers is complete, move on to other queries from properties.remaining
     Logger.log("beginning processFiles on next remaining folder");    
     while ( properties.remaining.length > 0 && !timeIsUp) {
         
@@ -334,8 +334,8 @@ function copy() {
         }
         
         // save, create trigger, and assign pageToken for continuation
-        properties.currChildren = files && files.items ? files : properties.currChildren;
-        properties.pageToken = properties.currChildren.nextPageToken;
+        properties.leftovers = files && files.items ? files : properties.leftovers;
+        properties.pageToken = properties.leftovers.nextPageToken;
         
         saveProperties(properties, createTrigger);
         return;

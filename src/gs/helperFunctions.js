@@ -81,8 +81,8 @@ function loadProperties() {
     }
     
     try {
-        properties.currChildren = JSON.parse(properties.currChildren);
-        Logger.log("JSON.parse properties.currChildren");
+        properties.leftovers = JSON.parse(properties.leftovers);
+        Logger.log("JSON.parse properties.leftovers");
     } catch(err) {
         Logger.log(err.message);
     }
