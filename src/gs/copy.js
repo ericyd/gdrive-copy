@@ -23,8 +23,7 @@ function copy() {
         currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
         errorFiles,     // {Array} array of src files that had error
-        timeZone,       // {string} time zone of user
-        timeIsUp = false; // {boolean}
+        timeZone;       // {string} time zone of user
         
         
     
@@ -39,7 +38,7 @@ function copy() {
     if ( properties.leftovers.items && properties.leftovers.items.length > 0) {
         Logger.log("beginning processFiles on leftovers");
         properties.destFolder = properties.leftovers.items[0].parents[0].id;
-        processFiles(properties.leftovers.items) 
+        processFiles(properties.leftovers.items) ;
         
     } 
     

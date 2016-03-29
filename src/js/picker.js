@@ -71,7 +71,7 @@ function createPicker(token) {
 // Allows method binding from external scripts, e.g. init.js
 exports.showPicker = function() {
     return pickerBuilder.setVisible(true);
-}
+};
 
 
 
