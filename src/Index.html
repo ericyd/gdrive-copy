@@ -53,10 +53,15 @@
           <label for="folderId" class="col-sm-4 control-label">Folder to copy</label>
           <div class="col-sm-8">
             <!--Elements to select folder-->
-            <div class="form-inline" id="folderSelect">
-                <button type="button" id="selectFolderButton" class="btn btn-primary" autocomplete="off">Select Folder</button> or 
-                <input type="text" id="folderTextbox" class="form-control" placeholder="Paste folder URL (ctrl-V)">
-            </div>
+            <div class="row" id="folderSelect">
+                <div class="col-md-4 col-xs-12">
+                    <button type="button" id="selectFolderButton" class="btn btn-primary btn-block" autocomplete="off">Select Folder</button>
+                </div>
+                <span class="col-md-1 col-xs-12 center">or</span> 
+                <div class="col-md-7 col-xs-12">
+                    <input type="text" id="folderTextbox" class="form-control" placeholder="Paste folder URL (Ctrl-V)">
+                </div>
+            </div> 
             
             <div id="getFolderErrors"></div>
             
@@ -78,11 +83,14 @@
         
         <!--Copy permissions?-->
         <div class="form-group" id="permissions-group">
-          <label class="col-sm-4 control-label checkbox-title" for="permissions">Copy sharing permissions<br />
+          <label class="col-sm-4 control-label checkbox-title" for="permissions">
+            <!--Question mark button-->
             <a role="button" href="#" id="explain-permissions" class="btn" data-toggle="tooltip" title="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals.  Owners of originals will become editors of the copies." data-trigger="focus" data-placement="top" data-container="body">
                 <i class="fa fa-question-circle"></i>
             </a>
+            Copy sharing permissions
           </label>
+          
           <div class="col-sm-8">
              <!--<input type="checkbox" id="permissions" name="permissions" />-->
              <div class="radio-inline">
