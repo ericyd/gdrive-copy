@@ -267,7 +267,7 @@ function copy() {
         var i;
         
         // copy editors, viewers, and commenters from src file to dest file
-        if (permissions.length > 0){
+        if (permissions && permissions.length > 0){
             for (i = 0; i < permissions.length; i++) {
                 
                 // if there is no email address, it is only sharable by link.
@@ -304,7 +304,7 @@ function copy() {
         
         
         // convert old owners to editors
-        if (owners.length > 0){
+        if (owners && owners.length > 0){
             for (i = 0; i < owners.length; i++) {
                 Drive.Permissions.insert(
                     {
