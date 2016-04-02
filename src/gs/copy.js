@@ -74,11 +74,14 @@ function copy() {
     
     
     if ( timeIsUp ) {
-        ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in 2 minutes");
+        ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in about 1 minute");
         saveState();     
     } else {
         // delete existing triggers and add Progress: Complete
-        deleteTrigger(properties.triggerId);
+        if ( properties.triggerId !== undefined ) {
+            // delete prior trigger
+            deleteTrigger(properties.triggerId);    
+        }
         Drive.Files.update({"labels": {"trashed": true}},properties.propertiesDocId);
         ss.getRange(2, 3, 1, 1).setValue("Complete").setBackground("#66b22c");
         ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss a"));
@@ -99,7 +102,6 @@ function copy() {
     function processFiles(items) {
         while ( items.length > 0 && !timeIsUp ) {
             item = items.pop();
-            Logger.log("items.length remaining = " + items.length);
             currTime = (new Date()).getTime();
             timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
             
@@ -111,11 +113,10 @@ function copy() {
                 newfile = copyFile(item);
             }
             
-            if (properties.permissions && item.permissions) {
+            if (properties.permissions && item.permissions && newfile.id) {
                 copyPermissions(item, newfile);
             }
             
-            Logger.log("writing status to spreadsheet for newfile");
             // report success or failure on spreadsheet log
             if (newfile.id) {
                 // sheet.getRange(row, column, numRows, numColumns) 
