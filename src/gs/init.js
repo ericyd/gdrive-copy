@@ -116,7 +116,6 @@ function initialize(selectedFolder) {
 
     selectedFolder.map = map;
     selectedFolder.remaining = [selectedFolder.srcId];
-    selectedFolder.errorFiles = [];
     selectedFolder.leftovers = {};
     
     

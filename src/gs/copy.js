@@ -72,11 +72,6 @@ function copy() {
     }
     
     
-    // if ( properties.errorFiles.length > 0 && !timeIsUp) {
-    //     processFiles(properties.errorFiles);
-    // }
-    
-    
     
     if ( timeIsUp ) {
         ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in 2 minutes");
@@ -183,7 +178,6 @@ function copy() {
         }
         
         catch(err) {
-            // properties.errorFiles.push(file);
             Logger.log(err.message);
             return err;
         }
@@ -217,7 +211,6 @@ function copy() {
         }
         
         catch(err) {
-            // properties.errorFiles.push(file);
             Logger.log(err.message);
             return err;   
         }        
