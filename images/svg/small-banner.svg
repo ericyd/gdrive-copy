@@ -15,8 +15,8 @@
    height="280"
    id="svg3114"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="large-banner.svg"
+   inkscape:version="0.91 r"
+   sodipodi:docname="small-banner.svg"
    inkscape:export-filename="/home/eric/gitrepos/gdrive-copy/images/svg/large-banner.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -26,7 +26,7 @@
        id="linearGradient6642"
        osb:paint="gradient">
       <stop
-         style="stop-color:#ffc13c;stop-opacity:1;"
+         style="stop-color:#ff8d3c;stop-opacity:1"
          offset="0"
          id="stop6644" />
       <stop
@@ -188,7 +188,7 @@
        fx="543.37659"
        fy="401.40628"
        r="1214.8052"
-       gradientTransform="matrix(0.41480899,-1.1460193e-4,0,0.35448979,-2.5165722,399.56218)"
+       gradientTransform="matrix(0.30670949,-0.00174541,0.00141206,0.25470174,55.655354,440.50387)"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
@@ -198,14 +198,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="89.318336"
-     inkscape:cy="-70.12378"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="217.99419"
+     inkscape:cy="211.81763"
      inkscape:document-units="px"
-     inkscape:current-layer="layer7"
+     inkscape:current-layer="layer8"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="969"
+     inkscape:window-width="1366"
+     inkscape:window-height="716"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -217,7 +217,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -241,8 +241,7 @@
      id="layer8"
      inkscape:label="bg"
      style="display:inline"
-     transform="translate(0,-400)"
-     sodipodi:insensitive="true">
+     transform="translate(0,-400)">
     <rect
        style="fill:url(#radialGradient6663);fill-opacity:1;stroke:none"
        id="rect6640"

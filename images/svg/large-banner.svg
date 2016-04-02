@@ -15,7 +15,7 @@
    height="680"
    id="svg3114"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r"
    sodipodi:docname="large-banner.svg"
    inkscape:export-filename="/home/eric/gitrepos/gdrive-copy/images/svg/large-banner.png"
    inkscape:export-xdpi="90"
@@ -26,7 +26,7 @@
        id="linearGradient6642"
        osb:paint="gradient">
       <stop
-         style="stop-color:#ffc13c;stop-opacity:1;"
+         style="stop-color:#ff8d3c;stop-opacity:1"
          offset="0"
          id="stop6644" />
       <stop
@@ -164,13 +164,13 @@
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient6642"
-       id="radialGradient6663"
-       cx="543.37659"
-       cy="401.40628"
-       fx="543.37659"
-       fy="401.40628"
-       r="1214.8052"
-       gradientTransform="matrix(0.85028717,-2.6615205e-4,0,0.82326873,-1.9633458,9.6971156)"
+       id="radialGradient5317"
+       cx="460.06281"
+       cy="340.01779"
+       fx="460.06281"
+       fy="340.01779"
+       r="460.09082"
+       gradientTransform="matrix(1.6321657,0.02233319,-0.01756439,1.2836503,-284.86373,-106.72082)"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
@@ -181,13 +181,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.24748737"
-     inkscape:cx="-24.908298"
-     inkscape:cy="-297.31219"
+     inkscape:cx="-19.968269"
+     inkscape:cy="25.936629"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer8"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="969"
+     inkscape:window-width="1366"
+     inkscape:window-height="716"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -199,7 +199,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -221,10 +221,9 @@
      inkscape:groupmode="layer"
      id="layer8"
      inkscape:label="bg"
-     style="display:inline"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <rect
-       style="fill:url(#radialGradient6663);fill-opacity:1;stroke:none"
+       style="fill:url(#radialGradient5317);fill-opacity:1;stroke:none;fill-rule:nonzero"
        id="rect6640"
        width="920.18164"
        height="680.15576"
@@ -289,7 +288,8 @@
   <g
      inkscape:groupmode="layer"
      id="layer4"
-     inkscape:label="transfer-arrows">
+     inkscape:label="transfer-arrows"
+     sodipodi:insensitive="true">
     <g
        id="g6815"
        transform="matrix(0.94326248,0,0,1,33.088669,14.285714)">
@@ -298,13 +298,13 @@
          inkscape:connector-curvature="0"
          id="path4049-2-4"
          d="m 312.30477,325.57322 c 40.44582,0 52.08312,71.82618 88.12362,71.82618 36.04051,0 75.98647,-77.36219 120.11084,-77.36219 44.12447,0 54.8976,75.34664 97.62395,75.34664"
-         style="fill:none;stroke:#000000;stroke-width:11.8236208;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:11.82362045, 23.6472409;stroke-dashoffset:0;marker-mid:none;marker-end:none" />
+         style="fill:none;stroke:#000000;stroke-width:11.8236208;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:11.82362045, 23.6472409;stroke-dashoffset:0;stroke-opacity:1;marker-mid:none;marker-end:none" />
       <path
          sodipodi:nodetypes="czzc"
          inkscape:connector-curvature="0"
          id="path4049-2-4-7"
          d="m 312.15194,390.15066 c 40.42436,0 52.05549,-73.85052 88.07686,-73.85052 36.02139,0 75.94614,79.54256 120.04711,79.54256 44.10106,0 54.86847,-77.47022 97.57215,-77.47022"
-         style="fill:none;stroke:#000000;stroke-width:11.98590088;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-mid:none;marker-end:none" />
+         style="fill:none;stroke:#000000;stroke-width:11.98590088;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-mid:none;marker-end:none" />
     </g>
   </g>
   <g
