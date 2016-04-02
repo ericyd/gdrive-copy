@@ -6,15 +6,12 @@
  */
 function copy() {
     // CONSTANTS
-    var MAX_RUNNING_TIME = 5.5 * 60 * 1000;   // 5.7 minutes in milliseconds
+    var MAX_RUNNING_TIME = 5.3 * 60 * 1000;   // 5.3 minutes in milliseconds
     var START_TIME = (new Date()).getTime();
     
     
     var timeIsUp,       // {boolean} true if max execution time is reached while executing script
         currTime,       // {number} integer representing current time in milliseconds
-        copyObject,     // {object} all the files and folders to copy
-        srcId,          // {string} identification for top level source folder
-        destId,         // {string} identification for top level destination folder
         ss,             // {object} instance of Sheet class
         properties,     // {object} properties of current run
         query,          // {string} query to generate Files list
@@ -22,7 +19,6 @@ function copy() {
         item,           // {object} metadata of child item from current iteration
         currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
-        errorFiles,     // {Array} array of src files that had error
         timeZone;       // {string} time zone of user
         
         
@@ -62,13 +58,9 @@ function copy() {
             
             // loop through and process
             if (files.items && files.items.length > 0) {
-                
                 processFiles(files.items);
-                
             } else {
-                
                 Logger.log('No children found.');
-                // todo: get next folder from properties.remaining
             }
             
             // get next page token to continue iteration
@@ -124,7 +116,7 @@ function copy() {
                 newfile = copyFile(item);
             }
             
-            if (properties.permissions) {
+            if (properties.permissions && item.permissions) {
                 copyPermissions(item, newfile);
             }
             
@@ -258,8 +250,8 @@ function copy() {
     /**
      * copy permissions from source to destination file/folder
      * 
-     * @param {string} srcId identification string for the source folder
-     * @param {string} destId identification string for the destination folder   
+     * @param {string} src metadata for the source folder
+     * @param {string} dest metadata for the destination folder   
      */
     function copyPermissions(src, dest) {
         var permissions = src.permissions;
