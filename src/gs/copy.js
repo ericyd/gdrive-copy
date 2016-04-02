@@ -264,8 +264,7 @@ function copy() {
                         {
                             "role": permissions[i].role,
                             "type": permissions[i].type,
-                            "value": permissions[i].emailAddress,
-                            "additionalRoles": permissions[i].additionalRoles ? [permissions[i].additionalRoles[0]] : []
+                            "value": permissions[i].emailAddress
                         },
                         dest.id,
                         {
@@ -277,8 +276,7 @@ function copy() {
                             "role": permissions[i].role,
                             "type": permissions[i].type,
                             "id": permissions[i].id,
-                            "withLink": permissions[i].withLink,
-                            "additionalRoles": permissions[i].additionalRoles ? [permissions[i].additionalRoles[0]] : []
+                            "withLink": permissions[i].withLink
                         },
                         dest.id,
                         {
