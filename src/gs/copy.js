@@ -23,24 +23,27 @@ function copy() {
         
         
     
-    
+    // Load properties and initialize logger spreadsheet
     properties = loadProperties();
     Logger.log("properties loaded");    
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
     
     
-    // get current children, or if none exist, query next folder from properties.remaining
+    
+    // get current children, or skip if none exist
     if ( properties.leftovers.items && properties.leftovers.items.length > 0) {
         Logger.log("beginning processFiles on leftovers");
         properties.destFolder = properties.leftovers.items[0].parents[0].id;
-        processFiles(properties.leftovers.items) ;
-        
+        processFiles(properties.leftovers.items) ;    
     } 
     
-    // when leftovers is complete, move on to other queries from properties.remaining
+    
+    
+    // When leftovers are complete, query next folder from properties.remaining
     Logger.log("beginning processFiles on next remaining folder");    
     while ( properties.remaining.length > 0 && !timeIsUp) {
+        
         
         // if pages remained in the previous query, use them first
         if ( properties.pageToken ) {
@@ -49,14 +52,19 @@ function copy() {
             currFolder = properties.remaining.shift();
         }
         
+        
+        // build query
         query = '"' + currFolder + '" in parents and trashed = false';
         
+        
+        // Get fileList using query. 
+        // Repeat if pageToken exists (i.e. more than 1000 results return from the query)
         do {
             
-            // get files
+            // Get fileList
             files = getFiles(query, properties.pageToken);
             
-            // loop through and process
+            // Send items to processFiles() to copy
             if (files.items && files.items.length > 0) {
                 processFiles(files.items);
             } else {
@@ -68,16 +76,19 @@ function copy() {
             
         } while (properties.pageToken && !timeIsUp);
         
-    
     }
     
     
     
+    // If timeIsUp, maximum execution time has been reached
+    // Update logger spreadsheet, and save current items to properties.leftovers
     if ( timeIsUp ) {
         ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in 1-2 minutes");
         saveState();     
     } else {
-        // delete existing triggers and add Progress: Complete
+        // If script reaches here and !timeIsUp, then the copy is complete!  
+        // Delete prior trigger, move propertiesDoc to trash, and update logger spreadsheet,
+         
         if ( properties.triggerId !== undefined ) {
             // delete prior trigger
             deleteTrigger(properties.triggerId);    
@@ -106,6 +117,7 @@ function copy() {
             timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
             
             
+            
             // copy folder or file
             if ( item.mimeType == "application/vnd.google-apps.folder") {
                 newfile = insertFolder(item);    
@@ -113,13 +125,18 @@ function copy() {
                 newfile = copyFile(item);
             }
             
+            
+            
+            // Copy permissions if selected, and if permissions exist to copy 
             if (properties.permissions && item.permissions && newfile.id) {
                 copyPermissions(item, newfile);
             }
             
+            
+            
             // report success or failure on spreadsheet log
             if (newfile.id) {
-                // sheet.getRange(row, column, numRows, numColumns) 
+                // syntax: sheet.getRange(row, column, numRows, numColumns) 
                 ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
                     "Copied",
                     newfile.title,
@@ -171,7 +188,7 @@ function copy() {
                 "mimeType": "application/vnd.google-apps.folder"
             });
             
-            
+            // Update list of remaining folders and map source to destination
             properties.remaining.push(file.id);
             properties.map[file.id] = r.id;
             

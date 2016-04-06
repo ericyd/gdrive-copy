@@ -35,10 +35,11 @@ function doGet(e) {
 function initialize(selectedFolder) {
     var destFolder,     // {Object} instance of Folder class representing destination folder
         spreadsheet,    // {Object} instance of Spreadsheet class
-        map = {},       // {Object} map of source ids (keys) to destination ids (values)
         propertiesDoc,  // {Object} metadata for Google Document created to hold properties
+        userProperties, // {Object} instance of UserProperties object
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
         
+    
     
     // create destination folder
     try {
@@ -83,7 +84,6 @@ function initialize(selectedFolder) {
     
     // create document for storing properties as plain text
     // this will be deleted upon script completion
-    // create destination folder
     try {
         propertiesDoc = Drive.Files.insert({
             "description": "This document will be deleted after the folder copy is complete.  It is only used to store properties necessary to complete the copying procedure",
@@ -102,7 +102,11 @@ function initialize(selectedFolder) {
     }
     
     
+    
+    // add link to destination folder to logger spreadsheet
     SpreadsheetApp.openById(spreadsheet.id).getSheetByName("Log").getRange(2,5).setValue('=HYPERLINK("https://drive.google.com/open?id=' + destFolder.id + '","'+ selectedFolder.destName + '")');
+    
+    
     
     // Get IDs of destination folder and logger spreadsheet 
     selectedFolder.destId = destFolder.id;
@@ -111,18 +115,16 @@ function initialize(selectedFolder) {
     
     
     
-    // initialize mapToDest with top level source and destination folder
-    map[selectedFolder.srcId] = selectedFolder.destId;
-
-    selectedFolder.map = map;
-    selectedFolder.remaining = [selectedFolder.srcId];
-    selectedFolder.leftovers = {};
-    
+    // initialize map with top level source and destination folder
+    selectedFolder.leftovers = {}; // {Object} FileList object (returned from Files.list) for items not processed in prior execution (filled in saveState)
+    selectedFolder.map = {};       // {Object} map of source ids (keys) to destination ids (values)
+    selectedFolder.map[selectedFolder.srcId] = selectedFolder.destId;;
+    selectedFolder.remaining = [selectedFolder.srcId]; 
     
     
     
     // save srcId, destId, copyPermissions, spreadsheetId to userProperties
-    var userProperties = PropertiesService.getUserProperties();
+    userProperties = PropertiesService.getUserProperties();
     userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
     userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
     saveProperties(selectedFolder, null);

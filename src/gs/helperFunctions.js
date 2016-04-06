@@ -4,13 +4,16 @@
  * On completetion, save propertiesToSave to userProperties
  * 
  * @param {object} propertiesToSave contains all properties that need to be saved to userProperties
+ * @param {function} callback callback function to run after properties are saved
  */
 function saveProperties(propertiesToSave, callback) {
     var userProperties = PropertiesService.getUserProperties().getProperties();
     var propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
-    //var userProperties = PropertiesService.getUserProperties();
     var existingProperties = {};
     
+    
+    // extract text from propertiesDoc
+    // This will be overwritten later
     if (propertiesDoc.getText() !== "") {
         try {
             existingProperties = JSON.parse(propertiesDoc.getText());
@@ -19,6 +22,8 @@ function saveProperties(propertiesToSave, callback) {
         }
     }
     
+    
+    // Stringify all JSON objects so they can propertly save to plain text
     for (var key in propertiesToSave) {
         
         // skip loop if the property is from prototype
@@ -34,11 +39,14 @@ function saveProperties(propertiesToSave, callback) {
         } 
         
         
-        // update existingProperties
+        // update existingProperties with new properties values
         existingProperties[key] = propertiesToSave[key];
         
     }
     
+    
+    
+    // save the object existingProperties back to propertiesDoc
     try {
         propertiesDoc.setText(JSON.stringify(existingProperties));
     } catch(err) {
@@ -46,7 +54,6 @@ function saveProperties(propertiesToSave, callback) {
     }
     
     
-    //userProperties.setProperties(propertiesToSave);
     
     if (callback) {
         callback();    
@@ -56,6 +63,9 @@ function saveProperties(propertiesToSave, callback) {
     
     return;
 }
+
+
+
 
 
 
@@ -69,10 +79,14 @@ function saveProperties(propertiesToSave, callback) {
 function loadProperties() {
     var userProperties, properties, propertiesDoc;
     
+    
+    // Get properties from propertiesDoc.  FileID for propertiesDoc is saved in userProperties
     userProperties = PropertiesService.getUserProperties().getProperties(); // {object} properties for current user
     propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
     properties = JSON.parse(propertiesDoc.getText());
     
+    
+    // Parse the JSON objects stored in the propertiesDoc text
     try {
         properties.map = JSON.parse(properties.map);
         Logger.log("JSON.parse properties.map");
@@ -101,19 +115,25 @@ function loadProperties() {
 
 
 
+
+
 /**
- * Create a trigger to run copy() in 61 seconds.
+ * Create a trigger to run copy() in 121 seconds.
  * Save trigger ID to userProperties so it can be deleted later
  * 
  */
 function createTrigger() {
+    
+    // Create trigger
     var trigger =  ScriptApp.newTrigger('copy')
         .timeBased()
         .after(121*1000)	
         .create();
         
     Logger.log("trigger created, copy resuming in 121 seconds");
-        
+    
+    
+    // Save the triggerID so this trigger can be deleted later    
     saveProperties({
         "triggerId": trigger.getUniqueId()
     }, null);
