@@ -109,10 +109,10 @@ function loadProperties() {
 function createTrigger() {
     var trigger =  ScriptApp.newTrigger('copy')
         .timeBased()
-        .after(61*1000)	
+        .after(121*1000)	
         .create();
         
-    Logger.log("trigger created, copy resuming in 61 seconds");
+    Logger.log("trigger created, copy resuming in 121 seconds");
         
     saveProperties({
         "triggerId": trigger.getUniqueId()
@@ -163,3 +163,25 @@ function getOAuthToken() {
 function getMetadata(id) {
     return Drive.Files.get(id);
 }
+
+
+
+
+/**
+ * Gets files from query and returns fileList with metadata
+ * 
+ * @param {string} query the query to select files from the Drive
+ * @param {string} pageToken the pageToken (if any) for the existing query
+ * @return {object} fileList object where fileList.items is an array of children files
+ */
+function getFiles(query, pageToken) {
+    var fileList;
+    
+    fileList = Drive.Files.list({
+                    q: query,
+                    maxResults: 1000,
+                    pageToken: pageToken
+                });
+        
+    return fileList;    
+} 

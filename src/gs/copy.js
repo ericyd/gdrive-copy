@@ -54,7 +54,7 @@ function copy() {
         do {
             
             // get files
-            files = getFiles(query);
+            files = getFiles(query, properties.pageToken);
             
             // loop through and process
             if (files.items && files.items.length > 0) {
@@ -74,7 +74,7 @@ function copy() {
     
     
     if ( timeIsUp ) {
-        ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in about 1 minute");
+        ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in 1-2 minutes");
         saveState();     
     } else {
         // delete existing triggers and add Progress: Complete
@@ -218,26 +218,6 @@ function copy() {
     }
 
 
-    /**
-     * Gets files from query and returns fileList with metadata
-     * 
-     * @param {string} query the query to select files from the Drive
-     * @return {object} fileList object where fileList.items is an array of children files
-     */
-    function getFiles(query) {
-        var fileList;
-        
-        fileList = Drive.Files.list({
-                       q: query,
-                       maxResults: 1000,
-                       pageToken: properties.pageToken
-                   });
-            
-        return fileList;    
-    } 
-
-
-
 
 
 
@@ -258,7 +238,8 @@ function copy() {
                 
                 // if there is no email address, it is only sharable by link.
                 // These permissions will not include an email address, but they will include an ID
-                // insert requests must include either value or id, thus the need to differentiate between permission types
+                // Permissions.insert requests must include either value or id, 
+                // thus the need to differentiate between permission types
                 if (permissions[i].emailAddress) {
                     Drive.Permissions.insert(
                         {
@@ -323,15 +304,6 @@ function copy() {
         saveProperties(properties, createTrigger);
         return;
     }
-
-
-
-
-
-
-
-
-
 
 
 }
