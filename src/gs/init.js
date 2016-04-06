@@ -118,7 +118,7 @@ function initialize(selectedFolder) {
     // initialize map with top level source and destination folder
     selectedFolder.leftovers = {}; // {Object} FileList object (returned from Files.list) for items not processed in prior execution (filled in saveState)
     selectedFolder.map = {};       // {Object} map of source ids (keys) to destination ids (values)
-    selectedFolder.map[selectedFolder.srcId] = selectedFolder.destId;;
+    selectedFolder.map[selectedFolder.srcId] = selectedFolder.destId;
     selectedFolder.remaining = [selectedFolder.srcId]; 
     
     
