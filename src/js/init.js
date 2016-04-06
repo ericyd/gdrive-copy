@@ -1,6 +1,5 @@
 // Requires
-var $, jQuery;
-$ = jQuery = require('jquery');
+var $ = jQuery = require('jquery');
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js');
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js');
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/popover.js');
@@ -86,7 +85,6 @@ $(function() {
         $("#please-review").show("blind");
         
         
-        // Not sure if this will continue running on window close
         
         google.script.run.copy();
         

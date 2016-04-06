@@ -7,8 +7,7 @@ for providing the working backbone of this script
 
 
 // requires
-var $, jQuery;
-$ = jQuery = require('jquery');
+var $ = jQuery = require('jquery');
 
 
 /* Load api script.  On success, run onApiLoad()
