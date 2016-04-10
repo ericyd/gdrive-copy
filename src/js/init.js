@@ -1,8 +1,6 @@
 // Requires
 var $ = jQuery = require('jquery');
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js');
-require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js');
-require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/popover.js');
 require('../../node_modules/jquery-ui/effect-blind.js');
 var picker = require('./picker');
 
@@ -112,9 +110,6 @@ $(function() {
         return;
     }
 
-
-    
-    $("#explain-permissions").tooltip();
 
 
 
