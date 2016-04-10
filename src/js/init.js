@@ -45,7 +45,6 @@ $(function() {
             
             // Get values from form and selected folder to initialize copy        
             picker.folder.destName = $("#newFolder").val();
-            picker.folder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
             picker.folder.destLocation = $("#destination-group input:checked").val();
             
             google.script.run
@@ -135,12 +134,21 @@ $(function() {
 });
 
 
+
+
+/* Handling for folderTextbox: 
+   When folder URL is pasted into textbox, it will automatically get the information for the folder.
+*/
 var folderTextbox = document.getElementById("folderTextbox");
 
-// when pasting folder URL, get file data after paste has been executed by mouse or keyboard
+
+// Add event listeners
 folderTextbox.addEventListener('mouseup', getFileData, false);
 folderTextbox.addEventListener('keyup', getFileData, false);
 folderTextbox.addEventListener('paste', getFileData, false);
+
+
+
 
 /**
  * If folder URL is added, get folder metadata and display relevant information.
@@ -170,6 +178,9 @@ function getFileData(e) {
     return false;
     
 }
+
+
+
 
 /**
  * Parses folder URL string and returns folder ID string
