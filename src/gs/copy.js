@@ -127,10 +127,11 @@ function copy() {
             
             
             
-            // Copy permissions if selected, and if permissions exist to copy 
-            if (properties.permissions && item.permissions && newfile.id) {
-                copyPermissions(item, newfile);
-            }
+            // Copy permissions if selected, and if permissions exist to copy
+            // if (properties.permissions && item.permissions && newfile.id) { 
+            // if (properties.permissions && item.permissions) {
+            //     copyPermissions(item.permissions, item.owners, newfile.id);
+            // }
             
             
             
@@ -244,9 +245,9 @@ function copy() {
      * @param {string} src metadata for the source folder
      * @param {string} dest metadata for the destination folder   
      */
-    function copyPermissions(src, dest) {
-        var permissions = src.permissions;
-        var owners = src.permissions;
+    function copyPermissions(permissions, owners, destId) {
+        // var permissions = src.permissions;
+        // var owners = src.owners;
         var i;
         
         // copy editors, viewers, and commenters from src file to dest file
@@ -264,7 +265,7 @@ function copy() {
                             "type": permissions[i].type,
                             "value": permissions[i].emailAddress
                         },
-                        dest.id,
+                        destId,
                         {
                             'sendNotificationEmails': 'false'
                         });
@@ -276,7 +277,7 @@ function copy() {
                             "id": permissions[i].id,
                             "withLink": permissions[i].withLink
                         },
-                        dest.id,
+                        destId,
                         {
                             'sendNotificationEmails': 'false'
                         });
@@ -294,7 +295,7 @@ function copy() {
                         "type": "writer",
                         "value": owners[i].emailAddress,
                     },
-                    dest.id,
+                    destId,
                     {
                         'sendNotificationEmails': 'false'
                     });
