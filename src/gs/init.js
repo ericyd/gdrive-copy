@@ -1,16 +1,11 @@
 /**
  * Serves HTML of the application for HTTP GET requests.
- * If folderId is provided as a URL parameter, the web app will list
- * the contents of that folder (if permissions allow). Otherwise
- * the web app will list the contents of the root folder.
  *
  * @param {Object} e event parameter that can contain information
  *     about any URL parameters provided.
  */
 function doGet(e) {
   var template = HtmlService.createTemplateFromFile('Index');
- 
-  template.thisForm = e.parameter.thisForm;
   
   // Build and return HTML in IFRAME sandbox mode.
   return template.evaluate()
@@ -30,7 +25,7 @@ function doGet(e) {
  * Save properties to userProperties.
  * Return IDs of created destination folder and logger spreadsheet
  * 
- * @param {object} selectedFolder contains srcId, srcParentId, destName, permissions, srcName
+ * @param {object} selectedFolder contains srcId, srcParentId, destName, srcName
  */
 function initialize(selectedFolder) {
     var destFolder,     // {Object} instance of Folder class representing destination folder
@@ -123,7 +118,7 @@ function initialize(selectedFolder) {
     
     
     
-    // save srcId, destId, copyPermissions, spreadsheetId to userProperties
+    // save srcId, destId, spreadsheetId to userProperties
     userProperties = PropertiesService.getUserProperties();
     userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
     userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
