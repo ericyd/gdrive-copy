@@ -77,6 +77,33 @@
           </div>
         </div>
         
+        <!--Copy permissions?-->
+        <div class="form-group" id="permissions-group">
+          <label class="col-sm-4 control-label checkbox-title" for="permissions">
+            <!--Question mark button-->
+            <a role="button" href="#" id="explain-permissions" class="btn" data-toggle="tooltip" title="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals.  Owners of originals will become editors of the copies." data-trigger="focus" data-placement="top" data-container="body">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            Copy sharing permissions
+          </label>
+          
+          <div class="col-sm-8">
+             <!--<input type="checkbox" id="permissions" name="permissions" />-->
+             <div class="radio-inline">
+              <label>
+                <input type="radio" name="permissions" value="no" checked>
+                No
+              </label>
+            </div>
+            <div class="radio-inline">
+              <label>
+                <input type="radio" name="permissions" value="yes">
+                Yes
+              </label>
+            </div>
+          </div>
+        </div>
+        
         <!--Copy to-->
         <div class="form-group" id="destination-group">
           <label class="col-sm-4 control-label">Copy folder to</label>
@@ -112,13 +139,10 @@
     
     <!--These divs display when complete-->
     <div id="complete" class='alert alert-success' role='alert'>
-        <b>Copying has started in background</b>
-        <ul class="fa-ul">
-            <li><i class="fa-li fa fa-cog"></i>Copying folder "<span class="folderName"></span>". The new copy can be found <span id="dest-folder-link"></span>.</li>
-            <li><i class="fa-li fa fa-cog"></i>You may close this window and the copying will continue in the background.</li>
-            <li><i class="fa-li fa fa-cog"></i>Please check the <span id="copy-log-link"></span> for progress updates. This log is located inside the newly created folder.</li>
-            <li><i class="fa-li fa fa-cog"></i>Please refresh this page to begin copying another folder</li>
-        </ul> 
+        Now copying folder "<span class="folderName"></span>".<br />
+        You may close this window and the copying will continue in the background.<br />
+        To check the progress of the copying, please check the <span id="copy-log-link"></span>. This log is located inside the newly created folder<br />
+        The copy of <span class="folderName"></span> can be found <span id="dest-folder-link"></span>. 
     </div>
     
     <div id="please-review" class="panel panel-default">

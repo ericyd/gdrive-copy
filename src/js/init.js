@@ -1,6 +1,8 @@
 // Requires
 var $ = jQuery = require('jquery');
 require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js');
+require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js');
+require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/popover.js');
 require('../../node_modules/jquery-ui/effect-blind.js');
 var picker = require('./picker');
 
@@ -43,6 +45,7 @@ $(function() {
             
             // Get values from form and selected folder to initialize copy        
             picker.folder.destName = $("#newFolder").val();
+            picker.folder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
             picker.folder.destLocation = $("#destination-group input:checked").val();
             
             google.script.run
@@ -110,6 +113,9 @@ $(function() {
         return;
     }
 
+
+    
+    $("#explain-permissions").tooltip();
 
 
 
