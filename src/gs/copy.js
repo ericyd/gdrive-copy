@@ -129,9 +129,9 @@ function copy() {
             
             // Copy permissions if selected, and if permissions exist to copy
             // if (properties.permissions && item.permissions && newfile.id) { 
-            // if (properties.permissions && item.permissions) {
-            //     copyPermissions(item.permissions, item.owners, newfile.id);
-            // }
+            if (properties.permissions && item.permissions) {
+                copyPermissions(item.permissions, item.owners, newfile.id);
+            }
             
             
             
