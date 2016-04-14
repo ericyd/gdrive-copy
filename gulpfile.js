@@ -1,3 +1,5 @@
+"use strict";
+
 var gulp = require('gulp');
 var htmlmin = require('gulp-htmlmin');
 var concat = require('gulp-concat');
@@ -11,6 +13,8 @@ var changed = require('gulp-changed');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var globby = require('globby');  
+var svg2png = require("svg2png");
+var fs = require('fs');
 
 gulp.task('default', function(){
     // Default task
@@ -104,6 +108,49 @@ gulp.task('html', function() {
         .pipe(gulp.dest('dist'));
 });
 
+
+
+gulp.task('img', function() {
+    let img_path = "./dist/icons/";
+    fs.stat(img_path, (err, stat) => {
+        if (err) fs.mkdir(img_path);    
+    });
+    
+     
+    fs.readFile("./images/svg/small-banner.svg", (err, data) => {
+        if (err) throw err;
+        svg2png(data, { width: 440, height: 280 })
+            .then(buffer => fs.writeFile(img_path + "small-banner.png", buffer, (err) => {
+                if (err) throw err;
+            }))
+            .catch(e => console.error(e));
+    });
+    
+    fs.readFile("./images/svg/large-banner.svg", (err, data) => {
+        if (err) throw err;
+        svg2png(data, { width: 920, height: 680 })
+            .then(buffer => fs.writeFile(img_path + "large-banner.png", buffer, (err) => {
+                if (err) throw err;
+            }))
+            .catch(e => console.error(e));
+    });
+    
+    let sizes = ['256','128','96','64','48','32','16'];
+    
+    for (let i = 0; i < sizes.length; i++) {
+        fs.readFile("./images/svg/cp-icon.svg", (err, data) => {
+            if (err) throw err;
+            svg2png(data, { width: sizes[i], height: sizes[i] })
+                .then(buffer => fs.writeFile(img_path + "cp-icon-" + sizes[i] + ".png", buffer, (err) => {
+                    if (err) throw (err);
+                }))
+                .catch(e => console.error(e));
+        });
+    }
+    
+       
+    
+})
 
 
 
