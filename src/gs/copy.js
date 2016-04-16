@@ -128,9 +128,20 @@ function copy() {
             
             
             // Copy permissions if selected, and if permissions exist to copy
-            // if (properties.permissions && item.permissions && newfile.id) { 
-            if (properties.permissions && item.permissions) {
-                copyPermissions(item.permissions, item.owners, newfile.id);
+            // if (properties.permissions && item.permissions && newfile.id) {
+
+            if (properties.permissions) {
+                if (item.mimeType == "application/vnd.google-apps.document" ||
+                    item.mimeType == "application/vnd.google-apps.folder" ||
+                    item.mimeType == "application/vnd.google-apps.spreadsheet" ||
+                    item.mimeType == "application/vnd.google-apps.presentation" ||
+                    item.mimeType == "application/vnd.google-apps.drawing" ||
+                    item.mimeType == "application/vnd.google-apps.form" ||
+                    item.mimeType == "application/vnd.google-apps.script" ) {
+                       Logger.log("item type = " + item.mimeType);
+                       Logger.log("copying permissions");
+                       copyPermissions(item.id, item.owners, newfile.id);
+                }   
             }
             
             
@@ -245,9 +256,13 @@ function copy() {
      * @param {string} src metadata for the source folder
      * @param {string} dest metadata for the destination folder   
      */
-    function copyPermissions(permissions, owners, destId) {
-        // var permissions = src.permissions;
-        // var owners = src.owners;
+    function copyPermissions(srcId, owners, destId) {
+        Logger.log("src id: " + srcId + " & dest id: " + destId);
+        var srcPermissions = getPermissions(srcId);
+        var permissions = srcPermissions.items;
+        // Logger.log("permissions: " + permissions);
+        // var owners = srcData.owners;
+        // Logger.log("owners: " + owners);
         var i;
         
         // copy editors, viewers, and commenters from src file to dest file
@@ -259,6 +274,8 @@ function copy() {
                 // Permissions.insert requests must include either value or id, 
                 // thus the need to differentiate between permission types
                 if (permissions[i].emailAddress) {
+                    if (permissions[i].role == "owner") continue;
+                    
                     Drive.Permissions.insert(
                         {
                             "role": permissions[i].role,
@@ -291,8 +308,8 @@ function copy() {
             for (i = 0; i < owners.length; i++) {
                 Drive.Permissions.insert(
                     {
-                        "role": "user",
-                        "type": "writer",
+                        "role": "writer",
+                        "type": "user",
                         "value": owners[i].emailAddress,
                     },
                     destId,
