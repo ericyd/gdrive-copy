@@ -56,9 +56,8 @@ function getFiles(query, pageToken) {
 /**
  *
  * @param {object} ss instance of Sheet class representing the logger spreadsheet
- * @param {Arra} values array of values to be written to the spreadsheet
+ * @param {Array} values array of values to be written to the spreadsheet
  */
-
 function log(ss, values) {
-    
+    return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
 }

@@ -1,9 +1,9 @@
 /**
  * copy permissions from source to destination file/folder
  *
- * @param {string} src metadata for the source folder
+ * @param {string} srcId metadata for the source folder
  * @param {string} owners list of owners of src file
- * @param {string} dest metadata for the destination folder
+ * @param {string} destId metadata for the destination folder
  */
 function copyPermissions(srcId, owners, destId) {
     Logger.log("src id: " + srcId + " & dest id: " + destId);
@@ -59,7 +59,7 @@ function copyPermissions(srcId, owners, destId) {
                 {
                     "role": "writer",
                     "type": "user",
-                    "value": owners[i].emailAddress,
+                    "value": owners[i].emailAddress
                 },
                 destId,
                 {
@@ -67,4 +67,6 @@ function copyPermissions(srcId, owners, destId) {
                 });
         }
     }
+
+//    TODO: loop through dest permissions and delete any permissions that don't exist in src permissions
 }

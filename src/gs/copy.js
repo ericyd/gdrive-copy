@@ -83,7 +83,8 @@ function copy() {
     // If timeIsUp, maximum execution time has been reached
     // Update logger spreadsheet, and save current items to properties.leftovers
     if ( timeIsUp ) {
-        ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in 1-2 minutes");
+        log(ss, ["Paused due to Google quota limits - copy will resume in 1-2 minutes"]);
+        // ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in 1-2 minutes");
         saveState();     
     } else {
         // If script reaches here and !timeIsUp, then the copy is complete!  
@@ -98,9 +99,7 @@ function copy() {
         ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss a"));
     }
             
-    
-    
-    return;
+
     
     
     
@@ -108,7 +107,7 @@ function copy() {
      * Loops through array of files.items
      * and sends to the appropriate copy function (insertFolder or copyFile)
      * 
-     * @param {array} items the list of files over which to iterate
+     * @param {Array} items the list of files over which to iterate
      */
     function processFiles(items) {
         while ( items.length > 0 && !timeIsUp ) {
@@ -149,28 +148,43 @@ function copy() {
             // report success or failure on spreadsheet log
             if (newfile.id) {
                 // syntax: sheet.getRange(row, column, numRows, numColumns) 
-                ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
+                /*ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
                     "Copied",
                     newfile.title,
                     '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
                     newfile.id, 
                     Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                ]]);    
+                ]]);*/
+
+                log(ss, [
+                    "Copied",
+                    newfile.title,
+                    '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
+                    newfile.id,
+                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
+                ]);
                 
             } else {
                 // newfile is error
-                ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
+                /*ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
                     "Error, " + newfile,
                     item.title,
                     '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
                     item.id,
                     Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                ]]);
+                ]]);*/
+
+                log(ss, [
+                    "Error, " + newfile,
+                    item.title,
+                    '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
+                    item.id,
+                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
+                ]);
             }
             
             
         }
-        return;
     }
     
    
@@ -225,7 +239,7 @@ function copy() {
      */
     function copyFile(file) {
         try {
-            var r = Drive.Files.copy(
+            return Drive.Files.copy(
                 {
                 "title": file.title,
                 "parents": [
@@ -237,7 +251,6 @@ function copy() {
                 },
                 file.id
             );
-            return r;
         }
         
         catch(err) {
@@ -262,8 +275,5 @@ function copy() {
         properties.pageToken = properties.leftovers.nextPageToken;
         
         saveProperties(properties, createTrigger);
-        return;
     }
-
-
 }
