@@ -50,4 +50,15 @@ function getFiles(query, pageToken) {
                 });
         
     return fileList;    
-} 
+}
+
+
+/**
+ *
+ * @param {object} ss instance of Sheet class representing the logger spreadsheet
+ * @param {Arra} values array of values to be written to the spreadsheet
+ */
+
+function log(ss, values) {
+    
+}
