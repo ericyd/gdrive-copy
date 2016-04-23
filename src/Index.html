@@ -46,15 +46,15 @@
       
         <!--Select Folder-->
         <div class="form-group">
-          <label for="folderId" class="col-sm-4 control-label">Folder to copy</label>
-          <div class="col-sm-8">
+          <label for="selectFolderButton" class="col-lg-2 col-md-4 col-sm-4 control-label">Folder to copy</label>
+          <div class="col-lg-10 col-md-8 col-sm-8">
             <!--Elements to select folder-->
             <div class="row" id="folderSelect">
-                <div class="col-md-4 col-xs-12">
+                <div class="col-lg-3 col-md-4 col-xs-12">
                     <button type="button" id="selectFolderButton" class="btn btn-primary btn-block" autocomplete="off">Select Folder</button>
                 </div>
-                <span class="col-md-1 col-xs-12 center">or</span> 
-                <div class="col-md-7 col-xs-12">
+                <span class="col-lg-1 col-md-1 col-xs-12 center">or</span>
+                <div class="col-lg-8 col-md-7 col-xs-12">
                     <input type="text" id="folderTextbox" class="form-control" placeholder="Paste folder URL (Ctrl-V)">
                 </div>
             </div> 
@@ -71,15 +71,15 @@
         
         <!--Insert folder name-->
         <div class="form-group">
-          <label for="newFolder" class="col-sm-4 control-label">New folder name</label>
-          <div class="col-sm-8">
+          <label for="newFolder" class="col-lg-2 col-md-4 col-sm-4 control-label">New folder name</label>
+          <div class="col-lg-10 col-md-8 col-sm-8">
             <input type="textbox" id="newFolder" name="newFolder" class="form-control" placeholder="New folder name">
           </div>
         </div>
         
         <!--Copy permissions?-->
         <div class="form-group" id="permissions-group">
-          <label class="col-sm-4 control-label checkbox-title" for="permissions">
+          <label class="col-lg-2 col-md-4 col-sm-4 control-label checkbox-title" for="permissions">
             <!--Question mark button-->
             <a role="button" href="#" id="explain-permissions" class="btn" data-toggle="tooltip" title="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals.  Owners of originals will become editors of the copies.  Copying takes much longer if 'Yes' is selected." data-trigger="focus" data-placement="top" data-container="body">
                 <i class="fa fa-question-circle"></i>
@@ -87,7 +87,7 @@
             Copy sharing permissions
           </label>
           
-          <div class="col-sm-8">
+          <div class="col-lg-10 col-md-8 col-sm-8" id="permissions">
              <!--<input type="checkbox" id="permissions" name="permissions" />-->
              <div class="radio-inline">
               <label>
@@ -106,8 +106,8 @@
         
         <!--Copy to-->
         <div class="form-group" id="destination-group">
-          <label class="col-sm-4 control-label">Copy folder to</label>
-          <div class="col-sm-8">
+          <label class="col-lg-2 col-md-4 col-sm-4 control-label">Copy folder to</label>
+          <div class="col-lg-10 col-md-8 col-sm-8">
             <div class="radio">
               <label>
                 <input type="radio" name="copyLocationOptions" id="sameDir" value="same" checked>
@@ -125,7 +125,7 @@
         
         <!--Submit-->
         <div class="form-group">
-          <div class="col-sm-offset-4 col-sm-8">
+          <div class="col-lg-offset-2 col-md-offset-4 col-sm-offset-4 col-lg-10 col-md-8 col-sm-8">
             <button type="submit" id="copyFolderButton" data-loading-text="Copying..." class="btn btn-primary" autocomplete="off">Copy folder</button>
           </div>
         </div>
