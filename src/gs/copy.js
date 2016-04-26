@@ -22,15 +22,18 @@ function copy() {
         timeZone;       // {string} time zone of user
         
         
-    
-    // Load properties and initialize logger spreadsheet
-    properties = loadProperties();
-    Logger.log("properties loaded");    
-    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
-    timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
-    
-    
-    
+    try {
+        // Load properties and initialize logger spreadsheet
+        properties = loadProperties();
+        Logger.log("properties loaded");
+        ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
+        timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
+
+    } catch (err) {
+        log(ss, [err.message, err.fileName, err.lineNumber]);
+    }
+
+
     // get current children, or skip if none exist
     if ( properties.leftovers.items && properties.leftovers.items.length > 0) {
         Logger.log("beginning processFiles on leftovers");
@@ -44,13 +47,17 @@ function copy() {
     Logger.log("beginning processFiles on next remaining folder");    
     while ( properties.remaining.length > 0 && !timeIsUp) {
         
-        
-        // if pages remained in the previous query, use them first
-        if ( properties.pageToken ) {
-            currFolder = properties.destFolder;
-        } else {
-            currFolder = properties.remaining.shift();
+        try {
+            // if pages remained in the previous query, use them first
+            if ( properties.pageToken ) {
+                currFolder = properties.destFolder;
+            } else {
+                currFolder = properties.remaining.shift();
+            }
+        } catch (err) {
+            log(ss, [err.message, err.fileName, err.lineNumber]);
         }
+
         
         
         // build query
@@ -60,10 +67,14 @@ function copy() {
         // Get fileList using query. 
         // Repeat if pageToken exists (i.e. more than 1000 results return from the query)
         do {
-            
-            // Get fileList
-            files = getFiles(query, properties.pageToken);
-            
+
+            try {
+                // Get fileList
+                files = getFiles(query, properties.pageToken);
+            } catch (err) {
+                log(ss, [err.message, err.fileName, err.lineNumber]);
+            }
+
             // Send items to processFiles() to copy
             if (files.items && files.items.length > 0) {
                 processFiles(files.items);
@@ -91,10 +102,19 @@ function copy() {
         // Delete prior trigger, move propertiesDoc to trash, and update logger spreadsheet,
          
         if ( properties.triggerId !== undefined ) {
-            // delete prior trigger
-            deleteTrigger(properties.triggerId);    
+            try {
+                // delete prior trigger
+                deleteTrigger(properties.triggerId);
+            } catch (err) {
+                log(ss, [err.message, err.fileName, err.lineNumber]);
+            }
+
         }
-        Drive.Files.update({"labels": {"trashed": true}},properties.propertiesDocId);
+        try {
+            Drive.Files.update({"labels": {"trashed": true}},properties.propertiesDocId);
+        } catch (err) {
+            log(ss, [err.message, err.fileName, err.lineNumber]);
+        }
         ss.getRange(2, 3, 1, 1).setValue("Complete").setBackground("#66b22c");
         ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss a"));
     }
@@ -111,18 +131,75 @@ function copy() {
      */
     function processFiles(items) {
         while ( items.length > 0 && !timeIsUp ) {
-            item = items.pop();
-            currTime = (new Date()).getTime();
-            timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
-            
-            
-            
-            // copy folder or file
-            if ( item.mimeType == "application/vnd.google-apps.folder") {
-                newfile = insertFolder(item);    
-            } else {
-                newfile = copyFile(item);
+            try {
+                item = items.pop();
+                currTime = (new Date()).getTime();
+                timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
+            } catch (err) {
+                log(ss, [err.message, err.fileName, err.lineNumber]);
             }
+
+            
+            
+            try {
+                // copy folder or file
+                if ( item.mimeType == "application/vnd.google-apps.folder") {
+                    newfile = insertFolder(item);
+                } else {
+                    newfile = copyFile(item);
+                }
+            } catch (err) {
+                log(ss, [err.message, err.fileName, err.lineNumber]);
+            }
+
+            
+            
+            
+            
+            
+            
+            try {
+                // report success or failure on spreadsheet log
+                if (newfile.id) {
+                    // syntax: sheet.getRange(row, column, numRows, numColumns)
+                    /*ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
+                     "Copied",
+                     newfile.title,
+                     '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
+                     newfile.id,
+                     Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
+                     ]]);*/
+
+                    log(ss, [
+                        "Copied",
+                        newfile.title,
+                        '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
+                        newfile.id,
+                        Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
+                    ]);
+
+                } else {
+                    // newfile is error
+                    /*ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
+                     "Error, " + newfile,
+                     item.title,
+                     '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
+                     item.id,
+                     Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
+                     ]]);*/
+
+                    log(ss, [
+                        "Error, " + newfile,
+                        item.title,
+                        '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
+                        item.id,
+                        Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
+                    ]);
+                }
+            } catch (err) {
+                log(ss, [err.message, err.fileName, err.lineNumber]);
+            }
+            
             
             
             
@@ -139,49 +216,10 @@ function copy() {
                     item.mimeType == "application/vnd.google-apps.script" ) {
                        Logger.log("item type = " + item.mimeType);
                        Logger.log("copying permissions");
-                       copyPermissions(item.id, item.owners, newfile.id);
+                       copyPermissions(item.id, item.owners, newfile.id, ss);
                 }   
             }
-            
-            
-            
-            // report success or failure on spreadsheet log
-            if (newfile.id) {
-                // syntax: sheet.getRange(row, column, numRows, numColumns) 
-                /*ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
-                    "Copied",
-                    newfile.title,
-                    '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
-                    newfile.id, 
-                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                ]]);*/
 
-                log(ss, [
-                    "Copied",
-                    newfile.title,
-                    '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
-                    newfile.id,
-                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                ]);
-                
-            } else {
-                // newfile is error
-                /*ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
-                    "Error, " + newfile,
-                    item.title,
-                    '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
-                    item.id,
-                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                ]]);*/
-
-                log(ss, [
-                    "Error, " + newfile,
-                    item.title,
-                    '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
-                    item.id,
-                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                ]);
-            }
             
             
         }
@@ -222,7 +260,7 @@ function copy() {
         }
         
         catch(err) {
-            Logger.log(err.message);
+            log(ss, [err.message, err.fileName, err.lineNumber]);
             return err;
         }
     }
@@ -254,7 +292,7 @@ function copy() {
         }
         
         catch(err) {
-            Logger.log(err.message);
+            log(ss, [err.message, err.fileName, err.lineNumber]);
             return err;   
         }        
     }
@@ -265,15 +303,24 @@ function copy() {
      * Delete existing triggers, save properties, and create new trigger
      */
     function saveState() {
-        if ( properties.triggerId !== undefined ) {
-            // delete prior trigger
-            deleteTrigger(properties.triggerId);    
+        try {
+            if ( properties.triggerId !== undefined ) {
+                // delete prior trigger
+                deleteTrigger(properties.triggerId);
+            }
+
+            // save, create trigger, and assign pageToken for continuation
+            properties.leftovers = files && files.items ? files : properties.leftovers;
+            properties.pageToken = properties.leftovers.nextPageToken;
+        } catch (err) {
+            log(ss, [err.message, err.fileName, err.lineNumber]);
         }
-        
-        // save, create trigger, and assign pageToken for continuation
-        properties.leftovers = files && files.items ? files : properties.leftovers;
-        properties.pageToken = properties.leftovers.nextPageToken;
-        
-        saveProperties(properties, createTrigger);
+
+        try {
+            saveProperties(properties);
+            createTrigger();
+        } catch (err) {
+            log(ss, [err.message, err.fileName, err.lineNumber]);
+        }
     }
 }

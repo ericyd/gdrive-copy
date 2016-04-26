@@ -59,5 +59,11 @@ function getFiles(query, pageToken) {
  * @param {Array} values array of values to be written to the spreadsheet
  */
 function log(ss, values) {
-    return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
+    if (ss) {
+        return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
+    } else {
+        var userProperties = PropertiesService.getUserProperties().getProperties();
+        return SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log")
+            .getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
+    }
 }

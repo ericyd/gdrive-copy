@@ -103,6 +103,10 @@ function initialize(selectedFolder) {
     
     
     
+    // Copy permissions of top-level folder
+    copyPermissions(selectedFolder.srcId, null, destFolder.id);
+    
+    
     // add link to destination folder to logger spreadsheet
     SpreadsheetApp.openById(spreadsheet.id).getSheetByName("Log").getRange(2,5).setValue('=HYPERLINK("https://drive.google.com/open?id=' + destFolder.id + '","'+ selectedFolder.destName + '")');
     
@@ -127,7 +131,7 @@ function initialize(selectedFolder) {
     userProperties = PropertiesService.getUserProperties();
     userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
     userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
-    saveProperties(selectedFolder, null);
+    saveProperties(selectedFolder);
     
     
     return {

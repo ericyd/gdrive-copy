@@ -6,10 +6,17 @@
  * @param {object} propertiesToSave contains all properties that need to be saved to userProperties
  * @param {function} callback callback function to run after properties are saved
  */
-function saveProperties(propertiesToSave, callback) {
-    var userProperties = PropertiesService.getUserProperties().getProperties();
-    var propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
-    var existingProperties = {};
+function saveProperties(propertiesToSave) {
+    var userProperties,propertiesDoc,existingProperties,ss;
+    try {
+        userProperties = PropertiesService.getUserProperties().getProperties();
+        propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
+        existingProperties = {};
+        ss = SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log");
+    } catch (err) {
+        log(ss, [err.message, err.fileName, err.lineNumber]);
+    }
+
 
 
     // extract text from propertiesDoc
@@ -19,6 +26,7 @@ function saveProperties(propertiesToSave, callback) {
             existingProperties = JSON.parse(propertiesDoc.getText());
         } catch(err) {
             Logger.log("propsCell error: " + err);
+            log(ss, [err.message, err.fileName, err.lineNumber]);
         }
     }
 
@@ -35,13 +43,16 @@ function saveProperties(propertiesToSave, callback) {
                 propertiesToSave[key] = JSON.stringify(propertiesToSave[key]);
             } catch(err) {
                 Logger.log("propertiesToSave error: key = " + key + ", " + err);
+                log(ss, [err.message, err.fileName, err.lineNumber]);
             }
         }
 
-
-        // update existingProperties with new properties values
-        existingProperties[key] = propertiesToSave[key];
-
+        try {
+            // update existingProperties with new properties values
+            existingProperties[key] = propertiesToSave[key];
+        } catch (err) {
+            log(ss, [err.message, err.fileName, err.lineNumber]);
+        }
     }
 
 
@@ -51,13 +62,9 @@ function saveProperties(propertiesToSave, callback) {
         propertiesDoc.setText(JSON.stringify(existingProperties));
     } catch(err) {
         Logger.log("setValue error: " + err);
+        log(ss, [err.message, err.fileName, err.lineNumber]);
     }
 
-
-
-    if (callback) {
-        callback();
-    }
 
     Logger.log("properties saved");
 
