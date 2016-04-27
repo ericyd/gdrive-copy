@@ -141,34 +141,13 @@ function copy() {
 
             
             
-            try {
-                // copy folder or file
-                if ( item.mimeType == "application/vnd.google-apps.folder") {
-                    newfile = insertFolder(item);
-                } else {
-                    newfile = copyFile(item);
-                }
-            } catch (err) {
-                log(ss, [err.message, err.fileName, err.lineNumber]);
-            }
-
-            
-            
-            
-            
-            
+            newfile = copyFile(item);
+           
             
             try {
                 // report success or failure on spreadsheet log
                 if (newfile.id) {
                     // syntax: sheet.getRange(row, column, numRows, numColumns)
-                    /*ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
-                     "Copied",
-                     newfile.title,
-                     '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
-                     newfile.id,
-                     Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                     ]]);*/
 
                     log(ss, [
                         "Copied",
@@ -180,13 +159,6 @@ function copy() {
 
                 } else {
                     // newfile is error
-                    /*ss.getRange(ss.getLastRow()+1, 1, 1, 5).setValues([[
-                     "Error, " + newfile,
-                     item.title,
-                     '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
-                     item.id,
-                     Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                     ]]);*/
 
                     log(ss, [
                         "Error, " + newfile,
@@ -214,8 +186,8 @@ function copy() {
                     item.mimeType == "application/vnd.google-apps.drawing" ||
                     item.mimeType == "application/vnd.google-apps.form" ||
                     item.mimeType == "application/vnd.google-apps.script" ) {
-                       Logger.log("item type = " + item.mimeType);
-                       Logger.log("copying permissions");
+                    //    Logger.log("item type = " + item.mimeType);
+                    //    Logger.log("copying permissions");
                        copyPermissions(item.id, item.owners, newfile.id, ss);
                 }   
             }
@@ -226,45 +198,6 @@ function copy() {
     }
     
    
-    /**
-     * Try to insert folder with information from src file.
-     * Success: 
-     *   1. Add key/value to properties.map with src/dest folder ID pair
-     *   2. Add dest folder ID to properties.remaining array
-     *   3. Add note to Logger spreadsheet with destination folder ID
-     * Failure:
-     *   1. Log failure in spreadsheet with src ID
-     * 
-     * @pararm {Object} file File Resource with metadata from source folder
-     */
-    function insertFolder(file) {
-        
-        try {
-            var r = Drive.Files.insert({
-                "description": file.description,
-                "title": file.title,
-                "parents": [
-                    {
-                        "kind": "drive#fileLink",
-                        "id": properties.map[file.parents[0].id]
-                    }
-                ],
-                "mimeType": "application/vnd.google-apps.folder"
-            });
-            
-            // Update list of remaining folders and map source to destination
-            properties.remaining.push(file.id);
-            properties.map[file.id] = r.id;
-            
-            return r;
-        }
-        
-        catch(err) {
-            log(ss, [err.message, err.fileName, err.lineNumber]);
-            return err;
-        }
-    }
-    
     
     /**
      * Try to copy file to destination parent.
@@ -276,25 +209,56 @@ function copy() {
      * @param {Object} file File Resource with metadata from source file
      */
     function copyFile(file) {
-        try {
-            return Drive.Files.copy(
-                {
-                "title": file.title,
-                "parents": [
+        // if folder, use insert, else use copy
+        if ( item.mimeType == "application/vnd.google-apps.folder") {
+            
+            try {
+                var r = Drive.Files.insert({
+                    "description": file.description,
+                    "title": file.title,
+                    "parents": [
+                        {
+                            "kind": "drive#fileLink",
+                            "id": properties.map[file.parents[0].id]
+                        }
+                    ],
+                    "mimeType": "application/vnd.google-apps.folder"
+                });
+                
+                // Update list of remaining folders and map source to destination
+                properties.remaining.push(file.id);
+                properties.map[file.id] = r.id;
+                
+                return r;
+            }
+            
+            catch(err) {
+                log(ss, [err.message, err.fileName, err.lineNumber]);
+                return err;
+            }    
+            
+        } else {
+            try {
+                return Drive.Files.copy(
                     {
-                        "kind": "drive#fileLink",
-                        "id": properties.map[file.parents[0].id]
-                    }
-                ]
-                },
-                file.id
-            );
+                    "title": file.title,
+                    "parents": [
+                        {
+                            "kind": "drive#fileLink",
+                            "id": properties.map[file.parents[0].id]
+                        }
+                    ]
+                    },
+                    file.id
+                );
+            }
+            
+            catch(err) {
+                log(ss, [err.message, err.fileName, err.lineNumber]);
+                return err;   
+            }        
         }
-        
-        catch(err) {
-            log(ss, [err.message, err.fileName, err.lineNumber]);
-            return err;   
-        }        
+    
     }
 
 
