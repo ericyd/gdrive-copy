@@ -61,9 +61,8 @@ function getFiles(query, pageToken) {
 function log(ss, values) {
     if (ss) {
         return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
-    } else {
-        var userProperties = PropertiesService.getUserProperties().getProperties();
-        return SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log")
-            .getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
+    } else {    
+        ss = SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperties().spreadsheetId).getSheetByName("Log");
+        return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
     }
 }
