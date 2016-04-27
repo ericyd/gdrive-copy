@@ -53,7 +53,8 @@ function copyPermissions(srcId, owners, destId, ss) {
                         });
                 }
             } catch (err) {
-                log(ss, [err.message, err.fileName, err.lineNumber]);
+                // log(ss, [err.message, err.fileName, err.lineNumber]);
+                continue;
             }
 
         }
@@ -75,7 +76,8 @@ function copyPermissions(srcId, owners, destId, ss) {
                         'sendNotificationEmails': 'false'
                     });
             } catch (err) {
-                log(ss, [err.message, err.fileName, err.lineNumber]);
+                // log(ss, [err.message, err.fileName, err.lineNumber]);
+                continue;
             }
 
         }

@@ -24,7 +24,7 @@ function loadProperties() {
         properties.map = JSON.parse(properties.map);
         Logger.log("JSON.parse properties.map");
     } catch(err) {
-        Logger.log(err.message);
+        // Logger.log(err.message);
         log(ss, [err.message, err.fileName, err.lineNumber]);
     }
 
@@ -32,7 +32,7 @@ function loadProperties() {
         properties.leftovers = JSON.parse(properties.leftovers);
         Logger.log("JSON.parse properties.leftovers");
     } catch(err) {
-        Logger.log(err.message);
+        // Logger.log(err.message);
         log(ss, [err.message, err.fileName, err.lineNumber]);
     }
 
@@ -40,7 +40,7 @@ function loadProperties() {
         properties.remaining = JSON.parse(properties.remaining);
         Logger.log("JSON.parse properties.remaining");
     } catch(err) {
-        Logger.log(err.message);
+        // Logger.log(err.message);
         log(ss, [err.message, err.fileName, err.lineNumber]);
     }
 

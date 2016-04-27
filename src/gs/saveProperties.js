@@ -42,7 +42,7 @@ function saveProperties(propertiesToSave) {
             try {
                 propertiesToSave[key] = JSON.stringify(propertiesToSave[key]);
             } catch(err) {
-                Logger.log("propertiesToSave error: key = " + key + ", " + err);
+                // Logger.log("propertiesToSave error: key = " + key + ", " + err);
                 log(ss, [err.message, err.fileName, err.lineNumber]);
             }
         }
@@ -61,7 +61,7 @@ function saveProperties(propertiesToSave) {
     try {
         propertiesDoc.setText(JSON.stringify(existingProperties));
     } catch(err) {
-        Logger.log("setValue error: " + err);
+        // Logger.log("setValue error: " + err);
         log(ss, [err.message, err.fileName, err.lineNumber]);
     }
 
