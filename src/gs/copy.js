@@ -24,10 +24,9 @@ function copy() {
      
     try {
         // Load properties and initialize logger spreadsheet
-        properties = exponentialBackoff(loadProperties, 'Properties could not be loaded. Exiting...');
+        properties = exponentialBackoff(loadProperties, 'Error restarting script, will retry in 1-2 minutes');
     } catch (err) {
         log(null, [err.message, err.fileName, err.lineNumber]);
-        log(null, ['Error restarting script, will retry in 1-2 minutes']);
         exponentialBackoff(createTrigger,
             'Error setting trigger.  There has been a server error with Google Apps Script.' +
             'To successfully finish copying, please Copy Folder.');
@@ -138,45 +137,35 @@ function copy() {
      */
     function processFiles(items) {
         while ( items.length > 0 && !timeIsUp ) {
-            try {
-                item = items.pop();
-                currTime = (new Date()).getTime();
-                timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
-            } catch (err) {
-                log(ss, [err.message, err.fileName, err.lineNumber]);
-            }
+            item = items.pop();
+            currTime = (new Date()).getTime();
+            timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
 
-            
             
             newfile = copyFile(item);
-           
-            
-            try {
-                // report success or failure on spreadsheet log
-                if (newfile.id) {
-                    // syntax: sheet.getRange(row, column, numRows, numColumns)
 
-                    log(ss, [
-                        "Copied",
-                        newfile.title,
-                        '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
-                        newfile.id,
-                        Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                    ]);
 
-                } else {
-                    // newfile is error
+            if (newfile.id) {
+                // syntax: sheet.getRange(row, column, numRows, numColumns)
 
-                    log(ss, [
-                        "Error, " + newfile,
-                        item.title,
-                        '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
-                        item.id,
-                        Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
-                    ]);
-                }
-            } catch (err) {
-                log(ss, [err.message, err.fileName, err.lineNumber]);
+                log(ss, [
+                    "Copied",
+                    newfile.title,
+                    '=HYPERLINK("https://drive.google.com/open?id=' + newfile.id + '","'+ newfile.title + '")',
+                    newfile.id,
+                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
+                ]);
+
+            } else {
+                // newfile is error
+
+                log(ss, [
+                    "Error, " + newfile,
+                    item.title,
+                    '=HYPERLINK("https://drive.google.com/open?id=' + item.id + '","'+ item.title + '")',
+                    item.id,
+                    Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")
+                ]);
             }
             
             
@@ -193,8 +182,6 @@ function copy() {
                     item.mimeType == "application/vnd.google-apps.drawing" ||
                     item.mimeType == "application/vnd.google-apps.form" ||
                     item.mimeType == "application/vnd.google-apps.script" ) {
-                    //    Logger.log("item type = " + item.mimeType);
-                    //    Logger.log("copying permissions");
                        copyPermissions(item.id, item.owners, newfile.id, ss);
                 }   
             }
@@ -218,7 +205,6 @@ function copy() {
     function copyFile(file) {
         // if folder, use insert, else use copy
         if ( item.mimeType == "application/vnd.google-apps.folder") {
-            
             try {
                 var r = Drive.Files.insert({
                     "description": file.description,

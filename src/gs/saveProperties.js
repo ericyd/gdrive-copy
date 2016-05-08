@@ -24,7 +24,6 @@ function saveProperties(propertiesToSave) {
         try {
             existingProperties = JSON.parse(propertiesDoc.getText());
         } catch(err) {
-            Logger.log("propsCell error: " + err);
             log(ss, [err.message, err.fileName, err.lineNumber]);
         }
     }
@@ -38,34 +37,15 @@ function saveProperties(propertiesToSave) {
 
         // stringify all the objects and arrays
         if ( typeof propertiesToSave[key] === "object" ) {
-            try {
-                propertiesToSave[key] = JSON.stringify(propertiesToSave[key]);
-            } catch(err) {
-                // Logger.log("propertiesToSave error: key = " + key + ", " + err);
-                log(ss, [err.message, err.fileName, err.lineNumber]);
-            }
+            propertiesToSave[key] = JSON.stringify(propertiesToSave[key]);
         }
 
-        try {
-            // update existingProperties with new properties values
-            existingProperties[key] = propertiesToSave[key];
-        } catch (err) {
-            log(ss, [err.message, err.fileName, err.lineNumber]);
-        }
+        existingProperties[key] = propertiesToSave[key];
+
     }
-
 
 
     // save the object existingProperties back to propertiesDoc
-    try {
-        propertiesDoc.setText(JSON.stringify(existingProperties));
-    } catch(err) {
-        // Logger.log("setValue error: " + err);
-        log(ss, [err.message, err.fileName, err.lineNumber]);
-    }
-
-
-    Logger.log("properties saved");
-
+    propertiesDoc.setText(JSON.stringify(existingProperties));
 
 }

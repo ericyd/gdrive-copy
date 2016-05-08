@@ -6,10 +6,9 @@
  * @param {string} destId metadata for the destination folder
  */
 function copyPermissions(srcId, owners, destId, ss) {
-    var srcPermissions, permissions, i;
+    var srcPermissions, permissions, i, j, destPermissions;
 
     try {
-        Logger.log("src id: " + srcId + " & dest id: " + destId);
         srcPermissions = getPermissions(srcId);
         permissions = srcPermissions.items;
     } catch (err) {
@@ -81,5 +80,23 @@ function copyPermissions(srcId, owners, destId, ss) {
         }
     }
 
-//    TODO: loop through dest permissions and delete any permissions that don't exist in src permissions
+
+
+
+    destPermissions = getPermissions(destId).items;
+
+    if (destPermissions && destPermissions.length > 0) {
+        for (i = 0; i < destPermissions.length; i++) {
+            for (j = 0; j < permissions.length; j++) {
+                if (destPermissions[i].id == permissions[j].id) {
+                    break;
+                }
+                // if destPermissions does not exist in permissions, delete it
+                if (j == permissions.length) {
+                    Drive.Permissions.delete(destId, destPermissions[i].id);
+                }
+            }
+        }
+    }
+
 }

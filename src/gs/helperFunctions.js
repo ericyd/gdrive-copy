@@ -85,6 +85,7 @@ function exponentialBackoff(func, errorMsg) {
         try {
             return func();
         } catch(e) {
+            log(null, [e.message, e.fileName, e.lineNumber]);
             if (n == 5) {
                 log(null, [errorMsg]);
                 throw e;

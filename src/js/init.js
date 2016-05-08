@@ -55,6 +55,7 @@ $(function() {
                     // prompt user to wait or delete existing triggers
                     if (number > 9) {
                         $("#too-many-triggers").show('blind');
+                        $("#status").hide("blind");
                     } else {
                         google.script.run
                             .withSuccessHandler(success)
@@ -135,6 +136,8 @@ $(function() {
     });
     
     $('#delete-existing-triggers').click(function() {
+        $("#status").show("blind");
+        $("#too-many-triggers").hide();
         google.script.run
             .withSuccessHandler(function() {
                 google.script.run

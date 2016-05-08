@@ -6,14 +6,13 @@
  * @return {object} properties JSON object with current user's properties
  */
 function loadProperties() {
-    var userProperties, properties, propertiesDoc, ss;
+    var userProperties, properties, propertiesDoc;
 
     try {
         // Get properties from propertiesDoc.  FileID for propertiesDoc is saved in userProperties
         userProperties = PropertiesService.getUserProperties().getProperties(); // {object} properties for current user
         propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
         properties = JSON.parse(propertiesDoc.getText());
-        ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     } catch (err) {
         throw err;
     }
@@ -25,8 +24,6 @@ function loadProperties() {
     } catch (err) {
         throw err;
     }
-
-
 
 
     return properties;
