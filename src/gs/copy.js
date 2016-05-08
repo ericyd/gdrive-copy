@@ -27,11 +27,26 @@ function copy() {
         properties = exponentialBackoff(loadProperties, 'Properties could not be loaded. Exiting...');
     } catch (err) {
         log(null, [err.message, err.fileName, err.lineNumber]);
+        log(null, ['Error restarting script, will retry in 1-2 minutes']);
+        exponentialBackoff(createTrigger,
+            'Error setting trigger.  There has been a server error with Google Apps Script.' +
+            'To successfully finish copying, please Copy Folder.');
         return;
     }
 
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
+
+
+    // delete prior trigger
+    if ( properties.triggerId !== undefined ) {
+        try {
+            // delete prior trigger
+            deleteTrigger(properties.triggerId);
+        } catch (err) {
+            log(ss, [err.message, err.fileName, err.lineNumber]);
+        }
+    }
 
 
     // get current children, or skip if none exist
@@ -101,15 +116,7 @@ function copy() {
         // If script reaches here and !timeIsUp, then the copy is complete!  
         // Delete prior trigger, move propertiesDoc to trash, and update logger spreadsheet,
          
-        if ( properties.triggerId !== undefined ) {
-            try {
-                // delete prior trigger
-                deleteTrigger(properties.triggerId);
-            } catch (err) {
-                log(ss, [err.message, err.fileName, err.lineNumber]);
-            }
 
-        }
         try {
             Drive.Files.update({"labels": {"trashed": true}},properties.propertiesDocId);
         } catch (err) {
@@ -268,11 +275,6 @@ function copy() {
      */
     function saveState() {
         try {
-            if ( properties.triggerId !== undefined ) {
-                // delete prior trigger
-                deleteTrigger(properties.triggerId);
-            }
-
             // save, create trigger, and assign pageToken for continuation
             properties.leftovers = files && files.items ? files : properties.leftovers;
             properties.pageToken = properties.leftovers.nextPageToken;
