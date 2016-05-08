@@ -4,7 +4,6 @@
  * On completetion, save propertiesToSave to userProperties
  *
  * @param {object} propertiesToSave contains all properties that need to be saved to userProperties
- * @param {function} callback callback function to run after properties are saved
  */
 function saveProperties(propertiesToSave) {
     var userProperties,propertiesDoc,existingProperties,ss;
@@ -14,7 +13,7 @@ function saveProperties(propertiesToSave) {
         existingProperties = {};
         ss = SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log");
     } catch (err) {
-        log(ss, [err.message, err.fileName, err.lineNumber]);
+        log(null, [err.message, err.fileName, err.lineNumber]);
     }
 
 
@@ -68,5 +67,5 @@ function saveProperties(propertiesToSave) {
 
     Logger.log("properties saved");
 
-    return;
+
 }

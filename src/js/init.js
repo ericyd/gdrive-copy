@@ -39,15 +39,15 @@ $(function() {
             $("#errors").html("");
             $("#selectOtherFolder").hide("blind");
             
-            var $btn = $("#copyFolderButton").button('loading');
+            $("#copyFolderButton").button('loading');
             $("#newFolder").prop('disabled', true);
             $("#description").hide("blind");
             $("#status").show("blind");
             
             // Get values from form and selected folder to initialize copy        
             picker.folder.destName = $("#newFolder").val();
-            picker.folder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
-            picker.folder.destLocation = $("#destination-group input:checked").val();
+            picker.folder.permissions = $("#permissions-group").find("input:checked").val() == "yes";
+            picker.folder.destLocation = $("#destination-group").find("input:checked").val();
 
 
             google.script.run
@@ -99,7 +99,7 @@ $(function() {
         
         google.script.run.copy();
         
-        return;
+        
     }
     
     
@@ -121,7 +121,7 @@ $(function() {
         $("#errors").append(errormsg);
         $("#status-title").html("Error");
         
-        return;
+        
     }
 
 

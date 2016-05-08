@@ -15,34 +15,17 @@ function loadProperties() {
         properties = JSON.parse(propertiesDoc.getText());
         ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     } catch (err) {
-        log(ss, [err.message, err.fileName, err.lineNumber]);
+        throw err;
     }
 
-
-    // Parse the JSON objects stored in the propertiesDoc text
     try {
         properties.map = JSON.parse(properties.map);
-        Logger.log("JSON.parse properties.map");
-    } catch(err) {
-        // Logger.log(err.message);
-        log(ss, [err.message, err.fileName, err.lineNumber]);
-    }
-
-    try {
         properties.leftovers = JSON.parse(properties.leftovers);
-        Logger.log("JSON.parse properties.leftovers");
-    } catch(err) {
-        // Logger.log(err.message);
-        log(ss, [err.message, err.fileName, err.lineNumber]);
+        properties.remaining = JSON.parse(properties.remaining);
+    } catch (err) {
+        throw err;
     }
 
-    try {
-        properties.remaining = JSON.parse(properties.remaining);
-        Logger.log("JSON.parse properties.remaining");
-    } catch(err) {
-        // Logger.log(err.message);
-        log(ss, [err.message, err.fileName, err.lineNumber]);
-    }
 
 
 

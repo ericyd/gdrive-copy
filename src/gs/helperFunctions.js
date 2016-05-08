@@ -1,3 +1,4 @@
+//noinspection JSUnusedGlobalSymbols
 /**
  * Returns token for use with Google Picker
  */
@@ -76,8 +77,7 @@ function log(ss, values) {
  * See: https://developers.google.com/google-apps/documents-list/#implementing_exponential_backoff
  * Author: peter.herrmann@gmail.com (Peter Herrmann)
  * @param {Function} func The anonymous or named function to call.
- * @param {Function} optLoggerFunction Optionally, you can pass a function that will be used to log
- to in the case of a retry. For example, Logger.log (no parentheses) will work.
+ * @param {string} errorMsg Message to output in case of error
  * @return {*} The value returned by the called function.
  */
 function exponentialBackoff(func, errorMsg) {
@@ -87,6 +87,7 @@ function exponentialBackoff(func, errorMsg) {
         } catch(e) {
             if (n == 5) {
                 log(null, [errorMsg]);
+                throw e;
             }
             Utilities.sleep((Math.pow(2,n)*1000) + (Math.round(Math.random() * 1000)));
         }
