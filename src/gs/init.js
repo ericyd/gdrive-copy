@@ -38,9 +38,8 @@ function initialize(selectedFolder) {
         propertiesDoc,  // {Object} metadata for Google Document created to hold properties
         userProperties, // {Object} instance of UserProperties object
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
-        
     
-    
+
     // create destination folder
     try {
         destFolder = Drive.Files.insert({

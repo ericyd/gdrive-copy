@@ -6,7 +6,7 @@
  */
 function copy() {
     // CONSTANTS
-    var MAX_RUNNING_TIME = 5.3 * 60 * 1000;   // 5.3 minutes in milliseconds
+    var MAX_RUNNING_TIME = 5.1 * 60000; // return millisecs
     var START_TIME = (new Date()).getTime();
     
     
@@ -20,18 +20,18 @@ function copy() {
         currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
         timeZone;       // {string} time zone of user
-        
-        
+    
+     
     try {
         // Load properties and initialize logger spreadsheet
-        properties = loadProperties();
-        Logger.log("properties loaded");
-        ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
-        timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
-
+        properties = exponentialBackoff(loadProperties, 'Properties could not be loaded. Exiting...');
     } catch (err) {
-        log(ss, [err.message, err.fileName, err.lineNumber]);
+        log(null, [err.message, err.fileName, err.lineNumber]);
+        return;
     }
+
+    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
+    timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
 
 
     // get current children, or skip if none exist
@@ -282,7 +282,9 @@ function copy() {
 
         try {
             saveProperties(properties);
-            createTrigger();
+            exponentialBackoff(createTrigger,
+                'Error setting trigger.  There has been a server error with Google Apps Script.' +
+                'To successfully finish copying, please Copy Folder.');
         } catch (err) {
             log(ss, [err.message, err.fileName, err.lineNumber]);
         }

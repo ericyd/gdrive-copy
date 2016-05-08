@@ -11,6 +11,7 @@ var picker = require('./picker');
 $(function() {
 
     $("#selectedFolderInfo").hide();
+    $("#too-many-triggers").hide();
 
     /**
      * Bind form submission action.
@@ -47,19 +48,29 @@ $(function() {
             picker.folder.destName = $("#newFolder").val();
             picker.folder.permissions = $("#permissions-group input:checked").val() == "yes" ? true : false;
             picker.folder.destLocation = $("#destination-group input:checked").val();
-            
+
+
             google.script.run
-                .withSuccessHandler(success)
-                .withFailureHandler(showError)
-                .initialize(picker.folder);
+                .withSuccessHandler(function(number) {
+                    // prompt user to wait or delete existing triggers
+                    if (number > 9) {
+                        $("#too-many-triggers").show('blind');
+                    } else {
+                        google.script.run
+                            .withSuccessHandler(success)
+                            .withFailureHandler(showError)
+                            .initialize(picker.folder);
+                    }
+                })
+                .withFailureHandler(function(err) {
+                    $("#errors").append(err);
+                })
+                .getTriggersQuantity();
         }
-        
-        
-        
         event.preventDefault();
     });
 
-
+    
     
     /**
      * Hide 'status' indicator, and show success message.
@@ -123,6 +134,19 @@ $(function() {
         picker.showPicker();
     });
     
+    $('#delete-existing-triggers').click(function() {
+        google.script.run
+            .withSuccessHandler(function() {
+                google.script.run
+                    .withSuccessHandler(success)
+                    .withFailureHandler(showError)
+                    .initialize(picker.folder);
+            })
+            .withFailureHandler(function(err) {
+                $("#errors").append(err);
+            })
+            .deleteAllTriggers();
+    });
     
     $("#selectOtherFolder").click(function() {
         $("#getFolderErrors").text("");

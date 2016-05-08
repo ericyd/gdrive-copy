@@ -1,31 +1,29 @@
 /**
+ * Returns number of existing triggers for user.
+ * @return {number} triggers the number of active triggers for this user
+ */
+function getTriggersQuantity() {
+    return ScriptApp.getProjectTriggers().length;
+}
+
+
+
+/**
  * Create a trigger to run copy() in 121 seconds.
  * Save trigger ID to userProperties so it can be deleted later
  *
  */
 function createTrigger() {
-    // modelled after exponential backoff found here: https://gist.github.com/peterherrmann/2700284
-    for (var n=0; n<6; n++) {
-        try {
-            // Create trigger
-            var trigger =  ScriptApp.newTrigger('copy')
-                .timeBased()
-                .after(121*1000)
-                .create();
-            
-            
-            // Save the triggerID so this trigger can be deleted later
-            saveProperties({
-                "triggerId": trigger.getUniqueId()
-            });
-            
-        } catch(err) {
-            log(ss, [err.message, err.fileName, err.lineNumber, "trial # " + n]);
-            if (n == 5) {
-                log(ss, ["tried 6 times, could not complete"]);
-            } 
-            Utilities.sleep((Math.pow(2,n)*1000) + (Math.round(Math.random() * 1000)));
-        }    
+    var trigger = ScriptApp.newTrigger('copy')
+        .timeBased()
+        .after(121*1000)
+        .create();
+
+    if (trigger) {
+        // Save the triggerID so this trigger can be deleted later
+        saveProperties({
+            "triggerId": trigger.getUniqueId()
+        });
     }
 }
 
@@ -52,4 +50,16 @@ function deleteTrigger(triggerId) {
         log(ss, [err.message, err.fileName, err.lineNumber]);
     }
     
+}
+
+
+
+/**
+ * Loop over all triggers and delete
+ */
+function deleteAllTriggers() {
+    var allTriggers = ScriptApp.getProjectTriggers();
+    for (var i = 0; i < allTriggers.length; i++) {
+        ScriptApp.deleteTrigger(allTriggers[i]);
+    }
 }

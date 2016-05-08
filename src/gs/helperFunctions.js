@@ -66,3 +66,29 @@ function log(ss, values) {
         return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
     }
 }
+
+
+
+/**
+ * Invokes a function, performing up to 5 retries with exponential backoff.
+ * Retries with delays of approximately 1, 2, 4, 8 then 16 seconds for a total of
+ * about 32 seconds before it gives up and rethrows the last error.
+ * See: https://developers.google.com/google-apps/documents-list/#implementing_exponential_backoff
+ * Author: peter.herrmann@gmail.com (Peter Herrmann)
+ * @param {Function} func The anonymous or named function to call.
+ * @param {Function} optLoggerFunction Optionally, you can pass a function that will be used to log
+ to in the case of a retry. For example, Logger.log (no parentheses) will work.
+ * @return {*} The value returned by the called function.
+ */
+function exponentialBackoff(func, errorMsg) {
+    for (var n=0; n<6; n++) {
+        try {
+            return func();
+        } catch(e) {
+            if (n == 5) {
+                log(null, [errorMsg]);
+            }
+            Utilities.sleep((Math.pow(2,n)*1000) + (Math.round(Math.random() * 1000)));
+        }
+    }
+}
