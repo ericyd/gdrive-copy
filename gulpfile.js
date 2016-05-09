@@ -60,7 +60,7 @@ gulp.task('gs', function() {
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(concat('Code.gs'))
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(gulp.dest('dist'));
     
 })

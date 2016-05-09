@@ -182,7 +182,7 @@ function copy() {
                     item.mimeType == "application/vnd.google-apps.drawing" ||
                     item.mimeType == "application/vnd.google-apps.form" ||
                     item.mimeType == "application/vnd.google-apps.script" ) {
-                       copyPermissions(item.id, item.owners, newfile.id, ss);
+                       copyPermissions(item.id, item.owners, newfile.id);
                 }   
             }
 

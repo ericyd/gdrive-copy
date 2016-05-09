@@ -5,14 +5,13 @@
  * @param {string} owners list of owners of src file
  * @param {string} destId metadata for the destination folder
  */
-function copyPermissions(srcId, owners, destId, ss) {
-    var srcPermissions, permissions, i, j, destPermissions;
+function copyPermissions(srcId, owners, destId) {
+    var permissions, destPermissions, i, j;
 
     try {
-        srcPermissions = getPermissions(srcId);
-        permissions = srcPermissions.items;
+        permissions = getPermissions(srcId).items;
     } catch (err) {
-        log(ss, [err.message, err.fileName, err.lineNumber]);
+        log(null, [err.message, err.fileName, err.lineNumber]);
     }
 
 
@@ -51,9 +50,7 @@ function copyPermissions(srcId, owners, destId, ss) {
                             'sendNotificationEmails': 'false'
                         });
                 }
-            } catch (err) {
-                // log(ss, [err.message, err.fileName, err.lineNumber]);
-            }
+            } catch (err) {}
 
         }
     }
@@ -73,17 +70,18 @@ function copyPermissions(srcId, owners, destId, ss) {
                     {
                         'sendNotificationEmails': 'false'
                     });
-            } catch (err) {
-                // log(ss, [err.message, err.fileName, err.lineNumber]);
-            }
+            } catch (err) {}
 
         }
     }
 
 
 
-
-    destPermissions = getPermissions(destId).items;
+    try {
+        destPermissions = getPermissions(destId).items;
+    } catch (err) {
+        log(null, [err.message, err.fileName, err.lineNumber]);
+    }
 
     if (destPermissions && destPermissions.length > 0) {
         for (i = 0; i < destPermissions.length; i++) {
@@ -93,7 +91,7 @@ function copyPermissions(srcId, owners, destId, ss) {
                 }
                 // if destPermissions does not exist in permissions, delete it
                 if (j == permissions.length) {
-                    Drive.Permissions.delete(destId, destPermissions[i].id);
+                    Drive.Permissions.remove(destId, destPermissions[i].id);
                 }
             }
         }
