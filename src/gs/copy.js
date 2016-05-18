@@ -41,7 +41,8 @@ function copy() {
 
             exponentialBackoff(createTrigger,
                 'Error setting trigger.  There has been a server error with Google Apps Script.' +
-                'To successfully finish copying, please Copy Folder.');
+                'To successfully finish copying, please refresh the app and click "Resume Copying"' +
+                'and follow the instructions on the page.');
         }
         return;
     }

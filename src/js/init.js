@@ -87,6 +87,8 @@ $(function() {
             // Valid!
             onValid();
 
+            picker.folder.resuming = true;
+
             // count number of triggers
             google.script.run
                 .withSuccessHandler(function(number) {
@@ -191,7 +193,6 @@ $(function() {
         $("#formDiv").toggle();
         $("#resume-form-div").toggle();
         $(".description").toggle();
-        resetForm();
     });
 
 
@@ -213,12 +214,22 @@ $(function() {
     $('#delete-existing-triggers').click(function() {
         $("#status").show("blind");
         $("#too-many-triggers").hide();
+
         google.script.run
             .withSuccessHandler(function() {
-                google.script.run
-                    .withSuccessHandler(success)
-                    .withFailureHandler(showError)
-                    .initialize(picker.folder);
+
+                if (picker.folder.resuming) {
+                    google.script.run
+                        .withSuccessHandler(success)
+                        .withFailureHandler(showError)
+                        .resume(picker.folder);
+                } else {
+                    google.script.run
+                        .withSuccessHandler(success)
+                        .withFailureHandler(showError)
+                        .initialize(picker.folder);
+                }
+
             })
             .withFailureHandler(function(err) {
                 $("#errors").append(err);

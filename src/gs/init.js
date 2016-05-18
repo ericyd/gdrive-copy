@@ -109,7 +109,7 @@ function initialize(selectedFolder) {
     SpreadsheetApp.openById(spreadsheet.id).getSheetByName("Log").getRange(2,5).setValue('=HYPERLINK("https://drive.google.com/open?id=' + destFolder.id + '","'+ selectedFolder.destName + '")');
     
     
-    
+
     // Get IDs of destination folder and logger spreadsheet 
     selectedFolder.destId = destFolder.id;
     selectedFolder.spreadsheetId = spreadsheet.id;
@@ -131,7 +131,7 @@ function initialize(selectedFolder) {
     userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
     userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
     userProperties.setProperty("trials", 0);
-    userProperties().setProperty("resuming", 'false');
+    userProperties.setProperty("resuming", 'false');
     saveProperties(selectedFolder);
     
     
