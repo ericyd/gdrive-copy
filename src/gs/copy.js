@@ -30,7 +30,6 @@ function copy() {
         properties = exponentialBackoff(loadProperties, 'Error restarting script, will retry in 1-2 minutes');
 
     } catch (err) {
-        log(null, [err.message, err.fileName, err.lineNumber]);
 
         var n = Number(PropertiesService.getUserProperties().getProperties()['trials']);
         Logger.log(n);
@@ -48,7 +47,7 @@ function copy() {
     }
 
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
-    timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
+    timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone() || 'GMT-7';
 
 
     // delete prior trigger

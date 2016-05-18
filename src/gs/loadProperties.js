@@ -21,6 +21,7 @@ function loadProperties() {
         properties.map = JSON.parse(properties.map);
         properties.leftovers = JSON.parse(properties.leftovers);
         properties.remaining = JSON.parse(properties.remaining);
+        properties.permissions = JSON.parse(properties.permissions);
     } catch (err) {
         throw err;
     }

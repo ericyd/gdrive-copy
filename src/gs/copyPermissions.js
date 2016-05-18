@@ -93,7 +93,7 @@ function copyPermissions(srcId, owners, destId) {
                     break;
                 }
                 // if destPermissions does not exist in permissions, delete it
-                if (j == permissions.length) {
+                if (j == permissions.length - 1 && destPermissions[i].role != 'owner') {
                     Drive.Permissions.remove(destId, destPermissions[i].id);
                 }
             }

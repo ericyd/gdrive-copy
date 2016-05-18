@@ -38,14 +38,15 @@ function saveProperties(propertiesToSave) {
         // skip loop if the property is from prototype
         if(!propertiesToSave.hasOwnProperty(key)) continue;
 
-        // // stringify all the objects and arrays
-        // if ( typeof propertiesToSave[key] === "object" ) {
-        //     existingProperties[key] = JSON.stringify(propertiesToSave[key]);
-        // } else {
-        //     existingProperties[key] = propertiesToSave[key];
-        // }
+        // stringify all the objects and arrays
+        if ( typeof propertiesToSave[key] !== "string" ) {
+            existingProperties[key] = JSON.stringify(propertiesToSave[key]);
+        } else {
+            existingProperties[key] = propertiesToSave[key];
+        }
+
         Logger.log("key: " + key + ", value: " + existingProperties[key]);
-        existingProperties[key] = propertiesToSave[key];
+
 
     }
 
