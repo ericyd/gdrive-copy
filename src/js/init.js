@@ -155,7 +155,7 @@ $(function() {
         
         
         
-        google.script.run.copy(results.resuming);
+        google.script.run.copy();
         
         
     }

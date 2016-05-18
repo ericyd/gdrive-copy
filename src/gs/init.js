@@ -131,6 +131,7 @@ function initialize(selectedFolder) {
     userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
     userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
     userProperties.setProperty("trials", 0);
+    userProperties().setProperty("resuming", 'false');
     saveProperties(selectedFolder);
     
     
