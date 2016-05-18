@@ -3,8 +3,10 @@
  * Get parameters from userProperties,
  * Loop until time runs out,
  * then call timeout methods, saveProperties and createTrigger.
+ *
+ * @param {boolean} resuming whether or not the copy call is resuming an existing folder copy or starting fresh
  */
-function copy() {
+function copy(resuming) {
     // CONSTANTS
     var MAX_RUNNING_TIME = 5.1 * 60000; // return millisecs
     var START_TIME = (new Date()).getTime();
@@ -20,12 +22,27 @@ function copy() {
         currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
         timeZone;       // {string} time zone of user
-    
+
+
+
+    if (resuming) {
+        // findPriorCopy();
+        // find "DO NOT DELETE" file and load properties from there
+    } else {
+        loadProperties();
+        rest of initialization
+    }
+
+
+
+
+
+
      
     try {
         // Load properties and initialize logger spreadsheet
         properties = exponentialBackoff(loadProperties, 'Error restarting script, will retry in 1-2 minutes');
-        // properties = exponentialBackoff(null, 'Error restarting script, will retry in 1-2 minutes');
+
     } catch (err) {
         log(null, [err.message, err.fileName, err.lineNumber]);
 

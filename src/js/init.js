@@ -1,23 +1,19 @@
 // Requires
-// var $ = jQuery = require('jquery');
-// require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/button.js');
-// require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js');
-// require('../../node_modules/bootstrap-sass/assets/javascripts/bootstrap/popover.js');
-// require('../../node_modules/jquery-ui/effect-blind.js');
 var picker = require('./picker');
 
 
 // event bindings
 $(function() {
 
-    $("#selectedFolderInfo").hide();
+    $(".selectedFolderInfo").hide();
     $("#too-many-triggers").hide();
+    $("#resume-form-div").hide();
+    $(".description:eq(1)").hide();
 
-    $("#resume-button").click(function () {
-
-    });
 
     /**
+     * Execute when beginning new folder copy
+     *
      * Bind form submission action.
      * Disable form elements,
      * Hide description text for app,
@@ -40,20 +36,15 @@ $(function() {
             $("#errors").html(errormsg);
             
         } else {
-            $("#errors").html("");
-            $("#selectOtherFolder").hide("blind");
-            
-            $("#copyFolderButton").button('loading');
-            $("#newFolder").prop('disabled', true);
-            $("#description").hide("blind");
-            $("#status").show("blind");
+            // Valid!
+            onValid();
             
             // Get values from form and selected folder to initialize copy        
             picker.folder.destName = $("#newFolder").val();
             picker.folder.permissions = $("#permissions-group").find("input:checked").val() == "yes";
             picker.folder.destLocation = $("#destination-group").find("input:checked").val();
 
-
+            // count number of triggers
             google.script.run
                 .withSuccessHandler(function(number) {
                     // prompt user to wait or delete existing triggers
@@ -61,6 +52,8 @@ $(function() {
                         $("#too-many-triggers").show('blind');
                         $("#status").hide("blind");
                     } else {
+
+                        // if not too many triggers, initialize script
                         google.script.run
                             .withSuccessHandler(success)
                             .withFailureHandler(showError)
@@ -75,6 +68,66 @@ $(function() {
         event.preventDefault();
     });
 
+
+    /**
+     * Execute when resuming folder copy.
+     *
+     * @param {Object} event
+     */
+    $("#resumeForm").submit(function( event ) {
+
+        var errormsg;
+
+        // validate
+        if (!picker.folder.srcId) {
+            errormsg = "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
+            $("#errors").html(errormsg);
+
+        } else {
+            // Valid!
+            onValid();
+
+            // count number of triggers
+            google.script.run
+                .withSuccessHandler(function(number) {
+                    // prompt user to wait or delete existing triggers
+                    if (number > 9) {
+                        $("#too-many-triggers").show('blind');
+                        $("#status").hide("blind");
+                    } else {
+
+                        // if not too many triggers, initialize script
+                        google.script.run
+                            .withSuccessHandler(success)
+                            .withFailureHandler(showError)
+                            .resume(picker.folder);
+                    }
+                })
+                .withFailureHandler(function(err) {
+                    $("#errors").append(err);
+                })
+                .getTriggersQuantity();
+        }
+        event.preventDefault();
+    });
+
+
+    /**
+     * Called when either form validates
+     */
+    function onValid() {
+        $(".description").hide("blind");
+        $("#errors").html("");
+        $(".selectOtherFolder").hide("blind");
+        $("#resume-button").hide("blind");
+        $("#new-copy-button").hide("blind");
+
+        $("#copyFolderButton").button('loading');
+        $("#resumeFolderSubmit").button('loading');
+        $("#newFolder").prop('disabled', true);
+
+        $("#status").show("blind");
+    }
     
     
     /**
@@ -102,7 +155,7 @@ $(function() {
         
         
         
-        google.script.run.copy();
+        google.script.run.copy(results.resuming);
         
         
     }
@@ -130,14 +183,32 @@ $(function() {
     }
 
 
-    
+    /**
+     * Show 'resume' form when #resume-button is selected.
+     * Show original form when #new-copy-button is selected.
+     */
+    $(".toggle-forms").click(function () {
+        $("#formDiv").toggle();
+        $("#resume-form-div").toggle();
+        $(".description").toggle();
+        resetForm();
+    });
+
+
+    /**
+     * Add explanation tooltip for #explain-permissions
+     */
     $("#explain-permissions").tooltip();
 
 
-
-    $("#selectFolderButton").click(function() {
+    /**
+     * Show Google Picker when select Folder buttons are selected
+     */
+    $(".selectFolderButton").click(function() {
         picker.showPicker();
     });
+
+
     
     $('#delete-existing-triggers').click(function() {
         $("#status").show("blind");
@@ -155,12 +226,17 @@ $(function() {
             .deleteAllTriggers();
     });
     
-    $("#selectOtherFolder").click(function() {
-        $("#getFolderErrors").text("");
-        $("#folderSelect").show();
-        $("#selectedFolderInfo").hide();
-        $("#folderTextbox").val("");
+    $(".selectOtherFolder").click(function() {
+        resetForm();
     });
+
+    function resetForm() {
+        $(".getFolderErrors").text("");
+        $(".folderSelect").show();
+        $(".selectedFolderInfo").hide();
+        $("#folderTextbox").val("");
+        $("#resumeTextbox").val("");
+    }
     
 
 });
@@ -172,12 +248,17 @@ $(function() {
    When folder URL is pasted into textbox, it will automatically get the information for the folder.
 */
 var folderTextbox = document.getElementById("folderTextbox");
+var resumeTextbox = document.getElementById("resumeTextbox");
 
 
 // Add event listeners
 folderTextbox.addEventListener('mouseup', getFileData, false);
 folderTextbox.addEventListener('keyup', getFileData, false);
 folderTextbox.addEventListener('paste', getFileData, false);
+
+resumeTextbox.addEventListener('mouseup', getFileData, false);
+resumeTextbox.addEventListener('keyup', getFileData, false);
+resumeTextbox.addEventListener('paste', getFileData, false);
 
 
 
@@ -188,8 +269,8 @@ folderTextbox.addEventListener('paste', getFileData, false);
  * @param {object} e event object
  */
 function getFileData(e) {
-    if (folderTextbox.value !== "") {
-        var id = parseId( folderTextbox.value );
+    if (e.target.value !== "") {
+        var id = parseId( e.target.value );
         
         google.script.run
             .withSuccessHandler(function (metadata) {

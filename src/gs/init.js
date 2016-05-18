@@ -136,7 +136,8 @@ function initialize(selectedFolder) {
     
     return {
         spreadsheetId: selectedFolder.spreadsheetId,
-        destId: selectedFolder.destId
+        destId: selectedFolder.destId,
+        resuming: false
     };
     
 }

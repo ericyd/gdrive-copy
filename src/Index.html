@@ -31,19 +31,21 @@
        Copy a google drive folder and all its contents
     </h1>
 
-    <div id="description">
+    <div id="description" class="description">
        Just input the folder sharing url and a new folder name, and it will copy to your home folder in Google drive.<br />
-       This app will recursively copy the folder structure, and is designed to work well for deep folder structures.<br /><br />
        To get started, simply select your folder and choose a new name, then select Copy Folder!<br />
+        If the folder copy get's stuck, simply use the "Resume prior folder copy" button, then select the copy of your folder.<br />
     </div>
 
-    <button class="btn btn-primary" id="resume-button">Resume</button>
-    
-    
-    
+    <div id="resume-description" class="description">
+        Sometimes this app will get stuck (sorry!).  To resume a folder copy that is in-progress, but paused for whatever reason, simply
+        select the <b><i>new, incomplete copy</i></b> of the folder and select "Resume copying".
+    </div>
+
+
     
     <!--Form-->
-    <div id="formDiv">
+    <div id="formDiv" class="form-div">
       <form id="folderForm" name="folderForm"  class="form-horizontal">
       
         <!--Select Folder-->
@@ -51,9 +53,9 @@
           <label for="selectFolderButton" class="col-lg-2 col-md-4 col-sm-4 control-label">Folder to copy</label>
           <div class="col-lg-10 col-md-8 col-sm-8">
             <!--Elements to select folder-->
-            <div class="row" id="folderSelect">
+            <div class="row folderSelect">
                 <div class="col-lg-3 col-md-4 col-xs-12">
-                    <button type="button" id="selectFolderButton" class="btn btn-primary btn-block">Select Folder</button>
+                    <button type="button" id="selectFolderButton" class="btn btn-primary btn-block selectFolderButton">Select Folder</button>
                 </div>
                 <span class="col-lg-1 col-md-1 col-xs-12 center">or</span>
                 <div class="col-lg-8 col-md-7 col-xs-12">
@@ -61,12 +63,12 @@
                 </div>
             </div> 
             
-            <div id="getFolderErrors"></div>
+            <div class="getFolderErrors"></div>
             
             <!--Display when folder is selected-->
-            <div id="selectedFolderInfo">
+            <div id="selectedFolderInfo" class="selectedFolderInfo">
                 <span class="folderName"></span> &nbsp;&nbsp;
-                <button type="button" id="selectOtherFolder" class="btn btn-default">Select other folder</button>
+                <button type="button" class="btn btn-default selectOtherFolder">Select other folder</button>
             </div>
           </div>
         </div>
@@ -134,9 +136,59 @@
 
       </form>
 
+        <button type="button" class="btn btn-warning toggle-forms" id="resume-button">Resume prior folder copy</button>
+
     </div>
-      
-     
+
+
+
+      <div id="resume-form-div" class="form-div">
+          <form id="resumeForm" name="resumeForm"  class="form-horizontal">
+
+              <!--Select Folder-->
+              <div class="form-group">
+                  <label for="resumeFolderSelect" class="col-lg-2 col-md-4 col-sm-4 control-label">Folder to copy</label>
+                  <div class="col-lg-10 col-md-8 col-sm-8">
+                      <!--Elements to select folder-->
+                      <div class="row folderSelect">
+                          <!--Button to activate Google Picker-->
+                          <div class="col-lg-3 col-md-4 col-xs-12">
+                              <button type="button" id="resumeFolderSelect" class="btn btn-primary btn-block selectFolderButton">Select Folder</button>
+                          </div>
+
+                          <span class="col-lg-1 col-md-1 col-xs-12 center">or</span>
+
+                          <!--Textbox for pasting folder URL-->
+                          <div class="col-lg-8 col-md-7 col-xs-12">
+                              <input type="text" id="resumeTextbox" class="form-control" placeholder="Paste folder URL (Ctrl-V)">
+                          </div>
+                      </div>
+
+                      <div class="getFolderErrors"></div>
+
+                      <!--Display when folder is selected-->
+                      <div class="selectedFolderInfo">
+                          <span class="folderName"></span> &nbsp;&nbsp;
+                          <button type="button" class="btn btn-default selectOtherFolder">Select other folder</button>
+                      </div>
+                  </div>
+              </div>
+
+              <!--Submit-->
+              <div class="form-group">
+                  <div class="col-lg-offset-2 col-md-offset-4 col-sm-offset-4 col-lg-10 col-md-8 col-sm-8">
+                      <button type="submit" id="resumeFolderSubmit" data-loading-text="Resuming..." class="btn btn-primary">Resume copying</button>
+                  </div>
+              </div>
+
+          </form>
+
+          <button type="button" class="btn btn-warning toggle-forms" id="new-copy-button">Start new folder copy</button>
+      </div>
+
+
+
+
     
     
     <!--These divs display when complete-->
@@ -157,7 +209,7 @@
         Please take a moment to <a href="https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews" target="_blank">rate and review this app</a> in the Chrome Web Store.
       </div>
     </div>
-    
+
     <!--These divs get filled programatically at runtime-->
     <div id="errors"></div>
     <div id="too-many-triggers" class="alert alert-danger">

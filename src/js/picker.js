@@ -4,12 +4,6 @@ for providing the working backbone of this script
 */
 
 
-
-
-// requires
-// var $ = jQuery = require('jquery');
-
-
 /* Load api script.  On success, run onApiLoad()
 
     this is an alternative to including this script tag after the js
@@ -140,12 +134,12 @@ function setSelectedFolder(properties) {
     selectedFolder.destName = properties.destName;
     
     // update display
-    $("#getFolderErrors").text("");
+    $(".getFolderErrors").text("");
     $("#newFolder").val(selectedFolder.destName);
     $(".folderName").text(selectedFolder.srcName);
     
-    $("#folderSelect").hide();
-    $("#selectedFolderInfo").show();
+    $(".folderSelect").hide();
+    $(".selectedFolderInfo").show();
     
 }
 

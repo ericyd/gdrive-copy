@@ -63,7 +63,7 @@ html, body {
 }
 
 
-#description {
+.description {
   font-family:$font-family-sans-serif; 
   padding: 10px 0 10px 0;
 }
@@ -80,4 +80,8 @@ th {
 
 .center {
     text-align: center;
+}
+
+.form-div {
+  margin-bottom: 30px;
 }
