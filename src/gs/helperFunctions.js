@@ -60,12 +60,11 @@ function getFiles(query, pageToken) {
  * @param {Array} values array of values to be written to the spreadsheet
  */
 function log(ss, values) {
-    if (ss) {
-        return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
-    } else {    
-        ss = SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperties().spreadsheetId).getSheetByName("Log");
-        return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
+    if (ss == null) {
+        ss = SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperties()['spreadsheetId']).getSheetByName("Log");
     }
+
+    return ss.getRange(ss.getLastRow()+1, 1, 1, values.length).setValues([values]);
 }
 
 
@@ -87,7 +86,7 @@ function exponentialBackoff(func, errorMsg) {
         } catch(e) {
             log(null, [e.message, e.fileName, e.lineNumber]);
             if (n == 5) {
-                log(null, [errorMsg]);
+                log(null, [errorMsg, '', '', '', Utilities.formatDate(new Date(), 'GMT-7', "MM-dd-yy hh:mm:ss aaa")]);
                 throw e;
             }
             Utilities.sleep((Math.pow(2,n)*1000) + (Math.round(Math.random() * 1000)));

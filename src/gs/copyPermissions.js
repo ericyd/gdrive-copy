@@ -77,6 +77,9 @@ function copyPermissions(srcId, owners, destId) {
 
 
 
+    // remove permissions that exist in dest but not source
+    // these were most likely inherited from parent
+
     try {
         destPermissions = getPermissions(destId).items;
     } catch (err) {

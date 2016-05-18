@@ -25,11 +25,21 @@ function copy() {
     try {
         // Load properties and initialize logger spreadsheet
         properties = exponentialBackoff(loadProperties, 'Error restarting script, will retry in 1-2 minutes');
+        // properties = exponentialBackoff(null, 'Error restarting script, will retry in 1-2 minutes');
     } catch (err) {
         log(null, [err.message, err.fileName, err.lineNumber]);
-        exponentialBackoff(createTrigger,
-            'Error setting trigger.  There has been a server error with Google Apps Script.' +
-            'To successfully finish copying, please Copy Folder.');
+
+        var n = Number(PropertiesService.getUserProperties().getProperties()['trials']);
+        Logger.log(n);
+
+        if (n < 5) {
+            Logger.log('setting trials property');
+            PropertiesService.getUserProperties().setProperty('trials', (n + 1).toString());
+
+            exponentialBackoff(createTrigger,
+                'Error setting trigger.  There has been a server error with Google Apps Script.' +
+                'To successfully finish copying, please Copy Folder.');
+        }
         return;
     }
 
@@ -43,14 +53,13 @@ function copy() {
             // delete prior trigger
             deleteTrigger(properties.triggerId);
         } catch (err) {
-            log(ss, [err.message, err.fileName, err.lineNumber]);
+            log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
         }
     }
 
 
     // get current children, or skip if none exist
     if ( properties.leftovers.items && properties.leftovers.items.length > 0) {
-        Logger.log("beginning processFiles on leftovers");
         properties.destFolder = properties.leftovers.items[0].parents[0].id;
         processFiles(properties.leftovers.items) ;    
     } 
@@ -69,7 +78,7 @@ function copy() {
                 currFolder = properties.remaining.shift();
             }
         } catch (err) {
-            log(ss, [err.message, err.fileName, err.lineNumber]);
+            log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
         }
 
         

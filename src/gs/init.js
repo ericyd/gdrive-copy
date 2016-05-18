@@ -21,9 +21,6 @@ function doGet(e) {
 
 
 
-
-
-
 /**
  * Create top level destination folder,
  * create logger spreadsheet.
@@ -124,7 +121,8 @@ function initialize(selectedFolder) {
     selectedFolder.leftovers = {}; // {Object} FileList object (returned from Files.list) for items not processed in prior execution (filled in saveState)
     selectedFolder.map = {};       // {Object} map of source ids (keys) to destination ids (values)
     selectedFolder.map[selectedFolder.srcId] = selectedFolder.destId;
-    selectedFolder.remaining = [selectedFolder.srcId]; 
+    selectedFolder.remaining = [selectedFolder.srcId];
+
     
     
     
@@ -132,6 +130,7 @@ function initialize(selectedFolder) {
     userProperties = PropertiesService.getUserProperties();
     userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
     userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
+    userProperties.setProperty("trials", 0);
     saveProperties(selectedFolder);
     
     

@@ -7,6 +7,9 @@
  */
 function saveProperties(propertiesToSave) {
     var userProperties,propertiesDoc,existingProperties,ss;
+
+
+    // Attempt to access existing properties to overwrite
     try {
         userProperties = PropertiesService.getUserProperties().getProperties();
         propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
@@ -24,7 +27,7 @@ function saveProperties(propertiesToSave) {
         try {
             existingProperties = JSON.parse(propertiesDoc.getText());
         } catch(err) {
-            log(ss, [err.message, err.fileName, err.lineNumber]);
+            log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
         }
     }
 
@@ -44,8 +47,12 @@ function saveProperties(propertiesToSave) {
 
     }
 
+    try {
+        // save the object existingProperties back to propertiesDoc
+        propertiesDoc.setText(JSON.stringify(existingProperties));
+    } catch (err) {
+        log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
+    }
 
-    // save the object existingProperties back to propertiesDoc
-    propertiesDoc.setText(JSON.stringify(existingProperties));
 
 }
