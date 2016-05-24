@@ -1,0 +1,45 @@
+@import "my-variables";
+
+/*
+Sticky footer
+https://css-tricks.com/snippets/css/sticky-footer/
+*/
+
+.container {
+  width: $container-width;
+  min-height: 100%;
+  /* equal to footer height */
+  margin-bottom: -$footer-height;
+  @media only screen and (max-width:768px) {
+    margin-bottom: -$footer-height-sm;
+  }
+}
+
+.container:after {
+  content: "";
+  display: block;
+}
+
+footer, .container:after {
+  height: $footer-height;
+  @media only screen and (max-width:768px) {
+    height: $footer-height-sm;
+  }
+}
+
+footer {
+  width: 100%;
+  padding: 1em 0 1em 0;
+  background: $footer-color;
+}
+
+
+footer > div {
+  font-size: 0.7em;
+  line-height: 1.5em;
+  border-right: 1px solid darken($footer-color, 20%);
+
+  &:first-of-type, &:nth-of-type(5), &:last-of-type {
+    border-right: 0;
+  }
+}

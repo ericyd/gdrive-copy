@@ -20,7 +20,7 @@ gulp.task('default', function(){
     // Default task
 });
 
-gulp.task('build', ['jslint', 'js','gs', 'html','css', 'bootstrap']);
+gulp.task('build', ['jslint', 'js','gs', 'html','css', 'cutestrap']);
 
 gulp.task('watch', function(){ 
     var watcher = gulp.watch(['./src/**/*'], ['build']);
@@ -82,11 +82,11 @@ gulp.task('css', function() {
 
 
 
-gulp.task('bootstrap', function() {
-    return gulp.src('./src/css/custom-bootstrap.scss')
+gulp.task('cutestrap', function() {
+    return gulp.src('./src/css/my-cutestrap.scss')
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
         .pipe(autoprefixer({browsers: ['last 2 versions']}))
-        .pipe(concat('bootstrap.html'))
+        .pipe(concat('cutestrap.html'))
         .pipe(insert.wrap('<style>', '</style>'))
         .pipe(gulp.dest('dist'));
 });

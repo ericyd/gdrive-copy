@@ -1,87 +1,34 @@
-@import "custom-variables";
+@import "my-variables";
+@import "_footer";
+@import "_layout";
 
-/* 
-Sticky footer
-https://css-tricks.com/snippets/css/sticky-footer/
-*/
+
 html, body {
-    height: 100%;
+  height: 100%;
 }
 
-.container {
-    width: 70%;
-    min-height: 100%;
-    /* equal to footer height */
-    margin-bottom: -$footer-height; 
-    @media only screen and (max-width:768px) {
-        margin-bottom: -$footer-height-sm;
-    }
-}
-
-.container:after {
-    content: "";
-    display: block;
-}
-
-.footer, .container:after {
-    height: $footer-height;
-    @media only screen and (max-width:768px) {
-        height: $footer-height-sm;
-    } 
-}
-
-.footer {
-  width: 100%;
-  padding: 1em 0 1em 0;
-  background:$footer-color;
-  
-  .col-sm-2 {
-    font-size: 0.8em;
-    
-    @media only screen and (max-width:768px) {
-        padding-top: 1em;
-    } 
-  }
-}
-
-.footer > .container-fluid > .row > div {
-    border-right: 1px solid darken($footer-color, 20%); 
-  
-}
 
 #explain-permissions {
-    background:#fff;
-    color:#000;
-    
-    &:hover{
-        color: $brand-primary;    
-    }
-    
-    &:focus {
-        outline:0;
-    }
+  background:#fff;
+  color:#000;
+
+  &:hover{
+    color: $primary;
+  }
+
+  &:focus {
+    outline:0;
+  }
 }
 
 
 .description {
-  font-family:$font-family-sans-serif; 
   padding: 10px 0 10px 0;
 }
 
-th {
-    font-weight: bold;
-}
 
 
 // Hide elements that are programatically shown throughout script processing
 #status, #complete, #please-review, #dialog-message {
-    display: none;
-}
-
-.center {
-    text-align: center;
-}
-
-.form-div {
-  margin-bottom: 30px;
+  display: none;
 }

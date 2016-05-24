@@ -1,0 +1,11 @@
+@import "my-variables";
+
+main {
+  width: $container-width;
+  margin: 0 auto;
+}
+
+
+.form-div {
+  margin-bottom: 30px;
+}
