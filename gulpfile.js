@@ -31,6 +31,53 @@ gulp.task('watch', function(){
 });
 
 
+var compiler = require('gulp-hogan-compile');
+var hogan = require('hogan');
+var templates = {};
+
+gulp.task('templates', function() {
+    gulp.src('src/templates/complete.mustache')
+        .pipe(compiler(templates));
+    console.log(templates);
+});
+
+gulp.task('render', ['templates'], function() {
+    'use strict';
+    // Do something with templates, like passing to a static site generator
+    console.log(templates);
+    var base = '';
+    var form = '';
+
+    fs.readFile("./src/templates/form.mustache", (err, data) => {
+        if (err) throw err;
+
+        form = hogan.compile(data.toString());
+
+    });
+
+    fs.readFile("./src/templates/base.mustache", (err, data) => {
+        if (err) throw err;
+
+        var template = hogan.compile(data.toString());
+        console.log('base')
+        console.log(template.render({}, {'form': form}));
+        base = template;
+
+    });
+
+    fs.readFile("./src/templates/complete.mustache", (err, data) => {
+        if (err) throw err;
+
+    var template = hogan.compile(data.toString());
+    console.log('complete')
+    // first argument is object of variables to fill
+    // second argument is object assigning super templates
+    console.log(template.render({}, {'base': base}));
+
+});
+
+
+});
 
 
 gulp.task('js', function() {
