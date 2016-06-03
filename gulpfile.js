@@ -15,6 +15,7 @@ var buffer = require('vinyl-buffer');
 var globby = require('globby');  
 var svg2png = require("svg2png");
 var fs = require('fs');
+var gulpHogan = require('./hogan-render');
 
 gulp.task('default', function(){
     // Default task
@@ -32,51 +33,24 @@ gulp.task('watch', function(){
 
 
 var compiler = require('gulp-hogan-compile');
-var hogan = require('hogan');
+var hogan = require('hogan.js');
 var templates = {};
 
 gulp.task('templates', function() {
-    gulp.src('src/templates/complete.mustache')
-        .pipe(compiler(templates));
+    gulp.src('src/templates/*.mustache')
+        .pipe(compiler(templates))
+        .pipe(gulp.dest('dist'));
+    console.log('templates: ');
     console.log(templates);
 });
 
-gulp.task('render', ['templates'], function() {
-    'use strict';
-    // Do something with templates, like passing to a static site generator
-    console.log(templates);
-    var base = '';
-    var form = '';
-
-    fs.readFile("./src/templates/form.mustache", (err, data) => {
-        if (err) throw err;
-
-        form = hogan.compile(data.toString());
-
-    });
-
-    fs.readFile("./src/templates/base.mustache", (err, data) => {
-        if (err) throw err;
-
-        var template = hogan.compile(data.toString());
-        console.log('base')
-        console.log(template.render({}, {'form': form}));
-        base = template;
-
-    });
-
-    fs.readFile("./src/templates/complete.mustache", (err, data) => {
-        if (err) throw err;
-
-    var template = hogan.compile(data.toString());
-    console.log('complete')
-    // first argument is object of variables to fill
-    // second argument is object assigning super templates
-    console.log(template.render({}, {'base': base}));
-
-});
 
 
+gulp.task('hogan', function() {
+    var b = gulp.src('src/templates/complete.mustache')
+        .pipe(gulpHogan())
+        .pipe(concat('templatedIndex.html'))
+        .pipe(gulp.dest('dist'));
 });
 
 
@@ -143,8 +117,11 @@ gulp.task('cutestrap', function() {
 
 gulp.task('html', function() {
     // process html  
-    return gulp.src('./src/Index.html')
+    
+    return gulp.src('src/templates/complete.mustache')
         .pipe(changed('dist'))
+        .pipe(gulpHogan())
+        .pipe(concat('Index.html'))
         .pipe(htmlmin({
             collapseWhitespace: true,
             removeComments: true,

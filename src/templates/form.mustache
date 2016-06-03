@@ -1,4 +1,148 @@
-<form>
-    {{$title}}default title{{/title}}
-    <input type="text">
-</form>
+<!--Form-->
+<div id="formDiv" class="form-div">
+    <form id="folderForm" name="folderForm"  class="form-horizontal">
+
+        <!--Select Folder-->
+        <div class="form-group">
+            <label for="selectFolderButton" class="col-lg-2 col-md-4 col-sm-4 control-label">Folder to copy</label>
+            <div class="col-lg-10 col-md-8 col-sm-8">
+                <!--Elements to select folder-->
+                <div class="row folderSelect">
+                    <div class="col-lg-3 col-md-4 col-xs-12">
+                        <button type="button" id="selectFolderButton" class="btn btn-primary btn-block selectFolderButton">Select Folder</button>
+                    </div>
+                    <span class="col-lg-1 col-md-1 col-xs-12 center">or</span>
+                    <div class="col-lg-8 col-md-7 col-xs-12">
+                        <input type="text" id="folderTextbox" class="form-control" placeholder="Paste folder URL (Ctrl-V)">
+                    </div>
+                </div>
+
+                <div class="getFolderErrors"></div>
+
+                <!--Display when folder is selected-->
+                <div id="selectedFolderInfo" class="selectedFolderInfo">
+                    <span class="folderName"></span> &nbsp;&nbsp;
+                    <button type="button" class="btn btn-default selectOtherFolder">Select other folder</button>
+                </div>
+            </div>
+        </div>
+
+        <!--Insert folder name-->
+        <div class="form-group">
+            <label for="newFolder" class="col-lg-2 col-md-4 col-sm-4 control-label">New folder name</label>
+            <div class="col-lg-10 col-md-8 col-sm-8">
+                <input type="textbox" id="newFolder" name="newFolder" class="form-control" placeholder="New folder name">
+            </div>
+        </div>
+
+        <!--Copy permissions?-->
+        <div class="form-group" id="permissions-group">
+            <label class="col-lg-2 col-md-4 col-sm-4 control-label checkbox-title" for="permissions">
+                <!--Question mark button-->
+                <a role="button" href="#" id="explain-permissions" class="btn" data-toggle="tooltip" title="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals.  Owners of originals will become editors of the copies.  Copying takes much longer if 'Yes' is selected." data-trigger="focus" data-placement="top" data-container="body">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                Copy sharing permissions
+            </label>
+
+            <div class="col-lg-10 col-md-8 col-sm-8" id="permissions">
+                <!--<input type="checkbox" id="permissions" name="permissions" />-->
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" name="permissions" value="no" checked>
+                        No
+                    </label>
+                </div>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" name="permissions" value="yes">
+                        Yes
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!--Copy to-->
+        <div class="form-group" id="destination-group">
+            <label class="col-lg-2 col-md-4 col-sm-4 control-label">Copy folder to</label>
+            <div class="col-lg-10 col-md-8 col-sm-8">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="copyLocationOptions" id="sameDir" value="same" checked>
+                        Same as source folder
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="copyLocationOptions" id="rootDir" value="root">
+                        Root directory (i.e. at the top of "My Drive")
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!--Submit-->
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-md-offset-4 col-sm-offset-4 col-lg-10 col-md-8 col-sm-8">
+                <button type="submit" id="copyFolderButton" data-loading-text="Copying..." class="btn btn-primary">Copy folder</button>
+            </div>
+        </div>
+
+    </form>
+
+    <button type="button" class="btn btn-warning toggle-forms" id="resume-button">Resume prior folder copy</button>
+
+</div>
+
+
+
+<div id="resume-form-div" class="form-div">
+    <form id="resumeForm" name="resumeForm"  class="form-horizontal">
+
+        <!--Select Folder-->
+        <div class="form-group">
+            <label for="resumeFolderSelect" class="col-lg-2 col-md-4 col-sm-4 control-label">Folder to copy</label>
+            <div class="col-lg-10 col-md-8 col-sm-8">
+                <!--Elements to select folder-->
+                <div class="row folderSelect">
+                    <!--Button to activate Google Picker-->
+                    <div class="col-lg-3 col-md-4 col-xs-12">
+                        <button type="button" id="resumeFolderSelect" class="btn btn-primary btn-block selectFolderButton">Select Folder</button>
+                    </div>
+
+                    <span class="col-lg-1 col-md-1 col-xs-12 center">or</span>
+
+                    <!--Textbox for pasting folder URL-->
+                    <div class="col-lg-8 col-md-7 col-xs-12">
+                        <input type="text" id="resumeTextbox" class="form-control" placeholder="Paste folder URL (Ctrl-V)">
+                    </div>
+                </div>
+
+                <div class="getFolderErrors"></div>
+
+                <!--Display when folder is selected-->
+                <div class="selectedFolderInfo">
+                    <span class="folderName"></span> &nbsp;&nbsp;
+                    <button type="button" class="btn btn-default selectOtherFolder">Select other folder</button>
+                </div>
+            </div>
+        </div>
+
+        <!--Submit-->
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-md-offset-4 col-sm-offset-4 col-lg-10 col-md-8 col-sm-8">
+                <button type="submit" id="resumeFolderSubmit" data-loading-text="Resuming..." class="btn btn-primary">Resume copying</button>
+            </div>
+        </div>
+
+    </form>
+
+    <button type="button" class="btn btn-warning toggle-forms" id="new-copy-button">Start new folder copy</button>
+</div>
+
+
+
+
+
+
+    
