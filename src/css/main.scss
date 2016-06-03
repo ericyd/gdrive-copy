@@ -1,6 +1,7 @@
 @import "my-variables";
 @import "_footer";
 @import "_layout";
+@import "_header";
 
 
 html, body {
@@ -19,11 +20,6 @@ html, body {
   &:focus {
     outline:0;
   }
-}
-
-
-.description {
-  padding: 10px 0 10px 0;
 }
 
 

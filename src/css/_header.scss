@@ -1,0 +1,18 @@
+@import "my-variables";
+
+.header-padding {
+    padding: 10px 20%;
+}
+
+nav {
+    @extend .header-padding;
+    width: 100%;
+    background: $secondary;
+    margin: 0; 
+}
+
+
+h1, .description {
+    @extend .header-padding;
+}
+
