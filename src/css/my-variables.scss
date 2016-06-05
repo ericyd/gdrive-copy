@@ -2,12 +2,27 @@
 
 //== Layout
 $container-width:       70%;
+$header-padding:        calculate-padding($container-width);
 $footer-height:         100px;
 $footer-height-sm:      250px;
 
 //== Colors
-$primary:                   #9B9DC9;
-$secondary:                 #393;
-$footer-color:              #bdbcbb;
+$primary:                   #F5733F;
+$light:                     #FF946A;
+$extra-light:               #FFA581;
+$dark:                      #E84707;
+$extra-dark:                #BB3500;
 
 //== Typography
+
+
+
+@function calculate-padding($containerWidth){
+  @return (100% - $containerWidth)/2
+}
+
+
+.smaller {
+    font-size: 0.7em;
+    line-height: 1.5em;
+}

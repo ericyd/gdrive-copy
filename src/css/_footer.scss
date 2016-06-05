@@ -1,45 +1,53 @@
 @import "my-variables";
+@import "../../node_modules/cutestrap/dist/scss/variables/_colors";
 
 /*
 Sticky footer
 https://css-tricks.com/snippets/css/sticky-footer/
 */
 
+/*
 .container {
-  width: $container-width;
-  min-height: 100%;
-  /* equal to footer height */
-  margin-bottom: -$footer-height;
-  @media only screen and (max-width:768px) {
-    margin-bottom: -$footer-height-sm;
-  }
+    width: $container-width;
+    min-height: 100%;
+    
+    margin-bottom: -$footer-height;
+    @media only screen and (max-width:768px) {
+        margin-bottom: -$footer-height-sm;
+    }
 }
 
 .container:after {
-  content: "";
-  display: block;
+    content: "";
+    display: block;
 }
 
 footer, .container:after {
-  height: $footer-height;
-  @media only screen and (max-width:768px) {
-    height: $footer-height-sm;
-  }
+    height: $footer-height;
+    @media only screen and (max-width:768px) {
+        height: $footer-height-sm;
+    }
 }
-
+*/
 footer {
-  width: 100%;
-  padding: 1em 0 1em 0;
-  background: $footer-color;
+    padding: 1em 0 1em 0;
+    background: $gray4;
 }
 
 
-footer > div {
-  font-size: 0.7em;
-  line-height: 1.5em;
-  border-right: 1px solid darken($footer-color, 20%);
-
-  &:first-of-type, &:nth-of-type(5), &:last-of-type {
-    border-right: 0;
-  }
+.footer-section {
+    // defined in my-variables
+    @extend .smaller;
+    border-right: 1px solid darken($gray4, 20%);
+    
+    &:last-of-type {
+        border-right: 0;
+    }
 }
+
+// footer > * {
+//     &:last-child {
+//         margin-right: 0;
+//         padding-right: 0; 
+//     }
+// }

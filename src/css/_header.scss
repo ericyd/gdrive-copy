@@ -1,18 +1,38 @@
 @import "my-variables";
 
-.header-padding {
-    padding: 10px 20%;
+header > * {
+    padding: 10px $header-padding;
+}
+
+.description {
+    // defined in my-variables
+    @extend .smaller;
 }
 
 nav {
-    @extend .header-padding;
-    width: 100%;
-    background: $secondary;
+    width: $container-width;
+    background: $extra-light;
     margin: 0; 
 }
 
-
-h1, .description {
-    @extend .header-padding;
+nav a {
+    display: inline-block;
+    padding: 5px 0 5px 0;
+    margin: 0 10px;
+    border-bottom: 3px solid $dark;
+    text-decoration: none;    
+    
+    &:hover {
+        color: $extra-dark;
+        border-bottom: 6px solid $extra-dark;
+        padding: 5px 0 2px 0;
+    }
+    
+    &:visited {
+        border-bottom: 3px solid $dark;
+    }
+    
+    &:focus {
+        outline: 0;
+    }
 }
-

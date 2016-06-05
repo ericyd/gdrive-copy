@@ -1,11 +1,73 @@
 @import "my-variables";
 
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+
 main {
-  width: $container-width;
-  margin: 0 auto;
+    width: $container-width;
+    margin: 0 auto;
 }
 
 
 .form-div {
-  margin-bottom: 30px;
+    margin-bottom: 30px;
+}
+
+
+#explain-permissions {
+    background:#fff;
+    color:#000;
+
+    &:hover{
+      color: $primary;
+    }
+
+    &:focus {
+      outline:0;
+    }
+}
+
+a {
+    color: $dark;
+    
+    &:hover {
+        color: $extra-dark;
+    }
+    
+    &:visited {
+        color: $dark;
+    }
+    
+    &:link {
+        color: $dark;
+    }
+    
+    &:focus {
+        color: $extra-dark;
+    }
+}
+
+// Hide elements that are programatically shown throughout script processing
+#status, #complete, #please-review, #dialog-message {
+    display: none;
+}
+
+
+.btn.btn--small {
+    height: 2.8rem;
+    line-height: 2.8rem;
+    padding: 0 1.5rem;
+    margin-bottom: 1rem;
 }

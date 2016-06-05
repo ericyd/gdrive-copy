@@ -1,0 +1,34 @@
+<div id="resume-form-div" class="form-div">
+    <form id="resumeForm" name="resumeForm"  class="form-horizontal">
+        
+        <!--Select Folder-->
+        Select the folder copy that is in progress
+        <!--Elements to select folder-->
+        <div class="folderSelect">
+            <!--Button to activate Google Picker-->
+            <button type="button" id="resumeFolderSelect" class="btn btn--small selectFolderButton">Select Folder</button>
+            or
+            <!--Textbox for pasting folder URL-->
+            <label for="resumeTextbox" class="textfield">
+                <input type="text" id="resumeTextbox">
+                <span class="textfield__label">Paste folder URL (Ctrl-V)</span>
+            </label>
+        </div>
+            
+            
+
+        <div class="getFolderErrors"></div>
+
+        <!--Display when folder is selected-->
+        <div class="selectedFolderInfo">
+            <span class="folderName"></span> &nbsp;&nbsp;
+            <button type="button" class="btn  btn--small selectOtherFolder">Select other folder</button>
+        </div>
+        
+        <br />
+
+        <!--Submit-->
+        <button type="submit" id="resumeFolderSubmit" data-loading-text="Resuming..." class="btn">Resume copying</button>
+
+    </form>
+</div>
