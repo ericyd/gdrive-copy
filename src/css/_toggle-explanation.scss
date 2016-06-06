@@ -1,0 +1,35 @@
+@import "my-variables";
+
+/* inspired by robots.thoughtbot.com/you-don-t-need-javascript-for-that */
+.toggle-label {
+    background:#fff;
+    color:#000;
+    cursor: pointer;
+    display: inline;
+    
+    &:hover{
+      color: $primary;
+    }
+    
+    /* div or span container with .toggle must have
+    contenteditable or tabindex="<integer>" added for them to have a focus state */ 
+    &:focus {
+        outline: 0;
+        ~ .toggle-content {
+            display: block;
+        }
+    }
+}
+
+.toggle-content {
+    @extend .smaller;
+    display: none;
+    width: $header-padding - 2%;
+    padding: 3px;
+    margin: 0 5px;
+    border: 1px solid $gray1;
+    border-radius: 2px;
+    position: absolute;
+    left: 0;
+    margin-top: -2rem;
+}

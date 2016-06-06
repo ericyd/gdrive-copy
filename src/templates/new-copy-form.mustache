@@ -41,9 +41,18 @@
         
         <!--Question mark button-->
         Copy sharing permissions
-        <a href="#" id="explain-permissions" data-toggle="tooltip" title="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals.  Owners of originals will become editors of the copies.  Copying takes much longer if 'Yes' is selected." data-trigger="focus" data-placement="top" data-container="body">
-            <i class="fa fa-question-circle"></i>
-        </a>
+        
+            <i tabindex="10" class="fa fa-question-circle toggle-label"></i>
+            
+            <!--Content to toggle-->
+            
+        
+        <div role="toggle" class="toggle-content">
+            Select this box if you want the documents in the folder copy to be editable/viewable 
+            by the same people as the originals.  
+            Owners of originals will become editors of the copies.  
+            Copying takes much longer if 'Yes' is selected.
+        </div>
         
         
         <div class="form-group" id="permissions-group">
