@@ -15,7 +15,7 @@ var buffer = require('vinyl-buffer');
 var globby = require('globby');  
 var svg2png = require("svg2png");
 var fs = require('fs');
-var gulpHogan = require('./hogan-render');
+var gulpHogan = require('gulp-hogan');
 
 gulp.task('default', function(){
     // Default task
