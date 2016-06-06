@@ -46,14 +46,6 @@ gulp.task('templates', function() {
 
 
 
-gulp.task('hogan', function() {
-    var b = gulp.src('src/templates/complete.mustache')
-        .pipe(gulpHogan())
-        .pipe(concat('templatedIndex.html'))
-        .pipe(gulp.dest('dist'));
-});
-
-
 gulp.task('js', function() {
     globby(['./src/js/*.js']).then(function(entries) {
         var b = browserify({
