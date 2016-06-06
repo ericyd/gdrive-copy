@@ -3,6 +3,7 @@
 
 //== Layout
 $container-width:       70%;
+$container-width-max:   600px;
 $header-padding:        calculate-padding($container-width);
 $footer-height:         100px;
 $footer-height-sm:      250px;
@@ -15,15 +16,10 @@ $dark:                      #E84707;
 $extra-dark:                #BB3500;
 
 //== Typography
-
+$fs-smaller:                0.7em;
+$lh-smaller:                1.5em;
 
 
 @function calculate-padding($containerWidth){
   @return (100% - $containerWidth)/2
-}
-
-
-.smaller {
-    font-size: 0.7em;
-    line-height: 1.5em;
 }

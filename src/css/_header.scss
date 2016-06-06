@@ -5,8 +5,8 @@ header > * {
 }
 
 .description {
-    // defined in my-variables
-    @extend .smaller;
+    font-size: $fs-smaller;
+    line-height: $lh-smaller;
 }
 
 nav {

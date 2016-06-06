@@ -22,7 +22,9 @@
 }
 
 .toggle-content {
-    @extend .smaller;
+    background: #fff;
+    font-size: $fs-smaller;
+    line-height: $lh-smaller;
     display: none;
     width: $header-padding - 2%;
     padding: 3px;
@@ -32,4 +34,11 @@
     position: absolute;
     left: 0;
     margin-top: -2rem;
+    
+    @media only screen and (max-width:850px) {
+        position: relative; 
+        margin-top:0px;
+        width: 100%;
+    }   
+    
 }

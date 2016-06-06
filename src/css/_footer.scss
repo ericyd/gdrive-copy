@@ -1,6 +1,4 @@
 @import "my-variables";
-@import "../../node_modules/cutestrap/dist/scss/variables/_colors";
-
 
 .push {
     height: $footer-height;
@@ -14,7 +12,8 @@ footer {
 
 .footer-section {
     // defined in my-variables
-    @extend .smaller;
+    font-size: $fs-smaller;
+    line-height: $lh-smaller;
     border-right: 1px solid darken($gray4, 20%);
     
     &:last-of-type {

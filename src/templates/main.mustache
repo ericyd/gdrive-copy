@@ -18,11 +18,9 @@
             </ul>
         </div>
     
-        <div id="please-review" class="panel panel-default">
+        <div id="please-review" class="panel">
             <div class="panel-heading">Have an extra 30 seconds?</div>
-            <div class="panel-body">
-                Please take a moment to <a href="https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews" target="_blank">rate and review this app</a> in the Chrome Web Store.
-            </div>
+            Please take a moment to <a href="https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews" target="_blank">rate and review this app</a> in the Chrome Web Store.
         </div>
     
         <!--These divs get filled programatically at runtime-->
@@ -32,8 +30,9 @@
             Please wait until the other instances complete to begin a new folder copy.<br><br>
             If there are no other folders currently being copied, you can force this operation to continue.
             Note: This will stop any other folder copies that are active on your account.
-            <button id="delete-existing-triggers" class="btn btn-danger">Force continue</button>
+            <button id="delete-existing-triggers" class="btn btn--small">Force continue</button>
         </div>
+        
         <div id="status">
             <h4 id="status-title">Initializing copy request (this should just take a few moments) <i class="fa fa-spinner fa-spin"></i></h4>
         </div>
