@@ -1,43 +1,19 @@
 @import "my-variables";
 
-html {
+html, body {
     height: 100%;
-}
-
-body {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.container {
-    flex: 1;
+    margin: 0;
 }
 
 
 main {
+    // min-height: 100%;
     width: $container-width;
     margin: 0 auto;
+    margin-bottom: -$footer-height;
+    
 }
 
-
-.form-div {
-    margin-bottom: 30px;
-}
-
-
-#explain-permissions {
-    background:#fff;
-    color:#000;
-
-    &:hover{
-      color: $primary;
-    }
-
-    &:focus {
-      outline:0;
-    }
-}
 
 a {
     color: $dark;

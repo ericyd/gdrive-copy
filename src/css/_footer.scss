@@ -1,37 +1,14 @@
 @import "my-variables";
 @import "../../node_modules/cutestrap/dist/scss/variables/_colors";
 
-/*
-Sticky footer
-https://css-tricks.com/snippets/css/sticky-footer/
-*/
 
-/*
-.container {
-    width: $container-width;
-    min-height: 100%;
-    
-    margin-bottom: -$footer-height;
-    @media only screen and (max-width:768px) {
-        margin-bottom: -$footer-height-sm;
-    }
-}
-
-.container:after {
-    content: "";
-    display: block;
-}
-
-footer, .container:after {
+.push {
     height: $footer-height;
-    @media only screen and (max-width:768px) {
-        height: $footer-height-sm;
-    }
 }
-*/
 footer {
     padding: 1em 0 1em 0;
     background: $gray4;
+    height: $footer-height;
 }
 
 
@@ -44,10 +21,3 @@ footer {
         border-right: 0;
     }
 }
-
-// footer > * {
-//     &:last-child {
-//         margin-right: 0;
-//         padding-right: 0; 
-//     }
-// }
