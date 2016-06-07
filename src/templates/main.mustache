@@ -1,10 +1,8 @@
 <main>
     <div class="container">
+    <!-- import forms partials -->
         {{> new-copy-form }}
         {{> resume-copy-form }}
-        
-        <!--todo: format alert boxes-->
-        
         
         <!--These divs display when complete-->
         <div id="complete" class='alert alert-success' role='alert'>
@@ -34,7 +32,7 @@
         </div>
         
         <div id="status">
-            <h4 id="status-title">Initializing copy request (this should just take a few moments) <i class="fa fa-spinner fa-spin"></i></h4>
+            <h4 id="status-title">Initializing copy request (this should just take a few moments) {{> icons/notched_circle}}</h4>
         </div>
     </div>
 </main>
