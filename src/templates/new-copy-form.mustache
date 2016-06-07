@@ -36,23 +36,11 @@
 
 
         <!--Copy permissions?-->
-        
-        <!--todo: replace "tooltip" functionality with something else, possibly something in the margin?-->
-        
-        <!--Question mark button-->
         Copy sharing permissions
-        
-            <i tabindex="10" class="fa fa-question-circle toggle-label"></i>
-            
-            <!--Content to toggle-->
-            
-        
-        <div role="toggle" class="toggle-content">
-            Select this box if you want the documents in the folder copy to be editable/viewable 
-            by the same people as the originals.  
-            Owners of originals will become editors of the copies.  
-            Copying takes much longer if 'Yes' is selected.
-        </div>
+        <!--Question mark button-->
+        <span tabindex="10" class="tooltip-toggle" data-tooltip="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals. Owners of originals will become editors of the copies. Copying takes much longer if 'Yes' is selected.">
+            <i class="fa fa-question-circle"></i>
+        </span> 
         
         
         <div class="form-group" id="permissions-group">
