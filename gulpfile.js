@@ -86,7 +86,7 @@ gulp.task('css', function() {
     
     return gulp.src('./src/css/main.scss')
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-        .pipe(autoprefixer({browsers: ['last 2 versions']}))
+        .pipe(autoprefixer({browsers: ['last 10 versions']}))
         .pipe(concat('css.html'))
         .pipe(insert.wrap('<style>', '</style>'))
         .pipe(gulp.dest('dist'));
