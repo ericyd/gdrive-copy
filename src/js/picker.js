@@ -3,15 +3,7 @@ Many, many thanks to [Jean-Pierre Verhulst](https://plus.google.com/+JeanPierreV
 for providing the working backbone of this script
 */
 
-
-/* Load api script.  On success, run onApiLoad()
-
-    this is an alternative to including this script tag after the js
-    <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
-    Note: above method fails when js is bundled using browserify
-*/
-// jQuery.getScript( "https://apis.google.com/js/api.js", onApiLoad );
-
+var ui = require('./interactions');
 
 // vanillaJS implementation of $.getScript(), thanks to http://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
 function getScript(source, callback) {
@@ -133,13 +125,7 @@ function setSelectedFolder(properties) {
     selectedFolder.srcName = properties.srcName;
     selectedFolder.destName = properties.destName;
     
-    // update display
-    $(".getFolderErrors").text("");
-    $("#newFolder").val(selectedFolder.destName);
-    $(".folderName").text(selectedFolder.srcName);
-    
-    $(".folderSelect").hide();
-    $(".selectedFolderInfo").show();
+    ui.folderIsSelected(selectedFolder);
     
 }
 
