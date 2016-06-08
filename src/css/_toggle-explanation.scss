@@ -50,8 +50,9 @@
         pointer-events: none;
     }
     
-    &:hover {
-        color: $primary;
+    &:hover > svg,
+    &:focus > svg {
+        fill: $primary;
     }
     
     &:focus {

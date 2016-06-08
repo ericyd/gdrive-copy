@@ -1,26 +1,29 @@
 <main>
     <div class="container">
-    <!-- import forms partials -->
+        <!-- import forms partials -->
         {{> new-copy-form }}
         {{> resume-copy-form }}
+
         
         <!--These divs display when complete-->
         <div id="complete" class='alert alert-success' role='alert'>
             <b>Copying has started in background</b>
             <ul class="icon-ul">
-                <li><i class="icon-li">{{> icons/cog }}</i>Copying folder "<span class="folderName"></span>".  You may close this window and the copying will continue in the background.</li>
-                <li><i class="icon-li">{{> icons/cog }}</i>Please check the <span id="copy-log-link"></span> for progress updates. This log is located inside the newly created folder.</li>
-                <li><i class="icon-li">{{> icons/cog }}</i>The new folder copy can be found <span id="dest-folder-link"></span>.</li>
-                <li><i class="icon-li">{{> icons/cog }}</i>Please refresh this page to begin copying another folder</li>
-                <li><i class="icon-li">{{> icons/cog }}</i>If the folder does not copy correctly, please email the author at eric@ericyd.com</li>
+                <li>Copying folder "<span class="folderName"></span>".  You may close this window and the copying will continue in the background.</li>
+                <li>Please check the <span id="copy-log-link"></span> for progress updates. This log is located inside the newly created folder.</li>
+                <li>The new folder copy can be found <span id="dest-folder-link"></span>.</li>
+                <li>Please refresh this page to begin copying another folder</li>
+                <li>If the folder does not copy correctly, please email the author at eric@ericyd.com</li>
             </ul>
         </div>
     
         <div id="please-review" class="panel">
             <div class="panel-heading">Have an extra 30 seconds?</div>
             Please take a moment to <a href="https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews" target="_blank">rate and review this app</a> in the Chrome Web Store.
-        </div>
+        </div> 
     
+    
+        
         <!--These divs get filled programatically at runtime-->
         <div id="errors"></div>
         <div id="too-many-triggers" class="alert alert-danger">
@@ -32,7 +35,7 @@
         </div>
         
         <div id="status">
-            <h4 id="status-title">Initializing copy request (this should just take a few moments) {{> icons/notched_circle}}</h4>
-        </div>
+            <h4 id="status-title">Initializing copy request (this should just take a few moments) <span class="rotate-contents">{{> icons/notched_circle}}</span></h4>
+        </div> 
     </div>
 </main>

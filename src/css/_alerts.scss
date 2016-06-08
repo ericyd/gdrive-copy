@@ -23,10 +23,8 @@
 .panel {
     @extend .alert;
     border: 1px solid $gray4;
-    // padding: 0;
-    
-    
 }
+
  .panel-heading {
     border-bottom: 1px solid $gray6;
     font-weight:bold;
