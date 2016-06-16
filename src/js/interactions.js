@@ -58,11 +58,8 @@ module.exports = {
     * Resets form to default state
     */
     resetForm: function () {
-        $(".getFolderErrors").text("");
         $(".folderSelect").show();
         $(".selectedFolderInfo").hide();
-        $("#folderTextbox").val("");
-        $("#resumeTextbox").val("");
     }
 }
 
