@@ -2,6 +2,8 @@
 var picker = require('./picker');
 var ui = require('./interactions');
 
+// interval is the handle for the interval set in handleMouse and cleared in getFileData 
+var interval;
 
 /* Handling for folderTextbox: 
    When folder URL is pasted into textbox, it will automatically get the information for the folder.
@@ -13,7 +15,6 @@ var resumeTextbox = document.getElementById("resumeTextbox");
 // Add event listeners
 folderTextbox.addEventListener('mouseup', handleMouse, false);
 folderTextbox.addEventListener('keyup', getFileData, false);
-
 resumeTextbox.addEventListener('mouseup', handleMouse, false);
 resumeTextbox.addEventListener('keyup', getFileData, false);
 
@@ -29,7 +30,7 @@ function handleMouse(e) {
         var g = function () {
             return getFileData(e);
         }; 
-        return setTimeout(g, 2000);
+        return interval = setInterval(g, 500);
     }
     getFileData(e);
 }
@@ -45,6 +46,7 @@ function getFileData(e) {
     
     if (e.target.value !== "") {
         ui.onFolderLookup();
+        clearInterval(interval);
         
         var id = parseId( e.target.value );
         
