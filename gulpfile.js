@@ -16,12 +16,14 @@ var globby = require('globby');
 var svg2png = require("svg2png");
 var fs = require('fs');
 var gulpHogan = require('gulp-hogan');
+var hoganCompile = require('gulp-hogan-compile');
+var hogan = require('hogan.js');
 
 gulp.task('default', function(){
     // Default task
 });
 
-gulp.task('build', ['jslint', 'js','gs', 'html','css', 'cutestrap']);
+gulp.task('build', ['templates', 'jslint', 'js','gs', 'html','css', 'cutestrap']); //
 
 gulp.task('watch', function(){ 
     var watcher = gulp.watch(['./src/**/*'], ['build']);
@@ -32,16 +34,20 @@ gulp.task('watch', function(){
 });
 
 
-var compiler = require('gulp-hogan-compile');
-var hogan = require('hogan.js');
-var templates = {};
+
 
 gulp.task('templates', function() {
-    gulp.src('src/templates/*.mustache')
-        .pipe(compiler(templates))
-        .pipe(gulp.dest('dist'));
-    console.log('templates: ');
-    console.log(templates);
+    gulp.src(['src/templates/forms/*.html', 'src/templates/icons/*.html'])
+        .pipe(hoganCompile('templates.js', {wrapper: 'commonjs', hoganModule: 'hogan.js'}))
+        .pipe(gulp.dest('src/js/'));
+});
+
+
+gulp.task('generate-test-site', ['build'], function() {
+    return gulp.src('src/templates/complete.html')
+        .pipe(gulpHogan({'testing': true}))
+        .pipe(concat('index.html'))
+        .pipe(gulp.dest('test'));
 });
 
 
@@ -110,9 +116,9 @@ gulp.task('cutestrap', function() {
 gulp.task('html', function() {
     // process html  
     
-    return gulp.src('src/templates/complete.mustache')
+    return gulp.src('src/templates/complete.html')
         .pipe(changed('dist'))
-        .pipe(gulpHogan())
+        .pipe(gulpHogan({'testing': false}))
         .pipe(concat('Index.html'))
         .pipe(htmlmin({
             collapseWhitespace: true,
