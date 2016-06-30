@@ -1,5 +1,6 @@
 /* Variables */
 @import "../../node_modules/cutestrap/dist/scss/variables/_colors";
+@import "../../node_modules/sass-colorscheme/colorscheme";
 
 //== Layout
 $container-width:       70%;
@@ -9,11 +10,9 @@ $footer-height:         100px;
 $footer-height-sm:      250px;
 
 //== Colors
-$primary:                   #F5733F;
-$light:                     #FF946A;
-$extra-light:               #FFA581;
-$dark:                      #E84707;
-$extra-dark:                #BB3500;
+$seed-color:                #F5733F;
+$colorscheme:               colorscheme(#F5733F, $scheme: 'complementary');
+
 
 //== Typography
 $fs-smaller:                0.7em;
