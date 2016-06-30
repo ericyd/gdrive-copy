@@ -1,11 +1,16 @@
 // Requires
 var picker = require('./picker');
 var ui = require('./interactions');
-
+var templates = require('./templates.js');
+var textboxHandlers = require('./textbox-handlers');
 
 // event bindings
 $(function() {
-    
+
+    $("#put-forms-here").html(templates.new.render({}));
+    textboxHandlers.addNewformListeners();
+
+
     /**
      * Execute when beginning new folder copy
      *
@@ -17,9 +22,9 @@ $(function() {
      * 
      * @param {Object} event 
      */
-    $("#folderForm").submit(function( event ) {
+    $("#folderForm").submit(function( event ) { 
         event.preventDefault();
-        var errormsg;
+        var errormsg; 
         
         // validate
         if (!picker.folder.srcId) {
