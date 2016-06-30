@@ -6,25 +6,34 @@
   "dependencies": {},
   "devDependencies": {
     "browserify": "~13.0.0",
+    "chai": "^3.5.0",
     "cutestrap": "^1.2.3",
+    "express": "^4.14.0",
     "globby": "~4.0.0",
     "gulp": "~3.9.0",
     "gulp-autoprefixer": "~3.1.0",
     "gulp-changed": "~1.3.0",
     "gulp-concat": "~2.6.0",
     "gulp-hogan": "^2.0.0",
+    "gulp-hogan-compile": "^0.4.1",
     "gulp-htmlmin": "~1.3.0",
     "gulp-insert": "~0.5.0",
     "gulp-jshint": "~2.0.0",
     "gulp-sass": "^2.1.1",
     "gulp-uglify": "~1.5.1",
+    "hogan.js": "^3.0.2",
+    "mocha": "^2.5.3",
+    "sass-colorscheme": "^0.4.0",
+    "selenium-webdriver": "^2.53.3",
     "svg2png": "^3.0.0",
     "vinyl-buffer": "~1.0.0",
     "vinyl-source-stream": "~1.1.0"
   },
   "scripts": {
     "watch": "gulp watch",
-    "build": "gulp build"
+    "build": "gulp build",
+    "serve": "node server.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
