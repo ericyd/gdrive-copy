@@ -22,10 +22,11 @@ function copy() {
         currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
         timeZone,       // {string} time zone of user
+        stop,           // {boolean} true if the user has clicked the 'stop' button
         userProperties = PropertiesService.getUserProperties(), // reference to userProperties store 
         triggerId = userProperties.getProperties().triggerId;      // {string} Unique ID for the most recently created trigger
 
-
+    stop = userProperties.getProperties().stop == 'true';
      
     try {
         // Load properties and initialize logger spreadsheet
@@ -76,7 +77,7 @@ function copy() {
     
     // When leftovers are complete, query next folder from properties.remaining
     Logger.log("beginning processFiles on next remaining folder");    
-    while ( properties.remaining.length > 0 && !timeIsUp) {
+    while ( properties.remaining.length > 0 && !timeIsUp && !stop) {
         
         try {
             // if pages remained in the previous query, use them first
@@ -116,11 +117,16 @@ function copy() {
             // get next page token to continue iteration
             properties.pageToken = files.nextPageToken;
             
-        } while (properties.pageToken && !timeIsUp);
+        } while (properties.pageToken && !timeIsUp && !stop);
         
     }
     
     
+    if (stop) {
+        saveState();
+        log(ss, ["Stopped manually by user.  Please use 'Resume' button to restart copying"]);
+        return;
+    }
     
     // If timeIsUp, maximum execution time has been reached
     // Update logger spreadsheet, and save current items to properties.leftovers
@@ -152,11 +158,11 @@ function copy() {
      * @param {Array} items the list of files over which to iterate
      */
     function processFiles(items) {
-        while ( items.length > 0 && !timeIsUp ) {
+        while ( items.length > 0 && !timeIsUp && !stop) {
             item = items.pop();
             currTime = (new Date()).getTime();
             timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
-
+            stop = userProperties.getProperties().stop == 'true';
             
             newfile = copyFile(item);
 
