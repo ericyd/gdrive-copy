@@ -136,7 +136,7 @@ function initialize(selectedFolder) {
     userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
     userProperties.setProperty("trials", 0);
     userProperties.setProperty("resuming", 'false');
-    userProperties.setProperty('stop', false);
+    userProperties.setProperty('stop', 'false');
     saveProperties(selectedFolder);
     
     
