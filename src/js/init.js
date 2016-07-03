@@ -209,6 +209,10 @@ $(function() {
         picker.showPicker();
     });
 
+    $("#stop").click(function() {
+        google.script.run.setStopFlag();
+    });
+
 
     
     $('#delete-existing-triggers').click(function() {
