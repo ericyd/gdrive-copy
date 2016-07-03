@@ -1,0 +1,10 @@
+<div id='confirm-stop-message'>
+    {{#confirmed}}
+    <h3>You have stopped all folder copies.  To restart them, please use the "Resume" feature.</h3>
+    {{/confirmed}}
+    
+    {{^confirmed}}
+    <h3>Are you sure you want to stop the instances of copy folder that you have running?</h3>
+    <button type="button" class="btn btn--small" id="stop-confirm-button">Yes, I want to stop all my current instances of Copy Folder</button><br><br>
+    {{/confirmed}}
+</div>
