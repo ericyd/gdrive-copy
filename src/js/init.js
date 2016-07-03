@@ -9,6 +9,7 @@ $(function() {
     $("#too-many-triggers").hide();
     $("#resume-form-div").hide();
     $(".description:eq(1)").hide();
+    $("#confirm-stop-message").hide();
 
 
     /**
@@ -209,10 +210,24 @@ $(function() {
         picker.showPicker();
     });
 
-    $("#stop").click(function() {
+
+    $(".stop").click(function() {
+        $("#formDiv").hide();
+        $("#resume-form-div").hide();
+        $(".description").hide();
+        $("#confirm-stop-message").show();
+    });
+
+    $("#stop-confirm").click(function() {
         google.script.run.setStopFlag();
     });
 
+    $("#show-new-copy").click(function() {
+        $("#formDiv").show();
+        $("#resume-form-div").hide();
+        $(".description:eq(0)").show();
+        $("#confirm-stop-message").hide();
+    });
 
     
     $('#delete-existing-triggers').click(function() {
