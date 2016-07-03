@@ -21,7 +21,9 @@ function copy() {
         item,           // {object} metadata of child item from current iteration
         currFolder,     // {object} metadata of folder whose children are currently being processed
         newfile,        // {Object} JSON metadata for newly created folder or file
-        timeZone;       // {string} time zone of user
+        timeZone,       // {string} time zone of user
+        userProperties = PropertiesService.getUserProperties(), // reference to userProperties store 
+        triggerId = userProperties.getProperties().triggerId;      // {string} Unique ID for the most recently created trigger
 
 
      
@@ -31,12 +33,12 @@ function copy() {
 
     } catch (err) {
 
-        var n = Number(PropertiesService.getUserProperties().getProperties()['trials']);
+        var n = Number(userProperties.getProperties().trials);
         Logger.log(n);
 
         if (n < 5) {
             Logger.log('setting trials property');
-            PropertiesService.getUserProperties().setProperty('trials', (n + 1).toString());
+            userProperties.setProperty('trials', (n + 1).toString());
 
             exponentialBackoff(createTrigger,
                 'Error setting trigger.  There has been a server error with Google Apps Script.' +
@@ -47,14 +49,17 @@ function copy() {
     }
 
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
-    timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone() || 'GMT-7';
+    timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
+    if (timeZone === undefined || timeZone === null) {
+        timeZone = 'GMT-7';
+    }
 
 
     // delete prior trigger
-    if ( properties.triggerId !== undefined ) {
+    if ( triggerId !== undefined && triggerId !== null) {
         try {
             // delete prior trigger
-            deleteTrigger(properties.triggerId);
+            deleteTrigger(triggerId);
         } catch (err) {
             log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
         }
@@ -120,9 +125,8 @@ function copy() {
     // If timeIsUp, maximum execution time has been reached
     // Update logger spreadsheet, and save current items to properties.leftovers
     if ( timeIsUp ) {
-        log(ss, ["Paused due to Google quota limits - copy will resume in 1-2 minutes"]);
-        // ss.getRange(ss.getLastRow()+1, 1, 1, 1).setValue("Paused due to Google quota limits - copy will resume in 1-2 minutes");
         saveState();     
+        log(ss, ["Paused due to Google quota limits - copy will resume in 1-2 minutes"]);
     } else {
         // If script reaches here and !timeIsUp, then the copy is complete!  
         // Delete prior trigger, move propertiesDoc to trash, and update logger spreadsheet,
@@ -158,8 +162,6 @@ function copy() {
 
 
             if (newfile.id) {
-                // syntax: sheet.getRange(row, column, numRows, numColumns)
-
                 log(ss, [
                     "Copied",
                     newfile.title,

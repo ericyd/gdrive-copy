@@ -17,6 +17,7 @@ function resume(selectedFolder) {
     PropertiesService.getUserProperties().setProperty("resuming", 'true');
     PropertiesService.getUserProperties().setProperty("spreadsheetId", priorCopy.spreadsheetId);
     PropertiesService.getUserProperties().setProperty("propertiesDocId", priorCopy.propertiesDocId);
+    PropertiesService.getUserProperties().setProperty('stop', false);
 
     Logger.log(priorCopy.propertiesDocId);  
 
