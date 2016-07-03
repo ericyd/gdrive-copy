@@ -7,13 +7,11 @@ var textboxHandlers = require('./textbox-handlers');
 // event bindings
 $(function() {
 
-    $("#put-forms-here").html(templates.new.render({}));
+    $("#put-forms-here").html(templates.new.render({}, {
+        'spinner': templates.spinner,
+        'question': templates.question
+    }));
     textboxHandlers.addNewformListeners();
-    $(".selectedFolderInfo").hide();
-    $("#too-many-triggers").hide();
-    $("#resume-form-div").hide();
-    $(".description:eq(1)").hide();
-    $("#confirm-stop-message").hide();
 
 
     /**
@@ -168,49 +166,6 @@ $(function() {
         $("#errors").append(errormsg);
     }
 
-
-    /**
-     * Show 'resume' form when #resume-button is selected.
-     * Show original form when #new-copy-button is selected.
-     */
-    $(".toggle-forms").click(function () {
-        $("#formDiv").toggle();
-        $("#resume-form-div").toggle();
-        $(".description").toggle();
-    });
-
-
-    /**
-     * Add explanation tooltip for #explain-permissions
-     */
-    $("#explain-permissions").tooltip();
-
-
-    /**
-     * Show Google Picker when select Folder buttons are selected
-     */
-    $(".selectFolderButton").click(function() {
-        picker.showPicker();
-    });
-
-
-    $(".stop").click(function() {
-        $("#formDiv").hide();
-        $("#resume-form-div").hide();
-        $(".description").hide();
-        $("#confirm-stop-message").show();
-    });
-
-    $("#stop-confirm").click(function() {
-        google.script.run.setStopFlag();
-    });
-
-    $("#show-new-copy").click(function() {
-        $("#formDiv").show();
-        $("#resume-form-div").hide();
-        $(".description:eq(0)").show();
-        $("#confirm-stop-message").hide();
-    });
 
     
     $('#delete-existing-triggers').click(function() {

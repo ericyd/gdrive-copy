@@ -61,5 +61,5 @@ module.exports = {
         $(".folderSelect").show();
         $(".selectedFolderInfo").hide();
     }
-}
+};
 
