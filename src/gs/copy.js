@@ -123,7 +123,7 @@ function copy() {
     
     
     if (stop) {
-        saveState();
+        saveState('notrigger');
         log(ss, ["Stopped manually by user.  Please use 'Resume' button to restart copying"]);
         return;
     }
@@ -279,7 +279,7 @@ function copy() {
     /**
      * Delete existing triggers, save properties, and create new trigger
      */
-    function saveState() {
+    function saveState(makeTrigger) {
         try {
             // save, create trigger, and assign pageToken for continuation
             properties.leftovers = files && files.items ? files : properties.leftovers;
@@ -290,9 +290,12 @@ function copy() {
 
         try {
             saveProperties(properties);
-            exponentialBackoff(createTrigger,
-                'Error setting trigger.  There has been a server error with Google Apps Script.' +
-                'To successfully finish copying, please Copy Folder.');
+            if (makeTrigger !== 'notrigger') {
+                exponentialBackoff(createTrigger,
+                    'Error setting trigger.  There has been a server error with Google Apps Script.' +
+                    'To successfully finish copying, please Copy Folder.');
+            }
+            
         } catch (err) {
             log(ss, [err.message, err.fileName, err.lineNumber]);
         }
