@@ -22,9 +22,7 @@ function createTrigger() {
 
     if (trigger) {
         // Save the triggerID so this trigger can be deleted later
-        saveProperties({
-            "triggerId": trigger.getUniqueId()
-        });
+        PropertiesService.getUserProperties().setProperty('triggerId', trigger.getUniqueId());
     }
 }
 

@@ -3,59 +3,31 @@
  * converting any JSON objects to strings.
  * On completetion, save propertiesToSave to userProperties
  *
- * @param {object} propertiesToSave contains all properties that need to be saved to userProperties
+ * @param {object} properties - contains all properties that need to be saved to userProperties
  */
-function saveProperties(propertiesToSave) {
-    var userProperties,propertiesDoc,existingProperties,ss;
-
-
-    // Attempt to access existing properties to overwrite
-    try {
-        userProperties = PropertiesService.getUserProperties().getProperties();
-        propertiesDoc = DocumentApp.openById(userProperties.propertiesDocId).getBody();
-        existingProperties = {};
-        ss = SpreadsheetApp.openById(userProperties.spreadsheetId).getSheetByName("Log");
-    } catch (err) {
-        log(null, [err.message, err.fileName, err.lineNumber]);
-    }
-
-
-
-    // extract text from propertiesDoc
-    // This will be overwritten later
-    if (propertiesDoc.getText() !== "") {
-        try {
-            existingProperties = JSON.parse(propertiesDoc.getText());
-        } catch(err) {
-            log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
-        }
-    }
-
-
-    // Stringify all JSON objects so they can propertly save to plain text
-    for (var key in propertiesToSave) {
-
-        // skip loop if the property is from prototype
-        if(!propertiesToSave.hasOwnProperty(key)) continue;
-
-        // stringify all the objects and arrays
-        if ( typeof propertiesToSave[key] !== "string" ) {
-            existingProperties[key] = JSON.stringify(propertiesToSave[key]);
-        } else {
-            existingProperties[key] = propertiesToSave[key];
-        }
-
-        Logger.log("key: " + key + ", value: " + existingProperties[key]);
-
-
+function saveProperties(properties) {
+    try{properties.remaining = JSON.stringify(properties.remaining);}catch(e){}
+    try{properties.map = JSON.stringify(properties.map);}catch(e){}
+    try{properties.permissions = JSON.stringify(properties.permissions);}catch(e){} 
+    try{properties.leftovers = JSON.stringify(properties.leftovers);}catch(e){}
+    if (properties.leftovers && properties.leftovers.items) {
+        try{properties.leftovers.items = JSON.stringify(properties.leftovers.items);}catch(e){}
+        properties.leftovers.items.forEach(function(obj, i, arr) {
+            try{arr[i].owners = JSON.stringify(arr[i].owners);}catch(e){}
+            try{arr[i].labels = JSON.stringify(arr[i].labels);}catch(e){}
+            try{arr[i].lastModifyingUser = JSON.stringify(arr[i].lastModifyingUser);}catch(e){}
+            try{arr[i].lastModifyingUser.picture = JSON.stringify(arr[i].lastModifyingUser.picture);}catch(e){}
+            try{arr[i].ownerNames = JSON.stringify(arr[i].ownerNames);}catch(e){}
+            try{arr[i].openWithLinks = JSON.stringify(arr[i].openWithLinks);}catch(e){}
+            try{arr[i].spaces = JSON.stringify(arr[i].spaces);}catch(e){}
+            try{arr[i].parents = JSON.stringify(arr[i].parents);}catch(e){}
+            try{arr[i].userPermission = JSON.stringify(arr[i].userPermission);}catch(e){}
+        });
     }
 
     try {
-        // save the object existingProperties back to propertiesDoc
-        propertiesDoc.setText(JSON.stringify(existingProperties));
-    } catch (err) {
-        log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
+        DriveApp.getFileById(PropertiesService.getUserProperties().getProperties().propertiesDocId).setContent(JSON.stringify(properties));
+    } catch (e) {
+        throw e;
     }
-
-
 }

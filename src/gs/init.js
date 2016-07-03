@@ -81,17 +81,21 @@ function initialize(selectedFolder) {
     // create document for storing properties as plain text
     // this will be deleted upon script completion
     try {
-        propertiesDoc = Drive.Files.insert({
-            "description": "This document will be deleted after the folder copy is complete.  It is only used to store properties necessary to complete the copying procedure",
-            "title": "DO NOT DELETE OR MODIFY - will be deleted after copying completes",
-            "parents": [
-                {
-                    "kind": "drive#fileLink",
-                    "id": destFolder.id
-                }
-            ],
-            "mimeType": "application/vnd.google-apps.document"
-        });   
+        propertiesDoc = DriveApp.getFolderById(destFolder.id).createFile('DO NOT DELETE OR MODIFY - will be deleted after copying completes', '', MimeType.PLAIN_TEXT).getId();
+        propertiesDoc.setDescription("This document will be deleted after the folder copy is complete.  It is only used to store properties necessary to complete the copying procedure");
+        propertiesDoc = propertiesDoc.getId; 
+
+        // propertiesDoc = Drive.Files.insert({
+        //     "description": "This document will be deleted after the folder copy is complete.  It is only used to store properties necessary to complete the copying procedure",
+        //     "title": "DO NOT DELETE OR MODIFY - will be deleted after copying completes",
+        //     "parents": [
+        //         {
+        //             "kind": "drive#fileLink",
+        //             "id": destFolder.id
+        //         }
+        //     ],
+        //     "mimeType": "application/vnd.google-apps.document"
+        // });   
     }
     catch(err) {
         Logger.log(err.message);
@@ -113,7 +117,7 @@ function initialize(selectedFolder) {
     // Get IDs of destination folder and logger spreadsheet 
     selectedFolder.destId = destFolder.id;
     selectedFolder.spreadsheetId = spreadsheet.id;
-    selectedFolder.propertiesDocId = propertiesDoc.id;
+    selectedFolder.propertiesDocId = propertiesDoc; // propertiesDoc is only the ID, not the full metadata
     
     
     
@@ -132,6 +136,7 @@ function initialize(selectedFolder) {
     userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
     userProperties.setProperty("trials", 0);
     userProperties.setProperty("resuming", 'false');
+    userProperties.setProperty('stop', 'false');
     saveProperties(selectedFolder);
     
     
