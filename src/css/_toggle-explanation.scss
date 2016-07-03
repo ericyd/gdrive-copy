@@ -68,5 +68,10 @@
         opacity: 1;
         transition: all 0.75s ease;
     }
+
+    > svg {
+        width: 1em;
+        height: 1em;
+    }
     
 }

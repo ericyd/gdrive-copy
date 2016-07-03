@@ -3,11 +3,12 @@
 @import "../../node_modules/sass-colorscheme/colorscheme";
 
 //== Layout
-$container-width:       70%;
-$container-width-max:   600px;
-$header-padding:        calculate-padding($container-width);
+$container-width:       700px;
+$header-padding:        15%;
 $footer-height:         100px;
 $footer-height-sm:      250px;
+
+// todo: figure out why $primary isn't importing properly into Cutestrap (see radio buttons and btn hover for examples of inconsistency)
 
 //== Colors
 $seed-color:                #F5733F;
@@ -17,8 +18,3 @@ $colorscheme:               colorscheme(#F5733F, $scheme: 'complementary');
 //== Typography
 $fs-smaller:                0.7em;
 $lh-smaller:                1.5em;
-
-
-@function calculate-padding($containerWidth){
-  @return (100% - $containerWidth)/2
-}
