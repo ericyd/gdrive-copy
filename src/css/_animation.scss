@@ -1,3 +1,5 @@
+@import "my-variables";
+
 /* 
 Pulled directly from 
 https://github.com/FortAwesome/Font-Awesome/blob/89a28f8b1f9882159dce581ee92d398bbc33ad59/scss/_animated.scss 
@@ -33,4 +35,9 @@ https://github.com/FortAwesome/Font-Awesome/blob/89a28f8b1f9882159dce581ee92d398
     height: 1em;
     -webkit-animation: icon-spin 2s infinite linear;
     animation: icon-spin 2s infinite linear;
+}
+
+
+.primary-stroke {
+    stroke: $primary;
 }
