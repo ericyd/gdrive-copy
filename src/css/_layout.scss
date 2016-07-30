@@ -46,23 +46,6 @@ a {
 }
 
 
-.btn.btn--small {
-    height: 2.8rem;
-    line-height: 1rem;
-    // padding: -0.5rem 0.5rem 0.5rem 0.5rem; 
-    margin-bottom: 1rem;
-    border: 3px solid $primary;
-    background: #fff;
-    color: $primary; 
-}
-
-.btn.btn--small:hover {
-    background: $primary;
-    color: #fff; 
-    outline: 0; 
-    transition: all 0.25s ease;
-}
-
 // inspired by https://github.com/FortAwesome/Font-Awesome/blob/89a28f8b1f9882159dce581ee92d398bbc33ad59/scss/_list.scss
 .icon-ul {
     padding-left: 0;
