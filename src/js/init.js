@@ -3,14 +3,12 @@ var picker = require('./picker');
 var ui = require('./interactions');
 var templates = require('./templates.js');
 var textboxHandlers = require('./textbox-handlers');
+var icons = require('./icons');
 
 // event bindings
 $(function() {
 
-    $("#put-forms-here").html(templates.new.render({}, {
-        'spinner': templates.spinner,
-        'question': templates.question
-    }));
+    $("#put-forms-here").html(templates.start.render({}, icons));
     textboxHandlers.addNewformListeners();
 
 
