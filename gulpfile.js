@@ -43,12 +43,12 @@ gulp.task('templates', function() {
 });
 
 
-gulp.task('generate-test-site', ['build'], function() {
-    return gulp.src('src/templates/complete.html')
-        .pipe(gulpHogan({'testing': true}))
-        .pipe(concat('index.html'))
-        .pipe(gulp.dest('test'));
-});
+// gulp.task('generate-test-site', ['build'], function() {
+//     return gulp.src('src/templates/test.html')
+//         .pipe(gulpHogan())
+//         .pipe(concat('index.html'))
+//         .pipe(gulp.dest('test'));
+// });
 
 
 
@@ -118,7 +118,7 @@ gulp.task('html', function() {
     
     return gulp.src('src/templates/complete.html')
         .pipe(changed('dist'))
-        .pipe(gulpHogan({'testing': false}))
+        .pipe(gulpHogan())
         .pipe(concat('Index.html'))
         .pipe(htmlmin({
             collapseWhitespace: true,
