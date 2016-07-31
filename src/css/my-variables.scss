@@ -16,9 +16,13 @@ $colorscheme:               colorscheme(#F5733F, $scheme: 'complementary');
 $primary:                   map-get($colorscheme, 'primary');
 $primary--lighter:          map-get($colorscheme, 'primary--lighter');
 $primary--lightest:         map-get($colorscheme, 'primary--lightest');
-$primary--darkest:          map-get($colorscheme, 'primary--darker');
+$primary--darker:           map-get($colorscheme, 'primary--darker');
 $primary--darkest:          map-get($colorscheme, 'primary--darkest');
 
+//= Colors used by Cutestrap
+$primary-dark:              $primary--darker;
+$link--visited:             $primary--lightest;
+$link--hover:               $primary--lightest;
 
 //== Typography
 $fs-smaller:                0.7em;
