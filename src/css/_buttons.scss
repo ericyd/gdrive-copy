@@ -1,0 +1,52 @@
+@import "my-variables";
+
+.btn, [type=button],
+[type=submit],
+button {
+
+  &:focus, &:active, &:link, &:hover {
+    outline: 0;
+  }
+
+  &.btn--small {
+    
+    height: 2.8rem;
+    line-height: 1rem;
+    padding: 0.5rem; 
+    margin-bottom: 1rem;
+    border: 3px solid $primary;
+    background: transparent;
+    color: $primary;
+
+    &:hover {
+      background: $primary;
+      color: #fff; 
+      transition: all 0.25s ease;
+    } 
+
+    &:focus, &:active, &:link, &:hover {
+      outline: 0;
+    }
+
+    &.btn--nav {
+      color: #fff;
+      border-color: #fff;
+
+      &:hover {
+        background: #fff;
+        color: $gray3; // same as nav background in _header   
+        transition: all 0.25s ease;
+      }
+
+      &:focus, &:active, &:link, &:hover {
+        outline: 0;
+      }
+
+      &.active {
+        background: #fff;
+        color: $gray3; // same as nav background in _header
+      } 
+    }
+  }
+}
+

@@ -1,0 +1,30 @@
+@import "my-variables";
+
+header {
+    background: #393939;
+    background: -webkit-linear-gradient(#393939, #626262);
+    background: -o-linear-gradient(#393939, #626262);
+    background: -moz-linear-gradient(#393939, #626262);
+    background: linear-gradient(#393939, #626262);
+
+    > * {
+        padding: 10px 0;
+        color: #fff;
+    }
+}
+
+.header-container {
+    width: $container-width;
+    margin: 0 auto;
+}
+
+.description {
+    font-size: $fs-smaller;
+    line-height: $lh-smaller;
+}
+
+nav {
+    width: 100%;
+    background: $gray3;
+    margin: 0; 
+}

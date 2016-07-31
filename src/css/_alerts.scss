@@ -1,0 +1,32 @@
+@import "my-variables";
+
+.alert {
+    display: block;
+    padding: 1em;
+    margin: 0 0 1em 0; 
+    background: #fff;
+    font-size: $fs-smaller;
+    line-height: $lh-smaller;
+    border-radius: 2px;
+}
+
+.alert-success {
+    background: #A1D490;
+    color: darken(#A1D490, 30%);
+}
+
+.alert-danger {
+    background: #E88282;
+    color: darken(#E88282, 30%);
+}
+
+.panel {
+    @extend .alert;
+    border: 1px solid $gray4;
+}
+
+ .panel-heading {
+    border-bottom: 1px solid $gray6;
+    font-weight:bold;
+    margin: 0 0 0.5rem 0;
+}

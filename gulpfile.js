@@ -15,12 +15,15 @@ var buffer = require('vinyl-buffer');
 var globby = require('globby');  
 var svg2png = require("svg2png");
 var fs = require('fs');
+var gulpHogan = require('gulp-hogan');
+var hoganCompile = require('gulp-hogan-compile');
+var hogan = require('hogan.js');
 
 gulp.task('default', function(){
     // Default task
 });
 
-gulp.task('build', ['jslint', 'js','gs', 'html','css', 'bootstrap']);
+gulp.task('build', ['templates', 'jslint', 'js','gs', 'html','css', 'cutestrap']); //
 
 gulp.task('watch', function(){ 
     var watcher = gulp.watch(['./src/**/*'], ['build']);
@@ -30,6 +33,22 @@ gulp.task('watch', function(){
     });
 });
 
+
+
+
+gulp.task('templates', function() {
+    gulp.src(['src/templates/forms/*.html', 'src/templates/icons/*.html'])
+        .pipe(hoganCompile('templates.js', {wrapper: 'commonjs', hoganModule: 'hogan.js'}))
+        .pipe(gulp.dest('src/js/'));
+});
+
+
+// gulp.task('generate-test-site', ['build'], function() {
+//     return gulp.src('src/templates/test.html')
+//         .pipe(gulpHogan())
+//         .pipe(concat('index.html'))
+//         .pipe(gulp.dest('test'));
+// });
 
 
 
@@ -73,7 +92,7 @@ gulp.task('css', function() {
     
     return gulp.src('./src/css/main.scss')
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-        .pipe(autoprefixer({browsers: ['last 2 versions']}))
+        .pipe(autoprefixer({browsers: ['last 10 versions']}))
         .pipe(concat('css.html'))
         .pipe(insert.wrap('<style>', '</style>'))
         .pipe(gulp.dest('dist'));
@@ -82,11 +101,11 @@ gulp.task('css', function() {
 
 
 
-gulp.task('bootstrap', function() {
-    return gulp.src('./src/css/custom-bootstrap.scss')
+gulp.task('cutestrap', function() {
+    return gulp.src('./src/css/my-cutestrap.scss')
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
         .pipe(autoprefixer({browsers: ['last 2 versions']}))
-        .pipe(concat('bootstrap.html'))
+        .pipe(concat('cutestrap.html'))
         .pipe(insert.wrap('<style>', '</style>'))
         .pipe(gulp.dest('dist'));
 });
@@ -96,8 +115,11 @@ gulp.task('bootstrap', function() {
 
 gulp.task('html', function() {
     // process html  
-    return gulp.src('./src/Index.html')
+    
+    return gulp.src('src/templates/complete.html')
         .pipe(changed('dist'))
+        .pipe(gulpHogan())
+        .pipe(concat('Index.html'))
         .pipe(htmlmin({
             collapseWhitespace: true,
             removeComments: true,

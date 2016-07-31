@@ -1,0 +1,77 @@
+@import "my-variables";
+
+/* from robots.thoughtbot.com/you-don-t-need-javascript-for-that */
+.tooltip-toggle {
+    cursor: pointer;
+    position: relative;
+    display: inline;
+    color: #000;
+    
+    //Tooltip text container - above element
+    //You can adjust the position to make the container appear below or beside the element
+    &::before {
+        background-color: #000;
+        border-radius: 5px;
+        color: #fff;
+        content: attr(data-tooltip); //This pulls in the text from the element with the tooltip
+        left: 2rem; //This centers the container above the element
+        padding: 0.25rem;
+        position: absolute;
+        text-transform: none;
+        top: -2rem; //This places the container above the element that needs a tooltip
+        transition: all 0.5s ease;
+        width: 300px;
+        font-size: $fs-smaller;
+        line-height: $lh-smaller;
+    }
+    
+    //Tooltip arrow
+    //You can adjust the position of this to align nicely with the element that
+    //needs a tooltip. You can also use `transform` to rotate it to make the
+    //tooltip work below or next to the element.
+    // &::after {
+    //     border-left: 5px solid transparent;
+    //     border-right: 5px solid transparent;
+    //     border-top: 5px solid #000;
+    //     content: " ";
+    //     font-size: 0;
+    //     left: 9px; //This centers the arrow above the element with the tooltip
+    //     line-height: 0;
+    //     margin-left: -5px;
+    //     position: absolute;
+    //     top: -12px; //This positions the arrow at the bottom of the container
+    //     width: 0;
+    // }
+    
+    //Setting up the transition
+    &::before,
+    &::after {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    &:hover > svg,
+    &:focus > svg {
+        fill: $primary;
+    }
+    
+    &:focus {
+        outline: 0;
+    }
+    
+    //Triggering the transition
+    &:hover::before,
+    &:hover::after,
+    &:focus::before,
+    &:focus::after {
+        outline: 0; 
+        opacity: 1;
+        transition: all 0.75s ease;
+    }
+
+    > svg {
+        width: 1em;
+        height: 1em;
+    }
+    
+}
