@@ -28,34 +28,3 @@ nav {
     background: $gray3;
     margin: 0; 
 }
-
-nav a {
-    display: inline-block;
-    padding: 0.2rem 1.5rem;
-    margin: 0 10px;
-    border:0;
-    text-decoration: none;
-    height: 2.8rem;
-    line-height: 2.8rem;
-    background: $gray4;
-    border-radius: 3px; 
-    
-    &:link {
-        color: $gray1;
-    } 
-    
-    &:hover {
-        background: $gray6;
-        color: $gray3;
-        transition: all 0.4s ease-out;
-    }
-    
-    &:visited {
-        border-bottom: 3px solid $primary;
-    }
-    
-    &:focus {
-        outline: 0;
-    }
-    
-}

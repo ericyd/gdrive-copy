@@ -3,62 +3,50 @@
 .btn, [type=button],
 [type=submit],
 button {
-  background-color: #E83FB8;
-  border: none;
-  border-radius: .2rem;
-  box-sizing: border-box;
-  color: #ffffff;
-  cursor: pointer;
-  display: inline-block;
-  height: 4.8rem;
-  line-height: 4.8rem;
-  max-width: 100%;
-  transition-property: background-color;
-  transition-duration: 200ms;
-  margin: 0 auto;
-  padding: 0 3rem;
-  text-align: center;
-  width: auto; }
-  .btn:link, [type=button]:link,
-  [type=submit]:link,
-  button:link, .btn:visited, [type=button]:visited,
-  [type=submit]:visited,
-  button:visited {
-    color: #ffffff;
-    text-decoration: none; }
-  .btn:focus, [type=button]:focus,
-  [type=submit]:focus,
-  button:focus, .btn:hover, [type=button]:hover,
-  [type=submit]:hover,
-  button:hover {
-    background-color: #e528b0;
-    color: #ffffff; }
-  .btn:focus, [type=button]:focus,
-  [type=submit]:focus,
-  button:focus {
-    outline: 0.1rem dotted #7d7d7e; }
-  .btn:active, [type=button]:active,
-  [type=submit]:active,
-  button:active {
-    background-color: #E83FB8; }
 
+  &:focus, &:active, &:link, &:hover {
+    outline: 0;
+  }
 
-
-
-.btn.btn--small {
+  &.btn--small {
+    
     height: 2.8rem;
     line-height: 1rem;
-    // padding: -0.5rem 0.5rem 0.5rem 0.5rem; 
+    padding: 0.5rem; 
     margin-bottom: 1rem;
     border: 3px solid $primary;
-    background: #fff;
+    background: transparent;
     color: $primary;
 
     &:hover {
-        background: $primary;
-        color: #fff; 
-        outline: 0; 
-        transition: all 0.25s ease;
+      background: $primary;
+      color: #fff; 
+      transition: all 0.25s ease;
     } 
+
+    &:focus, &:active, &:link, &:hover {
+      outline: 0;
+    }
+
+    &.btn--nav {
+      color: #fff;
+      border-color: #fff;
+
+      &:hover {
+        background: #fff;
+        color: $gray3; // same as nav background in _header   
+        transition: all 0.25s ease;
+      }
+
+      &:focus, &:active, &:link, &:hover {
+        outline: 0;
+      }
+
+      &.active {
+        background: #fff;
+        color: $gray3; // same as nav background in _header
+      } 
+    }
+  }
 }
 
