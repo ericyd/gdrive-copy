@@ -8,50 +8,6 @@ var interval;
 
 
 
-
-/* Handling for folderTextbox: 
-   When folder URL is pasted into textbox, it will automatically get the information for the folder.
-*/
-
-// Add event listeners
-function addNewformListeners() {
-    var folderTextbox = document.getElementById("folderTextbox");
-    folderTextbox.addEventListener('mouseup', handleMouse, false);
-    folderTextbox.addEventListener('keyup', getFileData, false);
-    $(".selectOtherFolder").click(function() {
-        ui.resetForm();
-    });
-
-    /**
-     * Show Google Picker when select Folder buttons are selected
-     */
-    $(".selectFolderButton").click(function() {
-        picker.showPicker();
-    });
-    
-}
-
-function addResumeformListeners() {
-    var resumeTextbox = document.getElementById("resumeTextbox");
-    resumeTextbox.addEventListener('mouseup', handleMouse, false);
-    resumeTextbox.addEventListener('keyup', getFileData, false);
-    $(".selectOtherFolder").click(function() {
-        ui.resetForm();
-    });
-
-    /**
-     * Show Google Picker when select Folder buttons are selected
-     */
-    $(".selectFolderButton").click(function() {
-        picker.showPicker();
-    });
-}
-
-exports.addNewformListeners = addNewformListeners;
-exports.addResumeformListeners = addResumeformListeners;  
-
-
-
 /**
  * If right-click, setTimeout
  * If left-click, trigger immediately
@@ -100,4 +56,10 @@ function getFileData(e) {
     }
     return false;
     
+}
+
+
+module.exports = {
+    handleMouse: handleMouse,
+    getFileData: getFileData
 }
