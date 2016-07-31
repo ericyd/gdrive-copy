@@ -5,25 +5,15 @@
         <center>
             <h1>Copy a google drive folder and all its contents</h1>
             {{> icons/header-icon }}
-        </center>
-        
-        <div id="description" class="description">
-            Just input the folder sharing url and a new folder name, and it will copy to your home folder in Google drive.<br />
-            To get started, simply select your folder and choose a new name, then select Copy Folder!<br />
-            If the folder copy get's stuck, simply use the "Resume prior folder copy" button, then select the copy of your folder.<br />
-        </div>
-        
-        <div id="resume-description" class="description">
-            Sometimes this app will get stuck (sorry!).  To resume a folder copy that is in-progress, but paused for whatever reason, simply
-            select the <b><i>new, incomplete copy</i></b> of the folder and select "Resume copying".
-        </div>    
+        </center>  
     </section>
 
     <nav>
         <section class="header-container">
-            <a role="button" class="active toggle-forms" id="new-copy-button" href="javascript:;">Copy folder</a>
-            <a role="button" class="toggle-forms" id="resume-button" href="javascript:;">Resume prior copy</a>
-            <a role="button" class="toggle-forms" id="stop-button" href="javascript:;">Stop all copying</a>
+            <a role="button" class="active" id="new-copy-button" href="javascript:;">Start</a>
+            <a role="button" class="" id="resume-button" href="javascript:;">Resume</a>
+            <a role="button" class="" id="stop-button" href="javascript:;">Pause</a>
+            <a role="button" class="" id="stop-button" href="javascript:;">FAQ</a>
         </section>
     </nav>
 </header>
