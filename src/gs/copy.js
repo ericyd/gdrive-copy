@@ -8,7 +8,7 @@
  */
 function copy() {
     // CONSTANTS
-    var MAX_RUNNING_TIME = 5.1 * 60000; // return millisecs
+    var MAX_RUNNING_TIME = 4.7 * 60000; // return millisecs
     var START_TIME = (new Date()).getTime();
     
     
