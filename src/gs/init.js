@@ -44,35 +44,26 @@ function initialize(selectedFolder) {
     /*****************************
      * Create Files used in copy process
      */
-    destFolder = createDestinationFolder(selectedFolder.srcName, 
+    destFolder = initializeDestinationFolder(selectedFolder.srcName, 
                             selectedFolder.destName, 
                             selectedFolder.destLocation, 
-                            selectedFolder.srcParentId);
+                            selectedFolder.srcParentId,
+                            selectedFolder.srcId);
 
     spreadsheet = createLoggerSpreadsheet(today, destFolder.id);
 
     propertiesDocId = createPropertiesDocument(destFolder.id);
 
-
-    if (selectedFolder.permissions) {
-        // Copy permissions of top-level folder
-        copyPermissions(selectedFolder.srcId, null, destFolder.id);
-    }
-
-
-    
-    // add link to destination folder to logger spreadsheet
-    SpreadsheetApp.openById(spreadsheet.id).getSheetByName("Log").getRange(2,5).setValue('=HYPERLINK("https://drive.google.com/open?id=' + destFolder.id + '","'+ selectedFolder.destName + '")');
-    
     
 
-    // Get IDs of destination folder and logger spreadsheet 
+    
+    /*****************************
+     * Build/add properties to selectedFolder so it can be saved to the properties doc
+     */
     selectedFolder.destId = destFolder.id;
     selectedFolder.spreadsheetId = spreadsheet.id;
     selectedFolder.propertiesDocId = propertiesDocId;
-    
-    
-    
+
     // initialize map with top level source and destination folder
     selectedFolder.leftovers = {}; // {Object} FileList object (returned from Files.list) for items not processed in prior execution (filled in saveState)
     selectedFolder.map = {};       // {Object} map of source ids (keys) to destination ids (values)
@@ -81,13 +72,27 @@ function initialize(selectedFolder) {
 
     
     
+
     /*****************************
      * Set UserProperties values and save properties to propertiesDoc
      */
     setUserPropertiesStore(selectedFolder.spreadsheetId, selectedFolder.propertiesDocId);
     saveProperties(selectedFolder);
+
+
+
+
+    /*****************************
+     * Miscellaneous tasks (set values in Logger spreadsheet and copy permissions for destination folder)
+     */
+    // add link to destination folder to logger spreadsheet
+    SpreadsheetApp.openById(spreadsheet.id).getSheetByName("Log").getRange(2,5).setValue('=HYPERLINK("https://drive.google.com/open?id=' + destFolder.id + '","'+ selectedFolder.destName + '")');
     
     
+
+    /*****************************
+     * Set UserProperties values and save properties to propertiesDoc
+     */
     return {
         spreadsheetId: selectedFolder.spreadsheetId,
         destId: selectedFolder.destId,

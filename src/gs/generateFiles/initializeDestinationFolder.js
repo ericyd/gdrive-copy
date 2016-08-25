@@ -1,5 +1,6 @@
 /**
- * Create the root folder of the new copy
+ * Create the root folder of the new copy.
+ * Copy permissions from source folder to destination folder if copyPermissions == yes
  * 
  * @param {string} srcName - Name of the source folder
  * @param {string} destName - Name of the destination folder being created
@@ -8,9 +9,11 @@
  * @param {string} srcParentId - ID of the parent of the source folder
  * @return {Object} metadata for destination folder, or error on failure
  */
-function createDestinationFolder(srcName, destName, destLocation, srcParentId) {
+function initializeDestinationFolder(srcName, destName, destLocation, srcParentId, srcId) {
+    var destFolder;
+
     try {
-        return Drive.Files.insert({
+        destFolder = Drive.Files.insert({
             "description": "Copy of " + srcName + ", created " + today,
             "title": destName,
             "parents": [
@@ -25,4 +28,10 @@ function createDestinationFolder(srcName, destName, destLocation, srcParentId) {
     catch(err) {
         return err.message;
     }
+
+    if (selectedFolder.permissions) {
+        copyPermissions(srcId, null, destFolder.id);
+    }
+
+    return destFolder;
 }
