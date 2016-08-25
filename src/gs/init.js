@@ -81,14 +81,10 @@ function initialize(selectedFolder) {
 
     
     
-    
-    // save srcId, destId, copyPermissions, spreadsheetId to userProperties
-    userProperties = PropertiesService.getUserProperties();
-    userProperties.setProperty("spreadsheetId", selectedFolder.spreadsheetId);
-    userProperties.setProperty("propertiesDocId", selectedFolder.propertiesDocId);
-    userProperties.setProperty("trials", 0);
-    userProperties.setProperty("resuming", 'false');
-    userProperties.setProperty('stop', 'false');
+    /*****************************
+     * Set UserProperties values and save properties to propertiesDoc
+     */
+    setUserPropertiesStore(selectedFolder.spreadsheetId, selectedFolder.propertiesDocId);
     saveProperties(selectedFolder);
     
     
