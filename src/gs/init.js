@@ -22,9 +22,10 @@ function doGet(e) {
 
 
 /**
- * Create top level destination folder,
- * create logger spreadsheet.
- * Save properties to userProperties.
+ * Initialize destination folder, logger spreadsheet, and properties doc.
+ * Build/add properties to selectedFolder so it can be saved to the properties doc.
+ * Set UserProperties values and save properties to propertiesDoc.
+ * Add link for destination folder to logger spreadsheet.
  * Return IDs of created destination folder and logger spreadsheet
  * 
  * @param {object} selectedFolder contains srcId, srcParentId, destName, permissions, srcName
@@ -37,7 +38,6 @@ function initialize(selectedFolder) {
     var destFolder,     // {Object} instance of Folder class representing destination folder
         spreadsheet,    // {Object} instance of Spreadsheet class
         propertiesDocId,  // {Object} metadata for Google Document created to hold properties
-        userProperties, // {Object} instance of UserProperties object
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
     
 
@@ -83,15 +83,15 @@ function initialize(selectedFolder) {
 
 
     /*****************************
-     * Miscellaneous tasks (set values in Logger spreadsheet and copy permissions for destination folder)
+     * Add link for destination folder to logger spreadsheet
      */
-    // add link to destination folder to logger spreadsheet
     SpreadsheetApp.openById(spreadsheet.id).getSheetByName("Log").getRange(2,5).setValue('=HYPERLINK("https://drive.google.com/open?id=' + destFolder.id + '","'+ selectedFolder.destName + '")');
     
+
     
 
     /*****************************
-     * Set UserProperties values and save properties to propertiesDoc
+     * Return IDs of created destination folder and logger spreadsheet
      */
     return {
         spreadsheetId: selectedFolder.spreadsheetId,
