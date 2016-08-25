@@ -30,64 +30,28 @@ function doGet(e) {
  * @param {object} selectedFolder contains srcId, srcParentId, destName, permissions, srcName
  */
 function initialize(selectedFolder) {
+
+    /*****************************
+     * Declare variables used in project initialization 
+     */
     var destFolder,     // {Object} instance of Folder class representing destination folder
         spreadsheet,    // {Object} instance of Spreadsheet class
-        propertiesDoc,  // {Object} metadata for Google Document created to hold properties
+        propertiesDocId,  // {Object} metadata for Google Document created to hold properties
         userProperties, // {Object} instance of UserProperties object
         today = Utilities.formatDate(new Date(), "GMT-5", "MM-dd-yyyy"); // {string} date of copy
     
 
-    // create destination folder
+    /*****************************
+     * Create Files used in copy process
+     */
     destFolder = createDestinationFolder(selectedFolder.srcName, 
                             selectedFolder.destName, 
                             selectedFolder.destLocation, 
                             selectedFolder.srcParentId);
-    
-    
-    
-    // create logger spreadsheet
-    try {
-        spreadsheet = Drive.Files.copy(
-            {
-            "title": "Copy Folder Log " + today,
-            "parents": [
-                {
-                    "kind": "drive#fileLink",
-                    "id": destFolder.id
-                }
-            ]
-            },
-            "17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg"
-        );   
-    }
-    catch(err) {
-        Logger.log(err.message);
-    }
-    
-    
-    
-    // create document for storing properties as plain text
-    // this will be deleted upon script completion
-    try {
-        propertiesDoc = DriveApp.getFolderById(destFolder.id).createFile('DO NOT DELETE OR MODIFY - will be deleted after copying completes', '', MimeType.PLAIN_TEXT).getId();
-        propertiesDoc.setDescription("This document will be deleted after the folder copy is complete.  It is only used to store properties necessary to complete the copying procedure");
-        propertiesDoc = propertiesDoc.getId; 
 
-        // propertiesDoc = Drive.Files.insert({
-        //     "description": "This document will be deleted after the folder copy is complete.  It is only used to store properties necessary to complete the copying procedure",
-        //     "title": "DO NOT DELETE OR MODIFY - will be deleted after copying completes",
-        //     "parents": [
-        //         {
-        //             "kind": "drive#fileLink",
-        //             "id": destFolder.id
-        //         }
-        //     ],
-        //     "mimeType": "application/vnd.google-apps.document"
-        // });   
-    }
-    catch(err) {
-        Logger.log(err.message);
-    }
+    spreadsheet = createLoggerSpreadsheet(today, destFolder.id);
+
+    propertiesDocId = createPropertiesDocument(destFolder.id);
 
 
     if (selectedFolder.permissions) {
@@ -105,7 +69,7 @@ function initialize(selectedFolder) {
     // Get IDs of destination folder and logger spreadsheet 
     selectedFolder.destId = destFolder.id;
     selectedFolder.spreadsheetId = spreadsheet.id;
-    selectedFolder.propertiesDocId = propertiesDoc; // propertiesDoc is only the ID, not the full metadata
+    selectedFolder.propertiesDocId = propertiesDocId;
     
     
     
