@@ -70,7 +70,7 @@ function copy() {
     // get current children, or skip if none exist
     if ( properties.leftovers.items && properties.leftovers.items.length > 0) {
         properties.destFolder = properties.leftovers.items[0].parents[0].id;
-        processFiles(properties.leftovers.items) ;    
+        processFileList(properties.leftovers.items) ;    
     } 
     
     
@@ -107,9 +107,9 @@ function copy() {
                 log(ss, [err.message, err.fileName, err.lineNumber]);
             }
 
-            // Send items to processFiles() to copy
+            // Send items to processFileList() to copy
             if (files.items && files.items.length > 0) {
-                processFiles(files.items);
+                processFileList(files.items);
             } else {
                 Logger.log('No children found.');
             }

@@ -4,7 +4,7 @@
  * 
  * @param {Array} items the list of files over which to iterate
  */
-function processFiles(items) {
+function processFileList(items) {
     while ( items.length > 0 && !timeIsUp && !stop) {
         item = items.pop();
         currTime = (new Date()).getTime();
