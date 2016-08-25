@@ -7,7 +7,7 @@
  * 
  * @param {Array} items the list of files over which to iterate
  */
-function processFileList(items, timeZone, permissions, userProperties, START_TIME, MAX_RUNNING_TIME) {
+function processFileList(items, timeZone, permissions, userProperties, START_TIME, MAX_RUNNING_TIME, map) {
     while (items.length > 0 && !timeIsUp && !stop) {
         /*****************************
          * Get next file from passed file list.
@@ -18,9 +18,9 @@ function processFileList(items, timeZone, permissions, userProperties, START_TIM
 
 
         /*****************************
-         * Copy each
+         * Copy each (files and folders are both represented the same in Google Drive)
          */
-        newfile = copyFile(item);
+        newfile = copyFile(item, map);
 
 
 

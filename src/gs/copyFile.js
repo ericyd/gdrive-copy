@@ -7,9 +7,9 @@
  * 
  * @param {Object} file File Resource with metadata from source file
  */
-function copyFile(file) {
+function copyFile(file, map) {
     // if folder, use insert, else use copy
-    if ( item.mimeType == "application/vnd.google-apps.folder") {
+    if ( file.mimeType == "application/vnd.google-apps.folder") {
         try {
             var r = Drive.Files.insert({
                 "description": file.description,
@@ -17,15 +17,23 @@ function copyFile(file) {
                 "parents": [
                     {
                         "kind": "drive#fileLink",
-                        "id": properties.map[file.parents[0].id]
+                        "id": map[file.parents[0].id]
                     }
                 ],
                 "mimeType": "application/vnd.google-apps.folder"
             });
             
-            // Update list of remaining folders and map source to destination
+            // Update list of remaining folders
+            //
+            //
+            //  TODO: How am I going to push this value into this array?
+            //  Maybe make an object which can be referenced (set and get) from other functions?
+            //
+            //
             properties.remaining.push(file.id);
-            properties.map[file.id] = r.id;
+
+            // map source to destination
+            map[file.id] = r.id;
             
             return r;
         }
@@ -43,7 +51,7 @@ function copyFile(file) {
                 "parents": [
                     {
                         "kind": "drive#fileLink",
-                        "id": properties.map[file.parents[0].id]
+                        "id": map[file.parents[0].id]
                     }
                 ]
                 },
