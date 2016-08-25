@@ -24,12 +24,7 @@ function copyFile(file, map) {
             });
             
             // Update list of remaining folders
-            //
-            //
-            //  TODO: How am I going to push this value into this array?
-            //  Maybe make an object which can be referenced (set and get) from other functions?
-            //
-            //
+            // note: properties is a global object found in ./properties/propertiesObject.js
             properties.remaining.push(file.id);
 
             // map source to destination

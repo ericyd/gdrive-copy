@@ -15,7 +15,7 @@ function copy() {
     var timeIsUp,       // {boolean} true if max execution time is reached while executing script
         currTime,       // {number} integer representing current time in milliseconds
         ss,             // {object} instance of Sheet class
-        properties,     // {object} properties of current run
+        //properties is a global object now, stored in the file propertiesObject
         query,          // {string} query to generate Files list
         files,          // {object} list of files within Drive folder
         item,           // {object} metadata of child item from current iteration
