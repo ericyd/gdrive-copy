@@ -38,22 +38,10 @@ function initialize(selectedFolder) {
     
 
     // create destination folder
-    try {
-        destFolder = Drive.Files.insert({
-            "description": "Copy of " + selectedFolder.srcName + ", created " + today,
-            "title": selectedFolder.destName,
-            "parents": [
-                {
-                    "kind": "drive#fileLink",
-                    "id": selectedFolder.destLocation == "same" ? selectedFolder.srcParentId : DriveApp.getRootFolder().getId()
-                }
-            ],
-            "mimeType": "application/vnd.google-apps.folder"
-        });   
-    }
-    catch(err) {
-        Logger.log(err.message);
-    }
+    destFolder = createDestinationFolder(selectedFolder.srcName, 
+                            selectedFolder.destName, 
+                            selectedFolder.destLocation, 
+                            selectedFolder.srcParentId);
     
     
     
