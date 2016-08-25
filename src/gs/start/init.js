@@ -76,7 +76,7 @@ function initialize(selectedFolder) {
     /*****************************
      * Set UserProperties values and save properties to propertiesDoc
      */
-    setUserPropertiesStore(selectedFolder.spreadsheetId, selectedFolder.propertiesDocId);
+    setUserPropertiesStore(selectedFolder.spreadsheetId, selectedFolder.propertiesDocId, selectedFolder.destId, "false");
     saveProperties(selectedFolder);
 
 

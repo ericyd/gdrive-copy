@@ -13,13 +13,7 @@ function resume(selectedFolder) {
 
     var priorCopy = findPriorCopy(selectedFolder.srcId);
 
-    PropertiesService.getUserProperties().setProperty("destId", selectedFolder.destId);
-    PropertiesService.getUserProperties().setProperty("resuming", 'true');
-    PropertiesService.getUserProperties().setProperty("spreadsheetId", priorCopy.spreadsheetId);
-    PropertiesService.getUserProperties().setProperty("propertiesDocId", priorCopy.propertiesDocId);
-    PropertiesService.getUserProperties().setProperty('stop', 'false');
-
-    Logger.log(priorCopy.propertiesDocId);  
+    setUserPropertiesStore(priorCopy.spreadsheetId, priorCopy.propertiesDocId, selectedFolder.destId, "true")
 
     return {
         spreadsheetId: priorCopy.spreadsheetId,
