@@ -74,7 +74,7 @@ gulp.task('js', function() {
 
 gulp.task('gs', function() {
     // jshint and minify Code.gs
-    return gulp.src('./src/gs/*.js')
+    return gulp.src('./src/gs/**/*.js')
         .pipe(changed('dist'))
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
