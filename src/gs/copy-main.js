@@ -27,7 +27,20 @@ function copy() {
         triggerId = userProperties.getProperties().triggerId;      // {string} Unique ID for the most recently created trigger
 
     stop = userProperties.getProperties().stop == 'true';
-     
+
+    /*****************************
+     * deleteAllTriggers()
+     *  - get rid of all triggers that exist from previous runs, or anything else
+     */
+
+    /*****************************
+     * createTrigger()
+     * 
+     */
+
+    /*****************************
+     * Load properties
+     */
     try {
         // Load properties and initialize logger spreadsheet
         properties = exponentialBackoff(loadProperties, 'Error restarting script, will retry in 1-2 minutes');
@@ -49,13 +62,17 @@ function copy() {
         return;
     }
 
+
+    /*****************************
+     * Initialize logger spreadsheet
+     */ 
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
     if (timeZone === undefined || timeZone === null) {
         timeZone = 'GMT-7';
     }
 
-
+    // TODO: Move this higher in function calls
     // delete prior trigger
     if ( triggerId !== undefined && triggerId !== null) {
         try {
@@ -66,6 +83,11 @@ function copy() {
         }
     }
 
+    /*****************************
+     * Handle leftovers from prior run
+     */
+
+    // TODO: Make a separate function processLeftovers() or something like that
 
     // get current children, or skip if none exist
     if ( properties.leftovers.items && properties.leftovers.items.length > 0) {
@@ -74,7 +96,9 @@ function copy() {
     } 
     
     
-    
+    /*****************************
+     * Query the next folder from properties.remaining
+     */
     // When leftovers are complete, query next folder from properties.remaining
     Logger.log("beginning processFiles on next remaining folder");    
     while ( properties.remaining.length > 0 && !timeIsUp && !stop) {
@@ -121,7 +145,9 @@ function copy() {
         
     }
     
+    // TODO: Delete trigger if script is complete, or if "stop" is selected
     
+    // TODO: Pass log message to saveState() and have it log from within the function
     if (stop) {
         saveState('notrigger');
         log(ss, ["Stopped manually by user.  Please use 'Resume' button to restart copying"]);
