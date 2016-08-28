@@ -8,6 +8,12 @@
  * @param {Array} items the list of files over which to iterate
  */
 function processFileList(items, timeZone, permissions, userProperties, START_TIME, MAX_RUNNING_TIME, map) {
+    var item
+       ,newfile
+       ,currTime
+       ,timeIsUp
+       ,stop;
+    
     while (items.length > 0 && !timeIsUp && !stop) {
         /*****************************
          * Get next file from passed file list.
