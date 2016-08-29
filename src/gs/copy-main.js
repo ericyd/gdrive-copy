@@ -11,7 +11,7 @@ function copy() {
     var MAX_RUNNING_TIME = 4.7 * 60000; // return millisecs
     var START_TIME = (new Date()).getTime();
     
-    
+    // TODO: clean up variable declarations
     var timeIsUp,       // {boolean} true if max execution time is reached while executing script
         currTime,       // {number} integer representing current time in milliseconds
         ss,             // {object} instance of Sheet class
