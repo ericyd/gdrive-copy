@@ -23,7 +23,7 @@ gulp.task('default', function(){
     // Default task
 });
 
-gulp.task('build', ['templates', 'jslint', 'js','gs', 'html','css', 'cutestrap']); //
+gulp.task('build', ['templates', 'jslint', 'js','gs', 'html','css', 'cutestrap']);
 
 gulp.task('watch', function(){ 
     var watcher = gulp.watch(['./src/**/*'], ['build']);
@@ -52,7 +52,7 @@ gulp.task('templates', function() {
 
 
 
-gulp.task('js', function() {
+gulp.task('js', [templates], function() {
     globby(['./src/js/*.js']).then(function(entries) {
         var b = browserify({
             entries: entries,
