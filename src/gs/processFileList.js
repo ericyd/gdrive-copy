@@ -7,14 +7,11 @@
  * 
  * @param {Array} items the list of files over which to iterate
  */
-function processFileList(items, timeZone, permissions, userProperties, START_TIME, MAX_RUNNING_TIME, map) {
+function processFileList(items, timeZone, permissions, userProperties, timers, map) {
     var item
-       ,newfile
-       ,currTime
-       ,timeIsUp
-       ,stop;
+       ,newfile;
     
-    while (items.length > 0 && !timeIsUp && !stop) {
+    while (items.length > 0 && !timers.timeIsUp && !timers.stop) {
         /*****************************
          * Get next file from passed file list.
          */
@@ -74,10 +71,8 @@ function processFileList(items, timeZone, permissions, userProperties, START_TIM
 
 
         /*****************************
-         * Get current runtime and decide if processing needs to stop
+         * Update current runtime and user stop flag
          */
-        currTime = (new Date()).getTime();
-        timeIsUp = (currTime - START_TIME >= MAX_RUNNING_TIME);
-        stop = userProperties.getProperties().stop == 'true';
+        timers.update(userProperties);
     }
 }
