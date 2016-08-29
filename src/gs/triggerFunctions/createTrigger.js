@@ -6,7 +6,7 @@
 function createTrigger() {
     var trigger = ScriptApp.newTrigger('copy')
         .timeBased()
-        .after(121*1000)
+        .after(6.2*1000*60) // set trigger for 6.2 minutes from now
         .create();
 
     if (trigger) {
