@@ -28,30 +28,32 @@ function copy() {
 
     stop = userProperties.getProperties().stop == 'true';
 
+
+
+
     /*****************************
      * Delete previous trigger
      */
     deleteTrigger(triggerId);
-    if ( triggerId !== undefined && triggerId !== null) {
-        try {
-            // delete prior trigger
-            
-        } catch (err) {
-            log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
-        }
-    }
 
     /*****************************
-     * createTrigger()
-     * 
+     * Create trigger for next run.
+     * This trigger will be deleted if script finishes successfully 
+     * or if the stop flag is set.
      */
+    createTrigger();
+
+
+
 
     /*****************************
-     * Load properties
+     * Load properties.
+     * If loading properties fails, return the function and
+     * set a trigger to retry in 6 minutes.
      */
     try {
         // Load properties and initialize logger spreadsheet
-        properties = exponentialBackoff(loadProperties, 'Error restarting script, will retry in 1-2 minutes');
+        properties = exponentialBackoff(loadProperties, 'Error restarting script, trying again...');
 
     } catch (err) {
 
@@ -72,7 +74,7 @@ function copy() {
 
 
     /*****************************
-     * Initialize logger spreadsheet
+     * Initialize logger spreadsheet and timeZone
      */ 
     ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName("Log");
     timeZone = SpreadsheetApp.openById(properties.spreadsheetId).getSpreadsheetTimeZone();
