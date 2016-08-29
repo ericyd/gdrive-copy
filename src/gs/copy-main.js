@@ -29,9 +29,17 @@ function copy() {
     stop = userProperties.getProperties().stop == 'true';
 
     /*****************************
-     * deleteAllTriggers()
-     *  - get rid of all triggers that exist from previous runs, or anything else
+     * Delete previous trigger
      */
+    deleteTrigger(triggerId);
+    if ( triggerId !== undefined && triggerId !== null) {
+        try {
+            // delete prior trigger
+            
+        } catch (err) {
+            log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
+        }
+    }
 
     /*****************************
      * createTrigger()
@@ -72,16 +80,7 @@ function copy() {
         timeZone = 'GMT-7';
     }
 
-    // TODO: Move this higher in function calls
-    // delete prior trigger
-    if ( triggerId !== undefined && triggerId !== null) {
-        try {
-            // delete prior trigger
-            deleteTrigger(triggerId);
-        } catch (err) {
-            log(ss, [err.message, err.fileName, err.lineNumber, Utilities.formatDate(new Date(), timeZone, "MM-dd-yy hh:mm:ss aaa")]);
-        }
-    }
+    
 
     /*****************************
      * Handle leftovers from prior run
