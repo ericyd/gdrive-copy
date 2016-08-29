@@ -17,7 +17,7 @@ function deleteTrigger(triggerId) {
                 }
             }
         } catch (err) {
-            log(ss, [err.message, err.fileName, err.lineNumber);
+            log(ss, [err.message, err.fileName, err.lineNumber]);
         }
     }
 }

@@ -52,7 +52,7 @@ gulp.task('templates', function() {
 
 
 
-gulp.task('js', [templates], function() {
+gulp.task('js', ['templates'], function() {
     globby(['./src/js/*.js']).then(function(entries) {
         var b = browserify({
             entries: entries,
