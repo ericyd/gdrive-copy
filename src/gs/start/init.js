@@ -10,7 +10,7 @@
 function doGet(e) {
   var template = HtmlService.createTemplateFromFile('Index');
  
-  template.thisForm = e.parameter.thisForm;
+  template.userEmail = Session.getActiveUser().getEmail();
   
   // Build and return HTML in IFRAME sandbox mode.
   return template.evaluate()

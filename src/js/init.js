@@ -11,6 +11,8 @@ $(function() {
     $("#put-forms-here").html(templates.start.render({}, icons));
     formEventListeners.addNewformListeners();
 
+    $(".userEmail").text(userEmail);
+
     
     $('#delete-existing-triggers').click(function() {
         $("#status").show("blind");
