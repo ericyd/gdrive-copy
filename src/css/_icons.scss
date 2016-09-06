@@ -1,0 +1,13 @@
+@import "my-variables";
+
+.spinner {
+  -webkit-animation: icon-spin 1.2s infinite linear;
+    animation: icon-spin 1.2s infinite linear;
+  width: 1em;
+  height: 1em;
+  border: 0.5em solid #777;
+  border-right-color: $primary;
+  border-radius: 50%;
+  display: inline-block;
+}
+
