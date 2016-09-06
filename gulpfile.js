@@ -18,6 +18,9 @@ var fs = require('fs');
 var gulpHogan = require('gulp-hogan');
 var hoganCompile = require('gulp-hogan-compile');
 var hogan = require('hogan.js');
+var gulpif = require('gulp-if');
+
+var isProd = false; // true for production; controls gulp-uglify() and html-min()
 
 gulp.task('default', function(){
     // Default task
@@ -64,7 +67,7 @@ gulp.task('js', ['templates'], function() {
         return b.bundle()
             .pipe(source('js.html'))
             .pipe(buffer())
-            .pipe(uglify())
+            .pipe(gulpif(isProd, uglify()))
             .pipe(insert.wrap('<script>', '</script>'))
             .pipe(gulp.dest('dist'));
     });    
@@ -79,7 +82,7 @@ gulp.task('gs', function() {
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(concat('Code.gs'))
-        .pipe(uglify())
+        .pipe(gulpif(isProd, uglify()))
         .pipe(gulp.dest('dist'));
     
 })
@@ -120,13 +123,13 @@ gulp.task('html', function() {
         .pipe(changed('dist'))
         .pipe(gulpHogan())
         .pipe(concat('Index.html'))
-        .pipe(htmlmin({
+        .pipe(gulpif(isProd, htmlmin({
             collapseWhitespace: true,
             removeComments: true,
             removeCommentsFromCDATA: true,
             conservativeCollapse: true,
             minifyJS: true
-        }))
+        })))
         .pipe(gulp.dest('dist'));
 });
 
