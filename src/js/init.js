@@ -11,7 +11,15 @@ $(function() {
     $("#put-forms-here").html(templates.start.render({}, icons));
     formEventListeners.addNewformListeners();
 
-    $(".userEmail").text(userEmail);
+    google.script.run
+        .withSuccessHandler(function(email) {
+            $(".userEmail").text(email);
+        })
+        .withFailureHandler(function(err) {
+            console.log("couldn't get email");
+        })
+        .getUserEmail();
+    
 
     
     $('#delete-existing-triggers').click(function() {
