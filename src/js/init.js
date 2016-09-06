@@ -13,7 +13,7 @@ $(function() {
 
     google.script.run
         .withSuccessHandler(function(email) {
-            $(".userEmail").text(email);
+            $(".userEmail").html(email);
         })
         .withFailureHandler(function(err) {
             console.log("couldn't get email");

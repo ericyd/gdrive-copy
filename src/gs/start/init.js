@@ -9,8 +9,6 @@
  */
 function doGet(e) {
   var template = HtmlService.createTemplateFromFile('Index');
- 
-  template.userEmail = Session.getActiveUser().getEmail();
   
   // Build and return HTML in IFRAME sandbox mode.
   return template.evaluate()
@@ -45,7 +43,7 @@ function initialize(selectedFolder) {
      * Create Files used in copy process
      */
     destFolder = initializeDestinationFolder(selectedFolder, today);
-    
+
     spreadsheet = createLoggerSpreadsheet(today, destFolder.id);
 
     propertiesDocId = createPropertiesDocument(destFolder.id);
