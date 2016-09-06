@@ -9,17 +9,17 @@
  * @param {string} srcParentId - ID of the parent of the source folder
  * @return {Object} metadata for destination folder, or error on failure
  */
-function initializeDestinationFolder(srcName, destName, destLocation, srcParentId, srcId) {
+function initializeDestinationFolder(selectedFolder, today) {
     var destFolder;
 
     try {
         destFolder = Drive.Files.insert({
-            "description": "Copy of " + srcName + ", created " + today,
-            "title": destName,
+            "description": "Copy of " + selectedFolder.srcName + ", created " + today,
+            "title": selectedFolder.destName,
             "parents": [
                 {
                     "kind": "drive#fileLink",
-                    "id": destLocation == "same" ? srcParentId : DriveApp.getRootFolder().getId()
+                    "id": selectedFolder.destLocation == "same" ? selectedFolder.srcParentId : DriveApp.getRootFolder().getId()
                 }
             ],
             "mimeType": "application/vnd.google-apps.folder"
@@ -30,7 +30,7 @@ function initializeDestinationFolder(srcName, destName, destLocation, srcParentI
     }
 
     if (selectedFolder.permissions) {
-        copyPermissions(srcId, null, destFolder.id);
+        copyPermissions(selectedFolder.srcId, null, destFolder.id);
     }
 
     return destFolder;
