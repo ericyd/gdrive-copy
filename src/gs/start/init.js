@@ -44,12 +44,8 @@ function initialize(selectedFolder) {
     /*****************************
      * Create Files used in copy process
      */
-    destFolder = initializeDestinationFolder(selectedFolder.srcName, 
-                            selectedFolder.destName, 
-                            selectedFolder.destLocation, 
-                            selectedFolder.srcParentId,
-                            selectedFolder.srcId);
-
+    destFolder = initializeDestinationFolder(selectedFolder, today);
+    
     spreadsheet = createLoggerSpreadsheet(today, destFolder.id);
 
     propertiesDocId = createPropertiesDocument(destFolder.id);
