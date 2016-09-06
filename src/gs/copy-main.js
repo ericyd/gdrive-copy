@@ -127,7 +127,7 @@ function copy() {
 
             // Send items to processFileList() to copy if there is anything to copy
             if (fileList.items && fileList.items.length > 0) {
-                processFileList(fileList.items, timeZone, properties.permissions, userProperties, START_TIME, MAX_RUNNING_TIME, properties.map);
+                processFileList(fileList.items, timeZone, properties.permissions, userProperties, timers, properties.map);
             } else {
                 Logger.log('No children found.');
             }
