@@ -84,7 +84,7 @@ function copy() {
      */
     if (properties.leftovers.items && properties.leftovers.items.length > 0) {
         properties.destFolder = properties.leftovers.items[0].parents[0].id;
-        processFileList(properties.leftovers.items, timeZone, properties.permissions, userProperties, timers, properties.map);    
+        processFileList(properties.leftovers.items, timeZone, properties.permissions, userProperties, timers, properties.map, ss);    
     } 
     
 
@@ -127,7 +127,7 @@ function copy() {
 
             // Send items to processFileList() to copy if there is anything to copy
             if (fileList.items && fileList.items.length > 0) {
-                processFileList(fileList.items, timeZone, properties.permissions, userProperties, timers, properties.map);
+                processFileList(fileList.items, timeZone, properties.permissions, userProperties, timers, properties.map, ss);
             } else {
                 Logger.log('No children found.');
             }
@@ -149,13 +149,13 @@ function copy() {
      */     
     // Case: user manually stopped script
     if (timers.stop) {
-        saveState(fileList, "Stopped manually by user.  Please use 'Resume' button to restart copying");
+        saveState(fileList, "Stopped manually by user.  Please use 'Resume' button to restart copying", ss);
         deleteTrigger(userProperties.getProperties().triggerId);
         return;
 
     // Case: maximum execution time has been reached
     } else if (timers.timeIsUp) {
-        saveState(fileList, "Paused due to Google quota limits - copy will resume in 1-2 minutes");
+        saveState(fileList, "Paused due to Google quota limits - copy will resume in 1-2 minutes", ss);
 
     // Case: the copy is complete!    
     } else {  

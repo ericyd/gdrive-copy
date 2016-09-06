@@ -7,7 +7,7 @@
  * 
  * @param {Array} items the list of files over which to iterate
  */
-function processFileList(items, timeZone, permissions, userProperties, timers, map) {
+function processFileList(items, timeZone, permissions, userProperties, timers, map, ss) {
     var item
        ,newfile;
     

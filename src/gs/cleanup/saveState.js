@@ -3,7 +3,7 @@
  * 
  * @param {string} logMessage - The message to output to the log when state is saved
  */
-function saveState(fileList, logMessage) {
+function saveState(fileList, logMessage, ss) {
 
     try {
         // save, create trigger, and assign pageToken for continuation
