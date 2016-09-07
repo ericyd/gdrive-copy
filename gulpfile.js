@@ -44,9 +44,11 @@ gulp.task('watch', function(){
 
 
 gulp.task('templates', function() {
-    gulp.src(['src/templates/forms/*.html', 'src/templates/icons/*.html'])
+    return gulp.src(['src/templates/forms/*.html', 'src/templates/icons/*.html'])
         .pipe(hoganCompile('templates.js', {wrapper: 'commonjs', hoganModule: 'hogan.js'}))
         .pipe(gulp.dest('src/js/'));
+
+    
 });
 
 
@@ -71,7 +73,7 @@ gulp.task('js', ['templates'], function() {
         return b.bundle()
             .pipe(source('js.html'))
             .pipe(buffer())
-            .pipe(gulpif(isProd, uglify()))
+            .pipe(gulpif(true, uglify())) // GAS doesn't like the huge files that it creates without uglifying
             .pipe(insert.wrap('<script>', '</script>'))
             .pipe(gulp.dest('dist'));
     });    
