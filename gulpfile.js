@@ -20,13 +20,17 @@ var hoganCompile = require('gulp-hogan-compile');
 var hogan = require('hogan.js');
 var gulpif = require('gulp-if');
 
-var isProd = false; // true for production; controls gulp-uglify() and html-min()
+var isProd = false; // true for production; controls gulp-uglify(), html-min(), and if buildImages runs with `build`
 
 gulp.task('default', function(){
     // Default task
 });
 
-gulp.task('build', ['templates', 'jslint', 'js','gs', 'html','css', 'cutestrap']);
+gulp.task('build', ['templates', 'jslint', 'js','gs', 'html','css', 'cutestrap'], function() {
+    if (isProd) {
+        buildImages();
+    }
+});
 
 gulp.task('watch', function(){ 
     var watcher = gulp.watch(['./src/**/*'], ['build']);
@@ -135,7 +139,19 @@ gulp.task('html', function() {
 
 
 
-gulp.task('img', function() {
+gulp.task('img', buildImages);
+
+
+
+gulp.task('jslint', function() {
+    return gulp.src('./src/js/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+})
+
+
+
+function buildImages() {
     let img_path = "./dist/icons/";
     fs.stat(img_path, (err, stat) => {
         if (err) fs.mkdir(img_path);    
@@ -173,14 +189,4 @@ gulp.task('img', function() {
         });
     }
     
-       
-    
-})
-
-
-
-gulp.task('jslint', function() {
-    return gulp.src('./src/js/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'));
-})
+}
