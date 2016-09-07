@@ -64,7 +64,7 @@ gulp.task('js', ['templates'], function() {
         var b = browserify({
             entries: entries,
             baseDir: './src/js',
-            debug: true
+            debug: false
         });
         
 
