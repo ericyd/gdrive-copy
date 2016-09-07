@@ -11,8 +11,8 @@ $footer-height-sm:      250px;
 // todo: figure out why $primary isn't importing properly into Cutestrap (see radio buttons and btn hover for examples of inconsistency)
 
 //== Colors
-$seed-color:                #F5733F;
-$colorscheme:               colorscheme(#F5733F, $scheme: 'complementary');
+$seed-color:                #A32E2E;
+$colorscheme:               colorscheme($seed-color, $scheme: 'complementary');
 $primary:                   map-get($colorscheme, 'primary');
 $primary--lighter:          map-get($colorscheme, 'primary--lighter');
 $primary--lightest:         map-get($colorscheme, 'primary--lightest');

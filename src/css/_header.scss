@@ -28,3 +28,15 @@ nav {
     background: $gray3;
     margin: 0; 
 }
+
+h1 {
+    width: 100%;
+    text-align: center;
+
+    & > svg {
+        width: 2em;
+        height: 2em;
+        position: relative;
+        top: 0.5em;
+    }
+}
