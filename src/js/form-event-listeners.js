@@ -148,19 +148,6 @@ function addResumeformListeners() {
 
 
 
-
-exports.addNewformListeners = addNewformListeners;
-exports.addResumeformListeners = addResumeformListeners;  
-
-
-
-
-
-
-
-
-
-
 /**
  * Hide 'status' indicator, and show success message.
  * Include links to logger spreadsheet and destination folder
@@ -208,3 +195,9 @@ function showError(msg) {
     errormsg += "Please try again. Make sure you have correct permissions to copy this folder, and make sure you are using Google Chrome or Chromium when using this app.</div>";
     $("#errors").append(errormsg);
 }
+
+
+exports.addNewformListeners = addNewformListeners;
+exports.addResumeformListeners = addResumeformListeners;  
+exports.showError = showError;
+exports.success = success;

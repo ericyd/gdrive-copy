@@ -31,13 +31,13 @@ $(function() {
 
                 if (picker.folder.resuming) {
                     google.script.run
-                        .withSuccessHandler(success)
-                        .withFailureHandler(showError)
+                        .withSuccessHandler(formEventListeners.success)
+                        .withFailureHandler(formEventListeners.showError)
                         .resume(picker.folder);
                 } else {
                     google.script.run
-                        .withSuccessHandler(success)
-                        .withFailureHandler(showError)
+                        .withSuccessHandler(formEventListeners.success)
+                        .withFailureHandler(formEventListeners.showError)
                         .initialize(picker.folder);
                 }
 
