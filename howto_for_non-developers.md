@@ -17,17 +17,23 @@ The intended audience for this document are those people who have familiarity wi
 git clone https://github.com/ericyd/gdrive-copy.git
 ```
 
-## Step 2: Install dependencies
+## Step 2: Install the latest version of npm
+
+```
+npm install -g npm
+```
+
+## Step 3: Install dependencies
 
 ```
 npm install
 ```
 
-## Step 3: Edit code
+## Step 4: Edit code
 
 All uncompiled source code is located in the `src` folder.  The `gs` directory houses the Google Apps Script files that actually access Google Drive.
 
-## Step 4: Compile code
+## Step 5: Compile code
 
 This app uses Gulp to build and bundle the app.  Simple run
 ```
@@ -39,11 +45,11 @@ gulp watch
 ```
 before editing files, and the files will be compiled in realtime whenever changes are made.
 
-## Step 5: Upload code
+## Step 6: Upload code
 
 This app makes use of the free Google Apps Script service, so all you need to do is create a new Google Apps Script file from within your Google Drive, and upload the contents of the files in `dist` into the appropriate files.  You may need to create additional files via `File > New > Script | HTML file`.
    
-## Step 6: Deploy as web app
+## Step 7: Deploy as web app
 
 Select `Publish > Deploy as Web App`.  Select the options you'd like, such as who can execute the and how the script will run.
 
