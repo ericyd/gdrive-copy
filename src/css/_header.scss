@@ -18,23 +18,38 @@ header {
     margin: 0 auto;
 }
 
-.description {
-    font-size: $fs-smaller;
-    line-height: $lh-smaller;
-}
-
 nav {
     width: 100%;
     background: $gray3;
     margin: 0; 
 }
 
-h1 {
+.header-title {
+    width: 100%;
+    text-align: center;
 
-    & > svg {
-        width: 2em;
-        height: 2em;
-        position: relative;
-        top: 0.5em;
+    & > .header-title__icon {
+        float: left;
+
+        & > svg {
+            width: 2em;
+            height: 2em;
+            position: relative;
+            top: 0.5em;
+        }
+    }
+}
+
+
+
+
+.change-account {
+    width: 100%;
+    text-align: right;
+
+    & > .change-account__box {
+        border: 1px solid $gray4;
+        padding: 0.5em;
+        font-size: 0.75em;
     }
 }
