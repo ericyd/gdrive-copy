@@ -20,7 +20,7 @@ var hoganCompile = require('gulp-hogan-compile');
 var hogan = require('hogan.js');
 var gulpif = require('gulp-if');
 
-var isProd = false; // true for production; controls gulp-uglify(), html-min(), and if buildImages runs with `build`
+var isProd = false; // true for production; controls minification of JS, CSS, HTML, and building of images with `build`
 
 gulp.task('default', function(){
     // Default task
@@ -73,7 +73,26 @@ gulp.task('js', ['templates'], function() {
         return b.bundle()
             .pipe(source('js.html'))
             .pipe(buffer())
-            .pipe(gulpif(true, uglify())) // GAS doesn't like the huge files that it creates without uglifying
+            .pipe(gulpif(isProd, uglify(), uglify({
+                mangle: false,
+                output: {
+                    indent_start  : 0,     // start indentation on every line (only when `beautify`)
+                    indent_level  : 2,
+                    beautify      : true, // beautify output?
+                    bracketize    : true, // use brackets every time?
+                    comments      : false // output comments?
+                },
+                compressor: {
+                    sequences     : false,  // join consecutive statemets with the “comma operator”
+                    conditionals  : false,  // optimize if-s and conditional expressions
+                    comparisons   : false,  // optimize comparisons
+                    evaluate      : false,  // evaluate constant expressions
+                    booleans      : true,  // optimize boolean expressions
+                    loops         : false,  // optimize loops
+                    join_vars     : false  // join var declarations
+                }
+
+            }))) // GAS doesn't like the huge files that it creates without uglifying
             .pipe(insert.wrap('<script>', '</script>'))
             .pipe(gulp.dest('dist'));
     });    
@@ -100,7 +119,7 @@ gulp.task('css', function() {
     // process css
     
     return gulp.src('./src/css/main.scss')
-        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(sass({outputStyle: isProd ? 'compressed' : 'compact'}).on('error', sass.logError))
         .pipe(autoprefixer({browsers: ['last 10 versions']}))
         .pipe(concat('css.html'))
         .pipe(insert.wrap('<style>', '</style>'))

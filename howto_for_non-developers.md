@@ -35,7 +35,10 @@ All uncompiled source code is located in the `src` folder.  The `gs` directory h
 
 ## Step 5: Compile code
 
-This app uses Gulp to build and bundle the app.  Simple run
+This app uses Gulp to build and bundle the app.  In the Gulpfile, you can set the `isProd` variable to `true` to enable minification of CSS, HTML, and JS files, 
+or you can leave it `false` and things will not be compressed. 
+
+Simply run
 ```
 gulp build
 ```
