@@ -60,6 +60,7 @@ module.exports = {
     resetForm: function () {
         $(".folderSelect").show();
         $(".selectedFolderInfo").hide();
+        $(".getFolderErrors").hide();
     }
 };
 

@@ -50,7 +50,10 @@ function getFileData(e) {
 
             })
             .withFailureHandler(function (msg) {
-                $("#getFolderErrors").text("Error: " + msg);
+                $(".folderSelect").hide();
+                $(".folderLookup").hide();
+                $(".selectedFolderInfo").show();
+                $(".getFolderErrors").text("Error: " + msg + "<br>You may not have permission to copy this folder.").show();
             })
             .getMetadata(id);
     }
