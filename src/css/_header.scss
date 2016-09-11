@@ -11,27 +11,20 @@ header {
         padding: 10px 0;
         color: #fff;
     }
+
+    > .header-container {
+        text-align: center;
+    }
 }
 
 .header-container {
     width: $container-width;
     margin: 0 auto;
-}
 
-nav {
-    width: 100%;
-    background: $gray3;
-    margin: 0; 
-}
-
-.header-title {
-    width: 100%;
-    text-align: center;
-
-    & > .header-title__icon {
+    > .header-container__icon {
         display: inline-block;
 
-        & > svg {
+        > svg {
             width: 5em;
             height: 5em;
             position: relative;
@@ -39,24 +32,42 @@ nav {
         }
     }
 
-    & > .header-title__headings {
+    > .header-container__headings {
         display: inline-block;
+        
+        > h1, 
+        > h4 {
+            padding: 0.5rem;
+            margin: 0;
+        }
     }
 }
 
+nav {
+    width: 100%;
+    background: $gray3;
+    margin: 0; 
+    padding: 0;
+    height: 4em;
 
-
+    .btn, 
+    [type=button],
+    [type=submit],
+    button {
+        margin: 1em 0 0 0;
+    }
+}
 
 .change-account {
     float:right;
     text-align: right;
-    margin: 0 1em 0 0;
+    margin: 0.5em 1em 0 0;
 
     & > .change-account__box {
         background: $gray6;
         color: $gray1;
         border: 1px solid $gray4;
-        padding: 0.5em;
-        font-size: 0.75em;
+        padding: 0.25em 0.5em;
+        font-size: 0.65em;
     }
 }

@@ -3,6 +3,7 @@
 .btn, [type=button],
 [type=submit],
 button {
+  border-radius: $border-radius;
 
   &:focus, &:active, &:link, &:hover {
     outline: 0;
