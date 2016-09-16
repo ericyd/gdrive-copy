@@ -31,7 +31,7 @@ npm install
 
 ## Step 4: Edit code
 
-All uncompiled source code is located in the `src` folder.  The `gs` directory houses the Google Apps Script files that actually access Google Drive.
+All uncompiled source code is located in the `src` folder.  The `application` directory houses the Google Apps Script files that actually access Google Drive.
 
 ## Step 5: Compile code
 

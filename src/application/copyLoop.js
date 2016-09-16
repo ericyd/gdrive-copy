@@ -6,7 +6,7 @@
  *
  * @param {boolean} resuming whether or not the copy call is resuming an existing folder copy or starting fresh
  */
-function copy() {
+function copy() { 
     /*****************************
      * Initialize timers, initialize variables for script, and update current time
      */
