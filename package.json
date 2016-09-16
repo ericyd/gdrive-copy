@@ -1,6 +1,6 @@
 {
   "name": "google-drive-copy-folder",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "Web app to recursively copy Google Drive folder and contents",
   "main": "gulpfile.js",
   "dependencies": {},
@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/edauenhauer/google-drive-copy-folder.git"
+    "url": "https://github.com/ericyd/gdrive-copy.git"
   },
   "keywords": [
     "google",
