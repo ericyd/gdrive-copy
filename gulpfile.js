@@ -146,7 +146,7 @@ gulp.task('html', function() {
     
     return gulp.src('src/templates/complete.html')
         .pipe(changed('dist'))
-        .pipe(gulpHogan())
+        .pipe(gulpHogan({'isProd': isProd}))
         .pipe(concat('Index.html'))
         .pipe(gulpif(isProd, htmlmin({
             collapseWhitespace: true,
