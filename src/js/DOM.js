@@ -1,10 +1,7 @@
-/*
-This handles all of the hiding/showing of UI elements
-for various user inputs
-
-Primarily refactored out of init.js and picker.js
-*/
-
+/**
+ * This module provides functions that control the
+ * showing/hiding of DOM elements.
+ */
 
 module.exports = {
     /**

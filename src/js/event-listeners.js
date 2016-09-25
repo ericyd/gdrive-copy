@@ -6,10 +6,9 @@
  * their usage.
  */
 
-var ui = require('./interactions');
+var DOM = require('./DOM');
 var picker = require('./picker');
 var templates = require('./templates.js');
-var formEventListeners = require('./form-event-listeners');
 var icons = require('./icons');
 var parseId = require('./parseId');
 var textboxHandlers = require('./textbox-handlers');
@@ -61,7 +60,7 @@ module.exports = {
      */
     'addSelectButtonListeners': function() {
         $(".selectOtherFolder").click(function() {
-            ui.resetForm();
+            DOM.resetForm();
         });
 
         // Show Google Picker when select Folder buttons are selected
@@ -99,7 +98,7 @@ module.exports = {
 
             } else {
                 // Valid!
-                ui.onValid();
+                DOM.onValid();
 
                 picker.folder.resuming = true;
 
@@ -166,7 +165,7 @@ module.exports = {
                 
             } else {
                 // Valid!
-                ui.onValid();
+                DOM.onValid();
                 
                 // Get values from form and selected folder to initialize copy        
                 picker.folder.destName = $("#newFolder").val();

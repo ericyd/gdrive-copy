@@ -3,7 +3,7 @@ Many, many thanks to [Jean-Pierre Verhulst](https://plus.google.com/+JeanPierreV
 for providing the working backbone of this script
 */
 
-var ui = require('./interactions');
+var DOM = require('./DOM');
 
 // vanillaJS implementation of $.getScript(), thanks to http://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
 function getScript(source, callback) {
@@ -125,7 +125,7 @@ function setSelectedFolder(properties) {
     selectedFolder.srcName = properties.srcName;
     selectedFolder.destName = properties.destName;
     
-    ui.folderIsSelected(selectedFolder);
+    DOM.folderIsSelected(selectedFolder);
     
 }
 
