@@ -1,3 +1,11 @@
+/**
+ * This module provides functionality used for the "Select Folder"
+ * textboxes, which automatically find folder metadata when a URL 
+ * is pasted into them.  The textboxes can handle pasting via 'Ctrl+V',
+ * or right-clicking and selecting "Paste" from the context menu. 
+ */
+
+
 // Requires
 var picker = require('./picker');
 var ui = require('./interactions');
@@ -6,7 +14,7 @@ var parseId = require('./parseId');
 // interval is the handle for the interval set in handleMouse and cleared in getFileData 
 var interval;
 
-
+// TODO: refactor these functions to live in the 'module.exports' object.
 
 /**
  * If right-click, setTimeout
@@ -18,7 +26,8 @@ function handleMouse(e) {
         var g = function () {
             return getFileData(e);
         }; 
-        return interval = setInterval(g, 500);
+        interval = setInterval(g, 500);
+        return;
     }
     getFileData(e);
 }
