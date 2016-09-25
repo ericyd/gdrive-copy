@@ -24,14 +24,14 @@ module.exports = {
             $("#put-forms-here").html(templates.resume.render({}, icons));
             $(".btn--nav").removeClass("active");
             $(this).addClass("active");
-            this.addResumeFormListeners();
+            module.exports.addResumeFormListeners();
         }); 
 
         $('#start-button').click(function(e) {
             $("#put-forms-here").html(templates.start.render({}, icons));
             $(".btn--nav").removeClass("active");
             $(this).addClass("active");
-            this.addStartFormListeners();
+            module.exports.addStartFormListeners();
         });
 
         $('#stop-button').click(function(e) {
@@ -75,7 +75,7 @@ module.exports = {
      * Set bindings for input elements in the Resume view
      */
     'addResumeFormListeners': function() {
-        this.addSelectButtonListeners();
+        module.exports.addSelectButtonListeners();
         
         var resumeTextbox = document.getElementById("resumeTextbox");
         resumeTextbox.addEventListener('mouseup', textboxHandlers.handleMouse, false);
@@ -136,7 +136,7 @@ module.exports = {
         var folderTextbox = document.getElementById("folderTextbox");
         folderTextbox.addEventListener('mouseup', textboxHandlers.handleMouse, false);
         folderTextbox.addEventListener('keyup', textboxHandlers.getFileData, false);
-        this.addSelectButtonListeners();
+        module.exports.addSelectButtonListeners();
 
 
         /**
