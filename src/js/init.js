@@ -4,12 +4,16 @@ var ui = require('./interactions');
 var templates = require('./templates.js');
 var formEventListeners = require('./form-event-listeners');
 var icons = require('./icons');
+var eventListeners = require('./event-listeners');
 
 // event bindings
 $(function() {
 
+    eventListeners.addNavListeners();
+    eventListeners.addDeleteTriggerButtonListeners();
+
     $("#put-forms-here").html(templates.start.render({}, icons));
-    formEventListeners.addNewformListeners();
+    eventListeners.addStartFormListeners();
 
     google.script.run
         .withSuccessHandler(function(email) {
@@ -20,31 +24,4 @@ $(function() {
         })
         .getUserEmail();
     
-
-    
-    $('#delete-existing-triggers').click(function() {
-        $("#status").show("blind");
-        $("#too-many-triggers").hide();
-
-        google.script.run
-            .withSuccessHandler(function() {
-
-                if (picker.folder.resuming) {
-                    google.script.run
-                        .withSuccessHandler(formEventListeners.success)
-                        .withFailureHandler(formEventListeners.showError)
-                        .resume(picker.folder);
-                } else {
-                    google.script.run
-                        .withSuccessHandler(formEventListeners.success)
-                        .withFailureHandler(formEventListeners.showError)
-                        .initialize(picker.folder);
-                }
-
-            })
-            .withFailureHandler(function(err) {
-                $("#errors").append(err);
-            })
-            .deleteAllTriggers();
-    });
 });
