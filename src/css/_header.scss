@@ -48,14 +48,9 @@ nav {
     background: $gray3;
     margin: 0; 
     padding: 0;
-    height: 4em;
+    // height: 4em;
 
-    .btn, 
-    [type=button],
-    [type=submit],
-    button {
-        margin: 1em 0 0 0;
-    }
+    
 }
 
 .change-account {
