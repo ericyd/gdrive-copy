@@ -9,6 +9,10 @@ button {
     outline: 0;
   }
 
+  &::-moz-focus-inner {
+    border: 0;
+  }
+
   &.btn--small {
     
     // height: 2.8rem;
@@ -29,6 +33,10 @@ button {
       outline: 0;
     }
 
+    &::-moz-focus-inner {
+      border: 0;
+    }
+
   }
 
   &.btn--nav {
@@ -47,6 +55,10 @@ button {
 
     &:focus, &:active, &:link, &:hover {
       outline: 0;
+    }
+
+    &::-moz-focus-inner {
+      border: 0;
     }
 
     &.active {
