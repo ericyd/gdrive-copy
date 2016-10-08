@@ -5,9 +5,34 @@
 
 
 <html>
-    {{> head }}
+    <head>
 
-    {{> body }}
+        <!--Webfont loader for Google Apps Scripts-->
+        {{^testing}}
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+        <script>
+            WebFont.load({
+                google: {
+                    families: ['Lato']
+                }
+            });
+        </script>
+        {{/testing}}
+
+        
+    </head>
+
+    <body>
+    
+        {{> header }}
+        
+        {{> main }}
+
+        <div class="push"></div>
+        
+        {{> footer }} 
+        
+    </body>
 </html>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>

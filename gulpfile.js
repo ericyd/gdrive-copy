@@ -144,7 +144,7 @@ gulp.task('cutestrap', function() {
 gulp.task('html', function() {
     // process html  
     
-    return gulp.src('src/templates/complete.html')
+    return gulp.src('src/templates/index.html')
         .pipe(changed('dist'))
         .pipe(gulpHogan({'isProd': isProd}))
         .pipe(concat('Index.html'))
