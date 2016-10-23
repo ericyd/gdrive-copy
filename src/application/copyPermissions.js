@@ -100,4 +100,20 @@ function copyPermissions(srcId, owners, destId) {
         }
     }
 
+
+
+    // copy protected ranges from original sheet
+    var sheet = DriveApp.openFileById(srcId).getActiveSheet(); // double-check
+    var protectionsRange = sheet.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+    var protectionsSheet = sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
+    for (var i = 0; i < protectionsRange.length; i++) {
+        var protection = protectionsRange[i];
+        // add all ther other editors
+        var editors = protection.getEditors();
+        for (var j = 0; j < editors.length; j++) {
+            // add a protected range in the destination, and add all the editors to it
+        }
+    }
+
+
 }
