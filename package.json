@@ -8,7 +8,6 @@
     "browserify": "~13.0.0",
     "chai": "^3.5.0",
     "cutestrap": "^1.2.3",
-    "express": "^4.14.0",
     "globby": "~4.0.0",
     "gulp": "~3.9.0",
     "gulp-autoprefixer": "~3.1.0",
@@ -34,7 +33,6 @@
   "scripts": {
     "watch": "gulp watch",
     "build": "gulp build",
-    "serve": "node server.js",
     "test": "mocha"
   },
   "repository": {

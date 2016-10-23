@@ -8,6 +8,7 @@ The intended audience for this document are those people who have familiarity wi
 ## Requirements
 
 * Git
+* NodeJS 4.x
 * NPM (packaged with NodeJS)
 * Google Drive account
 

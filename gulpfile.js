@@ -101,13 +101,12 @@ gulp.task('js', ['templates'], function() {
 
 
 gulp.task('gs', function() {
-    // jshint and minify Code.gs
+    // jshint and minify application.gs
     return gulp.src('./src/application/**/*.js')
         .pipe(changed('dist'))
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(concat('application.gs'))
-        .pipe(gulpif(isProd, uglify()))
         .pipe(gulp.dest('dist'));
     
 })
@@ -144,7 +143,7 @@ gulp.task('cutestrap', function() {
 gulp.task('html', function() {
     // process html  
     
-    return gulp.src('src/templates/complete.html')
+    return gulp.src('src/templates/index.html')
         .pipe(changed('dist'))
         .pipe(gulpHogan({'isProd': isProd}))
         .pipe(concat('Index.html'))
