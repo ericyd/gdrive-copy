@@ -103,17 +103,50 @@ function copyPermissions(srcId, owners, destId) {
 
 
     // copy protected ranges from original sheet
-    var sheet = DriveApp.openFileById(srcId).getActiveSheet(); // double-check
-    var protectionsRange = sheet.getProtections(SpreadsheetApp.ProtectionType.RANGE);
-    var protectionsSheet = sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
-    for (var i = 0; i < protectionsRange.length; i++) {
-        var protection = protectionsRange[i];
-        // add all ther other editors
-        var editors = protection.getEditors();
-        for (var j = 0; j < editors.length; j++) {
-            // add a protected range in the destination, and add all the editors to it
+    /*
+    var srcFile = DriveApp.getFileById(srcId);
+
+    if (srcFile.getMimeType() == "application/vnd.google-apps.spreadsheet") {
+        var srcSheet = SpreadsheetApp.openById(srcId);
+        var destSheet = SpreadsheetApp.openById(destId);
+        var protections = srcSheet.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+        var protectionsSheet = srcSheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
+        
+        // join the SHEET and RANGE arrays
+        // for (var k = 0; k < protectionsSheet.length; k++) {
+        //     protections.push(protectionsSheet[k]);
+        // }
+
+        var protection, editors, protect, i, j;
+        
+        for (i = 0; i < protections.length; i++) {
+            protection = protections[i];
+            editors = protection.getEditors();
+            //Logger.log(protections[i].getRange().getA1Notation());
+            // protect the dest range
+            var name = protections[i].getRange().getSheet().getName();
+            var range = protections[i].getRange();
+            //Logger.log(name, range);
+            
+            protect = destSheet.getSheetByName(name).protect();
+            Logger.log('name = ' + name + 'range = ' + range + 'protect = ' + protect.getProtectionType());
+            
+            for (j = 0; j < editors.length; j++) {
+                // add editors to the protection
+                protect.addEditor(editors[j]);
+            }
+        }
+
+        for (i = 0; i < protectionsSheet.length; i++) {
+            protection = protectionsSheet[i];
+            editors = protection.getEditors();
+            // protect the dest range
+            protect = destSheet.getSheetByName(protections[i].getRange().getSheet().getName()).protect();
+            for (j = 0; j < editors.length; j++) {
+                // add editors to the protection
+                protect.addEditor(editors[j]);
+            }
         }
     }
-
-
+    */
 }
