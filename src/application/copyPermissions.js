@@ -101,28 +101,43 @@ function copyPermissions(srcId, owners, destId) {
     }
 
 
-    /*
+    // TODO: figure out why the protections are copied with more editors than the src
+
     // copy protected ranges from original sheet
     if (DriveApp.getFileById(srcId).getMimeType() == "application/vnd.google-apps.spreadsheet") {
-        var srcSheet = SpreadsheetApp.openById(srcId);
-        var destSheet = SpreadsheetApp.openById(destId);
-        var srcSheets = srcSheet.getSheets();
-        var destSheets = destSheet.getSheets();
+        var srcSS = SpreadsheetApp.openById(srcId);
+        var destSS = SpreadsheetApp.openById(destId);
+        Logger.log("mime type matched");
+        var srcProtections, srcProtection, destProtections, destProtection, destSheet, editors, protect, h, i, j, k;
+        srcProtections = srcSS.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+        for (i = 0; i < srcProtections.length; i++) {
+            srcProtection = srcProtections[i];
+            editors = srcProtection.getEditors();
+            destSheet = destSS.getSheetByName(srcProtection.getRange().getSheet().getName());
+            destProtections = destSheet.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+            Logger.log("dest protections assigned");
+            Logger.log("dest protections.length = " + destProtections.length);
+            for (j = 0; j < destProtections.length; j++) {
+                // remove existing protections
+                destProtections[j].remove();
+                Logger.log("destProtection removed");
 
-        var protections, srcProtection, destProtections, editors, protect, h, i, j, k;
-        for (h = 0; h < srcSheets.length; h++) {
-            protections = srcSheets[h].getProtections(SpreadsheetApp.ProtectionType.RANGE);
-            for (i = 0; i < protections.length; i++) {
-                srcProtection = protections[i];
-                editors = srcProtection.getEditors();
-                destProtections = destSheet.getSheetByName(srcProtection.getRange().getSheet().getName()).getProtections(SpreadsheetApp.ProtectionType.RANGE);
-                for (j = 0; j < destProtections; j++) {
-                    for (k = 0; k < editors.length; k++) {
-                        destProtections[j].addEditor(editors[k]);
-                    }
+                // set protection by sheet or by range
+                if (srcProtection.getRange().getA1Notation() === 'A1') {
+                    destProtection = destSheet.protect();
+                } else {
+                    destProtection = destSheet.getRange(srcProtection.getRange().getA1Notation()).protect();
+                }
+
+                Logger.log("dest protection set");
+                Logger.log("dest protection type = " + destProtection.getProtectionType());
+                
+                // add editors
+                for (k = 0; k < editors.length; k++) {
+                    destProtection.addEditor(editors[k]);
+                    Logger.log('adding editor ' + editors[k] + ' to ' + srcProtection.getRange().getSheet().getName() + ' ' + srcProtection.getRange().getA1Notation());
                 }
             }
         }
     }
-    */
 }
