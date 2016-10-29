@@ -25,8 +25,24 @@ This app does not expose your files in any way.  The copying takes place exclusi
 * If you'd like to copy sharing permissions from the original folder, select "Yes" for Copy Sharing Permissions
 * By default the folder will copy to the same location as the original folder.  You can copy it to the root directory by selecting "Root directory" under "Copy folder to"
 
-## Bugs? Comments? Questions?
+## Bugs? Questions?
 
-Please contact the author at eric@ericyd.com
+Please open an [issue on Github](https://github.com/ericyd/gdrive-copy/issues).
 
-[Please review!!!](https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl/reviews)
+# Project maintenance
+
+This project is no longer being actively developed.  I will try to keep it updated to remain functional with 
+any changes to the Drive API, but I have a limited amount of time and other projects which I would like to focus on.
+
+I welcome contributions and I will gladly review any pull requests.
+
+If you are inclined to contribute to this project, here are a few areas which need attention:
+
+1. Fix the long-standing bug where the copying will fail to resume, presumably due to exceeding a Google Apps quota.
+2. Add a procedure to catch and re-process files that error out during the copying process.  Currently they are just 
+logged and then ignored, but ideally they would be tried again.
+3. Make the account switcher and login process more robust to ensure that people don't get locked out of the app, or are 
+forced to use it with only one account
+4. Add integration for Google Drive so that this script could be added into the context menu for Google Drive folders and 
+accessed directly from Drive, rather than having to navigate to a separate app
+5. General codebase cleanup and refactoring
