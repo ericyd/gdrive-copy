@@ -101,42 +101,43 @@ function copyPermissions(srcId, owners, destId) {
     }
 
 
-    // TODO: figure out why the protections are copied with more editors than the src
-
     // copy protected ranges from original sheet
     if (DriveApp.getFileById(srcId).getMimeType() == "application/vnd.google-apps.spreadsheet") {
         var srcSS = SpreadsheetApp.openById(srcId);
         var destSS = SpreadsheetApp.openById(destId);
-        Logger.log("mime type matched");
-        var srcProtections, srcProtection, destProtections, destProtection, destSheet, editors, protect, h, i, j, k;
-        srcProtections = srcSS.getProtections(SpreadsheetApp.ProtectionType.RANGE);
-        for (i = 0; i < srcProtections.length; i++) {
-            srcProtection = srcProtections[i];
+        var srcProtectionsR, srcProtectionsS, srcProtection, destProtectionsR, destProtectionsS, destProtection, destSheet, editors, editorEmails, protect, h, i, j, k;
+        srcProtectionsR = srcSS.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+        srcProtectionsS = srcSS.getProtections(SpreadsheetApp.ProtectionType.SHEET);
+        // copy the RANGE protections
+        for (i = 0; i < srcProtectionsR.length; i++) {
+            srcProtection = srcProtectionsR[i];
             editors = srcProtection.getEditors();
             destSheet = destSS.getSheetByName(srcProtection.getRange().getSheet().getName());
-            destProtections = destSheet.getProtections(SpreadsheetApp.ProtectionType.RANGE);
-            Logger.log("dest protections assigned");
-            Logger.log("dest protections.length = " + destProtections.length);
-            for (j = 0; j < destProtections.length; j++) {
-                // remove existing protections
-                destProtections[j].remove();
-                Logger.log("destProtection removed");
-
-                // set protection by sheet or by range
-                if (srcProtection.getRange().getA1Notation() === 'A1') {
-                    destProtection = destSheet.protect();
-                } else {
-                    destProtection = destSheet.getRange(srcProtection.getRange().getA1Notation()).protect();
-                }
-
-                Logger.log("dest protection set");
-                Logger.log("dest protection type = " + destProtection.getProtectionType());
-                
+            destProtectionsR = destSheet.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+            for (j = 0; j < destProtectionsR.length; j++) {
                 // add editors
+                editorEmails = [];
                 for (k = 0; k < editors.length; k++) {
-                    destProtection.addEditor(editors[k]);
-                    Logger.log('adding editor ' + editors[k] + ' to ' + srcProtection.getRange().getSheet().getName() + ' ' + srcProtection.getRange().getA1Notation());
+                    editorEmails.push(editors[k].getEmail());
                 }
+                destProtectionsR[j].addEditors(editorEmails);
+                Logger.log('adding editors ' + editorEmails + ' to ' + destProtectionsR[j].getRange().getSheet().getName() + ' ' + destProtectionsR[j].getRange().getA1Notation());
+            }
+        }
+        // copy the SHEET protections
+        for (i = 0; i < srcProtectionsS.length; i++) {
+            srcProtection = srcProtectionsS[i];
+            editors = srcProtection.getEditors();
+            destSheet = destSS.getSheetByName(srcProtection.getRange().getSheet().getName());
+            destProtectionsS = destSheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
+            for (j = 0; j < destProtectionsS.length; j++) {
+                // add editors
+                editorEmails = [];
+                for (k = 0; k < editors.length; k++) {
+                    editorEmails.push(editors[k].getEmail());
+                }
+                destProtectionsS[j].addEditors(editorEmails);
+                Logger.log('adding editors ' + editorEmails + ' to ' + destProtectionsS[j].getRange().getSheet().getName() + ' ' + destProtectionsS[j].getRange().getA1Notation());
             }
         }
     }
