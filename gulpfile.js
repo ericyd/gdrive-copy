@@ -147,13 +147,13 @@ gulp.task('html', function() {
         .pipe(changed('dist'))
         .pipe(gulpHogan({'isProd': isProd}))
         .pipe(concat('Index.html'))
-        .pipe(gulpif(isProd, htmlmin({
+        .pipe(htmlmin({
             collapseWhitespace: true,
             removeComments: true,
             removeCommentsFromCDATA: true,
             conservativeCollapse: true,
             minifyJS: true
-        })))
+        }))
         .pipe(gulp.dest('dist'));
 });
 
