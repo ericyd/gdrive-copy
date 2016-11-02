@@ -118,7 +118,7 @@ gulp.task('css', function() {
     // process css
     
     return gulp.src('./src/css/main.scss')
-        .pipe(sass({outputStyle: isProd ? 'compressed' : 'compact'}).on('error', sass.logError))
+        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
         .pipe(autoprefixer({browsers: ['last 10 versions']}))
         .pipe(concat('css.html'))
         .pipe(insert.wrap('<style>', '</style>'))
