@@ -1,44 +1,41 @@
 <!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
 <?!= HtmlService.createHtmlOutputFromFile('cutestrap').getContent(); ?>
-<?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
 
 
 
-<html>
-    <head>
+        <html>
 
-        <!--Webfont loader for Google Apps Scripts-->
-        {{^testing}}
-        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
-        <script>
-            WebFont.load({
-                google: {
-                    families: ['Lato']
-                }
-            });
-        </script>
-        {{/testing}}
+        <head>
 
-        
-    </head>
-
-    <body>
-    
-        {{> header }}
-        
-        {{> main }}
-
-        <div class="push"></div>
-        
-        {{> footer }} 
-        
-    </body>
-</html>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+            <!--Webfont loader for Google Apps Scripts-->
+            {{^testing}}
+            <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+            <script>
+                WebFont.load({
+                    google: {
+                        families: ['Lato']
+                    }
+                });
+            </script>
+            {{/testing}}
 
 
-<!-- Use a templated HTML printing scriptlet to import JavaScript. -->
-<?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
+        </head>
+
+        <body>
+
+            {{> header }}
+
+            <div id="root"></div>
+
+            <div class="push"></div>
+
+            {{> footer }}
+
+        </body>
+
+        </html>
+
+        <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
+        <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
