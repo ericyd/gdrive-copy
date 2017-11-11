@@ -5,5 +5,5 @@
  * @return {object} the metadata for the folder
  */
 function getMetadata(id) {
-    return Drive.Files.get(id);
+  return Drive.Files.get(id);
 }

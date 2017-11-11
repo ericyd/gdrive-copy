@@ -10,28 +10,30 @@
  * @return {Object} metadata for destination folder, or error on failure
  */
 function initializeDestinationFolder(selectedFolder, today) {
-    var destFolder;
+  var destFolder;
 
-    try {
-        destFolder = Drive.Files.insert({
-            "description": "Copy of " + selectedFolder.srcName + ", created " + today,
-            "title": selectedFolder.destName,
-            "parents": [
-                {
-                    "kind": "drive#fileLink",
-                    "id": selectedFolder.destLocation == "same" ? selectedFolder.srcParentId : DriveApp.getRootFolder().getId()
-                }
-            ],
-            "mimeType": "application/vnd.google-apps.folder"
-        });   
-    }
-    catch(err) {
-        return err.message;
-    }
+  try {
+    destFolder = Drive.Files.insert({
+      description: 'Copy of ' + selectedFolder.srcName + ', created ' + today,
+      title: selectedFolder.destName,
+      parents: [
+        {
+          kind: 'drive#fileLink',
+          id:
+            selectedFolder.destLocation == 'same'
+              ? selectedFolder.srcParentId
+              : DriveApp.getRootFolder().getId()
+        }
+      ],
+      mimeType: 'application/vnd.google-apps.folder'
+    });
+  } catch (err) {
+    return err.message;
+  }
 
-    if (selectedFolder.permissions) {
-        copyPermissions(selectedFolder.srcId, null, destFolder.id);
-    }
+  if (selectedFolder.permissions) {
+    copyPermissions(selectedFolder.srcId, null, destFolder.id);
+  }
 
-    return destFolder;
+  return destFolder;
 }

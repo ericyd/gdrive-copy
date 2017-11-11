@@ -10,14 +10,18 @@
  */
 
 function resume(selectedFolder) {
+  var priorCopy = findPriorCopy(selectedFolder.srcId);
 
-    var priorCopy = findPriorCopy(selectedFolder.srcId);
+  setUserPropertiesStore(
+    priorCopy.spreadsheetId,
+    priorCopy.propertiesDocId,
+    selectedFolder.destId,
+    'true'
+  );
 
-    setUserPropertiesStore(priorCopy.spreadsheetId, priorCopy.propertiesDocId, selectedFolder.destId, "true")
-
-    return {
-        spreadsheetId: priorCopy.spreadsheetId,
-        destId: selectedFolder.srcId,
-        resuming: true
-    };
+  return {
+    spreadsheetId: priorCopy.spreadsheetId,
+    destId: selectedFolder.srcId,
+    resuming: true
+  };
 }

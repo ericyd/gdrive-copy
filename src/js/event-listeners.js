@@ -13,133 +13,129 @@ var icons = require('./icons');
 var parseId = require('./parseId');
 var textboxHandlers = require('./textbox-handlers');
 
-
 module.exports = {
-    /**
+  /**
      * Sets bindings for navigation buttons
      */
-    'addNavListeners': function() {
-        
-        $('#resume-button').click(function() {
-            $("#put-forms-here").html(templates.resume.render({}, icons));
-            $(".btn--nav").removeClass("active");
-            $(this).addClass("active");
-            module.exports.addResumeFormListeners();
-        }); 
+  addNavListeners: function() {
+    $('#resume-button').click(function() {
+      $('#put-forms-here').html(templates.resume.render({}, icons));
+      $('.btn--nav').removeClass('active');
+      $(this).addClass('active');
+      module.exports.addResumeFormListeners();
+    });
 
-        $('#start-button').click(function(e) {
-            $("#put-forms-here").html(templates.start.render({}, icons));
-            $(".btn--nav").removeClass("active");
-            $(this).addClass("active");
-            module.exports.addStartFormListeners();
-        });
+    $('#start-button').click(function(e) {
+      $('#put-forms-here').html(templates.start.render({}, icons));
+      $('.btn--nav').removeClass('active');
+      $(this).addClass('active');
+      module.exports.addStartFormListeners();
+    });
 
-        $('#stop-button').click(function(e) {
-            $("#put-forms-here").html(templates.pause.render({'confirmed': false}));
-            $(".btn--nav").removeClass("active");
-            $(this).addClass("active");
+    $('#stop-button').click(function(e) {
+      $('#put-forms-here').html(templates.pause.render({ confirmed: false }));
+      $('.btn--nav').removeClass('active');
+      $(this).addClass('active');
 
-            $('#stop-confirm-button').click(function() {
-                $("#put-forms-here").html(templates.pause.render({'confirmed': true}));
-                google.script.run.setStopFlag();
-            });
-        });
+      $('#stop-confirm-button').click(function() {
+        $('#put-forms-here').html(templates.pause.render({ confirmed: true }));
+        google.script.run.setStopFlag();
+      });
+    });
 
-        $('#faq-button').click(function() {
-            $("#put-forms-here").html(templates.faq.render({}, icons));
-            $(".btn--nav").removeClass("active");
-            $(this).addClass("active");
-        });
-    },
+    $('#faq-button').click(function() {
+      $('#put-forms-here').html(templates.faq.render({}, icons));
+      $('.btn--nav').removeClass('active');
+      $(this).addClass('active');
+    });
+  },
 
-
-
-    /**
+  /**
      * Set bindings for selectFolder and selectOtherFolder buttons.
      * Used in both addResumeformListeners and addStartFormListeners
      */
-    'addSelectButtonListeners': function() {
-        $(".selectOtherFolder").click(function() {
-            DOM.resetForm();
-        });
+  addSelectButtonListeners: function() {
+    $('.selectOtherFolder').click(function() {
+      DOM.resetForm();
+    });
 
-        // Show Google Picker when select Folder buttons are selected
-        $(".selectFolderButton").click(function() {
-            picker.showPicker();
-        });
-    },
+    // Show Google Picker when select Folder buttons are selected
+    $('.selectFolderButton').click(function() {
+      picker.showPicker();
+    });
+  },
 
-
-
-    /**
+  /**
      * Set bindings for input elements in the Resume view
      */
-    'addResumeFormListeners': function() {
-        module.exports.addSelectButtonListeners();
-        
-        var resumeTextbox = document.getElementById("resumeTextbox");
-        resumeTextbox.addEventListener('mouseup', textboxHandlers.handleMouse, false);
-        resumeTextbox.addEventListener('keyup', textboxHandlers.getFileData, false);
-        
+  addResumeFormListeners: function() {
+    module.exports.addSelectButtonListeners();
 
-        /**
+    var resumeTextbox = document.getElementById('resumeTextbox');
+    resumeTextbox.addEventListener(
+      'mouseup',
+      textboxHandlers.handleMouse,
+      false
+    );
+    resumeTextbox.addEventListener('keyup', textboxHandlers.getFileData, false);
+
+    /**
          * Execute when resuming folder copy.
          *
          * @param {Object} event
          */
-        $("#resumeForm").submit(function( event ) {
-            
-            var errormsg;
+    $('#resumeForm').submit(function(event) {
+      var errormsg;
 
-            // validate
-            if (!picker.folder.srcId) {
-                errormsg = "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
-                $("#errors").html(errormsg);
+      // validate
+      if (!picker.folder.srcId) {
+        errormsg =
+          "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
+        $('#errors').html(errormsg);
+      } else {
+        // Valid!
+        DOM.onValid();
 
+        picker.folder.resuming = true;
+
+        // count number of triggers
+        google.script.run
+          .withSuccessHandler(function(number) {
+            // prompt user to wait or delete existing triggers
+            if (number > 9) {
+              $('#too-many-triggers').show('blind');
+              $('#status').hide('blind');
             } else {
-                // Valid!
-                DOM.onValid();
-
-                picker.folder.resuming = true;
-
-                // count number of triggers
-                google.script.run
-                    .withSuccessHandler(function(number) {
-                        // prompt user to wait or delete existing triggers
-                        if (number > 9) {
-                            $("#too-many-triggers").show('blind');
-                            $("#status").hide("blind");
-                        } else {
-
-                            // if not too many triggers, initialize script
-                            google.script.run
-                                .withSuccessHandler(success)
-                                .withFailureHandler(showError)
-                                .resume(picker.folder);
-                        }
-                    })
-                    .withFailureHandler(function(err) {
-                        $("#errors").append(err);
-                    })
-                    .getTriggersQuantity();
+              // if not too many triggers, initialize script
+              google.script.run
+                .withSuccessHandler(success)
+                .withFailureHandler(showError)
+                .resume(picker.folder);
             }
-            event.preventDefault();
-        });
-    },
+          })
+          .withFailureHandler(function(err) {
+            $('#errors').append(err);
+          })
+          .getTriggersQuantity();
+      }
+      event.preventDefault();
+    });
+  },
 
-
-
-    /**
+  /**
      * set bindings for input elements in the Start view
      */
-    'addStartFormListeners': function() {
-        var folderTextbox = document.getElementById("folderTextbox");
-        folderTextbox.addEventListener('mouseup', textboxHandlers.handleMouse, false);
-        folderTextbox.addEventListener('keyup', textboxHandlers.getFileData, false);
-        module.exports.addSelectButtonListeners();
+  addStartFormListeners: function() {
+    var folderTextbox = document.getElementById('folderTextbox');
+    folderTextbox.addEventListener(
+      'mouseup',
+      textboxHandlers.handleMouse,
+      false
+    );
+    folderTextbox.addEventListener('keyup', textboxHandlers.getFileData, false);
+    module.exports.addSelectButtonListeners();
 
-
-        /**
+    /**
          * Execute when beginning new folder copy
          *
          * Bind form submission action.
@@ -150,93 +146,85 @@ module.exports = {
          * 
          * @param {Object} event 
          */
-        $("#folderForm").submit(function( event ) { 
-            
-            var errormsg; 
-            
-            // validate
-            if (!picker.folder.srcId) {
-                errormsg = "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
-                $("#errors").html(errormsg);
-                
-            } else if ( $("#newFolder").val() === "" ) {
-                errormsg = "<div class='alert alert-danger' role='alert'>Please enter a new folder name</div>";
-                $("#errors").html(errormsg);
-                
+    $('#folderForm').submit(function(event) {
+      var errormsg;
+
+      // validate
+      if (!picker.folder.srcId) {
+        errormsg =
+          "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
+        $('#errors').html(errormsg);
+      } else if ($('#newFolder').val() === '') {
+        errormsg =
+          "<div class='alert alert-danger' role='alert'>Please enter a new folder name</div>";
+        $('#errors').html(errormsg);
+      } else {
+        // Valid!
+        DOM.onValid();
+
+        // Get values from form and selected folder to initialize copy
+        picker.folder.destName = $('#newFolder').val();
+        picker.folder.permissions =
+          $('#permissions-group')
+            .find('input:checked')
+            .val() == 'yes';
+        picker.folder.destLocation = $('#destination-group')
+          .find('input:checked')
+          .val();
+
+        // count number of triggers
+        google.script.run
+          .withSuccessHandler(function(number) {
+            // prompt user to wait or delete existing triggers
+            if (number > 9) {
+              $('#too-many-triggers').show('blind');
+              $('#status').hide('blind');
             } else {
-                // Valid!
-                DOM.onValid();
-                
-                // Get values from form and selected folder to initialize copy        
-                picker.folder.destName = $("#newFolder").val();
-                picker.folder.permissions = $("#permissions-group").find("input:checked").val() == "yes";
-                picker.folder.destLocation = $("#destination-group").find("input:checked").val();
-
-                // count number of triggers
-                google.script.run
-                    .withSuccessHandler(function(number) {
-                        // prompt user to wait or delete existing triggers
-                        if (number > 9) {
-                            $("#too-many-triggers").show('blind');
-                            $("#status").hide("blind");
-                        } else {
-
-                            // if not too many triggers, initialize script
-                            google.script.run
-                                .withSuccessHandler(success)
-                                .withFailureHandler(showError)
-                                .initialize(picker.folder);
-                        }
-                    })
-                    .withFailureHandler(function(err) {
-                        $("#errors").append(err);
-                    })
-                    .getTriggersQuantity();
+              // if not too many triggers, initialize script
+              google.script.run
+                .withSuccessHandler(success)
+                .withFailureHandler(showError)
+                .initialize(picker.folder);
             }
-            event.preventDefault();
-            
-        });
-    },
+          })
+          .withFailureHandler(function(err) {
+            $('#errors').append(err);
+          })
+          .getTriggersQuantity();
+      }
+      event.preventDefault();
+    });
+  },
 
-
-
-    /**
+  /**
      * 
      */
-    'addDeleteTriggerButtonListeners': function() {
-        $('#delete-existing-triggers').click(function() {
-            $("#status").show("blind");
-            $("#too-many-triggers").hide();
+  addDeleteTriggerButtonListeners: function() {
+    $('#delete-existing-triggers').click(function() {
+      $('#status').show('blind');
+      $('#too-many-triggers').hide();
 
+      google.script.run
+        .withSuccessHandler(function() {
+          if (picker.folder.resuming) {
             google.script.run
-                .withSuccessHandler(function() {
-
-                    if (picker.folder.resuming) {
-                        google.script.run
-                            .withSuccessHandler(success)
-                            .withFailureHandler(showError)
-                            .resume(picker.folder);
-                    } else {
-                        google.script.run
-                            .withSuccessHandler(success)
-                            .withFailureHandler(showError)
-                            .initialize(picker.folder);
-                    }
-
-                })
-                .withFailureHandler(function(err) {
-                    $("#errors").append(err);
-                })
-                .deleteAllTriggers();
-        });
-    }
-
-
-}
-
-
-
-
+              .withSuccessHandler(success)
+              .withFailureHandler(showError)
+              .resume(picker.folder);
+          } else {
+            google.script.run
+              .withSuccessHandler(success)
+              .withFailureHandler(showError)
+              .initialize(picker.folder);
+          }
+        })
+        .withFailureHandler(function(err) {
+          $('#errors').append(err);
+        })
+        .deleteAllTriggers();
+    });
+  }
+};
 
 /**
  * Hide 'status' indicator, and show success message.
@@ -247,28 +235,27 @@ module.exports = {
  * @param {Object} results contains id string for logger spreadsheet and destination folder
  */
 function success(results) {
-    
-    $("#status").hide("blind");
-    
-    // link to spreadsheet and  dest Folder
-    var copyLogLink = "<a href='https://docs.google.com/spreadsheets/d/" + results.spreadsheetId +"' target='_blank'>copy log</a>";
-    $("#copy-log-link").html(copyLogLink);
-    
-    var destFolderLink = "<a href='https://drive.google.com/drive/u/0/folders/" + results.destId + "' target='_blank'>here</a>";
-    $("#dest-folder-link").html(destFolderLink);
-    
-    // alert that they can close window now
-    $("#complete").show("blind");
-    $("#please-review").show("blind");
-    
-    
-    
-    google.script.run.copy();
-    
-    
+  $('#status').hide('blind');
+
+  // link to spreadsheet and  dest Folder
+  var copyLogLink =
+    "<a href='https://docs.google.com/spreadsheets/d/" +
+    results.spreadsheetId +
+    "' target='_blank'>copy log</a>";
+  $('#copy-log-link').html(copyLogLink);
+
+  var destFolderLink =
+    "<a href='https://drive.google.com/drive/u/0/folders/" +
+    results.destId +
+    "' target='_blank'>here</a>";
+  $('#dest-folder-link').html(destFolderLink);
+
+  // alert that they can close window now
+  $('#complete').show('blind');
+  $('#please-review').show('blind');
+
+  google.script.run.copy();
 }
-
-
 
 /**
  * Build an 'alert' div that contains
@@ -276,12 +263,15 @@ function success(results) {
  * and suggestions for fixing the error
  * 
  * @param {string} msg error message produced by Google Apps Script from initialize() call
- */ 
+ */
+
 function showError(msg) {
-    $("#status").hide();
-    
-    var errormsg = "<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error initializing the copy folder request.<br />";
-    errormsg += "<b>Error message:</b> " + msg + ".<br>";
-    errormsg += "Please try again. Make sure you have correct permissions to copy this folder, and make sure you are using Google Chrome or Chromium when using this app.</div>";
-    $("#errors").append(errormsg);
+  $('#status').hide();
+
+  var errormsg =
+    "<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error initializing the copy folder request.<br />";
+  errormsg += '<b>Error message:</b> ' + msg + '.<br>';
+  errormsg +=
+    'Please try again. Make sure you have correct permissions to copy this folder, and make sure you are using Google Chrome or Chromium when using this app.</div>';
+  $('#errors').append(errormsg);
 }

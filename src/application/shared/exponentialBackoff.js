@@ -9,16 +9,22 @@
  * @return {*} The value returned by the called function.
  */
 function exponentialBackoff(func, errorMsg) {
-    for (var n=0; n<6; n++) {
-        try {
-            return func();
-        } catch(e) {
-            log(null, [e.message, e.fileName, e.lineNumber]);
-            if (n == 5) {
-                log(null, [errorMsg, '', '', '', Utilities.formatDate(new Date(), 'GMT-7', "MM-dd-yy hh:mm:ss aaa")]);
-                throw e;
-            }
-            Utilities.sleep((Math.pow(2,n)*1000) + (Math.round(Math.random() * 1000)));
-        }
+  for (var n = 0; n < 6; n++) {
+    try {
+      return func();
+    } catch (e) {
+      log(null, [e.message, e.fileName, e.lineNumber]);
+      if (n == 5) {
+        log(null, [
+          errorMsg,
+          '',
+          '',
+          '',
+          Utilities.formatDate(new Date(), 'GMT-7', 'MM-dd-yy hh:mm:ss aaa')
+        ]);
+        throw e;
+      }
+      Utilities.sleep(Math.pow(2, n) * 1000 + Math.round(Math.random() * 1000));
     }
+  }
 }

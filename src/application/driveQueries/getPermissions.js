@@ -5,5 +5,5 @@
  * @return {object} the permissions for the folder
  */
 function getPermissions(id) {
-    return Drive.Permissions.list(id);
+  return Drive.Permissions.list(id);
 }

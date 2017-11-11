@@ -6,20 +6,18 @@ var eventListeners = require('./event-listeners');
 
 // event bindings
 $(function() {
+  eventListeners.addNavListeners();
+  eventListeners.addDeleteTriggerButtonListeners();
 
-    eventListeners.addNavListeners();
-    eventListeners.addDeleteTriggerButtonListeners();
+  $('#put-forms-here').html(templates.start.render({}, icons));
+  eventListeners.addStartFormListeners();
 
-    $("#put-forms-here").html(templates.start.render({}, icons));
-    eventListeners.addStartFormListeners();
-
-    google.script.run
-        .withSuccessHandler(function(email) {
-            $(".userEmail").html(email);
-        })
-        .withFailureHandler(function(err) {
-            console.log("couldn't get email");
-        })
-        .getUserEmail();
-    
+  google.script.run
+    .withSuccessHandler(function(email) {
+      $('.userEmail').html(email);
+    })
+    .withFailureHandler(function(err) {
+      console.log("couldn't get email");
+    })
+    .getUserEmail();
 });

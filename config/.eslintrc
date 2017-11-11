@@ -1,0 +1,20 @@
+{
+    "extends": "react",
+    "plugins": [
+        "import"
+    ],
+    "env": {
+        "browser": true,
+        "mocha": true
+    },
+    "rules": {
+        "jsx-quotes": [
+            "error",
+            "prefer-single"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ]
+    }
+}

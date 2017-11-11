@@ -6,9 +6,9 @@
  * @return {object} fileList object where fileList.items is an array of children files
  */
 function getFiles(query, pageToken) {
-    return Drive.Files.list({
-                    q: query,
-                    maxResults: 1000,
-                    pageToken: pageToken
-                });    
+  return Drive.Files.list({
+    q: query,
+    maxResults: 1000,
+    pageToken: pageToken
+  });
 }
