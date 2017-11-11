@@ -1,33 +1,31 @@
 /* Variables */
-@import "../../node_modules/cutestrap/dist/scss/variables/_colors";
-@import "../../node_modules/sass-colorscheme/colorscheme";
+@import '../../node_modules/cutestrap/dist/scss/variables/_colors';
+@import '../../node_modules/sass-colorscheme/colorscheme';
 
 //== Layout
-$container-width:       700px;
-$header-padding:        15%;
-$footer-height:         100px;
-$footer-height-sm:      250px;
-
-// todo: figure out why $primary isn't importing properly into Cutestrap (see radio buttons and btn hover for examples of inconsistency)
+$container-width: 700px;
+$header-padding: 15%;
+$footer-height: 75px;
+$footer-height-sm: 250px;
 
 //== Colors
-$seed-color:                #A32E2E;
-$colorscheme:               colorscheme($seed-color, $scheme: 'complementary');
-$primary:                   map-get($colorscheme, 'primary');
-$primary--lighter:          map-get($colorscheme, 'primary--lighter');
-$primary--lightest:         map-get($colorscheme, 'primary--lightest');
-$primary--darker:           map-get($colorscheme, 'primary--darker');
-$primary--darkest:          map-get($colorscheme, 'primary--darkest');
+$body-background: #f7f7f7;
+$seed-color: #7cb7de;
+$colorscheme: colorscheme($seed-color, $scheme: 'complementary');
+$primary: map-get($colorscheme, 'primary');
+$primary--lighter: map-get($colorscheme, 'primary--lighter');
+$primary--lightest: map-get($colorscheme, 'primary--lightest');
+$primary--darker: map-get($colorscheme, 'primary--darker');
+$primary--darkest: map-get($colorscheme, 'primary--darkest');
 
 //= Colors used by Cutestrap
-$primary-dark:              $primary--darker;
-$link--visited:             $primary--lightest;
-$link--hover:               $primary--lightest;
+$primary-dark: $primary--darker;
+$link--visited: $primary--lightest;
+$link--hover: $primary--lightest;
 
 //== Typography
-$fs-smaller:                0.7em;
-$lh-smaller:                1.5em;
-
+$fs-smaller: 0.7em;
+$lh-smaller: 1.5em;
 
 //== buttons
-$border-radius:     0em;
+$border-radius: 0em;

@@ -1,0 +1,18 @@
+@import 'my-variables';
+
+.tab {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+
+#start-step1,
+#pause-step1 {
+  display: block;
+}
+
+.step2 {
+  display: none;
+}

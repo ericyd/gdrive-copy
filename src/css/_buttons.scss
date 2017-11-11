@@ -1,11 +1,15 @@
-@import "my-variables";
+@import 'my-variables';
 
-.btn, [type=button],
-[type=submit],
+.btn,
+[type='button'],
+[type='submit'],
 button {
   border-radius: $border-radius;
 
-  &:focus, &:active, &:link, &:hover {
+  &:focus,
+  &:active,
+  &:link,
+  &:hover {
     outline: 0;
   }
 
@@ -14,10 +18,9 @@ button {
   }
 
   &.btn--small {
-    
     // height: 2.8rem;
     line-height: 1rem;
-    padding: 0.5rem; 
+    padding: 0.5rem;
     margin-bottom: 1rem;
     border: 3px solid $primary;
     background: transparent;
@@ -25,35 +28,45 @@ button {
 
     &:hover {
       background: $primary;
-      color: #fff; 
+      color: #fff;
       transition: all 0.25s ease;
-    } 
+    }
 
-    &:focus, &:active, &:link, &:hover {
+    &:focus,
+    &:active,
+    &:link,
+    &:hover {
       outline: 0;
     }
 
     &::-moz-focus-inner {
       border: 0;
     }
-
   }
 
   &.btn--nav {
     color: #fff;
     margin: 0;
     line-height: 0em;
-    padding: 2.0em 1em 2.0em 1em;
+    padding: 1em 1em 0.5em 1em;
     border: 0px;
+    border-bottom: 0.5em solid $primary;
     background: none;
+    box-sizing: border-box;
+    transition: all 0.25s ease;
 
     &:hover {
-      background: #fff;
-      color: $gray3; // same as nav background in _header   
+      // padding-bottom: 1em;
+      border-color: $body-background;
+      // border-bottom: 0.5em solid $body-background;
+      // color: $gray3; // same as nav background in _header
       transition: all 0.25s ease;
     }
 
-    &:focus, &:active, &:link, &:hover {
+    &:focus,
+    &:active,
+    &:link,
+    &:hover {
       outline: 0;
     }
 
@@ -64,7 +77,13 @@ button {
     &.active {
       background: #fff;
       color: $gray3; // same as nav background in _header
-    } 
+      border-color: $body-background;
+      transition: all 0.25s ease;
+    }
   }
 }
 
+.github-button-wrapper {
+  position: relative;
+  top: 10px;
+}

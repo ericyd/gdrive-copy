@@ -1,81 +1,115 @@
-@import "my-variables";
+@import 'my-variables';
 
-html, body {
-    height: 100%;
-    margin: 0;
-    background: $gray4;
+* {
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
+html,
+body {
+  background-color: $body-background;
+  height: 100%;
+  margin: 0;
+}
+
+.relative-wrapper {
+  width: 100%;
+  position: relative;
+}
 
 main {
-    // min-height: 100%;
-    width: 100%;
-    background: #fff;
+  // min-height: 100%;
+  width: 100%;
 }
 
 .container {
-    width: $container-width;
-    padding-bottom: 3rem;
-    margin: 0 auto;
-    margin-bottom: -$footer-height;
+  width: $container-width;
+  padding-bottom: 3rem;
+  margin: 0 auto;
+  margin-bottom: -$footer-height;
+}
+
+.overlay {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+
+  .overlay__curtain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0.8;
+    background: #fff;
+  }
+
+  .overlay__content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    width: 800px;
+    text-align: center;
+    height: 500px;
+  }
 }
 
 a {
+  color: $primary--darker;
+
+  &:hover {
+    color: $primary--darkest;
+  }
+
+  &:visited {
     color: $primary--darker;
-    
-    &:hover {
-        color: $primary--darkest;
-    }
-    
-    &:visited {
-        color: $primary--darker;
-    }
-    
-    &:link {
-        color: $primary--darker;
-    }
-    
-    &:focus {
-        color: $primary--darkest;
-    }
-}
+  }
 
-// Hide elements that are programatically shown throughout script processing
-#status, #complete, #please-review, #dialog-message {
-    display: none;
-}
+  &:link {
+    color: $primary--darker;
+  }
 
+  &:focus {
+    color: $primary--darkest;
+  }
+}
 
 // inspired by https://github.com/FortAwesome/Font-Awesome/blob/89a28f8b1f9882159dce581ee92d398bbc33ad59/scss/_list.scss
 .icon-ul {
-    padding-left: 0;
-    margin-left: 2em; 
-    list-style-type: none;
-    
-    /* generated at duri.me */ 
-    list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAADJViUEAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAANigAADYoB/S2jSAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAHESURBVCiRpZMxaFNRFIa/8/J8ERtSCAraJTTiJp10MC0pWQoVa6tDps4ZqsnuFAIFR6mhS9d26qDPaixkCYi8oXQqbuLgZEEJbWmKPl/ucehNjEkQwX87//n/e88951xRVQZRqN70wlSyBYwBba91ktqufAgHdc6QE4guJ+esEWDMxkNwAArPsqkusbg2nTOGzX6RMWwurk3nepVZvdxdv331Qsf9CHwFLgLXrKajwmdR0kDMcl+A78CVn7HohuNG7iqQACatsS2qZRMPk68eB9dNPEyKahlo2/wkkHAjd9UVkQT0NU2dwsvy+7fdcKe4fwbUlp7PfEJMvcuLSMI5bnnLwIHlGn6fsR+Wb9jw4LjlLTvNSjMC3T2/Vd+NMv6uqpvX3WalGY0c1b/CyVfzLsi8fUjur+peXubz1bzrjKfCLWDKpueWancWRvks312WqfFUuOWq6qnIH8dvP6hln3Ti4cZOcf/s/satS7EfXhHkab9KVU//b0nqK3uHXkTaLwUZvxRMqJFZ4AiIiZKxxiM1MuuXggm/FGS8iHR9Ze9QRv2qh+vZe8bwutdVh4UXj4I3g7qRo3K/nTQ4X0eAto2H8AvmG6+Ga4L37gAAAABJRU5ErkJggg==);
-    
-    > li { 
-        position: relative; 
-    }
+  padding-left: 0;
+  margin-left: 2em;
+  list-style-type: none;
+
+  /* generated at duri.me */
+  list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAADJViUEAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAANigAADYoB/S2jSAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAHESURBVCiRpZMxaFNRFIa/8/J8ERtSCAraJTTiJp10MC0pWQoVa6tDps4ZqsnuFAIFR6mhS9d26qDPaixkCYi8oXQqbuLgZEEJbWmKPl/ucehNjEkQwX87//n/e88951xRVQZRqN70wlSyBYwBba91ktqufAgHdc6QE4guJ+esEWDMxkNwAArPsqkusbg2nTOGzX6RMWwurk3nepVZvdxdv331Qsf9CHwFLgLXrKajwmdR0kDMcl+A78CVn7HohuNG7iqQACatsS2qZRMPk68eB9dNPEyKahlo2/wkkHAjd9UVkQT0NU2dwsvy+7fdcke4fwbulp7pfejmvculsmi5bnnlwihlgn6fsr+Wb9jw4LjlLTvNSjMC3T2/Vd+NMv6uqpvX3WalGY0c1b/CyVfzLsi8fUjur+peXubz1bzrjKfCLWDKpueWancWRvks312WqfFUuOWq6qnIH8dvP6hln3Ti4cZOcf/s/satS7EfXhHkab9KVU//b0nqK3uHXkTaLwUZvxRMqJFZ4AiIiZKxxiM1MuuXggm/FGS8iHR9Ze9QRv2qh+vZe8bwutdVh4UXj4I3g7qRo3K/nTQ4X0eAto2H8AvmG6+Ga4L37gAAAABJRU5ErkJggg==);
+
+  > li {
+    position: relative;
+  }
 }
-
-
 
 .getFolderErrors,
 .folderLookup,
 .selectedFolderInfo {
-    display:none;
+  display: none;
 }
-
-
 
 #too-many-triggers {
-    display: none;
+  display: none;
 }
 
-
 .description {
-    font-size: $fs-smaller;
-    line-height: $lh-smaller;
+  font-size: $fs-smaller;
+  line-height: $lh-smaller;
+}
+
+.tab {
+  display: none;
+
+  &.active {
+    display: block;
+  }
 }

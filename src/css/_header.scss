@@ -1,68 +1,56 @@
-@import "my-variables";
+@import 'my-variables';
 
 header {
-    background: #393939;
-    background: -webkit-linear-gradient(#393939, #626262);
-    background: -o-linear-gradient(#393939, #626262);
-    background: -moz-linear-gradient(#393939, #626262);
-    background: linear-gradient(#393939, #626262);
+  > * {
+    padding: 10px 0;
+    color: #333;
+  }
 
-    > * {
-        padding: 10px 0;
-        color: #fff;
-    }
-
-    > .header-container {
-        text-align: center;
-    }
+  > .header-container {
+    text-align: left;
+  }
 }
 
 .header-container {
-    width: $container-width;
-    margin: 0 auto;
+  width: $container-width;
+  margin: 0 auto;
 
-    > .header-container__icon {
-        display: inline-block;
-
-        > svg {
-            width: 5em;
-            height: 5em;
-            position: relative;
-            top: 0.5em;
-        }
+  > .header-container__icon {
+    > svg {
+      width: 4em;
+      height: 4em;
+      position: relative;
+      top: 0.5em;
     }
+  }
 
-    > .header-container__headings {
-        display: inline-block;
-        
-        > h1, 
-        > h4 {
-            padding: 0.5rem;
-            margin: 0;
-        }
+  > .header-container__headings {
+    > h1 {
+      display: inline;
+      padding: 0.5rem;
+      margin: 0;
     }
+  }
 }
 
 nav {
-    width: 100%;
-    background: $gray3;
-    margin: 0; 
-    padding: 0;
-    // height: 4em;
-
-    
+  width: 100%;
+  background: $primary;
+  margin: 0;
+  padding: 0;
 }
 
-.change-account {
-    float:right;
-    text-align: right;
-    margin: 0.5em 1em 0 0;
+#change-account {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  text-align: right;
 
-    & > .change-account__box {
-        background: $gray6;
-        color: $gray1;
-        border: 1px solid $gray4;
-        padding: 0.25em 0.5em;
-        font-size: 0.65em;
-    }
+  & > .change-account__box {
+    background: $gray6;
+    color: $gray1;
+    border: 1px solid $gray4;
+    padding: 0.25em 0.5em;
+    font-size: 0.65em;
+  }
 }
