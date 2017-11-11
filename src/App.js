@@ -1,8 +1,8 @@
 'use strict';
 
 import React, { Component } from 'react';
-import Header from './Nav';
-import ViewContainer from './views/ViewContainer';
+import Header from './components/Nav';
+import ViewContainer from './components/ViewContainer';
 
 class App extends Component {
   constructor() {

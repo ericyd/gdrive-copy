@@ -13,9 +13,8 @@
     background-color: #000;
     border-radius: 5px;
     color: #fff;
-    content: attr(
-      data-tooltip
-    ); //This pulls in the text from the element with the tooltip
+    //This pulls in the text from the element with the tooltip
+    content: attr(data-tooltip);
     left: 2rem; //This centers the container above the element
     padding: 0.25rem;
     position: absolute;

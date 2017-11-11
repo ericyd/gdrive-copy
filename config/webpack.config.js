@@ -71,12 +71,19 @@
 // webpack 2 version
 
 const readFileSync = require('fs').readFileSync;
-const babelSettings = JSON.parse(readFileSync('.babelrc'));
+const babelSettings = JSON.parse(readFileSync('./config/.babelrc'));
+const paths = require('./paths');
 const ENV = process.env.NODE_ENV || 'development';
 const webpack = require('webpack');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 // const wrapPlugin = require('./webpackWrapPlugin.js');
 
 let plugins = [
+  new StyleLintPlugin({
+    configFile: './config/stylelint.config.js',
+    syntax: 'scss',
+    failOnError: false
+  }),
   // this gives the compiled codebase access to process.env.NODE_ENV
   new webpack.EnvironmentPlugin(['NODE_ENV']),
   // new wrapPlugin({top: '<script>', bottom: '</script>', raw: true}),
@@ -98,31 +105,31 @@ let plugins = [
 
 module.exports = {
   entry: {
-    index: ['./src/app.js']
+    index: ['./src/index.js']
   },
   resolve: {
     extensions: ['.js', '.html']
   },
   output: {
-    path: __dirname + '/src/svelte',
-    filename: 'compiled.js',
+    path: __dirname + '/dist',
+    filename: 'bundle.js',
     chunkFilename: '[name].[id].js'
   },
   plugins: plugins,
   module: {
     rules: [
       {
-        test: /\.(html|js)$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
+        include: paths.appSrc,
         use: {
           loader: 'babel-loader',
           query: babelSettings
         }
       },
       {
-        test: /\.html$/,
-        exclude: /node_modules/,
-        use: 'svelte-loader'
+        test: /\.(sc|sa|c)ss$/,
+        loaders: ['style', 'css', 'sass']
       }
     ]
   },

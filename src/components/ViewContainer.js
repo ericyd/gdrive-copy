@@ -1,11 +1,11 @@
 'use strict';
 
 import React, { Component } from 'react';
-import Start from './Start';
-import Resume from './Resume';
-import Pause from './Pause';
-import About from './About';
-import FAQ from './FAQ';
+import Start from '../views/Start';
+import Resume from '../views/Resume';
+import Pause from '../views/Pause';
+import About from '../views/About';
+import FAQ from '../views/FAQ';
 
 export default class ViewContainer extends Component {
   constructor() {

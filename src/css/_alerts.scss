@@ -3,7 +3,7 @@
 .alert {
   display: block;
   padding: 1em;
-  margin: 0 0 1em 0;
+  margin: 0 0 1em;
   background: #fff;
   font-size: $fs-smaller;
   line-height: $lh-smaller;
@@ -28,5 +28,5 @@
 .panel-heading {
   border-bottom: 1px solid $gray6;
   font-weight: bold;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
 }
