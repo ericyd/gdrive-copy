@@ -1,8 +1,8 @@
 /**
  * This module provides functionality used for the "Select Folder"
- * textboxes, which automatically find folder metadata when a URL 
+ * textboxes, which automatically find folder metadata when a URL
  * is pasted into them.  The textboxes can handle pasting via 'Ctrl+V',
- * or right-clicking and selecting "Paste" from the context menu. 
+ * or right-clicking and selecting "Paste" from the context menu.
  */
 
 // Requires
@@ -15,9 +15,9 @@ var interval;
 
 module.exports = {
   /**
-     * If right-click, setTimeout
-     * If left-click, trigger immediately
-     */
+   * If right-click, setTimeout
+   * If left-click, trigger immediately
+   */
   handleMouse: function(e) {
     // if context menu is activated, give user time to paste data via context menu
     if (e.button === 2) {
@@ -31,10 +31,10 @@ module.exports = {
   },
 
   /**
-     * If folder URL is added, get folder metadata and display relevant information.
-     * 
-     * @param {object} e event object
-     */
+   * If folder URL is added, get folder metadata and display relevant information.
+   *
+   * @param {object} e event object
+   */
   getFileData: function(e) {
     if (e.target.value !== '') {
       DOM.onFolderLookup();

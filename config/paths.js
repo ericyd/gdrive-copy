@@ -1,7 +1,7 @@
 /**
  * Provide paths for use in other config files.
- * 
- * This is mostly taken from the boilerplate file 
+ *
+ * This is mostly taken from the boilerplate file
  * in the hello-world app created by create-react-app
  */
 

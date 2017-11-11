@@ -4,7 +4,7 @@
  *   1. Log success in spreadsheet with file ID
  * Failure:
  *   1. Log error in spreadsheet with source ID
- * 
+ *
  * @param {Object} file File Resource with metadata from source file
  */
 function copyFile(file, map) {

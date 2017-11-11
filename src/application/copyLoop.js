@@ -8,8 +8,8 @@
  */
 function copy() {
   /*****************************
-     * Initialize timers, initialize variables for script, and update current time
-     */
+   * Initialize timers, initialize variables for script, and update current time
+   */
   timers.initialize(); // global
   //properties is a global object now, stored in the file propertiesObject
 
@@ -24,22 +24,22 @@ function copy() {
   timers.update(userProperties);
 
   /*****************************
-     * Delete previous trigger
-     */
+   * Delete previous trigger
+   */
   deleteTrigger(triggerId);
 
   /*****************************
-     * Create trigger for next run.
-     * This trigger will be deleted if script finishes successfully 
-     * or if the stop flag is set.
-     */
+   * Create trigger for next run.
+   * This trigger will be deleted if script finishes successfully
+   * or if the stop flag is set.
+   */
   createTrigger();
 
   /*****************************
-     * Load properties.
-     * If loading properties fails, return the function and
-     * set a trigger to retry in 6 minutes.
-     */
+   * Load properties.
+   * If loading properties fails, return the function and
+   * set a trigger to retry in 6 minutes.
+   */
   try {
     properties = exponentialBackoff(
       loadProperties,
@@ -64,8 +64,8 @@ function copy() {
   }
 
   /*****************************
-     * Initialize logger spreadsheet and timeZone
-     */
+   * Initialize logger spreadsheet and timeZone
+   */
 
   ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName('Log');
   timeZone = SpreadsheetApp.openById(
@@ -76,11 +76,11 @@ function copy() {
   }
 
   /*****************************
-     * Process leftover files from prior query results
-     * that weren't processed before script timed out.
-     * Destination folder must be set to the parent of the first leftover item.
-     * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
-     */
+   * Process leftover files from prior query results
+   * that weren't processed before script timed out.
+   * Destination folder must be set to the parent of the first leftover item.
+   * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
+   */
   if (properties.leftovers.items && properties.leftovers.items.length > 0) {
     properties.destFolder = properties.leftovers.items[0].parents[0].id;
     processFileList(
@@ -95,13 +95,13 @@ function copy() {
   }
 
   /*****************************
-     * Update current runtime and user stop flag
-     */
+   * Update current runtime and user stop flag
+   */
   timers.update(userProperties);
 
   /*****************************
-     * When leftovers are complete, query next folder from properties.remaining
-     */
+   * When leftovers are complete, query next folder from properties.remaining
+   */
 
   while (properties.remaining.length > 0 && !timers.timeIsUp && !timers.stop) {
     // if pages remained in the previous query, use them first
@@ -146,8 +146,8 @@ function copy() {
   }
 
   /*****************************
-     * Cleanup
-     */
+   * Cleanup
+   */
 
   // Case: user manually stopped script
   if (timers.stop) {

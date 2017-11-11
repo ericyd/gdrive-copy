@@ -97,13 +97,13 @@ function copyPermissions(srcId, owners, destId) {
   }
 
   /**
-     * Removed on 4/24/17
-     * Bug reports of infinite loops continue to trickle in.
-     * https://github.com/ericyd/gdrive-copy/issues/19
-     * https://github.com/ericyd/gdrive-copy/issues/3
-     * The marginal benefit of this procedure (which may not even still work)
-     * is not worth the possibility of creating an infinite loop for users.
-     */
+   * Removed on 4/24/17
+   * Bug reports of infinite loops continue to trickle in.
+   * https://github.com/ericyd/gdrive-copy/issues/19
+   * https://github.com/ericyd/gdrive-copy/issues/3
+   * The marginal benefit of this procedure (which may not even still work)
+   * is not worth the possibility of creating an infinite loop for users.
+   */
   // // copy protected ranges from original sheet
   // if (DriveApp.getFileById(srcId).getMimeType() == "application/vnd.google-apps.spreadsheet") {
   //     var srcSS, destSS, srcProtectionsR, srcProtectionsS, srcProtection, destProtectionsR, destProtectionsS, destProtection, destSheet, editors, editorEmails, protect, h, i, j, k;

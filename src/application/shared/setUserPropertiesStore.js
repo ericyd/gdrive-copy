@@ -1,7 +1,7 @@
 /**
  * save srcId, destId, copyPermissions, spreadsheetId to userProperties.
- * 
- * This is used when resuming, in which case the IDs of the logger spreadsheet and 
+ *
+ * This is used when resuming, in which case the IDs of the logger spreadsheet and
  * properties document will not be known.
  */
 function setUserPropertiesStore(

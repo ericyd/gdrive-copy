@@ -103,7 +103,7 @@ function pickerCallback(data) {
 
 /**
  * save passed values to selectedFolder
- * 
+ *
  * @param {object} properties selectedFolder properties to save
  */
 function setSelectedFolder(properties) {

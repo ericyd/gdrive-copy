@@ -1,8 +1,8 @@
 /**
  * This module provides functions that add event listeners
  * to all parts of the application.
- * 
- * Individual functions are commented to provide context for 
+ *
+ * Individual functions are commented to provide context for
  * their usage.
  */
 
@@ -15,8 +15,8 @@ var textboxHandlers = require('./textbox-handlers');
 
 module.exports = {
   /**
-     * Sets bindings for navigation buttons
-     */
+   * Sets bindings for navigation buttons
+   */
   addNavListeners: function() {
     $('#resume-button').click(function() {
       $('#put-forms-here').html(templates.resume.render({}, icons));
@@ -51,9 +51,9 @@ module.exports = {
   },
 
   /**
-     * Set bindings for selectFolder and selectOtherFolder buttons.
-     * Used in both addResumeformListeners and addStartFormListeners
-     */
+   * Set bindings for selectFolder and selectOtherFolder buttons.
+   * Used in both addResumeformListeners and addStartFormListeners
+   */
   addSelectButtonListeners: function() {
     $('.selectOtherFolder').click(function() {
       DOM.resetForm();
@@ -66,8 +66,8 @@ module.exports = {
   },
 
   /**
-     * Set bindings for input elements in the Resume view
-     */
+   * Set bindings for input elements in the Resume view
+   */
   addResumeFormListeners: function() {
     module.exports.addSelectButtonListeners();
 
@@ -80,10 +80,10 @@ module.exports = {
     resumeTextbox.addEventListener('keyup', textboxHandlers.getFileData, false);
 
     /**
-         * Execute when resuming folder copy.
-         *
-         * @param {Object} event
-         */
+     * Execute when resuming folder copy.
+     *
+     * @param {Object} event
+     */
     $('#resumeForm').submit(function(event) {
       var errormsg;
 
@@ -123,8 +123,8 @@ module.exports = {
   },
 
   /**
-     * set bindings for input elements in the Start view
-     */
+   * set bindings for input elements in the Start view
+   */
   addStartFormListeners: function() {
     var folderTextbox = document.getElementById('folderTextbox');
     folderTextbox.addEventListener(
@@ -136,16 +136,16 @@ module.exports = {
     module.exports.addSelectButtonListeners();
 
     /**
-         * Execute when beginning new folder copy
-         *
-         * Bind form submission action.
-         * Disable form elements,
-         * Hide description text for app,
-         * Show status spinner,
-         * run initialization method.
-         * 
-         * @param {Object} event 
-         */
+     * Execute when beginning new folder copy
+     *
+     * Bind form submission action.
+     * Disable form elements,
+     * Hide description text for app,
+     * Show status spinner,
+     * run initialization method.
+     *
+     * @param {Object} event
+     */
     $('#folderForm').submit(function(event) {
       var errormsg;
 
@@ -197,8 +197,8 @@ module.exports = {
   },
 
   /**
-     * 
-     */
+   *
+   */
   addDeleteTriggerButtonListeners: function() {
     $('#delete-existing-triggers').click(function() {
       $('#status').show('blind');
@@ -231,7 +231,7 @@ module.exports = {
  * Include links to logger spreadsheet and destination folder
  * so user can monitor progress of the copy.
  * Alert user that they can safely close the window now.
- * 
+ *
  * @param {Object} results contains id string for logger spreadsheet and destination folder
  */
 function success(results) {
@@ -261,7 +261,7 @@ function success(results) {
  * Build an 'alert' div that contains
  * error message output from Google Apps Script
  * and suggestions for fixing the error
- * 
+ *
  * @param {string} msg error message produced by Google Apps Script from initialize() call
  */
 

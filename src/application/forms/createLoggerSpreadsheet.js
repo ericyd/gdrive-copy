@@ -1,10 +1,10 @@
 /**
  * Create the spreadsheet used for logging progress of the copy
- * 
+ *
  * @param {string} today - Stringified version of today's date
  * @param {string} destId - ID of the destination folder, created in createDestinationFolder
- * 
- * @return {Object} metadata for logger spreadsheet, or error on fail 
+ *
+ * @return {Object} metadata for logger spreadsheet, or error on fail
  */
 function createLoggerSpreadsheet(today, destId) {
   try {

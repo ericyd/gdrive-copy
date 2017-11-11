@@ -115,7 +115,8 @@ export default function FAQ() {
       <div class="description">
         There isn't a handy Account Switcher like you'll find in native Google
         Apps.* However, you can try to use the link at the top of the page which
-        should re-direct you and allow you to sign if from a different account.<br />
+        should re-direct you and allow you to sign if from a different account.<br
+        />
         <br />
         If that fails, I would recommend signing in from another browser, or
         opening an incognito/private window and accessing the app that way.

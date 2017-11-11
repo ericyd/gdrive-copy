@@ -2,7 +2,7 @@
  * Create document that is used to store temporary properties information when the app pauses.
  * Create document as plain text.
  * This will be deleted upon script completion.
- * 
+ *
  * @param {string} destId - the ID of the destination folder
  * @return {Object} metadata for the properties document, or error on fail.
  */

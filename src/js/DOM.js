@@ -5,8 +5,8 @@
 
 module.exports = {
   /**
-    * Updates "Select Folder" fields with selected folder info
-    */
+   * Updates "Select Folder" fields with selected folder info
+   */
   folderIsSelected: function(selectedFolder) {
     // update display
     $('.getFolderErrors').text('');
@@ -19,18 +19,18 @@ module.exports = {
   },
 
   /**
-    * Function to alert user that folder is being identified
-    * Hides folder
-    */
+   * Function to alert user that folder is being identified
+   * Hides folder
+   */
   onFolderLookup: function() {
     $('.folderLookup').show();
     $('.folderSelect').hide();
   },
 
   /**
-    * Called when either form validates.
-    * Updates UI to indicate that the app is initializing.
-    */
+   * Called when either form validates.
+   * Updates UI to indicate that the app is initializing.
+   */
   onValid: function() {
     $('.description').hide('blind');
     $('#errors').html('');
@@ -46,8 +46,8 @@ module.exports = {
   },
 
   /**
-    * Resets form to default state
-    */
+   * Resets form to default state
+   */
   resetForm: function() {
     $('.folderSelect').show();
     $('.selectedFolderInfo').hide();

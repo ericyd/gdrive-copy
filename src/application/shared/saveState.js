@@ -1,6 +1,6 @@
 /**
  * Delete existing triggers, save properties, and create new trigger
- * 
+ *
  * @param {string} logMessage - The message to output to the log when state is saved
  */
 function saveState(fileList, logMessage, ss) {

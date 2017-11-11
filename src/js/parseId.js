@@ -1,6 +1,6 @@
 /**
  * Parses folder URL string and returns folder ID string
- * 
+ *
  * @param {string} url the folder URL for the selected folder
  * @return {string} id the folder ID for the selected folder
  */

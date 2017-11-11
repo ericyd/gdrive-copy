@@ -3,8 +3,8 @@
  * Applies Drive function to each (i.e. copy),
  * Logs result,
  * Copies permissions if selected and if file is a Drive document,
- * Get current runtime and decide if processing needs to stop. 
- * 
+ * Get current runtime and decide if processing needs to stop.
+ *
  * @param {Array} items the list of files over which to iterate
  */
 function processFileList(
@@ -20,18 +20,18 @@ function processFileList(
 
   while (items.length > 0 && !timers.timeIsUp && !timers.stop) {
     /*****************************
-         * Get next file from passed file list.
-         */
+     * Get next file from passed file list.
+     */
     item = items.pop();
 
     /*****************************
-         * Copy each (files and folders are both represented the same in Google Drive)
-         */
+     * Copy each (files and folders are both represented the same in Google Drive)
+     */
     newfile = copyFile(item, map);
 
     /*****************************
-         * Log result
-         */
+     * Log result
+     */
     if (newfile.id) {
       log(ss, [
         'Copied',
@@ -60,8 +60,8 @@ function processFileList(
     }
 
     /*****************************
-         * Copy permissions if selected, and if permissions exist to copy
-         */
+     * Copy permissions if selected, and if permissions exist to copy
+     */
     if (permissions) {
       if (
         item.mimeType == 'application/vnd.google-apps.document' ||
@@ -77,8 +77,8 @@ function processFileList(
     }
 
     /*****************************
-         * Update current runtime and user stop flag
-         */
+     * Update current runtime and user stop flag
+     */
     timers.update(userProperties);
   }
 }

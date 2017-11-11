@@ -23,21 +23,21 @@ function doGet(e) {
  * Set UserProperties values and save properties to propertiesDoc.
  * Add link for destination folder to logger spreadsheet.
  * Return IDs of created destination folder and logger spreadsheet
- * 
+ *
  * @param {object} selectedFolder contains srcId, srcParentId, destName, permissions, srcName
  */
 function initialize(selectedFolder) {
   /*****************************
-     * Declare variables used in project initialization 
-     */
+   * Declare variables used in project initialization
+   */
   var destFolder, // {Object} instance of Folder class representing destination folder
     spreadsheet, // {Object} instance of Spreadsheet class
     propertiesDocId, // {Object} metadata for Google Document created to hold properties
     today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'); // {string} date of copy
 
   /*****************************
-     * Create Files used in copy process
-     */
+   * Create Files used in copy process
+   */
   destFolder = initializeDestinationFolder(selectedFolder, today);
 
   spreadsheet = createLoggerSpreadsheet(today, destFolder.id);
@@ -45,8 +45,8 @@ function initialize(selectedFolder) {
   propertiesDocId = createPropertiesDocument(destFolder.id);
 
   /*****************************
-     * Build/add properties to selectedFolder so it can be saved to the properties doc
-     */
+   * Build/add properties to selectedFolder so it can be saved to the properties doc
+   */
   selectedFolder.destId = destFolder.id;
   selectedFolder.spreadsheetId = spreadsheet.id;
   selectedFolder.propertiesDocId = propertiesDocId;
@@ -58,8 +58,8 @@ function initialize(selectedFolder) {
   selectedFolder.remaining = [selectedFolder.srcId];
 
   /*****************************
-     * Set UserProperties values and save properties to propertiesDoc
-     */
+   * Set UserProperties values and save properties to propertiesDoc
+   */
   setUserPropertiesStore(
     selectedFolder.spreadsheetId,
     selectedFolder.propertiesDocId,
@@ -69,8 +69,8 @@ function initialize(selectedFolder) {
   saveProperties(selectedFolder);
 
   /*****************************
-     * Add link for destination folder to logger spreadsheet
-     */
+   * Add link for destination folder to logger spreadsheet
+   */
   SpreadsheetApp.openById(spreadsheet.id)
     .getSheetByName('Log')
     .getRange(2, 5)
@@ -83,8 +83,8 @@ function initialize(selectedFolder) {
     );
 
   /*****************************
-     * Return IDs of created destination folder and logger spreadsheet
-     */
+   * Return IDs of created destination folder and logger spreadsheet
+   */
   return {
     spreadsheetId: selectedFolder.spreadsheetId,
     destId: selectedFolder.destId,
