@@ -12,12 +12,12 @@ export default function Nav(props) {
   return (
     // svelte version
     // <nav>
-    //     <section class="header-container">
+    //     <section className="header-container">
     //         {{#each views as view}}
     //             <button role="button"
     //                 on:click='fire("click", {view})'
     //                 name='{{view.id}}'
-    //                 class="tabLink btn--nav {{active === view.id ? 'active' : ''}}"
+    //                 className="tabLink btn--nav {{active === view.id ? 'active' : ''}}"
     //                 id="{{view.id}}-button"
     //                 href="#">{{view.title}}</button>
     //         {{/each}}

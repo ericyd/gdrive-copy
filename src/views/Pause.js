@@ -4,7 +4,7 @@
 // {{#if showButton}}
 //     <button
 //         type="button"
-//         class="btn btn--small"
+//         className="btn btn--small"
 //         on:click='handleClick(event)'>
 //         Yes, I want to stop all my current instances of Copy Folder</button>
 // {{/if}}
@@ -12,15 +12,14 @@
 
 'use strict';
 
-import React from 'react';
-import SubmitBtn from '../components/SubmitBtn';
+import React, { Component } from 'react';
+import Button from '../components/Button';
 
 export default class Pause extends Component {
   constructor() {
     super();
 
-    this.state = {
-    };
+    this.state = {};
 
     this.handlePauseBtn = this.handlePauseBtn.bind(this);
   }
@@ -31,8 +30,13 @@ export default class Pause extends Component {
 
   render() {
     return (
-      <h2>Are you sure you want to pause everything?</h2>
-      <SubmitBtn text='Confirm: Pause copying' handleClick={this.handlePauseBtn} />
-    )
+      <div>
+        <h2>Are you sure you want to pause everything?</h2>
+        <Button
+          text="Confirm: Pause copying"
+          handleClick={this.handlePauseBtn}
+        />
+      </div>
+    );
   }
 }

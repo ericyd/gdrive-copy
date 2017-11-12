@@ -47,7 +47,7 @@ module.exports = (function() {
         '<h4><a name="longerThan2Mins"></a>The copying has been paused longer than 2 minutes and it isn\'t complete.  What do I do?</h4>\r'
       );
       t.b('\n' + i);
-      t.b('<div class="description">\r');
+      t.b('<div className="description">\r');
       t.b('\n' + i);
       t.b(
         '    When the app stops, you can use the "Resume" button to restart the copying.  When selecting the folder to resume, you must select the <b>in-progress</b> folder, <b>not</b> the original.<br><br>\r'
@@ -67,7 +67,7 @@ module.exports = (function() {
         '<h4><a name="copyBetweenDomains"></a>Can I use this app to copy a folder between domains?</h4>\r'
       );
       t.b('\n' + i);
-      t.b('<div class="description">\r');
+      t.b('<div className="description">\r');
       t.b('\n' + i);
       t.b('    Yes!  Follow the steps below:\r');
       t.b('\n' + i);
@@ -109,7 +109,7 @@ module.exports = (function() {
         '<h4><a name="whenIsItDone"></a>How do I know when it is done?</h4>\r'
       );
       t.b('\n' + i);
-      t.b('<div class="description">\r');
+      t.b('<div className="description">\r');
       t.b('\n' + i);
       t.b(
         '    You will know it is complete when the Copy Log says "Complete" in cell C2.  In addition, the cell will highlight green.\r'
@@ -127,7 +127,7 @@ module.exports = (function() {
         '<h4><a name="notEverythingCopied"></a>It didn\'t copy everything - what do I do?</h4>\r'
       );
       t.b('\n' + i);
-      t.b('<div class="description">\r');
+      t.b('<div className="description">\r');
       t.b('\n' + i);
       t.b(
         '    Typically this is due to server errors encountered while copying.  You should be able to do one of the following to resolve this situation:\r'
@@ -157,7 +157,7 @@ module.exports = (function() {
         '<h4><a name="multipleAccounts"></a>How do I sign into a different account with this app?</h4>\r'
       );
       t.b('\n' + i);
-      t.b('<div class="description">\r');
+      t.b('<div className="description">\r');
       t.b('\n' + i);
       t.b(
         "    There isn't a handy Account Switcher like you'll find in native Google Apps.*  However, you can try to use the link at the top of the page which should re-direct you and allow you to sign if from a different account.<br><br>\r"
@@ -185,7 +185,7 @@ module.exports = (function() {
         '<h4><a name="infiniteLoop"></a>HELP! The copying is stuck in an infinite loop!  What do I do?</h4>\r'
       );
       t.b('\n' + i);
-      t.b('<div class="description">\r');
+      t.b('<div className="description">\r');
       t.b('\n' + i);
       t.b(
         '    Please use the "Pause" function built into the app and <a href="https://github.com/ericyd/gdrive-copy/issues" target="_blank">report the bug</a>\r'
@@ -203,7 +203,7 @@ module.exports = (function() {
         '<h4><a name="openissue"></a>How do I report a bug in the app?</h4>\r'
       );
       t.b('\n' + i);
-      t.b('<div class="description">\r');
+      t.b('<div className="description">\r');
       t.b('\n' + i);
       t.b(
         '    If you have found a bug that is not covered in these FAQs, please <a href="https://github.com/ericyd/gdrive-copy/issues" target="_blank">open an issue on Github</a>.\r'
@@ -240,7 +240,7 @@ module.exports = (function() {
         );
         t.b('\n' + i);
         t.b(
-          '    <button type="button" class="btn btn--small" id="stop-confirm-button">Yes, I want to stop all my current instances of Copy Folder</button><br><br>\r'
+          '    <button type="button" className="btn btn--small" id="stop-confirm-button">Yes, I want to stop all my current instances of Copy Folder</button><br><br>\r'
         );
         t.b('\n' + i);
       }
@@ -254,7 +254,7 @@ module.exports = (function() {
     code: function(c, p, i) {
       var t = this;
       t.b((i = i || ''));
-      t.b('<div id="resume-description" class="description">\r');
+      t.b('<div id="resume-description" className="description">\r');
       t.b('\n' + i);
       t.b(
         '    Sometimes this app will get stuck (sorry!).  To resume a folder copy that is in-progress, but paused for whatever reason, simply\r'
@@ -268,10 +268,10 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('\r');
       t.b('\n' + i);
-      t.b('<div id="resume-form-div" class="form-div">\r');
+      t.b('<div id="resume-form-div" className="form-div">\r');
       t.b('\n' + i);
       t.b(
-        '    <form id="resumeForm" name="resumeForm"  class="form-horizontal">\r'
+        '    <form id="resumeForm" name="resumeForm"  className="form-horizontal">\r'
       );
       t.b('\n' + i);
       t.b('        \r');
@@ -282,24 +282,26 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('        <!--Elements to select folder-->\r');
       t.b('\n' + i);
-      t.b('        <div class="folderSelect">\r');
+      t.b('        <div className="folderSelect">\r');
       t.b('\n' + i);
       t.b('            <!--Button to activate Google Picker-->\r');
       t.b('\n' + i);
       t.b(
-        '            <button type="button" id="resumeFolderSelect" class="btn btn--small selectFolderButton">Select Folder</button>\r'
+        '            <button type="button" id="resumeFolderSelect" className="btn btn--small selectFolderButton">Select Folder</button>\r'
       );
       t.b('\n' + i);
       t.b('            or\r');
       t.b('\n' + i);
       t.b('            <!--Textbox for pasting folder URL-->\r');
       t.b('\n' + i);
-      t.b('            <label for="resumeTextbox" class="textfield">\r');
+      t.b(
+        '            <label htmlFor="resumeTextbox" className="textfield">\r'
+      );
       t.b('\n' + i);
       t.b('                <input type="text" id="resumeTextbox">\r');
       t.b('\n' + i);
       t.b(
-        '                <span class="textfield__label">Paste folder URL (Ctrl-V)</span>\r'
+        '                <span className="textfield__label">Paste folder URL (Ctrl-V)</span>\r'
       );
       t.b('\n' + i);
       t.b('            </label>\r');
@@ -310,10 +312,10 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('            \r');
       t.b('\n' + i);
-      t.b('        <div class="folderLookup">\r');
+      t.b('        <div className="folderLookup">\r');
       t.b('\n' + i);
       t.b(
-        '            Finding folder...<span class="rotate-contents"><i class="spinner"></i></span>\r'
+        '            Finding folder...<span className="rotate-contents"><i className="spinner"></i></span>\r'
       );
       t.b('\n' + i);
       t.b('        </div>\r');
@@ -322,18 +324,18 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('\r');
       t.b('\n' + i);
-      t.b('        <div class="getFolderErrors"></div>\r');
+      t.b('        <div className="getFolderErrors"></div>\r');
       t.b('\n' + i);
       t.b('\r');
       t.b('\n' + i);
       t.b('        <!--Display when folder is selected-->\r');
       t.b('\n' + i);
-      t.b('        <div class="selectedFolderInfo">\r');
+      t.b('        <div className="selectedFolderInfo">\r');
       t.b('\n' + i);
-      t.b('            <span class="folderName"></span> &nbsp;&nbsp;\r');
+      t.b('            <span className="folderName"></span> &nbsp;&nbsp;\r');
       t.b('\n' + i);
       t.b(
-        '            <button type="reset" class="btn  btn--small selectOtherFolder">Select other folder</button>\r'
+        '            <button type="reset" className="btn  btn--small selectOtherFolder">Select other folder</button>\r'
       );
       t.b('\n' + i);
       t.b('        </div>\r');
@@ -347,7 +349,7 @@ module.exports = (function() {
       t.b('        <!--Submit-->\r');
       t.b('\n' + i);
       t.b(
-        '        <button type="submit" id="resumeFolderSubmit" data-loading-text="Resuming..." class="btn">Resume copying</button>\r'
+        '        <button type="submit" id="resumeFolderSubmit" data-loading-text="Resuming..." className="btn">Resume copying</button>\r'
       );
       t.b('\n' + i);
       t.b('\r');
@@ -366,7 +368,7 @@ module.exports = (function() {
       t.b((i = i || ''));
       t.b('<!--Form-->\r');
       t.b('\n' + i);
-      t.b('<div id="description" class="description">\r');
+      t.b('<div id="description" className="description">\r');
       t.b('\n' + i);
       t.b(
         '    To get started, simply select your folder and choose a new name, then select Copy Folder!<br />\r'
@@ -382,7 +384,7 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('\r');
       t.b('\n' + i);
-      t.b('<div id="formDiv" class="form-div">\r');
+      t.b('<div id="formDiv" className="form-div">\r');
       t.b('\n' + i);
       t.b('    <form id="folderForm" name="folderForm">\r');
       t.b('\n' + i);
@@ -394,22 +396,22 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('        <!--Elements to select folder-->\r');
       t.b('\n' + i);
-      t.b('        <div class="folderSelect">\r');
+      t.b('        <div className="folderSelect">\r');
       t.b('\n' + i);
       t.b(
-        '            <button type="button" id="selectFolderButton" class="btn btn--small selectFolderButton">Select Folder</button>\r'
+        '            <button type="button" id="selectFolderButton" className="btn btn--small selectFolderButton">Select Folder</button>\r'
       );
       t.b('\n' + i);
       t.b('            or\r');
       t.b('\n' + i);
-      t.b('            <label for="newFolder" class="textfield">\r');
+      t.b('            <label htmlFor="newFolder" className="textfield">\r');
       t.b('\n' + i);
       t.b(
         '                <input type="text" id="folderTextbox" name="newFolder">\r'
       );
       t.b('\n' + i);
       t.b(
-        '                <span class="textfield__label">Paste folder URL (Ctrl-V)</span>\r'
+        '                <span className="textfield__label">Paste folder URL (Ctrl-V)</span>\r'
       );
       t.b('\n' + i);
       t.b('            </label>\r');
@@ -418,16 +420,16 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('\r');
       t.b('\n' + i);
-      t.b('        <div class="getFolderErrors"></div>\r');
+      t.b('        <div className="getFolderErrors"></div>\r');
       t.b('\n' + i);
       t.b('        \r');
       t.b('\n' + i);
       t.b('        \r');
       t.b('\n' + i);
-      t.b('        <div class="folderLookup">\r');
+      t.b('        <div className="folderLookup">\r');
       t.b('\n' + i);
       t.b(
-        '            Finding folder...<span class="rotate-contents"><i class="spinner"></i></span>\r'
+        '            Finding folder...<span className="rotate-contents"><i className="spinner"></i></span>\r'
       );
       t.b('\n' + i);
       t.b('        </div>\r');
@@ -438,12 +440,12 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('        <!--Display when folder is selected-->\r');
       t.b('\n' + i);
-      t.b('        <div class="selectedFolderInfo">\r');
+      t.b('        <div className="selectedFolderInfo">\r');
       t.b('\n' + i);
-      t.b('            <span class="folderName"></span> &nbsp;&nbsp;\r');
+      t.b('            <span className="folderName"></span> &nbsp;&nbsp;\r');
       t.b('\n' + i);
       t.b(
-        '            <button type="reset" class="btn  btn--small selectOtherFolder">Select other folder</button>\r'
+        '            <button type="reset" className="btn  btn--small selectOtherFolder">Select other folder</button>\r'
       );
       t.b('\n' + i);
       t.b('        </div>\r');
@@ -458,14 +460,14 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('        <!--New folder name-->\r');
       t.b('\n' + i);
-      t.b('        <label class="textfield" for="newFolder">\r');
+      t.b('        <label className="textfield" htmlFor="newFolder">\r');
       t.b('\n' + i);
       t.b(
         '            <input type="text" id="newFolder" name="newFolder" />\r'
       );
       t.b('\n' + i);
       t.b(
-        '            <span class="textfield__label">New folder name</span>\r'
+        '            <span className="textfield__label">New folder name</span>\r'
       );
       t.b('\n' + i);
       t.b('        </label>\r');
@@ -483,7 +485,7 @@ module.exports = (function() {
       t.b('        <!--Question mark button-->\r');
       t.b('\n' + i);
       t.b(
-        '        <span tabindex="10" class="tooltip-toggle" data-tooltip="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals. Owners of originals will become editors of the copies. Copying takes much longer if \'Yes\' is selected.">\r'
+        '        <span tabindex="10" className="tooltip-toggle" data-tooltip="Select this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals. Owners of originals will become editors of the copies. Copying takes much longer if \'Yes\' is selected.">\r'
       );
       t.b('\n' + i);
       t.b(t.rp('<question0', c, p, '            '));
@@ -493,25 +495,25 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('        \r');
       t.b('\n' + i);
-      t.b('        <div class="form-group" id="permissions-group">\r');
+      t.b('        <div className="form-group" id="permissions-group">\r');
       t.b('\n' + i);
-      t.b('            <label class="radio">\r');
+      t.b('            <label className="radio">\r');
       t.b('\n' + i);
       t.b(
         '                <input type="radio" name="permissions" value="no" checked/>\r'
       );
       t.b('\n' + i);
-      t.b('                <span class="radio__label">No</span>\r');
+      t.b('                <span className="radio__label">No</span>\r');
       t.b('\n' + i);
       t.b('            </label>\r');
       t.b('\n' + i);
-      t.b('            <label class="radio">\r');
+      t.b('            <label className="radio">\r');
       t.b('\n' + i);
       t.b(
         '                <input type="radio" name="permissions" value="yes" />\r'
       );
       t.b('\n' + i);
-      t.b('                <span class="radio__label">Yes</span>\r');
+      t.b('                <span className="radio__label">Yes</span>\r');
       t.b('\n' + i);
       t.b('            </label>\r');
       t.b('\n' + i);
@@ -527,28 +529,28 @@ module.exports = (function() {
       t.b('\n' + i);
       t.b('        Copy folder to\r');
       t.b('\n' + i);
-      t.b('        <div class="form-group" id="destination-group">\r');
+      t.b('        <div className="form-group" id="destination-group">\r');
       t.b('\n' + i);
-      t.b('            <label class="radio">\r');
+      t.b('            <label className="radio">\r');
       t.b('\n' + i);
       t.b(
         '                <input type="radio" name="copyLocationOptions" value="same" checked/>\r'
       );
       t.b('\n' + i);
       t.b(
-        '                <span class="radio__label">Same as source folder</span>\r'
+        '                <span className="radio__label">Same as source folder</span>\r'
       );
       t.b('\n' + i);
       t.b('            </label>\r');
       t.b('\n' + i);
-      t.b('            <label class="radio">\r');
+      t.b('            <label className="radio">\r');
       t.b('\n' + i);
       t.b(
         '                <input type="radio" name="copyLocationOptions" value="root" />\r'
       );
       t.b('\n' + i);
       t.b(
-        '                <span class="radio__label">Root directory (i.e. at the top of "My Drive")</span>\r'
+        '                <span className="radio__label">Root directory (i.e. at the top of "My Drive")</span>\r'
       );
       t.b('\n' + i);
       t.b('            </label>\r');
@@ -562,7 +564,7 @@ module.exports = (function() {
       t.b('        <!--Submit-->\r');
       t.b('\n' + i);
       t.b(
-        '        <button type="submit" id="copyFolderButton" data-loading-text="Copying..." class="btn">Copy folder</button>\r'
+        '        <button type="submit" id="copyFolderButton" data-loading-text="Copying..." className="btn">Copy folder</button>\r'
       );
       t.b('\n' + i);
       t.b('\r');

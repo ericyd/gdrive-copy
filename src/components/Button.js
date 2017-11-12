@@ -1,14 +1,14 @@
 'use strict';
 
-import React from 'react';
+import React, { Component } from 'react';
 
-export default class SubmitBtn extends Component {
+export default class Button extends Component {
   constructor() {
     super();
   }
 
   handleClick() {
-    return;
+    return this.props.handleClick();
   }
 
   render() {
@@ -17,7 +17,7 @@ export default class SubmitBtn extends Component {
         type="button"
         key={this.props.text}
         name={this.props.text}
-        className={'btn'}
+        className={['btn', this.props.className].join(' ')}
         onClick={this.handleClick}
       >
         {this.props.text}

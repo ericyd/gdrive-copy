@@ -90,7 +90,7 @@ module.exports = {
       // validate
       if (!picker.folder.srcId) {
         errormsg =
-          "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
+          "<div className='alert alert-danger' role='alert'>Please select a folder</div>";
         $('#errors').html(errormsg);
       } else {
         // Valid!
@@ -152,11 +152,11 @@ module.exports = {
       // validate
       if (!picker.folder.srcId) {
         errormsg =
-          "<div class='alert alert-danger' role='alert'>Please select a folder</div>";
+          "<div className='alert alert-danger' role='alert'>Please select a folder</div>";
         $('#errors').html(errormsg);
       } else if ($('#newFolder').val() === '') {
         errormsg =
-          "<div class='alert alert-danger' role='alert'>Please enter a new folder name</div>";
+          "<div className='alert alert-danger' role='alert'>Please enter a new folder name</div>";
         $('#errors').html(errormsg);
       } else {
         // Valid!
@@ -269,7 +269,7 @@ function showError(msg) {
   $('#status').hide();
 
   var errormsg =
-    "<div class='alert alert-danger' role='alert'><b>Error:</b> There was an error initializing the copy folder request.<br />";
+    "<div className='alert alert-danger' role='alert'><b>Error:</b> There was an error initializing the copy folder request.<br />";
   errormsg += '<b>Error message:</b> ' + msg + '.<br>';
   errormsg +=
     'Please try again. Make sure you have correct permissions to copy this folder, and make sure you are using Google Chrome or Chromium when using this app.</div>';
