@@ -111,7 +111,7 @@ module.exports = {
     extensions: ['.js', '.html']
   },
   output: {
-    path: __dirname + '/dist',
+    path: paths.appBuild,
     filename: 'bundle.js',
     chunkFilename: '[name].[id].js'
   },

@@ -26,6 +26,7 @@
     "gulp": "~3.9.0",
     "gulp-autoprefixer": "~3.1.0",
     "gulp-concat": "~2.6.0",
+    "gulp-hogan": "^2.0.0",
     "gulp-insert": "~0.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.1.0",
@@ -40,7 +41,6 @@
     "shallowequal": "^0.2.2",
     "style-loader": "^0.13.1",
     "stylelint": "^8.2.0",
-    "stylelint-config-standard": "^17.0.0",
     "stylelint-scss": "^2.1.0",
     "stylelint-webpack-plugin": "^0.9.0",
     "svg2png": "3.1.0",
@@ -50,23 +50,21 @@
   "scripts": {
     "watch": "gulp watch",
     "webpack": "webpack --config ./config/webpack.config.js",
-    "build": "NODE_ENV=production webpack --config ./config/webpack.config.js && NODE_ENV=production gulp build",
-    "test-site": "NODE_ENV=development webpack && NODE_ENV=development gulp generate-test-site",
+    "build":
+      "NODE_ENV=production webpack --config ./config/webpack.config.js && NODE_ENV=production gulp build",
+    "test-site":
+      "NODE_ENV=development webpack --config ./config/webpack.config.js && NODE_ENV=development gulp generate-test-site",
     "watch-test-site": "webpack && gulp watch-test-site",
     "test": "mocha",
     "prettier": "prettier --write --single-quote",
-    "prettier:all": "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
+    "prettier:all":
+      "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ericyd/gdrive-copy.git"
   },
-  "keywords": [
-    "google",
-    "drive",
-    "copy",
-    "folder"
-  ],
+  "keywords": ["google", "drive", "copy", "folder"],
   "author": "Eric Dauenhauer",
   "license": "MIT",
   "bugs": {

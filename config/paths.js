@@ -16,7 +16,7 @@ function resolveApp(relativePath) {
 }
 
 module.exports = {
-  appBuild: resolveApp('build'),
+  appBuild: resolveApp('dist'),
   appPublic: resolveApp('public'),
   appIndexJs: resolveApp('src/index.js'),
   appSrc: resolveApp('src')

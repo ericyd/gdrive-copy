@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-import Header from './components/Nav';
+import Nav from './components/Nav';
 import ViewContainer from './components/ViewContainer';
 
 class App extends Component {
@@ -9,7 +9,7 @@ class App extends Component {
     super();
 
     this.state = {
-      view: 'Plotter',
+      view: 'Start',
       test: 'testing'
     };
 
@@ -26,7 +26,9 @@ class App extends Component {
     return (
       <div className="App">
         <Nav handleViewChange={this.handleViewChange} view={this.state.view} />
-        <ViewContainer view={this.state.view} />
+        <div className="container">
+          <ViewContainer view={this.state.view} />
+        </div>
       </div>
     );
   }

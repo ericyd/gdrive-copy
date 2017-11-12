@@ -1,7 +1,8 @@
+ {{#isProd}}
 <!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
 <?!= HtmlService.createHtmlOutputFromFile('cutestrap').getContent(); ?>
     <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
-
+        {{/isProd}}
 
 
         <html>
@@ -9,7 +10,7 @@
         <head>
 
             <!--Webfont loader for Google Apps Scripts-->
-            {{^testing}}
+            {{#isProd}}
             <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
             <script>
                 WebFont.load({
@@ -18,7 +19,9 @@
                     }
                 });
             </script>
-            {{/testing}}
+            {{/isProd}} {{^isProd}}
+            <link rel="stylesheet" href="cutestrap.css">
+            <link rel="stylesheet" href="css.css"> {{/isProd}}
 
 
         </head>
@@ -35,7 +38,13 @@
 
         </body>
 
+        {{^isProd}}
+        <script src="bundle.js"></script>
+        {{/isProd}}
+
         </html>
 
+        {{#isProd}}
         <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
         <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
+            {{/isProd}}

@@ -1,27 +1,24 @@
 /* Variables */
 @import '../../node_modules/cutestrap/dist/scss/variables/_colors';
-@import '../../node_modules/sass-colorscheme/colorscheme';
 
 //== Layout
 $container-width: 700px;
 $header-padding: 15%;
-$footer-height: 75px;
+$footer-height: 100px;
 $footer-height-sm: 250px;
 
 //== Colors
 $body-background: #f7f7f7;
-$seed-color: #7cb7de;
-$colorscheme: colorscheme($seed-color, $scheme: 'complementary');
-$primary: map-get($colorscheme, 'primary');
-$primary--lighter: map-get($colorscheme, 'primary--lighter');
-$primary--lightest: map-get($colorscheme, 'primary--lightest');
-$primary--darker: map-get($colorscheme, 'primary--darker');
-$primary--darkest: map-get($colorscheme, 'primary--darkest');
+$primary: #7cb7de;
+$primary--lighter: lighten($primary, 10%);
+$primary--lightest: lighten($primary, 20%);
+$primary--darker: darken($primary, 10%);
+$primary--darkest: darken($primary, 20%);
 
 //= Colors used by Cutestrap
 $primary-dark: $primary--darker;
-$link--visited: $primary--lightest;
-$link--hover: $primary--lightest;
+$link--visited: $primary--darkest;
+$link--hover: $primary--darkest;
 
 //== Typography
 $fs-smaller: 0.7em;
