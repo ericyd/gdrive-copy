@@ -129,7 +129,7 @@ module.exports = {
       },
       {
         test: /\.(sc|sa|c)ss$/,
-        loaders: ['style', 'css', 'sass']
+        loaders: ['style-loader', 'css-loader', 'sass-loader']
       }
     ]
   },
