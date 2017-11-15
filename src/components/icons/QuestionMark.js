@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Question(props) {
+export default function QuestionMark(props) {
   return (
     // from http://iconmonstr.com/help-3/
     <svg viewBox="0 0 24 24" {...props}>

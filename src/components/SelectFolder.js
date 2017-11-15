@@ -8,6 +8,10 @@ import Spinner from './icons/Spinner';
 export default class SelectFolder extends React.Component {
   constructor() {
     super();
+    this.state = {
+      folderURL: '',
+      folderID: ''
+    };
     this.launchPicker = this.launchPicker.bind(this);
     this.getFolderFromURL = this.getFolderFromURL.bind(this);
   }
@@ -17,24 +21,30 @@ export default class SelectFolder extends React.Component {
   }
 
   getFolderFromURL(e) {
+    this.setState({ folderURL: e.target.value });
+    console.log(e.target.value);
     return e.target.value;
   }
 
   render() {
     return (
-      <div>
+      <fieldset>
+        <legend>Select folder to copy</legend>
         <TextInput
+          key="folderName"
+          id="folderName"
           name="folderName"
-          tempName=""
+          label="Folder URL"
+          handleChange={this.getFolderFromURL}
           placeholder="Paste Folder URL"
-          handlePaste={this.getFolderFromURL}
+          value=""
         />
         <Button
           text="Picker"
           className="btn--small"
           handleClick={this.launchPicker}
         />
-      </div>
+      </fieldset>
     );
   }
 }

@@ -31,7 +31,7 @@ export default class Pause extends Component {
   render() {
     return (
       <div>
-        <h2>Are you sure you want to pause everything?</h2>
+        <h4>Are you sure you want to pause everything?</h4>
         <Button
           text="Confirm: Pause copying"
           handleClick={this.handlePauseBtn}
