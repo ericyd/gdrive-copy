@@ -1,10 +1,10 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React from 'react';
 import Button from '../components/Button';
 import SelectFolder from '../components/SelectFolder';
 
-export default class Resume extends Component {
+export default class Resume extends React.Component {
   constructor() {
     super();
 

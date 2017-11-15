@@ -1,10 +1,11 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React from 'react';
 import TextInput from './TextInput';
 import Button from './Button';
+import Spinner from './icons/Spinner';
 
-export default class SelectFolder extends Component {
+export default class SelectFolder extends React.Component {
   constructor() {
     super();
     this.launchPicker = this.launchPicker.bind(this);

@@ -1,13 +1,13 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React from 'react';
 import Start from '../views/Start';
 import Resume from '../views/Resume';
 import Pause from '../views/Pause';
 import About from '../views/About';
 import FAQ from '../views/FAQ';
 
-export default class ViewContainer extends Component {
+export default class ViewContainer extends React.Component {
   constructor() {
     super();
 

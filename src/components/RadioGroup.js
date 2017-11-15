@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import Question from './icons/Question';
 
 export default function RadioGroup(props) {
   return (
@@ -12,6 +13,8 @@ export default function RadioGroup(props) {
         value="1"
         id={props.name + '-yes'}
       />
+
+      <Question />
 
       <label htmlFor={props.name + '-no'}>No</label>
       <input type="radio" name={props.name} value="0" id={props.name + '-no'} />

@@ -1,12 +1,12 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React from 'react';
 import Button from '../components/Button';
 import SelectFolder from '../components/SelectFolder';
 import TextInput from '../components/TextInput';
 import RadioGroup from '../components/RadioGroup';
 
-export default class Start extends Component {
+export default class Start extends React.Component {
   constructor() {
     super();
 
@@ -25,10 +25,7 @@ export default class Start extends Component {
         <SelectFolder />
         <TextInput name="folderName" tempName="" placeholder="Copy of Folder" />
         <RadioGroup name="copyPermissions" />
-        <Button
-          text="Begin copying"
-          handleClick={this.handleStartFormSubmit}
-        />
+        <Button text="Begin copying" handleClick={this.handleStartFormSubmit} />
       </form>
     );
   }
