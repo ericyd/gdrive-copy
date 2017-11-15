@@ -4,7 +4,7 @@
  * @param {string} url the folder URL for the selected folder
  * @return {string} id the folder ID for the selected folder
  */
-module.exports = function(url) {
+export default function parseURL(url) {
   var id, amp;
 
   // Get the index of the string at which the folderId starts
@@ -28,4 +28,4 @@ module.exports = function(url) {
   }
 
   return id;
-};
+}

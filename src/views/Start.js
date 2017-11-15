@@ -12,7 +12,12 @@ export default class Start extends React.Component {
   constructor() {
     super();
 
-    this.state = {};
+    this.state = {
+      srcFolderURL: '',
+      srcFolderID: '',
+      srcFolderName: '',
+      destFolderName: ''
+    };
 
     this.copyOptions = [
       {
@@ -34,16 +39,43 @@ export default class Start extends React.Component {
     ];
 
     this.handleStartFormSubmit = this.handleStartFormSubmit.bind(this);
+    this.handleFolderSelect = this.handleFolderSelect.bind(this);
+    this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
   }
 
   handleStartFormSubmit(e) {
     return;
   }
 
+  /**
+   * Sets this.state.srcFolderID, srcFolderURL, srcFolderName
+   * @param {string} url
+   * @param {string} id
+   * @param {string} name
+   */
+  handleFolderSelect(url, id, name) {
+    this.setState({
+      srcFolderURL: url,
+      srcFolderID: id,
+      srcFolderName: name,
+      destFolderName: 'Copy of ' + name
+    });
+  }
+
+  handleDestFolderChange(e) {
+    this.setState({
+      destFolderName: e.target.value
+    });
+  }
+
   render() {
     return (
       <form>
-        <SelectFolder />
+        <SelectFolder
+          srcFolderID={this.state.srcFolderID}
+          srcFolderURL={this.state.srcFolderURL}
+          handleFolderSelect={this.handleFolderSelect}
+        />
 
         <Fieldset legend="Name your copy">
           <TextInput
@@ -51,9 +83,9 @@ export default class Start extends React.Component {
             id="folderCopy"
             name="folderCopyName"
             label="Copy name"
-            handleChange={this.getFolderFromURL}
+            handleChange={this.handleDestFolderChange}
             placeholder="Copy name"
-            value=""
+            value={this.state.destFolderName}
           />
         </Fieldset>
 
