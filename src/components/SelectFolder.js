@@ -33,7 +33,7 @@ export default class SelectFolder extends React.Component {
   getFolderFromURL(e) {
     const url = e.target.value;
     const id = parseURL(url);
-    if ('undefined' != typeof google) {
+    if (process.env.NODE_ENV === 'production') {
       const name = google.script.run
         .withSuccessHandler(folder => {
           this.setState({
