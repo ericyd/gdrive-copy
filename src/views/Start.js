@@ -6,15 +6,17 @@ import SelectFolder from '../components/SelectFolder';
 import TextInput from '../components/TextInput';
 import QuestionTooltip from '../components/icons/QuestionTooltip';
 import Checkbox from '../components/Checkbox';
-import Fieldset from '../components/Fieldset';
+import Step from '../components/Step';
 import ViewContainer from '../components/ViewContainer';
 
 export default class Start extends React.Component {
   constructor() {
     super();
 
+    this.maxSteps = 4;
+
     this.state = {
-      view: 'Step1',
+      stepNum: 1,
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
@@ -43,7 +45,7 @@ export default class Start extends React.Component {
     this.handleStartFormSubmit = this.handleStartFormSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
-    this.rotateViews = this.rotateViews.bind(this);
+    this.nextView = this.nextView.bind(this);
   }
 
   handleStartFormSubmit(e) {
@@ -71,35 +73,31 @@ export default class Start extends React.Component {
     });
   }
 
-  rotateViews() {
-    switch (this.state.view) {
-      case 'Step1':
-        this.setState({ view: 'Step2' });
-        break;
-      case 'Step2':
-        this.setState({ view: 'Step3' });
-        break;
-      case 'Step3':
-        this.setState({ view: 'Step4' });
-        break;
-      default:
-        this.setState({ view: 'Step1' });
+  nextView() {
+    if (this.state.stepNum === this.maxSteps) {
+      return;
+    } else {
+      this.setState({ stepNum: this.state.stepNum + 1 });
     }
   }
 
   render() {
     return (
       <div>
-        <button onClick={this.rotateViews}>rotate</button>
-        <ViewContainer view={this.state.view}>
-          <SelectFolder
-            srcFolderID={this.state.srcFolderID}
-            srcFolderURL={this.state.srcFolderURL}
-            handleFolderSelect={this.handleFolderSelect}
+        <ViewContainer view={'Step' + this.state.stepNum}>
+          <Step
             viewName="Step1"
-          />
+            stepNum={1}
+            label="Which folder would you like to copy?"
+          >
+            <SelectFolder
+              srcFolderID={this.state.srcFolderID}
+              srcFolderURL={this.state.srcFolderURL}
+              handleFolderSelect={this.handleFolderSelect}
+            />
+          </Step>
 
-          <Fieldset legend="Name your copy" viewName="Step2">
+          <Step label="Name your copy" stepNum={2} viewName="Step2">
             <TextInput
               key="folderCopy"
               id="folderCopy"
@@ -109,9 +107,9 @@ export default class Start extends React.Component {
               placeholder="Copy name"
               value={this.state.destFolderName}
             />
-          </Fieldset>
+          </Step>
 
-          <Fieldset legend="Choose copying options" viewName="Step3">
+          <Step label="Choose copying options" stepNum={3} viewName="Step3">
             {this.copyOptions.map(option => {
               return (
                 <Checkbox
@@ -125,14 +123,17 @@ export default class Start extends React.Component {
                 </Checkbox>
               );
             })}
-          </Fieldset>
+          </Step>
 
-          <Button
-            viewName="Step 4"
-            text="Begin copying"
-            handleClick={this.handleStartFormSubmit}
-          />
+          <Step label="Start the copy" stepNum={4} viewName="Step4">
+            <Button
+              text="Begin copying"
+              handleClick={this.handleStartFormSubmit}
+            />
+          </Step>
         </ViewContainer>
+
+        <button onClick={this.nextView}>Next</button>
       </div>
     );
   }

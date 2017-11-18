@@ -4,7 +4,7 @@ import React from 'react';
 import TextInput from './TextInput';
 import Button from './Button';
 import Spinner from './icons/Spinner';
-import Fieldset from './Fieldset';
+import Step from './Step';
 import parseURL from '../util/parseURL';
 
 export default class SelectFolder extends React.Component {
@@ -61,7 +61,7 @@ export default class SelectFolder extends React.Component {
 
   render() {
     return (
-      <Fieldset legend="Select folder to copy">
+      <div>
         <TextInput
           key="folderName"
           id="folderName"
@@ -77,7 +77,7 @@ export default class SelectFolder extends React.Component {
           className="btn--small"
           handleClick={this.launchPicker}
         />
-      </Fieldset>
+      </div>
     );
   }
 }
