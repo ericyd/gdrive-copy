@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 export default function ViewContainer(props) {
   const children = React.Children.map(props.children, function(child) {
-    console.log(child);
     if (props.view === child.props.viewName) {
       return React.cloneElement(child);
     }

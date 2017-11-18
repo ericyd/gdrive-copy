@@ -20,7 +20,8 @@ export default class Start extends React.Component {
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
-      destFolderName: ''
+      destFolderName: '',
+      status: ''
     };
 
     this.copyOptions = [
@@ -49,7 +50,29 @@ export default class Start extends React.Component {
   }
 
   handleStartFormSubmit(e) {
-    return;
+    if (process.env.NODE_ENV === 'production') {
+      // count number of triggers
+      google.script.run
+        .withSuccessHandler(function(number) {
+          // prompt user to wait or delete existing triggers
+          if (number > 9) {
+            $('#too-many-triggers').show('blind');
+            $('#status').hide('blind');
+          } else {
+            // if not too many triggers, initialize script
+            google.script.run
+              .withSuccessHandler(success)
+              .withFailureHandler(showError)
+              .initialize(picker.folder);
+          }
+        })
+        .withFailureHandler(function(err) {
+          $('#errors').append(err);
+        })
+        .getTriggersQuantity();
+    } else {
+      this.setState({ status: 'done!' });
+    }
   }
 
   /**
@@ -84,6 +107,7 @@ export default class Start extends React.Component {
   render() {
     return (
       <div>
+        {this.state.status}
         <ViewContainer view={'Step' + this.state.stepNum}>
           <Step
             viewName="Step1"

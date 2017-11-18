@@ -17,17 +17,38 @@ export default class Resume extends React.Component {
       stepNum: 1,
       srcFolderURL: '',
       srcFolderID: '',
-      srcFolderName: ''
+      srcFolderName: '',
+      status: ''
     };
 
-    this.handleStartFormSubmit = this.handleStartFormSubmit.bind(this);
+    this.handleResumeFormSubmit = this.handleResumeFormSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
-    this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
     this.nextView = this.nextView.bind(this);
   }
 
-  handleStartFormSubmit(e) {
-    return;
+  handleResumeFormSubmit(e) {
+    if (process.env.NODE_ENV === 'production') {
+      google.script.run
+        .withSuccessHandler(function(number) {
+          // prompt user to wait or delete existing triggers
+          if (number > 9) {
+            $('#too-many-triggers').show('blind');
+            $('#status').hide('blind');
+          } else {
+            // if not too many triggers, initialize script
+            google.script.run
+              .withSuccessHandler(success)
+              .withFailureHandler(showError)
+              .resume(picker.folder);
+          }
+        })
+        .withFailureHandler(function(err) {
+          $('#errors').append(err);
+        })
+        .getTriggersQuantity();
+    } else {
+      this.setState({ status: 'done!' });
+    }
   }
 
   /**
@@ -55,6 +76,7 @@ export default class Resume extends React.Component {
   render() {
     return (
       <div>
+        {this.state.status} {this.props.viewName}
         <ViewContainer view={'Step' + this.state.stepNum}>
           <Step
             viewName="Step1"
@@ -68,14 +90,13 @@ export default class Resume extends React.Component {
             />
           </Step>
 
-          <Step label="Start the copy" stepNum={2} viewName="Step2">
+          <Step label="Resume the copy" stepNum={2} viewName="Step2">
             <Button
-              text="Begin copying"
-              handleClick={this.handleStartFormSubmit}
+              text="Resume copying"
+              handleClick={this.handleResumeFormSubmit}
             />
           </Step>
         </ViewContainer>
-
         <Button handleClick={this.nextView} text="Next" />
       </div>
     );
