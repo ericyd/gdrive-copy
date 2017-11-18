@@ -75,7 +75,7 @@ button {
     }
 
     &.active {
-      background: #fff;
+      background: $body-background;
       color: $gray3; // same as nav background in _header
       border-color: $body-background;
       transition: all 0.25s ease;

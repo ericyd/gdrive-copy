@@ -1,34 +1,35 @@
 @import 'my-variables';
-
-header {
-  > * {
-    padding: 10px 0;
-    color: #333;
-  }
-
-  > .header-container {
-    text-align: left;
-  }
-}
-
 .header-container {
-  width: $container-width;
+  width: $container-width * 1.5;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0 0 10px;
+  text-align: left;
+  color: #333;
 
   > .header-container__icon {
+    display: inline;
+
     > svg {
-      width: 4em;
-      height: 4em;
+      width: 3em;
+      height: 3em;
       position: relative;
       top: 0.5em;
+      display: inline-block;
     }
   }
 
   > .header-container__headings {
-    > h1 {
-      display: inline;
+    display: inline;
+    h1,
+    h5 {
       padding: 0.5rem;
       margin: 0;
+      display: inline;
+    }
+
+    h5 {
+      padding: 0;
     }
   }
 }
@@ -38,6 +39,12 @@ nav {
   background: $primary;
   margin: 0;
   padding: 0;
+}
+
+.nav-container {
+  width: $container-width;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 #change-account {
@@ -53,4 +60,8 @@ nav {
     padding: 0.25em 0.5em;
     font-size: 0.65em;
   }
+}
+
+h4 {
+  padding-top: 0;
 }

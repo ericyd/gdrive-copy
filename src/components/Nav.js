@@ -24,7 +24,7 @@ export default function Nav(props) {
     //     </section>
     // </nav>
     <nav className="nav">
-      <section className="header-container">
+      <section className="nav-container">
         {buttons.map(btn => {
           return (
             <button
