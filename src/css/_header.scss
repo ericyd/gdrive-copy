@@ -1,5 +1,8 @@
 @import 'my-variables';
 .header-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   width: $container-width * 1.5;
   max-width: 100%;
   margin: 0 auto;
@@ -7,30 +10,21 @@
   text-align: left;
   color: #333;
 
-  > .header-container__icon {
-    display: inline;
-
-    > svg {
-      width: 3em;
-      height: 3em;
-      position: relative;
-      top: 0.5em;
-      display: inline-block;
-    }
+  svg {
+    width: 3em;
+    height: 3em;
+    position: relative;
+    top: 0.5em;
   }
 
-  > .header-container__headings {
-    display: inline;
-    h1,
-    h5 {
-      padding: 0.5rem;
-      margin: 0;
-      display: inline;
-    }
+  h1 {
+    padding: 0.5rem;
+    margin: 0 2rem 0 0;
+  }
 
-    h5 {
-      padding: 0;
-    }
+  h5 {
+    padding: 0;
+    margin: 0;
   }
 }
 
