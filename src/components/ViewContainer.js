@@ -1,47 +1,18 @@
 'use strict';
 
 import React from 'react';
-import Start from '../views/Start';
-import Resume from '../views/Resume';
-import Pause from '../views/Pause';
-import About from '../views/About';
-import FAQ from '../views/FAQ';
+import PropTypes from 'prop-types';
 
-export default class ViewContainer extends React.Component {
-  constructor() {
-    super();
-
-    // this will contain the Plotter state when it unmounts,
-    // and send it back to Plotter when it re-mounts
-    this.state = {};
-
-    this.handlePlotterUnmount = this.handlePlotterUnmount.bind(this);
-  }
-
-  handlePlotterUnmount(state) {
-    this.setState(state);
-  }
-
-  render() {
-    switch (this.props.view) {
-      case 'FAQ':
-        return <FAQ />;
-      case 'About':
-        return <About />;
-      case 'Pause':
-        return <Pause />;
-      case 'Resume':
-        return <Resume />;
-      default:
-        return <Start />;
-      // <Plotter
-      //   handleUnmount={this.handlePlotterUnmount}
-      //   initialState={this.state}
-      // />
+export default function ViewContainer(props) {
+  const children = React.Children.map(props.children, function(child) {
+    console.log(child);
+    if (props.view === child.type.name) {
+      return React.cloneElement(child);
     }
-  }
+  });
+  return <div>{children}</div>;
 }
 
 ViewContainer.propTypes = {
-  view: React.PropTypes.string
+  view: PropTypes.string
 };

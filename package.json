@@ -36,6 +36,7 @@
     "node-sass": "^3.11.2",
     "open": "0.0.5",
     "prettier": "^1.8.2",
+    "prop-types": "^15.6.0",
     "react-addons-test-utils": "^15.4.1",
     "sass-loader": "^4.0.2",
     "shallowequal": "^0.2.2",
@@ -50,21 +51,23 @@
   "scripts": {
     "watch": "gulp watch",
     "webpack": "webpack --config ./config/webpack.config.js",
-    "build":
-      "NODE_ENV=production webpack --config ./config/webpack.config.js && NODE_ENV=production gulp build",
-    "test-site":
-      "NODE_ENV=development webpack --config ./config/webpack.config.js && NODE_ENV=development gulp generate-test-site",
+    "build": "NODE_ENV=production webpack --config ./config/webpack.config.js && NODE_ENV=production gulp build",
+    "test-site": "NODE_ENV=development webpack --config ./config/webpack.config.js && NODE_ENV=development gulp generate-test-site",
     "watch-test-site": "webpack && gulp watch-test-site",
     "test": "mocha",
     "prettier": "prettier --write --single-quote",
-    "prettier:all":
-      "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
+    "prettier:all": "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ericyd/gdrive-copy.git"
   },
-  "keywords": ["google", "drive", "copy", "folder"],
+  "keywords": [
+    "google",
+    "drive",
+    "copy",
+    "folder"
+  ],
   "author": "Eric Dauenhauer",
   "license": "MIT",
   "bugs": {

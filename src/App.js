@@ -4,6 +4,12 @@ import React from 'react';
 import Nav from './components/Nav';
 import ViewContainer from './components/ViewContainer';
 
+import Start from './views/Start';
+import Resume from './views/Resume';
+import Pause from './views/Pause';
+import About from './views/About';
+import FAQ from './views/FAQ';
+
 class App extends React.Component {
   constructor() {
     super();
@@ -27,7 +33,13 @@ class App extends React.Component {
       <div className="App">
         <Nav handleViewChange={this.handleViewChange} view={this.state.view} />
         <div className="container">
-          <ViewContainer view={this.state.view} />
+          <ViewContainer view={this.state.view}>
+            <About />
+            <Start />
+            <Resume />
+            <Pause />
+            <FAQ />
+          </ViewContainer>
         </div>
       </div>
     );
