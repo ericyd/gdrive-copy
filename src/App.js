@@ -34,11 +34,11 @@ class App extends React.Component {
         <Nav handleViewChange={this.handleViewChange} view={this.state.view} />
         <div className="container">
           <ViewContainer view={this.state.view}>
-            <About />
-            <Start />
-            <Resume />
-            <Pause />
-            <FAQ />
+            <About viewName="About" />
+            <Start viewName="Start" />
+            <Resume viewName="Resume" />
+            <Pause viewName="Pause" />
+            <FAQ viewName="FAQ" />
           </ViewContainer>
         </div>
       </div>

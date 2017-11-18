@@ -7,12 +7,14 @@ import TextInput from '../components/TextInput';
 import QuestionTooltip from '../components/icons/QuestionTooltip';
 import Checkbox from '../components/Checkbox';
 import Fieldset from '../components/Fieldset';
+import ViewContainer from '../components/ViewContainer';
 
 export default class Start extends React.Component {
   constructor() {
     super();
 
     this.state = {
+      view: 'Step1',
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
@@ -41,6 +43,7 @@ export default class Start extends React.Component {
     this.handleStartFormSubmit = this.handleStartFormSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
+    this.rotateViews = this.rotateViews.bind(this);
   }
 
   handleStartFormSubmit(e) {
@@ -68,45 +71,69 @@ export default class Start extends React.Component {
     });
   }
 
+  rotateViews() {
+    switch (this.state.view) {
+      case 'Step1':
+        this.setState({ view: 'Step2' });
+        break;
+      case 'Step2':
+        this.setState({ view: 'Step3' });
+        break;
+      case 'Step3':
+        this.setState({ view: 'Step4' });
+        break;
+      default:
+        this.setState({ view: 'Step1' });
+    }
+  }
+
   render() {
     return (
-      <form>
-        <SelectFolder
-          srcFolderID={this.state.srcFolderID}
-          srcFolderURL={this.state.srcFolderURL}
-          handleFolderSelect={this.handleFolderSelect}
-        />
-
-        <Fieldset legend="Name your copy">
-          <TextInput
-            key="folderCopy"
-            id="folderCopy"
-            name="folderCopyName"
-            label="Copy name"
-            handleChange={this.handleDestFolderChange}
-            placeholder="Copy name"
-            value={this.state.destFolderName}
+      <div>
+        <button onClick={this.rotateViews}>rotate</button>
+        <ViewContainer view={this.state.view}>
+          <SelectFolder
+            srcFolderID={this.state.srcFolderID}
+            srcFolderURL={this.state.srcFolderURL}
+            handleFolderSelect={this.handleFolderSelect}
+            viewName="Step1"
           />
-        </Fieldset>
 
-        <Fieldset legend="Choose copying options">
-          {this.copyOptions.map(option => {
-            return (
-              <Checkbox
-                name={option.name}
-                value={option.value}
-                id={option.id}
-                key={option.id}
-                label={option.label}
-              >
-                <QuestionTooltip tooltip={option.tooltip} />
-              </Checkbox>
-            );
-          })}
-        </Fieldset>
+          <Fieldset legend="Name your copy" viewName="Step2">
+            <TextInput
+              key="folderCopy"
+              id="folderCopy"
+              name="folderCopyName"
+              label="Copy name"
+              handleChange={this.handleDestFolderChange}
+              placeholder="Copy name"
+              value={this.state.destFolderName}
+            />
+          </Fieldset>
 
-        <Button text="Begin copying" handleClick={this.handleStartFormSubmit} />
-      </form>
+          <Fieldset legend="Choose copying options" viewName="Step3">
+            {this.copyOptions.map(option => {
+              return (
+                <Checkbox
+                  name={option.name}
+                  value={option.value}
+                  id={option.id}
+                  key={option.id}
+                  label={option.label}
+                >
+                  <QuestionTooltip tooltip={option.tooltip} />
+                </Checkbox>
+              );
+            })}
+          </Fieldset>
+
+          <Button
+            viewName="Step 4"
+            text="Begin copying"
+            handleClick={this.handleStartFormSubmit}
+          />
+        </ViewContainer>
+      </div>
     );
   }
 }
