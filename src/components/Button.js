@@ -2,26 +2,22 @@
 
 import React from 'react';
 
-export default class Button extends React.Component {
-  constructor() {
-    super();
-  }
-
-  handleClick() {
-    return this.props.handleClick();
-  }
-
-  render() {
-    return (
-      <button
-        type="button"
-        key={this.props.text}
-        name={this.props.text}
-        className={['btn', this.props.className].join(' ')}
-        onClick={this.handleClick}
-      >
-        {this.props.text}
-      </button>
-    );
-  }
+export default function Button(props) {
+  return (
+    <button
+      type="button"
+      key={props.text}
+      name={props.text}
+      className={['btn', props.className].join(' ')}
+      onClick={props.handleClick}
+    >
+      {props.text}
+    </button>
+  );
 }
+
+Button.propTypes = {
+  text: PropTypes.string,
+  className: PropTypes.string,
+  handleClick: PropTypes.func
+};

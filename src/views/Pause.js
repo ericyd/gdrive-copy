@@ -19,24 +19,44 @@ export default class Pause extends Component {
   constructor() {
     super();
 
-    this.state = {};
+    this.state = {
+      success: false
+    };
 
     this.handlePauseBtn = this.handlePauseBtn.bind(this);
   }
 
   handlePauseBtn() {
-    return;
+    if (process.env.NODE_ENV === 'production') {
+      google.script.run
+        .withSuccessHandler(status => {
+          return;
+        })
+        .withErrorHandler(err => {
+          // display error message
+          return err;
+        })
+        .setStopFlag();
+    } else {
+      this.setState({ success: true });
+    }
   }
 
   render() {
-    return (
-      <div>
-        <h4>Are you sure you want to pause everything?</h4>
-        <Button
-          text="Confirm: Pause copying"
-          handleClick={this.handlePauseBtn}
-        />
-      </div>
-    );
+    let show;
+    if (this.state.success) {
+      show = <h4>Success!</h4>;
+    } else {
+      show = (
+        <div>
+          <h4>Are you sure you want to pause everything?</h4>
+          <Button
+            text="Confirm: Pause copying"
+            handleClick={this.handlePauseBtn}
+          />
+        </div>
+      );
+    }
+    return <div>{show}</div>;
   }
 }

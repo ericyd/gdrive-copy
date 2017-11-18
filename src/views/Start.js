@@ -133,7 +133,7 @@ export default class Start extends React.Component {
           </Step>
         </ViewContainer>
 
-        <button onClick={this.nextView}>Next</button>
+        <Button handleClick={this.nextView} text="Next" />
       </div>
     );
   }
