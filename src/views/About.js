@@ -35,7 +35,7 @@ export default function About() {
         <a href="https://opensource.org/licenses/MIT" target="_blank">
           MIT License
         </a>. Feel free to reuse or distribute this code in any way you see fit.
-        You can find the most up-to-date source code on{' '}
+        You can find the source code on{' '}
         <a href="http://www.github.com/ericyd/gdrive-copy" target="_blank">
           Github
         </a>.
