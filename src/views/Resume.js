@@ -6,6 +6,9 @@ import SelectFolder from '../components/SelectFolder';
 import TextInput from '../components/TextInput';
 import Step from '../components/Step';
 import ViewContainer from '../components/ViewContainer';
+import Success from '../components/Success';
+import Error from '../components/Error';
+import Overlay from '../components/Overlay';
 
 export default class Resume extends React.Component {
   constructor() {
@@ -18,33 +21,64 @@ export default class Resume extends React.Component {
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
-      status: ''
+      status: '',
+      success: false,
+      successMsg: '',
+      error: false,
+      errorMsg: '',
+      processing: false,
+      processingMsg: ''
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.nextView = this.nextView.bind(this);
+    this.showError = this.showError.bind(this);
+    this.processing = this.processing.bind(this);
+  }
+
+  showError(msg) {
+    this.setState({
+      success: false,
+      error: true,
+      processing: false,
+      errorMsg: msg
+    });
+  }
+
+  showSuccess(msg) {
+    this.setState({
+      success: true,
+      error: false,
+      processing: false,
+      successMsg: msg
+    });
+  }
+
+  processing(msg) {
+    this.setState({
+      processing: true,
+      processingMsg: msg
+    });
   }
 
   handleSubmit(e) {
+    const _this = this;
     if (process.env.NODE_ENV === 'production') {
       google.script.run
         .withSuccessHandler(function(number) {
           // prompt user to wait or delete existing triggers
           if (number > 9) {
-            $('#too-many-triggers').show('blind');
-            $('#status').hide('blind');
+            _this.showError('Too many triggers');
           } else {
             // if not too many triggers, initialize script
             google.script.run
-              .withSuccessHandler(success)
-              .withFailureHandler(showError)
-              .resume(picker.folder);
+              .withSuccessHandler(_this.showSuccess)
+              .withFailureHandler(_this.showError)
+              .resume(_this.state);
           }
         })
-        .withFailureHandler(function(err) {
-          $('#errors').append(err);
-        })
+        .withFailureHandler(_this.showError)
         .getTriggersQuantity();
     } else {
       this.setState({ status: 'done!' });
@@ -76,6 +110,7 @@ export default class Resume extends React.Component {
   render() {
     return (
       <div>
+        {this.state.processing && <Overlay label={processingMsg} />}
         {this.state.status}
         <ViewContainer view={'Step' + this.state.stepNum}>
           <Step
@@ -98,8 +133,11 @@ export default class Resume extends React.Component {
         <Button handleClick={this.nextView} text="Next" />
 
         {/* show sample folder URL in test mode */}
-        {process.env.NODE_ENV !== 'production' &&
-          'https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-'}
+        {process.env.NODE_ENV !== 'production' && (
+          <div>
+            https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
+          </div>
+        )}
       </div>
     );
   }

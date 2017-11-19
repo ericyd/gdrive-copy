@@ -8,6 +8,9 @@ import QuestionTooltip from '../components/icons/QuestionTooltip';
 import Checkbox from '../components/Checkbox';
 import Step from '../components/Step';
 import ViewContainer from '../components/ViewContainer';
+import Success from '../components/Success';
+import Error from '../components/Error';
+import Overlay from '../components/Overlay';
 
 export default class Start extends React.Component {
   constructor() {
@@ -21,7 +24,13 @@ export default class Start extends React.Component {
       srcFolderID: '',
       srcFolderName: '',
       destFolderName: '',
-      status: ''
+      status: '',
+      success: false,
+      successMsg: '',
+      error: false,
+      errorMsg: '',
+      processing: false,
+      processingMsg: ''
     };
 
     this.copyOptions = [
@@ -47,28 +56,53 @@ export default class Start extends React.Component {
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
     this.nextView = this.nextView.bind(this);
+    this.showError = this.showError.bind(this);
+    this.showSuccess = this.showSuccess.bind(this);
+    this.processing = this.processing.bind(this);
+  }
+
+  showError(msg) {
+    this.setState({
+      error: true,
+      success: false,
+      errorMsg: msg
+    });
+  }
+
+  showSuccess(msg) {
+    this.setState({
+      error: false,
+      success: true,
+      successMsg: msg
+    });
+  }
+
+  processing(msg) {
+    this.setState({
+      processing: true,
+      processingMsg: msg
+    });
   }
 
   handleSubmit(e) {
+    this.setState({ processing: true });
+    const _this = this;
     if (process.env.NODE_ENV === 'production') {
       // count number of triggers
       google.script.run
         .withSuccessHandler(function(number) {
           // prompt user to wait or delete existing triggers
           if (number > 9) {
-            $('#too-many-triggers').show('blind');
-            $('#status').hide('blind');
+            _this.showError('Too many triggers');
           } else {
             // if not too many triggers, initialize script
             google.script.run
-              .withSuccessHandler(success)
-              .withFailureHandler(showError)
+              .withSuccessHandler(_this.showSuccess)
+              .withFailureHandler(_this.showError)
               .initialize(picker.folder);
           }
         })
-        .withFailureHandler(function(err) {
-          $('#errors').append(err);
-        })
+        .withFailureHandler(_this.showError)
         .getTriggersQuantity();
     } else {
       this.setState({ status: 'done!' });
@@ -107,6 +141,17 @@ export default class Start extends React.Component {
   render() {
     return (
       <div>
+        {this.state.processing && <Overlay label={processingMsg} />}
+        {this.state.success &&
+          !this.state.error && (
+            <Success>
+              <span>testing success</span>
+            </Success>
+          )}
+
+        {this.state.error &&
+          !this.state.success && <Error>{this.state.errorMsg}</Error>}
+
         {this.state.status}
         <ViewContainer view={'Step' + this.state.stepNum}>
           <Step
@@ -157,8 +202,11 @@ export default class Start extends React.Component {
         <Button handleClick={this.nextView} text="Next" />
 
         {/* show sample folder URL in test mode */}
-        {process.env.NODE_ENV !== 'production' &&
-          'https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-'}
+        {process.env.NODE_ENV !== 'production' && (
+          <div>
+            https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
+          </div>
+        )}
       </div>
     );
   }
