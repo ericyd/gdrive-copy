@@ -43,13 +43,13 @@ export default class Start extends React.Component {
       }
     ];
 
-    this.handleStartFormSubmit = this.handleStartFormSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
     this.nextView = this.nextView.bind(this);
   }
 
-  handleStartFormSubmit(e) {
+  handleSubmit(e) {
     if (process.env.NODE_ENV === 'production') {
       // count number of triggers
       google.script.run
@@ -150,14 +150,15 @@ export default class Start extends React.Component {
           </Step>
 
           <Step label="Start the copy" stepNum={4} viewName="Step4">
-            <Button
-              text="Begin copying"
-              handleClick={this.handleStartFormSubmit}
-            />
+            <Button text="Begin copying" handleClick={this.handleSubmit} />
           </Step>
         </ViewContainer>
 
         <Button handleClick={this.nextView} text="Next" />
+
+        {/* show sample folder URL in test mode */}
+        {process.env.NODE_ENV !== 'production' &&
+          'https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-'}
       </div>
     );
   }

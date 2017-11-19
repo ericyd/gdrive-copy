@@ -21,12 +21,12 @@ export default class Resume extends React.Component {
       status: ''
     };
 
-    this.handleResumeFormSubmit = this.handleResumeFormSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.nextView = this.nextView.bind(this);
   }
 
-  handleResumeFormSubmit(e) {
+  handleSubmit(e) {
     if (process.env.NODE_ENV === 'production') {
       google.script.run
         .withSuccessHandler(function(number) {
@@ -91,13 +91,15 @@ export default class Resume extends React.Component {
           </Step>
 
           <Step label="Resume the copy" stepNum={2} viewName="Step2">
-            <Button
-              text="Resume copying"
-              handleClick={this.handleResumeFormSubmit}
-            />
+            <Button text="Resume copying" handleClick={this.handleSubmit} />
           </Step>
         </ViewContainer>
+
         <Button handleClick={this.nextView} text="Next" />
+
+        {/* show sample folder URL in test mode */}
+        {process.env.NODE_ENV !== 'production' &&
+          'https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-'}
       </div>
     );
   }
