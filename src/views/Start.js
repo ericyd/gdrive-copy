@@ -10,6 +10,7 @@ import Step from '../components/Step';
 import ViewContainer from '../components/ViewContainer';
 import Success from '../components/Success';
 import Error from '../components/Error';
+import Panel from '../components/Panel';
 import Overlay from '../components/Overlay';
 
 export default class Start extends React.Component {
@@ -20,11 +21,16 @@ export default class Start extends React.Component {
 
     this.state = {
       stepNum: 1,
+      status: '',
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
       destFolderName: '',
-      status: '',
+      // must match IDs of copyOptions objects
+      copyPermissions: false,
+      copyToRoot: false,
+
+      // success/error/processing
       success: false,
       successMsg: '',
       error: false,
@@ -55,10 +61,12 @@ export default class Start extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
+    this.handleSelectOption = this.handleSelectOption.bind(this);
     this.nextView = this.nextView.bind(this);
     this.showError = this.showError.bind(this);
     this.showSuccess = this.showSuccess.bind(this);
     this.processing = this.processing.bind(this);
+    this.resetForm = this.resetForm.bind(this);
   }
 
   showError(msg) {
@@ -82,6 +90,24 @@ export default class Start extends React.Component {
       processing: true,
       processingMsg: msg
     });
+  }
+
+  resetForm() {
+    this.setState({
+      stepNum: 1,
+      error: false,
+      success: false,
+      processing: false,
+      srcFolderID: '',
+      srcFolderName: '',
+      srcFolderURL: ''
+    });
+  }
+
+  handleSelectOption(e) {
+    const settings = {};
+    settings[e.target.id] = e.target.checked;
+    this.setState(settings);
   }
 
   handleSubmit(e) {
@@ -120,7 +146,8 @@ export default class Start extends React.Component {
       srcFolderURL: url,
       srcFolderID: id,
       srcFolderName: name,
-      destFolderName: 'Copy of ' + name
+      destFolderName: 'Copy of ' + name,
+      stepNum: 2
     });
   }
 
@@ -141,7 +168,7 @@ export default class Start extends React.Component {
   render() {
     return (
       <div>
-        {this.state.processing && <Overlay label={processingMsg} />}
+        {this.state.processing && <Overlay label={this.state.processingMsg} />}
         {this.state.success &&
           !this.state.error && (
             <Success>
@@ -164,6 +191,12 @@ export default class Start extends React.Component {
               srcFolderURL={this.state.srcFolderURL}
               handleFolderSelect={this.handleFolderSelect}
             />
+            {/* show sample folder URL in test mode */}
+            {process.env.NODE_ENV !== 'production' && (
+              <div>
+                https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
+              </div>
+            )}
           </Step>
 
           <Step label="Name your copy" stepNum={2} viewName="Step2">
@@ -176,6 +209,7 @@ export default class Start extends React.Component {
               placeholder="Copy name"
               value={this.state.destFolderName}
             />
+            <Button handleClick={this.nextView} text="Next" />
           </Step>
 
           <Step label="Choose copying options" stepNum={3} viewName="Step3">
@@ -187,26 +221,43 @@ export default class Start extends React.Component {
                   id={option.id}
                   key={option.id}
                   label={option.label}
+                  isChecked={this.state[option.id]}
+                  handleChange={this.handleSelectOption}
                 >
                   <QuestionTooltip tooltip={option.tooltip} />
                 </Checkbox>
               );
             })}
+            <Button handleClick={this.nextView} text="Next" />
           </Step>
 
-          <Step label="Start the copy" stepNum={4} viewName="Step4">
-            <Button text="Begin copying" handleClick={this.handleSubmit} />
+          <Step label="Review and start copying" stepNum={4} viewName="Step4">
+            <Panel label="Original folder">
+              <a href={this.state.srcFolderURL}>{this.state.srcFolderName}</a>
+            </Panel>
+
+            <Panel label="Name of copy">
+              <span>{this.state.destFolderName}</span>
+            </Panel>
+
+            <Panel label="Options">
+              <div>
+                Copy permissions to new folder?{' '}
+                {this.state.copyPermissions ? 'Yes' : 'No'}
+              </div>
+              <div>
+                Copy to root of My Drive? {this.state.copyToRoot ? 'Yes' : 'No'}
+              </div>
+            </Panel>
+
+            <Button
+              className="btn--small"
+              text="Go back"
+              handleClick={this.resetForm}
+            />
+            <Button text="Copy Folder" handleClick={this.handleSubmit} />
           </Step>
         </ViewContainer>
-
-        <Button handleClick={this.nextView} text="Next" />
-
-        {/* show sample folder URL in test mode */}
-        {process.env.NODE_ENV !== 'production' && (
-          <div>
-            https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
-          </div>
-        )}
       </div>
     );
   }

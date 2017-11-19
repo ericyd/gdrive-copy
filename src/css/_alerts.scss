@@ -21,13 +21,8 @@
   border: 1px solid $alert--error--border;
 }
 
-.panel {
-  @extend .alert;
-  border: 1px solid $gray4;
-}
-
-.panel-heading {
-  border-bottom: 1px solid $gray6;
-  font-weight: bold;
-  margin: 0 0 0.5rem;
+.alert--neutral {
+  background: $alert--neutral--background;
+  color: $alert--neutral--text;
+  border: 1px solid $alert--neutral--border;
 }

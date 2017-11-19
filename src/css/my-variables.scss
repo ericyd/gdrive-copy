@@ -14,6 +14,7 @@ $primary--lighter: lighten($primary, 10%);
 $primary--lightest: lighten($primary, 20%);
 $primary--darker: darken($primary, 10%);
 $primary--darkest: darken($primary, 20%);
+
 $alert--success--base: #a1d490;
 $alert--success--background: lighten($alert--success--base, 20%);
 $alert--success--border: darken($alert--success--base, 40%);
@@ -23,6 +24,11 @@ $alert--error--base: #e88282;
 $alert--error--background: lighten($alert--error--base, 20%);
 $alert--error--border: darken($alert--error--base, 30%);
 $alert--error--text: $alert--error--border;
+
+$alert--neutral--base: #999;
+$alert--neutral--background: lighten($alert--neutral--base, 35%);
+$alert--neutral--border: darken($alert--neutral--base, 40%);
+$alert--neutral--text: $alert--neutral--border;
 
 //= Colors used by Cutestrap
 $primary-dark: $primary--darker;

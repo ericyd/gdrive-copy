@@ -110,7 +110,7 @@ export default class Resume extends React.Component {
   render() {
     return (
       <div>
-        {this.state.processing && <Overlay label={processingMsg} />}
+        {this.state.processing && <Overlay label={this.state.processingMsg} />}
         {this.state.status}
         <ViewContainer view={'Step' + this.state.stepNum}>
           <Step

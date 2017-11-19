@@ -10,7 +10,9 @@ export default function Checkbox(props) {
           type="checkbox"
           name={props.name}
           value={props.value}
+          checked={props.isChecked}
           id={props.id}
+          onChange={props.handleChange}
         />
         <span className="checkbox__label">
           {props.label} {props.children}
