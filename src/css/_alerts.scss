@@ -6,17 +6,19 @@
   background: #fff;
   font-size: $fs-smaller;
   line-height: $lh-smaller;
-  border-radius: 2px;
+  border-radius: $border-radius;
 }
 
-.alert-success {
-  background: #a1d490;
-  color: darken(#a1d490, 30%);
+.alert--success {
+  background: $alert--success--background;
+  color: $alert--success--text;
+  border: 1px solid $alert--success--border;
 }
 
-.alert-danger {
-  background: #e88282;
-  color: darken(#e88282, 30%);
+.alert--error {
+  background: $alert--error--background;
+  color: $alert--error--text;
+  border: 1px solid $alert--error--border;
 }
 
 .panel {

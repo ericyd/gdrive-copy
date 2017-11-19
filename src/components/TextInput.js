@@ -2,26 +2,20 @@
 
 import React from 'react';
 
-export default class TextInput extends React.Component {
-  constructor() {
-    super();
-  }
+export default function TextInput(props) {
+  return (
+    <label className="textfield" htmlFor={props.id}>
+      <span className="textfield__label">{props.label}</span>
 
-  render() {
-    return (
-      <label className="textfield" htmlFor={this.props.id}>
-        <span className="textfield__label">{this.props.label}</span>
-
-        <input
-          type="text"
-          name={this.props.name}
-          value={this.props.value}
-          placeholder={this.props.placeholder}
-          id={this.props.id}
-          onChange={this.props.handleChange}
-          onPaste={this.props.handlePaste}
-        />
-      </label>
-    );
-  }
+      <input
+        type="text"
+        name={props.name}
+        value={props.value}
+        placeholder={props.placeholder}
+        id={props.id}
+        onChange={props.handleChange}
+        onPaste={props.handlePaste}
+      />
+    </label>
+  );
 }
