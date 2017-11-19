@@ -1,0 +1,11 @@
+.no-padding {
+  padding: 0;
+}
+
+.test-mode-banner {
+  position: 'absolute';
+  top: '4em';
+  left: '0';
+  transform: 'rotate(270deg)';
+  background: red;
+}

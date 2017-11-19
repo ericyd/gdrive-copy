@@ -31,6 +31,10 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        {/* Show "test mode" if not in development */}
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="test-mode-banner">TEST MODE</div>
+        )}
         <Nav handleViewChange={this.handleViewChange} view={this.state.view} />
         <div className="container">
           <ViewContainer view={this.state.view}>
