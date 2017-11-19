@@ -37,7 +37,7 @@ gulp.task('watch-test-site', function() {
   });
 });
 
-gulp.task('generate-test-site', ['html', 'css', 'cutestrap', 'js'], function() {
+gulp.task('generate-test-site', ['build'], function() {
   return;
 });
 
@@ -53,8 +53,13 @@ gulp.task('js', function() {
 });
 
 gulp.task('gs', function() {
-  // linting has been moved to prettier.
-  // anything needed here?
+  // concatenate
+  if (isProd) {
+    return gulp
+      .src('./lib/**/*.js')
+      .pipe(concat('application.gs'))
+      .pipe(gulp.dest('dist'));
+  }
   return;
 });
 
