@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import AccountSwitcher from './AccountSwitcher';
 import PropTypes from 'prop-types';
 
 export default function Nav(props) {
@@ -26,6 +27,7 @@ export default function Nav(props) {
             </button>
           );
         })}
+        <AccountSwitcher />
       </section>
     </nav>
   );
