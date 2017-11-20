@@ -91,11 +91,14 @@ export default class Resume extends React.Component {
    * @param {string} id
    * @param {string} name
    */
-  handleFolderSelect(url, id, name) {
+  handleFolderSelect(url, id, name, parentID) {
     this.setState({
+      processing: false,
+      stepNum: 2,
       srcFolderURL: url,
       srcFolderID: id,
-      srcFolderName: name
+      srcFolderName: name,
+      srcParentID: parentID
     });
   }
 

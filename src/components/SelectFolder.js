@@ -11,9 +11,7 @@ export default class SelectFolder extends React.Component {
   constructor() {
     super();
     this.state = {
-      srcFolderURL: '',
-      srcFolderID: '',
-      srcFolderName: ''
+      srcFolderURL: ''
     };
     this.launchPicker = this.launchPicker.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
@@ -48,7 +46,12 @@ export default class SelectFolder extends React.Component {
           this.setState({
             srcFolderURL: url
           });
-          this.props.handleFolderSelect(url, id, folder.name);
+          this.props.handleFolderSelect(
+            url,
+            id,
+            folder.name,
+            folder.parents[0].id
+          );
         })
         .withErrorHandler(err => {
           this.props.showError(err);
@@ -61,11 +64,9 @@ export default class SelectFolder extends React.Component {
       _this.props.processing();
       return setTimeout(function() {
         _this.setState({
-          srcFolderURL: url,
-          srcFolderID: id,
-          srcFolderName: 'testing name'
+          srcFolderURL: url
         });
-        return _this.props.handleFolderSelect(url, id, name);
+        return _this.props.handleFolderSelect(url, id, name, id);
       }, 1500);
     }
   }

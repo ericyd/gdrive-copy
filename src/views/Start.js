@@ -25,6 +25,7 @@ export default class Start extends React.Component {
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
+      srcParentID: '',
       destFolderName: '',
       // must match IDs of copyOptions objects
       copyPermissions: false,
@@ -127,7 +128,15 @@ export default class Start extends React.Component {
             google.script.run
               .withSuccessHandler(_this.showSuccess)
               .withFailureHandler(_this.showError)
-              .initialize(picker.folder);
+              .initialize({
+                srcFolderID: this.state.srcFolderID,
+                srcFolderName: this.state.srcFolderName,
+                srcFolderURL: this.state.srcFolderURL,
+                srcParentID: this.state.srcParentID,
+                destFolderName: this.state.destFolderName,
+                copyPermissions: this.state.copyPermissions,
+                copyToRoot: this.state.copyToRoot
+              });
           }
         })
         .withFailureHandler(_this.showError)
@@ -143,12 +152,13 @@ export default class Start extends React.Component {
    * @param {string} id
    * @param {string} name
    */
-  handleFolderSelect(url, id, name) {
+  handleFolderSelect(url, id, name, parentID) {
     this.setState({
       processing: false,
       srcFolderURL: url,
       srcFolderID: id,
       srcFolderName: name,
+      srcParentID: parentID,
       destFolderName: 'Copy of ' + name,
       stepNum: 2
     });
