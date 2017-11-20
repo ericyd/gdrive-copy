@@ -1,28 +1,12 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function Nav(props) {
   const buttons = ['About', 'Start', 'Resume', 'Pause', 'FAQ'];
 
-  function handleViewChange(e) {
-    props.handleViewChange(e.target.name);
-  }
-
   return (
-    // svelte version
-    // <nav>
-    //     <section className="header-container">
-    //         {{#each views as view}}
-    //             <button role="button"
-    //                 on:click='fire("click", {view})'
-    //                 name='{{view.id}}'
-    //                 className="tabLink btn--nav {{active === view.id ? 'active' : ''}}"
-    //                 id="{{view.id}}-button"
-    //                 href="#">{{view.title}}</button>
-    //         {{/each}}
-    //     </section>
-    // </nav>
     <nav className="nav">
       <section className="nav-container">
         {buttons.map(btn => {
@@ -36,7 +20,7 @@ export default function Nav(props) {
                 'btn--nav',
                 props.view === btn ? 'active' : 'nav__btn'
               ].join(' ')}
-              onClick={handleViewChange}
+              onClick={props.handleViewChange}
             >
               {btn}
             </button>
@@ -48,6 +32,6 @@ export default function Nav(props) {
 }
 
 Nav.propTypes = {
-  handleViewChange: React.PropTypes.func.isRequired,
-  view: React.PropTypes.string.isRequired
+  handleViewChange: PropTypes.func.isRequired,
+  view: PropTypes.string.isRequired
 };

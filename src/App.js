@@ -22,9 +22,9 @@ class App extends React.Component {
     this.handleViewChange = this.handleViewChange.bind(this);
   }
 
-  handleViewChange(view) {
+  handleViewChange(e) {
     this.setState({
-      view: view
+      view: e.target.name
     });
   }
 
