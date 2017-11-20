@@ -6,6 +6,7 @@ import Button from './Button';
 import Spinner from './icons/Spinner';
 import Step from './Step';
 import parseURL from '../util/parseURL';
+import { showPicker } from '../util/picker';
 
 export default class SelectFolder extends React.Component {
   constructor() {
@@ -21,7 +22,7 @@ export default class SelectFolder extends React.Component {
   }
 
   launchPicker() {
-    return;
+    showPicker();
   }
 
   handleChange(e) {
@@ -72,8 +73,9 @@ export default class SelectFolder extends React.Component {
           placeholder="Paste Folder URL"
           value={this.state.srcFolderURL}
         />
+        <br />or<br />
         <Button
-          text="Picker"
+          text="Select folder"
           className="btn--small"
           handleClick={this.launchPicker}
         />

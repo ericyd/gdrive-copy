@@ -190,6 +190,7 @@ export default class Start extends React.Component {
               srcFolderID={this.state.srcFolderID}
               srcFolderURL={this.state.srcFolderURL}
               handleFolderSelect={this.handleFolderSelect}
+              pickerBuilder={this.props.pickerBuilder}
             />
             {/* show sample folder URL in test mode */}
             {process.env.NODE_ENV !== 'production' && (
