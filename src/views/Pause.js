@@ -1,62 +1,94 @@
-// from svelte version
-// <p>{{message}}</p>
-// <p>
-// {{#if showButton}}
-//     <button
-//         type="button"
-//         className="btn btn--small"
-//         on:click='handleClick(event)'>
-//         Yes, I want to stop all my current instances of Copy Folder</button>
-// {{/if}}
-// </p>
-
 'use strict';
 
 import React, { Component } from 'react';
 import Button from '../components/Button';
+import Overlay from '../components/Overlay';
+import Success from '../components/Success';
+import Error from '../components/Error';
 
 export default class Pause extends Component {
   constructor() {
     super();
 
     this.state = {
-      success: false
+      success: false,
+      error: false,
+      errorMsg: '',
+      processing: false,
+      processingMsg: 'Pausing all folder copies'
     };
 
     this.handlePauseBtn = this.handlePauseBtn.bind(this);
+    this.showError = this.showError.bind(this);
+    this.showSuccess = this.showSuccess.bind(this);
+  }
+
+  showError(msg) {
+    this.setState({
+      error: true,
+      success: false,
+      processing: false,
+      errorMsg: msg
+    });
+  }
+
+  showSuccess() {
+    this.setState({
+      error: false,
+      success: true,
+      processing: false
+    });
   }
 
   handlePauseBtn() {
+    this.setState({
+      processing: true
+    });
+    const _this = this;
     if (process.env.NODE_ENV === 'production') {
       google.script.run
-        .withSuccessHandler(status => {
-          return;
-        })
-        .withErrorHandler(err => {
-          // display error message
-          return err;
-        })
+        .withSuccessHandler(_this.showSuccess)
+        .withErrorHandler(_this.showError)
         .setStopFlag();
     } else {
-      this.setState({ success: true });
+      setTimeout(_this.showSuccess, 1500);
     }
   }
 
   render() {
-    let show;
-    if (this.state.success) {
-      show = <h4>Success!</h4>;
-    } else {
-      show = (
-        <div>
-          <h4>Are you sure you want to pause everything?</h4>
-          <Button
-            text="Confirm: Pause copying"
-            handleClick={this.handlePauseBtn}
-          />
-        </div>
-      );
-    }
-    return <div>{show}</div>;
+    return (
+      <div>
+        {/* Processing */}
+        {this.state.processing && <Overlay label={this.state.processingMsg} />}
+
+        {/* Success */}
+        {this.state.success &&
+          !this.state.error && (
+            <Success>
+              <p>Your folders should no longer be copying.</p>
+              <p>
+                Feel free to use the "Resume" feature if you would like to
+                restart the copy
+              </p>
+            </Success>
+          )}
+
+        {/* Error(s) */}
+        {this.state.error &&
+          !this.state.success && <Error>{this.state.errorMsg}</Error>}
+
+        {/* Default */}
+        {!this.state.error &&
+          !this.state.success && (
+            <div>
+              <h4>Are you sure you want to pause everything?</h4>
+              <Button
+                text="Confirm: Pause copying"
+                handleClick={this.handlePauseBtn}
+              />
+            </div>
+          )}
+      </div>
+    );
   }
 }
