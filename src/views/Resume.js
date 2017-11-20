@@ -122,6 +122,7 @@ export default class Resume extends React.Component {
               srcFolderID={this.state.srcFolderID}
               srcFolderURL={this.state.srcFolderURL}
               handleFolderSelect={this.handleFolderSelect}
+              processing={this.processing}
               pickerBuilder={this.props.pickerBuilder}
             />
           </Step>

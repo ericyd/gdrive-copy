@@ -8,7 +8,7 @@ var pickerBuilder;
 
 // vanillaJS implementation of $.getScript()
 //  http://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
-export default function getScript(source, callback) {
+export function getScript(source, callback) {
   var script = document.createElement('script');
   var prior = document.getElementsByTagName('script')[0];
   script.async = 1;

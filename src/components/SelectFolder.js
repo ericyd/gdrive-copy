@@ -3,7 +3,6 @@
 import React from 'react';
 import TextInput from './TextInput';
 import Button from './Button';
-import Spinner from './icons/Spinner';
 import Step from './Step';
 import parseURL from '../util/parseURL';
 import { showPicker } from '../util/picker';
@@ -17,7 +16,7 @@ export default class SelectFolder extends React.Component {
       srcFolderName: ''
     };
     this.launchPicker = this.launchPicker.bind(this);
-    this.getFolderFromURL = this.getFolderFromURL.bind(this);
+    this.handlePaste = this.handlePaste.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -25,22 +24,29 @@ export default class SelectFolder extends React.Component {
     showPicker();
   }
 
+  // allow TextInput to update if typing in
+  // todo: should this be removed to only support pasting?
   handleChange(e) {
     this.setState({
       srcFolderURL: e.target.value
     });
   }
 
-  getFolderFromURL(e) {
-    const url = e.target.value;
+  /**
+   * Parse the text pasted into the input
+   * and extract an ID. Then call google script
+   * to get metadata for that folder ID.
+   * @param {pasteEvent} e
+   */
+  handlePaste(e) {
+    const url = e.clipboardData.getData('Text');
     const id = parseURL(url);
     if (process.env.NODE_ENV === 'production') {
+      this.props.processing();
       const name = google.script.run
         .withSuccessHandler(folder => {
           this.setState({
-            srcFolderURL: url,
-            srcFolderID: id,
-            srcFolderName: folder.name
+            srcFolderURL: url
           });
           return this.props.handleFolderSelect(url, id, folder.name);
         })
@@ -50,13 +56,18 @@ export default class SelectFolder extends React.Component {
         })
         .getFolder(id);
     } else {
-      name = 'testing name';
-      this.setState({
-        srcFolderURL: url,
-        srcFolderID: id,
-        srcFolderName: name
-      });
-      return this.props.handleFolderSelect(url, id, name);
+      // TEST MODE
+      // ======================
+      const _this = this;
+      _this.props.processing();
+      return setTimeout(function() {
+        _this.setState({
+          srcFolderURL: url,
+          srcFolderID: id,
+          srcFolderName: 'testing name'
+        });
+        return _this.props.handleFolderSelect(url, id, name);
+      }, 1500);
     }
   }
 
@@ -68,7 +79,7 @@ export default class SelectFolder extends React.Component {
           id="folderName"
           name="folderName"
           label="Folder URL"
-          handlePaste={this.getFolderFromURL}
+          handlePaste={this.handlePaste}
           handleChange={this.handleChange}
           placeholder="Paste Folder URL"
           value={this.state.srcFolderURL}

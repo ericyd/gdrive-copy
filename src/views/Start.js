@@ -65,8 +65,8 @@ export default class Start extends React.Component {
     this.nextView = this.nextView.bind(this);
     this.showError = this.showError.bind(this);
     this.showSuccess = this.showSuccess.bind(this);
-    this.processing = this.processing.bind(this);
     this.resetForm = this.resetForm.bind(this);
+    this.processing = this.processing.bind(this);
   }
 
   showError(msg) {
@@ -143,11 +143,19 @@ export default class Start extends React.Component {
    */
   handleFolderSelect(url, id, name) {
     this.setState({
+      processing: false,
       srcFolderURL: url,
       srcFolderID: id,
       srcFolderName: name,
       destFolderName: 'Copy of ' + name,
       stepNum: 2
+    });
+  }
+
+  processing() {
+    this.setState({
+      processing: true,
+      processingMsg: 'Getting folder info'
     });
   }
 
@@ -190,6 +198,7 @@ export default class Start extends React.Component {
               srcFolderID={this.state.srcFolderID}
               srcFolderURL={this.state.srcFolderURL}
               handleFolderSelect={this.handleFolderSelect}
+              processing={this.processing}
               pickerBuilder={this.props.pickerBuilder}
             />
             {/* show sample folder URL in test mode */}
@@ -234,7 +243,9 @@ export default class Start extends React.Component {
 
           <Step label="Review and start copying" stepNum={4} viewName="Step4">
             <Panel label="Original folder">
-              <a href={this.state.srcFolderURL}>{this.state.srcFolderName}</a>
+              <a href={this.state.srcFolderURL} target="_blank">
+                {this.state.srcFolderName}
+              </a>
             </Panel>
 
             <Panel label="Name of copy">

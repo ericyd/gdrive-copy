@@ -18,7 +18,8 @@ export default function Overlay(props) {
           width: '100%',
           height: '100%',
           backgroundColor: '#fff',
-          opacity: 0.5
+          opacity: 0.5,
+          zIndex: 1000
         }}
       />
       {/* Message */}
@@ -28,7 +29,8 @@ export default function Overlay(props) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          opacity: 1
+          opacity: 1,
+          zIndex: 1001
         }}
       >
         {props.label} <Spinner width="4em" height="4em" />
