@@ -73,6 +73,7 @@ export default class Start extends React.Component {
     this.setState({
       error: true,
       success: false,
+      processing: false,
       errorMsg: msg
     });
   }
@@ -81,6 +82,7 @@ export default class Start extends React.Component {
     this.setState({
       error: false,
       success: true,
+      processing: false,
       successMsg: msg
     });
   }
@@ -198,6 +200,7 @@ export default class Start extends React.Component {
               srcFolderID={this.state.srcFolderID}
               srcFolderURL={this.state.srcFolderURL}
               handleFolderSelect={this.handleFolderSelect}
+              showError={this.showError}
               processing={this.processing}
               pickerBuilder={this.props.pickerBuilder}
             />

@@ -48,11 +48,10 @@ export default class SelectFolder extends React.Component {
           this.setState({
             srcFolderURL: url
           });
-          return this.props.handleFolderSelect(url, id, folder.name);
+          this.props.handleFolderSelect(url, id, folder.name);
         })
         .withErrorHandler(err => {
-          // display error message
-          return err;
+          this.props.showError(err);
         })
         .getFolder(id);
     } else {
