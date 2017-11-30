@@ -10,7 +10,7 @@ export default function Page(props) {
   // <h2>Step {props.stepNum + 1}</h2>
   return (
     <div>
-      <h4>{props.label}</h4>
+      <h2>{props.label}</h2>
       {props.children}
     </div>
   );

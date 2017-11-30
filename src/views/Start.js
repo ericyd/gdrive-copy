@@ -1,17 +1,18 @@
 'use strict';
 
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
 import SelectFolder from '../components/SelectFolder';
-import TextInput from '../components/TextInput';
-import QuestionTooltip from '../components/icons/QuestionTooltip';
-import Checkbox from 'material-ui/Checkbox';
-import Page from '../components/Page';
 import ViewContainer from '../components/ViewContainer';
+import Page from '../components/Page';
+import QuestionTooltip from '../components/icons/QuestionTooltip';
 import Success from '../components/Success';
 import Error from '../components/Error';
 import Panel from '../components/Panel';
 import Overlay from '../components/Overlay';
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
 
 export default class Start extends React.Component {
@@ -213,7 +214,7 @@ export default class Start extends React.Component {
             <StepLabel>Choose options</StepLabel>
           </Step>
           <Step>
-            <StepLabel>Start copying</StepLabel>
+            <StepLabel>Review and complete</StepLabel>
           </Step>
         </Stepper>
 
@@ -236,16 +237,21 @@ export default class Start extends React.Component {
           </Page>
 
           <Page label="Name your copy" stepNum={1}>
-            <TextInput
+            <TextField
               key="folderCopy"
               id="folderCopy"
               name="folderCopyName"
-              label="Copy name"
-              handleChange={this.handleDestFolderChange}
-              placeholder="Copy name"
+              onChange={this.handleDestFolderChange}
+              floatingLabelText="Copy name"
               value={this.state.destFolderName}
             />
-            <RaisedButton onClick={this.nextView} label="Next" />
+            <div>
+              <RaisedButton
+                onClick={this.nextView}
+                primary={true}
+                label="Next"
+              />
+            </div>
           </Page>
 
           <Page label="Choose copying options" stepNum={2}>
@@ -264,7 +270,7 @@ export default class Start extends React.Component {
                 </div>
               );
             })}
-            <RaisedButton onClick={this.nextView} label="Next" />
+            <RaisedButton onClick={this.nextView} primary={true} label="Next" />
           </Page>
 
           <Page label="Review and start copying" stepNum={3}>
@@ -274,7 +280,7 @@ export default class Start extends React.Component {
               </a>
             </Panel>
 
-            <Panel label="Name of copy">
+            <Panel label="Name your copy">
               <span>{this.state.destFolderName}</span>
             </Panel>
 
@@ -288,7 +294,7 @@ export default class Start extends React.Component {
               </div>
             </Panel>
 
-            <RaisedButton label="Go back" onClick={this.resetForm} />
+            <FlatButton label="Start over" onClick={this.resetForm} />
             <RaisedButton
               label="Copy Folder"
               primary={true}

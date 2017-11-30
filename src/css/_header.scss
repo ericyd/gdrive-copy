@@ -1,8 +1,6 @@
 @import 'my-variables';
 .header-container {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  @include flex-wrapper();
   width: $container-width;
   max-width: 100%;
   margin: 0 auto;

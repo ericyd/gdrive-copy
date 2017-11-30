@@ -1,22 +1,13 @@
 @import 'my-variables';
 
-.footer-spacer {
-  display: block;
-  height: $footer-height * 2;
-  width: 100%;
-}
-
 footer {
+  @include flex-wrapper($align: top);
   box-sizing: border-box;
   padding: 1em 0;
   background: $gray4;
   width: 100%;
-  height: $footer-height;
 }
 
 .footer-section {
-  // defined in my-variables
-  font-size: $fs-smaller;
-  line-height: $lh-smaller;
   width: 100% / $number-footer-sections;
 }

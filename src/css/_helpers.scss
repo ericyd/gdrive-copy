@@ -11,7 +11,5 @@
 }
 
 .flex-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  @include flex-wrapper($align: middle);
 }

@@ -4,25 +4,32 @@
   padding: 1em;
   margin: 1em 0 1em;
   background: #fff;
-  font-size: $fs-smaller;
-  line-height: $lh-smaller;
-  border-radius: $border-radius;
+  // border-radius: $border-radius;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0;
+  }
 }
 
 .alert--success {
   background: $alert--success--background;
   color: $alert--success--text;
-  border: 1px solid $alert--success--border;
+  // border: 1px solid $alert--success--border;
 }
 
 .alert--error {
   background: $alert--error--background;
   color: $alert--error--text;
-  border: 1px solid $alert--error--border;
+  // border: 1px solid $alert--error--border;
 }
 
 .alert--neutral {
   background: $alert--neutral--background;
   color: $alert--neutral--text;
-  border: 1px solid $alert--neutral--border;
+  // border: 1px solid $alert--neutral--border;
 }
