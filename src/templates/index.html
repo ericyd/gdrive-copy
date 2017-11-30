@@ -1,51 +1,49 @@
  {{#isProd}}
 <!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
-<?!= HtmlService.createHtmlOutputFromFile('cutestrap').getContent(); ?>
-    <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
-        {{/isProd}}
+<?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+    {{/isProd}}
 
 
-        <html>
+    <html>
 
-        <head>
+    <head>
 
-            <!--Webfont loader for Google Apps Scripts-->
-            {{#isProd}}
-            <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
-            <script>
-                WebFont.load({
-                    google: {
-                        families: ['Roboto']
-                    }
-                });
-            </script>
-            {{/isProd}} {{^isProd}}
-            <link rel="stylesheet" href="cutestrap.css">
-            <link rel="stylesheet" href="css.css">
-            <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet"> {{/isProd}}
-
-
-        </head>
-
-        <body>
-
-            {{> header }}
-
-            <div id="root"></div>
-
-            <div class="push"></div>
-
-            {{> footer }}
-
-        </body>
-
-        {{^isProd}}
-        <script src="bundle.js"></script>
-        {{/isProd}}
-
-        </html>
-
+        <!--Webfont loader for Google Apps Scripts-->
         {{#isProd}}
-        <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
-        <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
-            {{/isProd}}
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+        <script>
+            WebFont.load({
+                google: {
+                    families: ['Roboto']
+                }
+            });
+        </script>
+        {{/isProd}} {{^isProd}}
+        <link rel="stylesheet" href="css.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet"> {{/isProd}}
+
+
+    </head>
+
+    <body>
+
+        {{> header }}
+
+        <div id="root"></div>
+
+        <div class="push"></div>
+
+        {{> footer }}
+
+    </body>
+
+    {{^isProd}}
+    <script src="bundle.js"></script>
+    {{/isProd}}
+
+    </html>
+
+    {{#isProd}}
+    <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
+    <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
+        {{/isProd}}

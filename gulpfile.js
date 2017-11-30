@@ -17,7 +17,7 @@ gulp.task('default', function() {
   // Default task
 });
 
-gulp.task('build', ['js', 'html', 'gs', 'css', 'cutestrap'], function() {
+gulp.task('build', ['js', 'html', 'gs', 'css'], function() {
   if (isProd) {
     buildImages();
   }
@@ -78,24 +78,6 @@ gulp.task('css', function() {
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(autoprefixer({ browsers: ['last 10 versions'] }))
     .pipe(concat('css.css'))
-    .pipe(gulp.dest('dist'));
-});
-
-gulp.task('cutestrap', function() {
-  if (isProd) {
-    return gulp
-      .src('./src/css/my-cutestrap.scss')
-      .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-      .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
-      .pipe(concat('cutestrap.html'))
-      .pipe(insert.wrap('<style>', '</style>'))
-      .pipe(gulp.dest('dist'));
-  }
-  return gulp
-    .src('./src/css/my-cutestrap.scss')
-    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-    .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
-    .pipe(concat('cutestrap.css'))
     .pipe(gulp.dest('dist'));
 });
 
