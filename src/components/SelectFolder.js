@@ -1,11 +1,8 @@
 'use strict';
 
 import React from 'react';
-// import TextInput from './TextInput';
 import TextField from 'material-ui/TextField';
-// import Button from './Button';
 import RaisedButton from 'material-ui/RaisedButton';
-import Step from './Step';
 import parseURL from '../util/parseURL';
 import { showPicker } from '../util/picker';
 
@@ -30,10 +27,6 @@ export default class SelectFolder extends React.Component {
     this.setState({
       value: e.target.value
     });
-    // handle paste event
-    if (e.clipboardData && e.clipboardData.get) {
-      this.handlePaste(e);
-    }
   }
 
   /**
@@ -86,6 +79,7 @@ export default class SelectFolder extends React.Component {
           id="folderName"
           name="folderName"
           onChange={this.handleChange}
+          onPaste={this.handlePaste}
           value={this.state.value}
         />
         <br />or<br />

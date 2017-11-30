@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function Step(props) {
+export default function Page(props) {
   return (
     <div>
       <h2>Step {props.stepNum}</h2>
@@ -13,7 +13,7 @@ export default function Step(props) {
   );
 }
 
-Step.propTypes = {
+Page.propTypes = {
   label: PropTypes.string,
   stepNum: PropTypes.number
 };

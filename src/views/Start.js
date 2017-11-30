@@ -1,26 +1,27 @@
 'use strict';
 
 import React from 'react';
-import Button from '../components/Button';
+import RaisedButton from 'material-ui/RaisedButton';
 import SelectFolder from '../components/SelectFolder';
 import TextInput from '../components/TextInput';
 import QuestionTooltip from '../components/icons/QuestionTooltip';
 import Checkbox from '../components/Checkbox';
-import Step from '../components/Step';
+import Page from '../components/Page';
 import ViewContainer from '../components/ViewContainer';
 import Success from '../components/Success';
 import Error from '../components/Error';
 import Panel from '../components/Panel';
 import Overlay from '../components/Overlay';
+import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
 
 export default class Start extends React.Component {
   constructor() {
     super();
 
-    this.maxSteps = 4;
+    this.maxSteps = 3; // 4 steps, but 0-indexed
 
     this.state = {
-      stepNum: 1,
+      stepNum: 0,
       status: '',
       srcFolderURL: '',
       srcFolderID: '',
@@ -97,7 +98,7 @@ export default class Start extends React.Component {
 
   resetForm() {
     this.setState({
-      stepNum: 1,
+      stepNum: 0,
       error: false,
       success: false,
       processing: false,
@@ -160,7 +161,7 @@ export default class Start extends React.Component {
       srcFolderName: name,
       srcParentID: parentID,
       destFolderName: 'Copy of ' + name,
-      stepNum: 2
+      stepNum: this.state.stepNum + 1
     });
   }
 
@@ -200,12 +201,24 @@ export default class Start extends React.Component {
           !this.state.success && <Error>{this.state.errorMsg}</Error>}
 
         {this.state.status}
-        <ViewContainer view={'Step' + this.state.stepNum}>
-          <Step
-            viewName="Step1"
-            stepNum={1}
-            label="Which folder would you like to copy?"
-          >
+
+        <Stepper activeStep={this.state.stepNum}>
+          <Step>
+            <StepLabel>Select folder</StepLabel>
+          </Step>
+          <Step>
+            <StepLabel>Name the copy</StepLabel>
+          </Step>
+          <Step>
+            <StepLabel>Choose options</StepLabel>
+          </Step>
+          <Step>
+            <StepLabel>Start copying</StepLabel>
+          </Step>
+        </Stepper>
+
+        <ViewContainer activeStep={this.state.stepNum}>
+          <Page stepNum={0} label="Which folder would you like to copy?">
             <SelectFolder
               srcFolderID={this.state.srcFolderID}
               srcFolderURL={this.state.srcFolderURL}
@@ -220,9 +233,9 @@ export default class Start extends React.Component {
                 https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
               </div>
             )}
-          </Step>
+          </Page>
 
-          <Step label="Name your copy" stepNum={2} viewName="Step2">
+          <Page label="Name your copy" stepNum={1}>
             <TextInput
               key="folderCopy"
               id="folderCopy"
@@ -232,10 +245,10 @@ export default class Start extends React.Component {
               placeholder="Copy name"
               value={this.state.destFolderName}
             />
-            <Button handleClick={this.nextView} text="Next" />
-          </Step>
+            <RaisedButton handleClick={this.nextView} label="Next" />
+          </Page>
 
-          <Step label="Choose copying options" stepNum={3} viewName="Step3">
+          <Page label="Choose copying options" stepNum={2}>
             {this.copyOptions.map(option => {
               return (
                 <Checkbox
@@ -251,10 +264,10 @@ export default class Start extends React.Component {
                 </Checkbox>
               );
             })}
-            <Button handleClick={this.nextView} text="Next" />
-          </Step>
+            <RaisedButton handleClick={this.nextView} label="Next" />
+          </Page>
 
-          <Step label="Review and start copying" stepNum={4} viewName="Step4">
+          <Page label="Review and start copying" stepNum={3}>
             <Panel label="Original folder">
               <a href={this.state.srcFolderURL} target="_blank">
                 {this.state.srcFolderName}
@@ -275,13 +288,13 @@ export default class Start extends React.Component {
               </div>
             </Panel>
 
-            <Button
-              className="btn--small"
-              text="Go back"
-              handleClick={this.resetForm}
+            <RaisedButton label="Go back" handleClick={this.resetForm} />
+            <RaisedButton
+              label="Copy Folder"
+              primary={true}
+              handleClick={this.handleSubmit}
             />
-            <Button text="Copy Folder" handleClick={this.handleSubmit} />
-          </Step>
+          </Page>
         </ViewContainer>
       </div>
     );

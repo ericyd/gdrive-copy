@@ -1,23 +1,24 @@
 'use strict';
 
 import React from 'react';
-// import Button from '../components/Button';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import SelectFolder from '../components/SelectFolder';
-import Step from '../components/Step';
+import Page from '../components/Page';
 import ViewContainer from '../components/ViewContainer';
 import Success from '../components/Success';
 import Error from '../components/Error';
 import Overlay from '../components/Overlay';
+import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
 
 export default class Resume extends React.Component {
   constructor() {
     super();
 
-    this.maxSteps = 2;
+    this.maxSteps = 1; // 2 steps, but 0-indexed
 
     this.state = {
-      stepNum: 1,
+      stepNum: 0,
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
@@ -35,6 +36,7 @@ export default class Resume extends React.Component {
     this.nextView = this.nextView.bind(this);
     this.showError = this.showError.bind(this);
     this.processing = this.processing.bind(this);
+    this.resetForm = this.resetForm.bind(this);
   }
 
   showError(msg) {
@@ -59,6 +61,18 @@ export default class Resume extends React.Component {
     this.setState({
       processing: true,
       processingMsg: msg
+    });
+  }
+
+  resetForm() {
+    this.setState({
+      stepNum: 0,
+      error: false,
+      success: false,
+      processing: false,
+      srcFolderID: '',
+      srcFolderName: '',
+      srcFolderURL: ''
     });
   }
 
@@ -94,7 +108,7 @@ export default class Resume extends React.Component {
   handleFolderSelect(url, id, name, parentID) {
     this.setState({
       processing: false,
-      stepNum: 2,
+      stepNum: this.state.stepNum + 1,
       srcFolderURL: url,
       srcFolderID: id,
       srcFolderName: name,
@@ -102,25 +116,23 @@ export default class Resume extends React.Component {
     });
   }
 
-  nextView() {
-    if (this.state.stepNum === this.maxSteps) {
-      return;
-    } else {
-      this.setState({ stepNum: this.state.stepNum + 1 });
-    }
-  }
-
   render() {
     return (
       <div>
         {this.state.processing && <Overlay label={this.state.processingMsg} />}
         {this.state.status}
-        <ViewContainer view={'Step' + this.state.stepNum}>
-          <Step
-            viewName="Step1"
-            stepNum={1}
-            label="Which folder are you resuming?"
-          >
+
+        <Stepper activeStep={this.state.stepNum}>
+          <Step>
+            <StepLabel>Select folder</StepLabel>
+          </Step>
+          <Step>
+            <StepLabel>Resume copying</StepLabel>
+          </Step>
+        </Stepper>
+
+        <ViewContainer activeStep={this.state.stepNum}>
+          <Page stepNum={0} label="Which folder are you resuming?">
             <SelectFolder
               srcFolderID={this.state.srcFolderID}
               srcFolderURL={this.state.srcFolderURL}
@@ -129,18 +141,17 @@ export default class Resume extends React.Component {
               processing={this.processing}
               pickerBuilder={this.props.pickerBuilder}
             />
-          </Step>
+          </Page>
 
-          <Step label="Resume the copy" stepNum={2} viewName="Step2">
+          <Page stepNum={1} label="Resume the copy">
+            <FlatButton label="Start over" onClick={this.resetForm} />
             <RaisedButton
               label="Resume copying"
               primary={true}
               onClick={this.handleSubmit}
             />
-          </Step>
+          </Page>
         </ViewContainer>
-
-        <RaisedButton onClick={this.nextView} label="Next" />
 
         {/* show sample folder URL in test mode */}
         {process.env.NODE_ENV !== 'production' && (

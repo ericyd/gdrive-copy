@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 export default function ViewContainer(props) {
   const children = React.Children.map(props.children, function(child) {
-    if (props.view === child.props.viewName) {
+    if (props.activeStep === child.props.stepNum) {
       return React.cloneElement(child);
     }
   });
@@ -13,5 +13,5 @@ export default function ViewContainer(props) {
 }
 
 ViewContainer.propTypes = {
-  view: PropTypes.string
+  activeStep: PropTypes.number
 };
