@@ -9,6 +9,7 @@ import Resume from './views/Resume';
 import Pause from './views/Pause';
 import About from './views/About';
 import FAQ from './views/FAQ';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 export default class App extends React.Component {
   constructor() {
@@ -43,22 +44,27 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        {/* Show "test mode" if not in development */}
-        {process.env.NODE_ENV !== 'production' && (
-          <div className="test-mode-banner">TEST MODE</div>
-        )}
-        <Nav handleViewChange={this.handleViewChange} view={this.state.view} />
-        <div className="container">
-          <ViewContainer view={this.state.view}>
-            <About viewName="About" />
-            <Start viewName="Start" pickerBuilder={this.pickerBuilder} />
-            <Resume viewName="Resume" pickerBuilder={this.pickerBuilder} />
-            <Pause viewName="Pause" />
-            <FAQ viewName="FAQ" />
-          </ViewContainer>
+      <MuiThemeProvider>
+        <div className="App">
+          {/* Show "test mode" if not in development */}
+          {process.env.NODE_ENV !== 'production' && (
+            <div className="test-mode-banner">TEST MODE</div>
+          )}
+          <Nav
+            handleViewChange={this.handleViewChange}
+            view={this.state.view}
+          />
+          <div className="container">
+            <ViewContainer view={this.state.view}>
+              <About viewName="About" />
+              <Start viewName="Start" pickerBuilder={this.pickerBuilder} />
+              <Resume viewName="Resume" pickerBuilder={this.pickerBuilder} />
+              <Pause viewName="Pause" />
+              <FAQ viewName="FAQ" />
+            </ViewContainer>
+          </div>
         </div>
-      </div>
+      </MuiThemeProvider>
     );
   }
 }

@@ -1,8 +1,10 @@
 'use strict';
 
 import React from 'react';
-import TextInput from './TextInput';
-import Button from './Button';
+// import TextInput from './TextInput';
+import TextField from 'material-ui/TextField';
+// import Button from './Button';
+import RaisedButton from 'material-ui/RaisedButton';
 import Step from './Step';
 import parseURL from '../util/parseURL';
 import { showPicker } from '../util/picker';
@@ -11,7 +13,7 @@ export default class SelectFolder extends React.Component {
   constructor() {
     super();
     this.state = {
-      srcFolderURL: ''
+      value: ''
     };
     this.launchPicker = this.launchPicker.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
@@ -26,8 +28,12 @@ export default class SelectFolder extends React.Component {
   // todo: should this be removed to only support pasting?
   handleChange(e) {
     this.setState({
-      srcFolderURL: e.target.value
+      value: e.target.value
     });
+    // handle paste event
+    if (e.clipboardData && e.clipboardData.get) {
+      this.handlePaste(e);
+    }
   }
 
   /**
@@ -74,21 +80,19 @@ export default class SelectFolder extends React.Component {
   render() {
     return (
       <div>
-        <TextInput
+        <TextField
+          floatingLabelText="Paste Folder URL"
           key="folderName"
           id="folderName"
           name="folderName"
-          label="Folder URL"
-          handlePaste={this.handlePaste}
-          handleChange={this.handleChange}
-          placeholder="Paste Folder URL"
-          value={this.state.srcFolderURL}
+          onChange={this.handleChange}
+          value={this.state.value}
         />
         <br />or<br />
-        <Button
-          text="Select folder"
-          className="btn--small"
-          handleClick={this.launchPicker}
+        <RaisedButton
+          label="Primary"
+          primary={true}
+          onClick={this.launchPicker}
         />
       </div>
     );
