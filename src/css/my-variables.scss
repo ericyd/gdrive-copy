@@ -1,5 +1,4 @@
 /* Variables */
-@import '../../node_modules/cutestrap/dist/scss/variables/_colors';
 
 //== Layout
 $container-width: 700px;
@@ -14,6 +13,14 @@ $primary--lighter: lighten($primary, 10%);
 $primary--lightest: lighten($primary, 20%);
 $primary--darker: darken($primary, 10%);
 $primary--darkest: darken($primary, 20%);
+
+// credit: https://github.com/tylerchilds/cutestrap/blob/master/src/sass/variables/_colors.scss
+$gray1: #3c3c3d !default;
+$gray2: #5a5a5b !default;
+$gray3: #7d7d7e !default;
+$gray4: #cdcdce !default;
+$gray5: #dededf !default;
+$gray6: #efeff0 !default;
 
 $alert--success--base: #a1d490;
 $alert--success--background: lighten($alert--success--base, 20%);
