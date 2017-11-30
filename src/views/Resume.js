@@ -1,9 +1,9 @@
 'use strict';
 
 import React from 'react';
-import Button from '../components/Button';
+// import Button from '../components/Button';
+import RaisedButton from 'material-ui/RaisedButton';
 import SelectFolder from '../components/SelectFolder';
-import TextInput from '../components/TextInput';
 import Step from '../components/Step';
 import ViewContainer from '../components/ViewContainer';
 import Success from '../components/Success';
@@ -132,11 +132,15 @@ export default class Resume extends React.Component {
           </Step>
 
           <Step label="Resume the copy" stepNum={2} viewName="Step2">
-            <Button text="Resume copying" handleClick={this.handleSubmit} />
+            <RaisedButton
+              label="Resume copying"
+              primary={true}
+              onClick={this.handleSubmit}
+            />
           </Step>
         </ViewContainer>
 
-        <Button handleClick={this.nextView} text="Next" />
+        <RaisedButton onClick={this.nextView} label="Next" />
 
         {/* show sample folder URL in test mode */}
         {process.env.NODE_ENV !== 'production' && (

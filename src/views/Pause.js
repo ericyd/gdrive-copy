@@ -1,7 +1,8 @@
 'use strict';
 
 import React, { Component } from 'react';
-import Button from '../components/Button';
+// import Button from '../components/Button';
+import RaisedButton from 'material-ui/RaisedButton';
 import Overlay from '../components/Overlay';
 import Success from '../components/Success';
 import Error from '../components/Error';
@@ -82,9 +83,10 @@ export default class Pause extends Component {
           !this.state.success && (
             <div>
               <h4>Are you sure you want to pause everything?</h4>
-              <Button
-                text="Confirm: Pause copying"
-                handleClick={this.handlePauseBtn}
+              <RaisedButton
+                label="Confirm: Pause copying"
+                primary={true}
+                onClick={this.handlePauseBtn}
               />
             </div>
           )}

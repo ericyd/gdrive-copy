@@ -62,6 +62,16 @@ export default function About() {
         copy" button, then select the copy of your folder.
       </p>
 
+      <h3>Privacy</h3>
+
+      <p>
+        This app does not expose your files in any way. The copying takes place
+        exclusively through Google Drive, meaning that no one except the user
+        running the app will have access to the copied files. The only exception
+        to this is if a user copies sharing permissions, in which case
+        collaborators will be able to see the new files just like before.
+      </p>
+
       <h3>When issues arise...</h3>
 
       <p>

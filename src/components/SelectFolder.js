@@ -90,7 +90,7 @@ export default class SelectFolder extends React.Component {
         />
         <br />or<br />
         <RaisedButton
-          label="Primary"
+          label="Search your Drive"
           primary={true}
           onClick={this.launchPicker}
         />
