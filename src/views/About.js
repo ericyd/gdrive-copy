@@ -5,7 +5,7 @@ import React from 'react';
 export default function About() {
   return (
     <main className="doc">
-      <h3>General info</h3>
+      <h2>About</h2>
 
       <p>
         This app provides the capability to copy a Google Drive folder. It will
@@ -53,7 +53,7 @@ export default function About() {
         to launch your own, private version of the app.
       </p>
 
-      <h3>Getting started</h3>
+      <h2>Getting started</h2>
 
       <p>
         To get started, simply select your folder and choose a new name, then
@@ -62,7 +62,7 @@ export default function About() {
         copy" button, then select the copy of your folder.
       </p>
 
-      <h3>Privacy</h3>
+      <h2>Privacy</h2>
 
       <p>
         This app does not expose your files in any way. The copying takes place
@@ -72,7 +72,7 @@ export default function About() {
         collaborators will be able to see the new files just like before.
       </p>
 
-      <h3>When issues arise...</h3>
+      <h2>When issues arise...</h2>
 
       <p>
         Sometimes this app will get stuck (sorry!). To resume a folder copy that

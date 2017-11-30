@@ -6,6 +6,7 @@ export default function FAQ() {
   // Thanks to https://buttons.github.io/ for the Issues button
   return (
     <main className="doc">
+      <h2>FAQ</h2>
       <a name="top" />
       <ul>
         <li>

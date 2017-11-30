@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import SelectFolder from '../components/SelectFolder';
 import Page from '../components/Page';
 import ViewContainer from '../components/ViewContainer';
+import Panel from '../components/Panel';
 import Success from '../components/Success';
 import Error from '../components/Error';
 import Overlay from '../components/Overlay';
@@ -126,12 +127,13 @@ export default class Resume extends React.Component {
             <StepLabel>Select folder</StepLabel>
           </Step>
           <Step>
-            <StepLabel>Resume copying</StepLabel>
+            <StepLabel>Review and confirm</StepLabel>
           </Step>
         </Stepper>
 
         <ViewContainer activeStep={this.state.stepNum}>
           <Page stepNum={0} label="Which folder are you resuming?">
+            Please select the folder copy, not the original folder.
             <SelectFolder
               srcFolderID={this.state.srcFolderID}
               srcFolderURL={this.state.srcFolderURL}
@@ -143,6 +145,11 @@ export default class Resume extends React.Component {
           </Page>
 
           <Page stepNum={1} label="Resume the copy">
+            <Panel label="Selected folder">
+              <a href={this.state.srcFolderURL} target="_blank">
+                {this.state.srcFolderName}
+              </a>
+            </Panel>
             <FlatButton label="Start over" onClick={this.resetForm} />
             <RaisedButton
               label="Resume copying"

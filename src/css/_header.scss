@@ -1,4 +1,9 @@
 @import 'my-variables';
+
+header {
+  border-bottom: 1px solid #aaa;
+}
+
 .header-container {
   @include flex-wrapper();
   width: $container-width;

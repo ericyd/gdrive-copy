@@ -214,7 +214,7 @@ export default class Start extends React.Component {
             <StepLabel>Choose options</StepLabel>
           </Step>
           <Step>
-            <StepLabel>Review and complete</StepLabel>
+            <StepLabel>Review and confirm</StepLabel>
           </Step>
         </Stepper>
 
