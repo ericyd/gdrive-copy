@@ -13,11 +13,6 @@ body {
   font-family: $font-family;
 }
 
-.relative-wrapper {
-  width: 100%;
-  position: relative;
-}
-
 main {
   // min-height: 100%;
   width: 100%;
@@ -96,21 +91,4 @@ a {
 .folderLookup,
 .selectedFolderInfo {
   display: none;
-}
-
-#too-many-triggers {
-  display: none;
-}
-
-.description {
-  font-size: $fs-smaller;
-  line-height: $lh-smaller;
-}
-
-.tab {
-  display: none;
-
-  &.active {
-    display: block;
-  }
 }

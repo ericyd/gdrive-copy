@@ -3,7 +3,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  width: $container-width * 1.5;
+  width: $container-width;
   max-width: 100%;
   margin: 0 auto;
   padding: 0 0 10px;
@@ -19,26 +19,13 @@
 
   h1 {
     padding: 0.5rem;
-    margin: 0 2rem 0 0;
+    margin: 0 1rem 0 0;
   }
 
   h5 {
     padding: 0;
     margin: 0;
   }
-}
-
-nav {
-  width: 100%;
-  background: $primary;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-container {
-  width: $container-width;
-  max-width: 100%;
-  margin: 0 auto;
 }
 
 #change-account {
@@ -62,8 +49,4 @@ h4 {
 
 .doc h4 {
   padding-top: 2.4em;
-}
-
-.tab-label {
-  color: #383838;
 }

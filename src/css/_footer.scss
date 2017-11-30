@@ -18,10 +18,5 @@ footer {
   // defined in my-variables
   font-size: $fs-smaller;
   line-height: $lh-smaller;
-  border-right: 1px solid darken($gray4, 20%);
-
-  &:last-of-type,
-  &.footer-section--last {
-    border-right: 0;
-  }
+  width: 100% / $number-footer-sections;
 }

@@ -50,7 +50,7 @@ export default function FAQ() {
         <a name="longerThan2Mins" />The copying has been paused longer than 2
         minutes and it isn't complete. What do I do?
       </h4>
-      <div className="description">
+      <div>
         When the app stops, you can use the "Resume" button to restart the
         copying. When selecting the folder to resume, you must select the{' '}
         <b>in-progress</b> folder, <b>not</b> the original.<br />
@@ -64,7 +64,7 @@ export default function FAQ() {
         <a name="copyBetweenDomains" />Can I use this app to copy a folder
         between domains?
       </h4>
-      <div className="description">
+      <div>
         Yes! Follow the steps below:
         <ol>
           <li>Log into the account that owns the folder ("Account 1")</li>
@@ -85,7 +85,7 @@ export default function FAQ() {
       <h4>
         <a name="whenIsItDone" />How do I know when it is done?
       </h4>
-      <div className="description">
+      <div>
         You will know it is complete when the Copy Log says "Complete" in cell
         C2. In addition, the cell will highlight green.
       </div>
@@ -94,7 +94,7 @@ export default function FAQ() {
         <a name="notEverythingCopied" />It didn't copy everything - what do I
         do?
       </h4>
-      <div className="description">
+      <div>
         Typically this is due to server errors encountered while copying. You
         should be able to do one of the following to resolve this situation:
         <ol>
@@ -112,7 +112,7 @@ export default function FAQ() {
         <a name="multipleAccounts" />How do I sign into a different account with
         this app?
       </h4>
-      <div className="description">
+      <div>
         There isn't a handy Account Switcher like you'll find in native Google
         Apps.* However, you can try to use the link at the top of the page which
         should re-direct you and allow you to sign if from a different account.<br
@@ -141,7 +141,7 @@ export default function FAQ() {
         <a name="infiniteLoop" />HELP! The copying is stuck in an infinite loop!
         What do I do?
       </h4>
-      <div className="description">
+      <div>
         Please use the "Pause" function built into the app and{' '}
         <a href="https://github.com/ericyd/gdrive-copy/issues" target="_blank">
           report the bug
@@ -152,7 +152,7 @@ export default function FAQ() {
         <a name="uninstall" />How do I unintall the app and remove all
         permissions?
       </h4>
-      <div className="description">
+      <div>
         To quote{' '}
         <a href="https://webapps.stackexchange.com/questions/30841/how-do-i-remove-permission-from-an-app-that-i-gave-google-oauth-access-to">
           the excellent answer on stackexchange:
@@ -176,7 +176,7 @@ export default function FAQ() {
       <h4>
         <a name="openissue" />How do I report a bug in the app?
       </h4>
-      <div className="description">
+      <div>
         If you have found a bug that is not covered in these FAQs, please open
         an
         <span className="github-button-wrapper">
