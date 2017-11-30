@@ -181,11 +181,11 @@ export default function FAQ() {
         If you have found a bug that is not covered in these FAQs, please open
         an
         <span className="github-button-wrapper">
-          <a
+        <a
             className="github-button"
             href="https://github.com/ericyd/gdrive-copy/issues"
             data-icon="octicon-issue-opened"
-            data-style="mega"
+            data-size="large"
             aria-label="Issue ericyd/gdrive-copy on GitHub"
           >
             Issue
