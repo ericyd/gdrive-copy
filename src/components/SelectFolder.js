@@ -38,8 +38,8 @@ export default class SelectFolder extends React.Component {
   handlePaste(e) {
     const url = e.clipboardData.getData('Text');
     const id = parseURL(url);
+    this.props.processing("Getting folder info");
     if (process.env.NODE_ENV === 'production') {
-      this.props.processing();
       const name = google.script.run
         .withSuccessHandler(folder => {
           this.setState({
@@ -60,13 +60,12 @@ export default class SelectFolder extends React.Component {
       // TEST MODE
       // ======================
       const _this = this;
-      _this.props.processing();
       return setTimeout(function() {
         _this.setState({
           srcFolderURL: url
         });
         return _this.props.handleFolderSelect(url, id, 'test mode folder', id);
-      }, 1500);
+      }, 1000);
     }
   }
 

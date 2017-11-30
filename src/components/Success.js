@@ -9,7 +9,7 @@ export default function Success(props) {
     <Alert label="Success!" className="alert--success">
       {props.children}
       <a 
-        class="github-button" 
+        className="github-button" 
         href="https://github.com/ericyd/gdrive-copy" 
         data-icon="octicon-star" 
         data-size="large" 

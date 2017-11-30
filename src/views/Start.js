@@ -23,7 +23,6 @@ export default class Start extends React.Component {
 
     this.state = {
       stepNum: 0,
-      status: '',
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
@@ -93,7 +92,7 @@ export default class Start extends React.Component {
   processing(msg) {
     this.setState({
       processing: true,
-      processingMsg: msg
+      processingMsg: msg ? msg : ''
     });
   }
 
@@ -116,7 +115,7 @@ export default class Start extends React.Component {
   }
 
   handleSubmit(e) {
-    this.setState({ processing: true });
+    this.processing("Initializing the folder copy");
     const _this = this;
     if (process.env.NODE_ENV === 'production') {
       // count number of triggers
@@ -144,7 +143,7 @@ export default class Start extends React.Component {
         .withFailureHandler(_this.showError)
         .getTriggersQuantity();
     } else {
-      this.setState({ status: 'done!' });
+      return setTimeout(this.showSuccess, 1000);
     }
   }
 
@@ -166,10 +165,10 @@ export default class Start extends React.Component {
     });
   }
 
-  processing() {
+  processing(msg) {
     this.setState({
       processing: true,
-      processingMsg: 'Getting folder info'
+      processingMsg: msg ? msg : ''
     });
   }
 
@@ -188,20 +187,24 @@ export default class Start extends React.Component {
   }
 
   render() {
+    if (this.state.success && !this.state.error) {
+      return (
+        <Success>
+          <b>Copying has started in background</b>
+          <ul>
+              <li>Copying folder "{this.state.srcFolderName}".  You may close this window and the copying will continue in the background.</li>
+              <li>Please check the {this.state.srcFolderURL} for progress updates. This log is located inside the newly created folder.</li>
+              <li>The new folder copy can be found {this.state.destFolderName}.</li>
+              <li>At this time, you can only copy one folder at a time.  Please wait until this copy completes before starting another.</li>
+          </ul>
+        </Success>
+      )
+    }
     return (
       <div>
         {this.state.processing && <Overlay label={this.state.processingMsg} />}
-        {this.state.success &&
-          !this.state.error && (
-            <Success>
-              <span>testing success</span>
-            </Success>
-          )}
-
         {this.state.error &&
           !this.state.success && <Error>{this.state.errorMsg}</Error>}
-
-        {this.state.status}
 
         <Stepper activeStep={this.state.stepNum}>
           <Step>

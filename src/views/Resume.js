@@ -23,7 +23,6 @@ export default class Resume extends React.Component {
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
-      status: '',
       success: false,
       successMsg: '',
       error: false,
@@ -35,6 +34,7 @@ export default class Resume extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.showError = this.showError.bind(this);
+    this.showSuccess = this.showSuccess.bind(this);
     this.processing = this.processing.bind(this);
     this.resetForm = this.resetForm.bind(this);
   }
@@ -60,7 +60,7 @@ export default class Resume extends React.Component {
   processing(msg) {
     this.setState({
       processing: true,
-      processingMsg: msg
+      processingMsg: msg ? msg : ''
     });
   }
 
@@ -78,6 +78,7 @@ export default class Resume extends React.Component {
 
   handleSubmit(e) {
     const _this = this;
+    this.processing("Resuming the folder copy");
     if (process.env.NODE_ENV === 'production') {
       google.script.run
         .withSuccessHandler(function(number) {
@@ -95,7 +96,7 @@ export default class Resume extends React.Component {
         .withFailureHandler(_this.showError)
         .getTriggersQuantity();
     } else {
-      this.setState({ status: 'done!' });
+      return setTimeout(this.showSuccess, 1000);
     }
   }
 
@@ -117,10 +118,24 @@ export default class Resume extends React.Component {
   }
 
   render() {
+    if (this.state.success && !this.state.error) {
+      return (
+        <Success>
+          <b>Copying has resumed</b>
+          <ul>
+              <li>Copying folder "{this.state.srcFolderName}".  You may close this window and the copying will continue in the background.</li>
+              <li>Please check the {this.state.srcFolderURL} for progress updates. This log is located inside the newly created folder.</li>
+              <li>The new folder copy can be found {this.state.destFolderName}.</li>
+              <li>At this time, you can only copy one folder at a time.  Please wait until this copy completes before starting another.</li>
+          </ul>
+        </Success>
+      )
+    }
     return (
       <div>
         {this.state.processing && <Overlay label={this.state.processingMsg} />}
-        {this.state.status}
+        {this.state.error &&
+          !this.state.success && <Error>{this.state.errorMsg}</Error>}
 
         <Stepper activeStep={this.state.stepNum}>
           <Step>

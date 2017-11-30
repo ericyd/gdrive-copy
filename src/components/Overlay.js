@@ -30,7 +30,8 @@ export default function Overlay(props) {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           opacity: 1,
-          zIndex: 1001
+          zIndex: 1001,
+          textAlign: "center"
         }}
       >
         <Spinner width="4em" height="4em" />
