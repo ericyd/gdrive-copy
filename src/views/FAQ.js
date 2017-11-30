@@ -47,10 +47,10 @@ export default function FAQ() {
           <a href="#openissue">How do I report a bug in the app?</a>
         </li>
       </ul>
-      <h4>
+      <h3>
         <a name="longerThan2Mins" />The copying has been paused longer than 2
         minutes and it isn't complete. What do I do?
-      </h4>
+      </h3>
       <div>
         When the app stops, you can use the "Resume" button to restart the
         copying. When selecting the folder to resume, you must select the{' '}
@@ -61,10 +61,10 @@ export default function FAQ() {
         copying. Selecting the original folder will return an error.
       </div>
       <a href="#top">Top</a>
-      <h4>
+      <h3>
         <a name="copyBetweenDomains" />Can I use this app to copy a folder
         between domains?
-      </h4>
+      </h3>
       <div>
         Yes! Follow the steps below:
         <ol>
@@ -83,18 +83,18 @@ export default function FAQ() {
         </ol>
       </div>
       <a href="#top">Top</a>
-      <h4>
+      <h3>
         <a name="whenIsItDone" />How do I know when it is done?
-      </h4>
+      </h3>
       <div>
         You will know it is complete when the Copy Log says "Complete" in cell
         C2. In addition, the cell will highlight green.
       </div>
       <a href="#top">Top</a>
-      <h4>
+      <h3>
         <a name="notEverythingCopied" />It didn't copy everything - what do I
         do?
-      </h4>
+      </h3>
       <div>
         Typically this is due to server errors encountered while copying. You
         should be able to do one of the following to resolve this situation:
@@ -109,10 +109,10 @@ export default function FAQ() {
         </ol>
       </div>
       <a href="#top">Top</a>
-      <h4>
+      <h3>
         <a name="multipleAccounts" />How do I sign into a different account with
         this app?
-      </h4>
+      </h3>
       <div>
         There isn't a handy Account Switcher like you'll find in native Google
         Apps.* However, you can try to use the link at the top of the page which
@@ -138,10 +138,10 @@ export default function FAQ() {
         to add an Account Switcher, otherwise I would have done it already :)
       </div>
       <a href="#top">Top</a>
-      <h4>
+      <h3>
         <a name="infiniteLoop" />HELP! The copying is stuck in an infinite loop!
         What do I do?
-      </h4>
+      </h3>
       <div>
         Please use the "Pause" function built into the app and{' '}
         <a href="https://github.com/ericyd/gdrive-copy/issues" target="_blank">
@@ -149,13 +149,13 @@ export default function FAQ() {
         </a>
       </div>
       <a href="#top">Top</a>
-      <h4>
+      <h3>
         <a name="uninstall" />How do I unintall the app and remove all
         permissions?
-      </h4>
+      </h3>
       <div>
         To quote{' '}
-        <a href="https://webapps.stackexchange.com/questions/30841/how-do-i-remove-permission-from-an-app-that-i-gave-google-oauth-access-to">
+        <a href="https://webapps.stackexchange.com/a/30849">
           the excellent answer on stackexchange:
         </a>
         <ol>
@@ -174,9 +174,9 @@ export default function FAQ() {
         </ol>
       </div>
       <a href="#top">Top</a>
-      <h4>
+      <h3>
         <a name="openissue" />How do I report a bug in the app?
-      </h4>
+      </h3>
       <div>
         If you have found a bug that is not covered in these FAQs, please open
         an
