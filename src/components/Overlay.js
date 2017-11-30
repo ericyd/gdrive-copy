@@ -33,7 +33,8 @@ export default function Overlay(props) {
           zIndex: 1001
         }}
       >
-        {props.label} <Spinner width="4em" height="4em" />
+        <Spinner width="4em" height="4em" />
+        <div>{props.label}</div>
       </div>
     </div>
   );

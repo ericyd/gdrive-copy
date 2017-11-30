@@ -5,7 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SelectFolder from '../components/SelectFolder';
 import TextInput from '../components/TextInput';
 import QuestionTooltip from '../components/icons/QuestionTooltip';
-import Checkbox from '../components/Checkbox';
+import Checkbox from 'material-ui/Checkbox';
 import Page from '../components/Page';
 import ViewContainer from '../components/ViewContainer';
 import Success from '../components/Success';
@@ -245,26 +245,26 @@ export default class Start extends React.Component {
               placeholder="Copy name"
               value={this.state.destFolderName}
             />
-            <RaisedButton handleClick={this.nextView} label="Next" />
+            <RaisedButton onClick={this.nextView} label="Next" />
           </Page>
 
           <Page label="Choose copying options" stepNum={2}>
             {this.copyOptions.map(option => {
               return (
-                <Checkbox
-                  name={option.name}
-                  value={option.value}
-                  id={option.id}
-                  key={option.id}
-                  label={option.label}
-                  isChecked={this.state[option.id]}
-                  handleChange={this.handleSelectOption}
-                >
+                <div className="flex-wrapper">
+                  <Checkbox
+                    label={option.label}
+                    checked={this.state[option.id]}
+                    onCheck={this.handleSelectOption}
+                    id={option.id}
+                    key={option.id}
+                    style={{ width: '18em' }}
+                  />
                   <QuestionTooltip tooltip={option.tooltip} />
-                </Checkbox>
+                </div>
               );
             })}
-            <RaisedButton handleClick={this.nextView} label="Next" />
+            <RaisedButton onClick={this.nextView} label="Next" />
           </Page>
 
           <Page label="Review and start copying" stepNum={3}>
@@ -288,11 +288,11 @@ export default class Start extends React.Component {
               </div>
             </Panel>
 
-            <RaisedButton label="Go back" handleClick={this.resetForm} />
+            <RaisedButton label="Go back" onClick={this.resetForm} />
             <RaisedButton
               label="Copy Folder"
               primary={true}
-              handleClick={this.handleSubmit}
+              onClick={this.handleSubmit}
             />
           </Page>
         </ViewContainer>

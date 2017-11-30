@@ -33,7 +33,6 @@ export default class Resume extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
-    this.nextView = this.nextView.bind(this);
     this.showError = this.showError.bind(this);
     this.processing = this.processing.bind(this);
     this.resetForm = this.resetForm.bind(this);

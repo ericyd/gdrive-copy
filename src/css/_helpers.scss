@@ -9,3 +9,9 @@
   transform: 'rotate(270deg)';
   background: red;
 }
+
+.flex-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}

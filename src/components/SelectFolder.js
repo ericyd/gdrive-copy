@@ -65,7 +65,7 @@ export default class SelectFolder extends React.Component {
         _this.setState({
           srcFolderURL: url
         });
-        return _this.props.handleFolderSelect(url, id, name, id);
+        return _this.props.handleFolderSelect(url, id, 'test mode folder', id);
       }, 1500);
     }
   }
