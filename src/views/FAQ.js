@@ -128,7 +128,7 @@ export default function FAQ() {
             className="github-button"
             href="https://github.com/ericyd/gdrive-copy/issues"
             data-icon="octicon-issue-opened"
-            data-style="mega"
+            data-size="large"
             aria-label="Issue ericyd/gdrive-copy on GitHub"
           >
             Issue

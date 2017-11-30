@@ -1,7 +1,6 @@
 'use strict';
 
 import React, { Component } from 'react';
-// import Button from '../components/Button';
 import RaisedButton from 'material-ui/RaisedButton';
 import Overlay from '../components/Overlay';
 import Success from '../components/Success';

@@ -4,7 +4,6 @@ import React from 'react';
 import SelectFolder from '../components/SelectFolder';
 import ViewContainer from '../components/ViewContainer';
 import Page from '../components/Page';
-import QuestionTooltip from '../components/icons/QuestionTooltip';
 import Success from '../components/Success';
 import Error from '../components/Error';
 import Panel from '../components/Panel';
@@ -14,6 +13,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
+import { List, ListItem } from 'material-ui/List';
 
 export default class Start extends React.Component {
   constructor() {
@@ -47,9 +47,9 @@ export default class Start extends React.Component {
         name: 'copyPermissions',
         value: '1',
         id: 'copyPermissions',
-        label: 'Copy permissions to new folder',
+        label: 'Copy permissions',
         tooltip:
-          "Check this box if you want the documents in the folder copy to be editable/viewable by the same people as the originals. Owners of originals will become editors of the copies. Copying takes much longer if 'Yes' is selected."
+          "Sharing settings from the original folder and files will be copied"
       },
       {
         name: 'copyToRoot',
@@ -57,7 +57,7 @@ export default class Start extends React.Component {
         id: 'copyToRoot',
         label: 'Copy to root of My Drive',
         tooltip:
-          'Check this box if you would like the copy in the top of your Google Drive. By default, it will copy to the same location as the original folder.'
+          'By default, it will copy to the same location as the original folder'
       }
     ];
 
@@ -255,21 +255,22 @@ export default class Start extends React.Component {
           </Page>
 
           <Page label="Choose copying options" stepNum={2}>
-            {this.copyOptions.map(option => {
-              return (
-                <div className="flex-wrapper">
-                  <Checkbox
-                    label={option.label}
-                    checked={this.state[option.id]}
-                    onCheck={this.handleSelectOption}
-                    id={option.id}
-                    key={option.id}
-                    style={{ width: '18em' }}
-                  />
-                  <QuestionTooltip tooltip={option.tooltip} />
-                </div>
-              );
-            })}
+            <List>
+              {this.copyOptions.map(option => {
+                return (
+                  <ListItem leftCheckbox={
+                    <Checkbox
+                      checked={this.state[option.id]}
+                      onCheck={this.handleSelectOption}
+                      id={option.id}
+                      key={option.id}
+                    />}
+                    primaryText={option.label}
+                    secondaryText={option.tooltip}>
+                  </ListItem>
+                );
+              })}
+            </List>
             <RaisedButton onClick={this.nextView} primary={true} label="Next" />
           </Page>
 
