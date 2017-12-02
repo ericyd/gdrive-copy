@@ -120,30 +120,18 @@ export default class Start extends React.Component {
     this.processing('Initializing the folder copy');
     const _this = this;
     if (process.env.NODE_ENV === 'production') {
-      // count number of triggers
       google.script.run
-        .withSuccessHandler(function(number) {
-          // prompt user to wait or delete existing triggers
-          if (number > 9) {
-            _this.showError('Too many triggers');
-          } else {
-            // if not too many triggers, initialize script
-            google.script.run
-              .withSuccessHandler(_this.showSuccess)
-              .withFailureHandler(_this.showError)
-              .initialize({
-                srcFolderID: this.state.srcFolderID,
-                srcFolderName: this.state.srcFolderName,
-                srcFolderURL: this.state.srcFolderURL,
-                srcParentID: this.state.srcParentID,
-                destFolderName: this.state.destFolderName,
-                copyPermissions: this.state.copyPermissions,
-                copyToRoot: this.state.copyToRoot
-              });
-          }
-        })
+        .withSuccessHandler(_this.showSuccess)
         .withFailureHandler(_this.showError)
-        .getTriggersQuantity();
+        .initialize({
+          srcFolderID: this.state.srcFolderID,
+          srcFolderName: this.state.srcFolderName,
+          srcFolderURL: this.state.srcFolderURL,
+          srcParentID: this.state.srcParentID,
+          destFolderName: this.state.destFolderName,
+          copyPermissions: this.state.copyPermissions,
+          copyToRoot: this.state.copyToRoot
+        });
     } else {
       if (window.location.search.indexOf('testmode') !== -1) {
         return setTimeout(

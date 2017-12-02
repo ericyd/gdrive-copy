@@ -81,21 +81,11 @@ export default class Resume extends React.Component {
     const _this = this;
     this.processing('Resuming the folder copy');
     if (process.env.NODE_ENV === 'production') {
+      // if not too many triggers, initialize script
       google.script.run
-        .withSuccessHandler(function(number) {
-          // prompt user to wait or delete existing triggers
-          if (number > 9) {
-            _this.showError('Too many triggers');
-          } else {
-            // if not too many triggers, initialize script
-            google.script.run
-              .withSuccessHandler(_this.showSuccess)
-              .withFailureHandler(_this.showError)
-              .resume(_this.state);
-          }
-        })
+        .withSuccessHandler(_this.showSuccess)
         .withFailureHandler(_this.showError)
-        .getTriggersQuantity();
+        .resume(_this.state);
     } else {
       if (window.location.search.indexOf('testmode') !== -1) {
         return setTimeout(
