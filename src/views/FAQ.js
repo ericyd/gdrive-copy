@@ -46,6 +46,9 @@ export default function FAQ() {
         <li>
           <a href="#openissue">How do I report a bug in the app?</a>
         </li>
+        <li>
+          <a href="#teamdrives">Does this app support Team Drives?</a>
+        </li>
       </ul>
       <h3>
         <a name="longerThan2Mins" />The copying has been paused longer than 2
@@ -192,6 +195,12 @@ export default function FAQ() {
         </a>{' '}
         on Github.
       </div>
+      <a href="#top">Top</a>
+
+      <h3>
+        <a href="#teamdrives" />Does this app support Team Drives?
+      </h3>
+      <div>No.</div>
       <a href="#top">Top</a>
     </main>
   );
