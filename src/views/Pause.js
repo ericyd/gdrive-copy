@@ -85,17 +85,14 @@ export default class Pause extends Component {
           !this.state.success && <Error>{this.state.errorMsg}</Error>}
 
         {/* Default */}
-        {!this.state.error &&
-          !this.state.success && (
-            <div>
-              <h2>Are you sure you want to pause everything?</h2>
-              <RaisedButton
-                label="Confirm: Pause copying"
-                primary={true}
-                onClick={this.handlePauseBtn}
-              />
-            </div>
-          )}
+        <div>
+          <h2>Are you sure you want to pause everything?</h2>
+          <RaisedButton
+            label="Confirm: Pause copying"
+            primary={true}
+            onClick={this.handlePauseBtn}
+          />
+        </div>
       </div>
     );
   }

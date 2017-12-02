@@ -181,7 +181,11 @@ export default class Resume extends React.Component {
                 {this.state.srcFolderName}
               </a>
             </Panel>
-            <FlatButton label="Start over" onClick={this.resetForm} />
+            <FlatButton
+              label="Start over"
+              onClick={this.resetForm}
+              style={{ marginRight: '1em' }}
+            />
             <RaisedButton
               label="Resume copying"
               primary={true}

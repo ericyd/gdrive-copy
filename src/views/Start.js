@@ -273,7 +273,11 @@ export default class Start extends React.Component {
               value={this.state.destFolderName}
             />
             <div>
-              <FlatButton label="Go back" onClick={this.resetForm} />
+              <FlatButton
+                label="Go back"
+                onClick={this.resetForm}
+                style={{ marginRight: '1em' }}
+              />
               <RaisedButton
                 onClick={this.nextView}
                 primary={true}
@@ -301,7 +305,11 @@ export default class Start extends React.Component {
                 );
               })}
             </List>
-            <FlatButton label="Go back" onClick={this.prevView} />
+            <FlatButton
+              label="Go back"
+              onClick={this.prevView}
+              style={{ marginRight: '1em' }}
+            />
             <RaisedButton onClick={this.nextView} primary={true} label="Next" />
           </Page>
 
@@ -326,7 +334,11 @@ export default class Start extends React.Component {
               </div>
             </Panel>
 
-            <FlatButton label="Start over" onClick={this.resetForm} />
+            <FlatButton
+              label="Start over"
+              onClick={this.resetForm}
+              style={{ marginRight: '1em' }}
+            />
             <RaisedButton
               label="Copy Folder"
               primary={true}
