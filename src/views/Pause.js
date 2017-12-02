@@ -12,6 +12,7 @@ export default class Pause extends Component {
 
     this.state = {
       success: false,
+      successMsg: '',
       error: false,
       errorMsg: '',
       processing: false,
@@ -36,6 +37,7 @@ export default class Pause extends Component {
     this.setState({
       error: false,
       success: true,
+      successMsg: '',
       processing: false
     });
   }
@@ -51,27 +53,32 @@ export default class Pause extends Component {
         .withErrorHandler(_this.showError)
         .setStopFlag();
     } else {
-      setTimeout(_this.showSuccess, 1500);
+      if (window.location.search.indexOf('testmode') !== 0) {
+        return setTimeout(
+          () => _this.showError('This is a testmode error'),
+          1000
+        );
+      }
+      return setTimeout(() => _this.showSuccess('Copying has paused'), 1000);
     }
   }
 
   render() {
+    if (this.state.success && !this.state.error) {
+      return (
+        <Success msg={this.state.successMsg}>
+          <p>Your folders should no longer be copying.</p>
+          <p>
+            Feel free to use the "Resume" feature if you would like to restart
+            the copy
+          </p>
+        </Success>
+      );
+    }
     return (
       <div>
         {/* Processing */}
         {this.state.processing && <Overlay label={this.state.processingMsg} />}
-
-        {/* Success */}
-        {this.state.success &&
-          !this.state.error && (
-            <Success>
-              <p>Your folders should no longer be copying.</p>
-              <p>
-                Feel free to use the "Resume" feature if you would like to
-                restart the copy
-              </p>
-            </Success>
-          )}
 
         {/* Error(s) */}
         {this.state.error &&

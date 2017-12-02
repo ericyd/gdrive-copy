@@ -48,7 +48,7 @@ export default class Start extends React.Component {
         id: 'copyPermissions',
         label: 'Copy permissions',
         tooltip:
-          "Sharing settings from the original folder and files will be copied"
+          'Sharing settings from the original folder and files will be copied'
       },
       {
         name: 'copyToRoot',
@@ -63,8 +63,9 @@ export default class Start extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
-    this.handleSelectOption = this.handleSelectOption.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
     this.nextView = this.nextView.bind(this);
+    this.prevView = this.prevView.bind(this);
     this.showError = this.showError.bind(this);
     this.showSuccess = this.showSuccess.bind(this);
     this.resetForm = this.resetForm.bind(this);
@@ -108,14 +109,14 @@ export default class Start extends React.Component {
     });
   }
 
-  handleSelectOption(e) {
+  handleCheck(e) {
     const settings = {};
     settings[e.target.id] = e.target.checked;
     this.setState(settings);
   }
 
   handleSubmit(e) {
-    this.processing("Initializing the folder copy");
+    this.processing('Initializing the folder copy');
     const _this = this;
     if (process.env.NODE_ENV === 'production') {
       // count number of triggers
@@ -143,7 +144,16 @@ export default class Start extends React.Component {
         .withFailureHandler(_this.showError)
         .getTriggersQuantity();
     } else {
-      return setTimeout(this.showSuccess, 1000);
+      if (window.location.search.indexOf('testmode') !== 0) {
+        return setTimeout(
+          () => this.showError('This is a testmode error'),
+          1000
+        );
+      }
+      return setTimeout(
+        () => this.showSuccess('Copying has started in background'),
+        1000
+      );
     }
   }
 
@@ -186,19 +196,33 @@ export default class Start extends React.Component {
     }
   }
 
+  prevView() {
+    this.setState({ stepNum: this.state.stepNum - 1 });
+  }
+
   render() {
     if (this.state.success && !this.state.error) {
       return (
-        <Success>
-          <b>Copying has started in background</b>
+        <Success msg={this.state.successMsg}>
           <ul>
-              <li>Copying folder "{this.state.srcFolderName}".  You may close this window and the copying will continue in the background.</li>
-              <li>Please check the {this.state.srcFolderURL} for progress updates. This log is located inside the newly created folder.</li>
-              <li>The new folder copy can be found {this.state.destFolderName}.</li>
-              <li>At this time, you can only copy one folder at a time.  Please wait until this copy completes before starting another.</li>
+            <li>
+              Copying folder "{this.state.srcFolderName}". You may close this
+              window and the copying will continue in the background.
+            </li>
+            <li>
+              Please check the {this.state.srcFolderURL} for progress updates.
+              This log is located inside the newly created folder.
+            </li>
+            <li>
+              The new folder copy can be found {this.state.destFolderName}.
+            </li>
+            <li>
+              At this time, you can only copy one folder at a time. Please wait
+              until this copy completes before starting another.
+            </li>
           </ul>
         </Success>
-      )
+      );
     }
     return (
       <div>
@@ -249,6 +273,7 @@ export default class Start extends React.Component {
               value={this.state.destFolderName}
             />
             <div>
+              <FlatButton label="Go back" onClick={this.resetForm} />
               <RaisedButton
                 onClick={this.nextView}
                 primary={true}
@@ -261,19 +286,22 @@ export default class Start extends React.Component {
             <List>
               {this.copyOptions.map(option => {
                 return (
-                  <ListItem leftCheckbox={
-                    <Checkbox
-                      checked={this.state[option.id]}
-                      onCheck={this.handleSelectOption}
-                      id={option.id}
-                      key={option.id}
-                    />}
+                  <ListItem
+                    leftCheckbox={
+                      <Checkbox
+                        checked={this.state[option.id]}
+                        onCheck={this.handleCheck}
+                        id={option.id}
+                        key={option.id}
+                      />
+                    }
                     primaryText={option.label}
-                    secondaryText={option.tooltip}>
-                  </ListItem>
+                    secondaryText={option.tooltip}
+                  />
                 );
               })}
             </List>
+            <FlatButton label="Go back" onClick={this.prevView} />
             <RaisedButton onClick={this.nextView} primary={true} label="Next" />
           </Page>
 

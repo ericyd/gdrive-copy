@@ -8,7 +8,7 @@ import Warning from './icons/Warning';
 export default function Error(props) {
   return (
     <Alert
-      label="Error"
+      label="Oh no! Something went wrong"
       className="alert--error"
       icon={<Warning width="1em" height="1em" />}
     >

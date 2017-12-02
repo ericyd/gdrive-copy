@@ -8,7 +8,7 @@ import Checkmark from './icons/Checkmark';
 export default function Success(props) {
   return (
     <Alert
-      label="Success!"
+      label={'Success! ' + props.msg}
       className="alert--success"
       icon={<Checkmark width="1em" height="1em" />}
     >
