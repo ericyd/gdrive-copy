@@ -9,6 +9,7 @@ export default function Spinner(props) {
         width={props.width}
         height={props.height}
         viewBox="0 0 100 100"
+        aria-hidden="true"
       >
         {/* Major arc */}
         <path

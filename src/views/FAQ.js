@@ -1,9 +1,9 @@
 'use strict';
 
 import React from 'react';
+import Warning from '../components/icons/Warning';
 
 export default function FAQ() {
-  // Thanks to https://buttons.github.io/ for the Issues button
   return (
     <main className="doc">
       <h2>FAQ</h2>
@@ -122,18 +122,15 @@ export default function FAQ() {
         If that fails, I would recommend signing in from another browser, or
         opening an incognito/private window and accessing the app that way.
         <br />
-        <br />*If you think this is a good feature, please feel free to open an
-        <span className="github-button-wrapper">
-          <a
-            className="github-button"
-            href="https://github.com/ericyd/gdrive-copy/issues"
-            data-icon="octicon-issue-opened"
-            data-size="large"
-            aria-label="Issue ericyd/gdrive-copy on GitHub"
-          >
-            Issue
-          </a>
-        </span>{' '}
+        <br />*If you think this is a good feature, please feel free to open an{' '}
+        <a
+          className="github-button"
+          href="https://github.com/ericyd/gdrive-copy/issues"
+          aria-label="Issue ericyd/gdrive-copy on GitHub"
+          target="_blank"
+        >
+          <Warning width="1em" height="1em" /> Issue
+        </a>{' '}
         on Github., or better yet, contribute to the repo! 'Cuz I don't know how
         to add an Account Switcher, otherwise I would have done it already :)
       </div>
@@ -143,10 +140,15 @@ export default function FAQ() {
         What do I do?
       </h3>
       <div>
-        Please use the "Pause" function built into the app and{' '}
-        <a href="https://github.com/ericyd/gdrive-copy/issues" target="_blank">
-          report the bug
-        </a>
+        Please use the "Pause" function built into the app and open an{' '}
+        <a
+          className="github-button"
+          href="https://github.com/ericyd/gdrive-copy/issues"
+          aria-label="Issue ericyd/gdrive-copy on GitHub"
+          target="_blank"
+        >
+          <Warning width="1em" height="1em" /> Issue
+        </a>{' '}
       </div>
       <a href="#top">Top</a>
       <h3>
@@ -180,17 +182,14 @@ export default function FAQ() {
       <div>
         If you have found a bug that is not covered in these FAQs, please open
         an
-        <span className="github-button-wrapper">
         <a
-            className="github-button"
-            href="https://github.com/ericyd/gdrive-copy/issues"
-            data-icon="octicon-issue-opened"
-            data-size="large"
-            aria-label="Issue ericyd/gdrive-copy on GitHub"
-          >
-            Issue
-          </a>
-        </span>{' '}
+          className="github-button"
+          href="https://github.com/ericyd/gdrive-copy/issues"
+          aria-label="Issue ericyd/gdrive-copy on GitHub"
+          target="_blank"
+        >
+          <Warning width="1em" height="1em" /> Issue
+        </a>{' '}
         on Github.
       </div>
       <a href="#top">Top</a>

@@ -20,7 +20,7 @@
   background: $alert--success--background;
   color: $alert--success--text;
 
-  svg {
+  h3 svg {
     fill: $alert--success--text;
     margin-right: 0.5em;
     position: relative;
@@ -32,7 +32,7 @@
   background: $alert--error--background;
   color: $alert--error--text;
 
-  svg {
+  h3 svg {
     fill: $alert--error--text;
     margin-right: 0.5em;
     position: relative;
@@ -44,7 +44,7 @@
   background: $alert--neutral--background;
   color: $alert--neutral--text;
 
-  svg {
+  h3 svg {
     fill: $alert--neutral--text;
     margin-right: 0.5em;
     position: relative;

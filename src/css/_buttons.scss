@@ -1,6 +1,21 @@
 @import 'my-variables';
 
-.github-button-wrapper {
-  position: relative;
-  top: 10px;
+.github-button {
+  display: inline-block;
+  border: 1px solid $alert--neutral--text;
+  padding: 0.25em;
+  margin: 0 0.25em;
+  text-decoration: none;
+  color: $alert--neutral--text !important;
+  background-color: $gray5;
+  border-radius: 0.1em;
+
+  svg {
+    position: relative;
+    top: 0.1em;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
 }
