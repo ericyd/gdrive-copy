@@ -144,7 +144,8 @@ export default class Start extends React.Component {
         .withFailureHandler(_this.showError)
         .getTriggersQuantity();
     } else {
-      if (window.location.search.indexOf('testmode') !== 0) {
+      console.log(window.location.search);
+      if (window.location.search.indexOf('testmode') !== -1) {
         return setTimeout(
           () => this.showError('This is a testmode error'),
           1000

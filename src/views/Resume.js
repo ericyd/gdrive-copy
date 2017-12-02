@@ -96,7 +96,7 @@ export default class Resume extends React.Component {
         .withFailureHandler(_this.showError)
         .getTriggersQuantity();
     } else {
-      if (window.location.search.indexOf('testmode') !== 0) {
+      if (window.location.search.indexOf('testmode') !== -1) {
         return setTimeout(
           () => this.showError('This is a testmode error'),
           1000

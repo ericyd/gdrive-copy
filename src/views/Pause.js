@@ -53,7 +53,7 @@ export default class Pause extends Component {
         .withErrorHandler(_this.showError)
         .setStopFlag();
     } else {
-      if (window.location.search.indexOf('testmode') !== 0) {
+      if (window.location.search.indexOf('testmode') !== -1) {
         return setTimeout(
           () => _this.showError('This is a testmode error'),
           1000
