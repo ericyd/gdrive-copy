@@ -31,6 +31,10 @@ export default class App extends React.Component {
     const tabLabelStyle = { color: '#383838' };
     return (
       <MuiThemeProvider>
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="test-mode-banner">TEST MODE</div>
+        )}
+        <AccountSwitcher />
         <Tabs
           // this is what keeps everything centered
           // if I want the bar to span and the contents to be contained, I can use the
