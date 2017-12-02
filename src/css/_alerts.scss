@@ -19,17 +19,35 @@
 .alert--success {
   background: $alert--success--background;
   color: $alert--success--text;
-  // border: 1px solid $alert--success--border;
+
+  svg {
+    fill: $alert--success--text;
+    margin-right: 0.5em;
+    position: relative;
+    top: 0.15em;
+  }
 }
 
 .alert--error {
   background: $alert--error--background;
   color: $alert--error--text;
-  // border: 1px solid $alert--error--border;
+
+  svg {
+    fill: $alert--error--text;
+    margin-right: 0.5em;
+    position: relative;
+    top: 0.15em;
+  }
 }
 
 .alert--neutral {
   background: $alert--neutral--background;
   color: $alert--neutral--text;
-  // border: 1px solid $alert--neutral--border;
+
+  svg {
+    fill: $alert--neutral--text;
+    margin-right: 0.5em;
+    position: relative;
+    top: 0.15em;
+  }
 }

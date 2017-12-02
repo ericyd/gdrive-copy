@@ -8,7 +8,10 @@ export default function Alert(props) {
   return (
     <Paper zDepth={1}>
       <div className={['alert', props.className].join(' ')}>
-        <h3>{props.label}</h3>
+        <h3>
+          {props.icon}
+          {props.label}
+        </h3>
         {props.children}
       </div>
     </Paper>
