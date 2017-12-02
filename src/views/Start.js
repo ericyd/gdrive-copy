@@ -164,13 +164,6 @@ export default class Start extends React.Component {
     });
   }
 
-  processing(msg) {
-    this.setState({
-      processing: true,
-      processingMsg: msg ? msg : ''
-    });
-  }
-
   handleDestFolderChange(e) {
     this.setState({
       destFolderName: e.target.value
