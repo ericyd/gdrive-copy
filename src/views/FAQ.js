@@ -198,7 +198,7 @@ export default function FAQ() {
       <a href="#top">Top</a>
 
       <h3>
-        <a href="#teamdrives" />Does this app support Team Drives?
+        <a name="teamdrives" />Does this app support Team Drives?
       </h3>
       <div>No.</div>
       <a href="#top">Top</a>
