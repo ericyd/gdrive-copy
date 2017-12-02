@@ -254,7 +254,7 @@ export default class Start extends React.Component {
               handleFolderSelect={this.handleFolderSelect}
               showError={this.showError}
               processing={this.processing}
-              pickerBuilder={this.props.pickerBuilder}
+              picker={this.props.picker}
             />
             {/* show sample folder URL in test mode */}
             {process.env.NODE_ENV !== 'production' && (

@@ -18,7 +18,7 @@ export default class SelectFolder extends React.Component {
   }
 
   launchPicker() {
-    showPicker();
+    this.props.picker.showPicker();
   }
 
   // allow TextInput to update if typing in
@@ -38,14 +38,15 @@ export default class SelectFolder extends React.Component {
   handlePaste(e) {
     const url = e.clipboardData.getData('Text');
     const id = parseURL(url);
-    this.props.processing("Getting folder info");
+    this.props.processing('Getting folder info');
+    const _this = this;
     if (process.env.NODE_ENV === 'production') {
-      const name = google.script.run
+      google.script.run
         .withSuccessHandler(folder => {
-          this.setState({
+          _this.setState({
             srcFolderURL: url
           });
-          this.props.handleFolderSelect(
+          _this.props.handleFolderSelect(
             url,
             id,
             folder.name,
@@ -53,7 +54,7 @@ export default class SelectFolder extends React.Component {
           );
         })
         .withErrorHandler(err => {
-          this.props.showError(err);
+          _this.props.showError(err);
         })
         .getFolder(id);
     } else {

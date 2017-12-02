@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import { getScript, onApiLoad } from './util/picker';
+import { Picker, getScript } from './util/picker';
 import Start from './views/Start';
 import Resume from './views/Resume';
 import Pause from './views/Pause';
@@ -14,6 +14,29 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 export default class App extends React.Component {
   constructor() {
     super();
+
+    /**
+     * A callback function that extracts the chosen document's metadata from the
+     * response object. For details on the response object, see
+     * https://developers.google.com/picker/docs/result
+     *
+     * @param {object} data The response object.
+     */
+    this.pickerCallback = function(data) {
+      var action = data[google.picker.Response.ACTION];
+
+      if (action == google.picker.Action.PICKED) {
+        var doc = data[google.picker.Response.DOCUMENTS][0];
+        // setSelectedFolder({
+        //   srcId: doc[google.picker.Document.ID],
+        //   srcParentId: doc[google.picker.Document.PARENT_ID],
+        //   srcName: doc[google.picker.Document.NAME],
+        //   destName: 'Copy of ' + doc[google.picker.Document.NAME]
+        // });
+      } else if (action == google.picker.Action.CANCEL) {
+        google.script.host.close();
+      }
+    };
   }
 
   /**
@@ -21,10 +44,8 @@ export default class App extends React.Component {
    * Set global reference to picker so it can be passed down to the views
    */
   componentWillMount() {
-    this.pickerBuilder = getScript(
-      'https://apis.google.com/js/api.js',
-      onApiLoad
-    );
+    this.picker = new Picker(this.pickerCallback);
+    getScript('https://apis.google.com/js/api.js', this.picker.onApiLoad);
   }
 
   render() {
@@ -48,11 +69,11 @@ export default class App extends React.Component {
           </Tab>
 
           <Tab label="Start" style={tabLabelStyle}>
-            <Start pickerBuilder={this.pickerBuilder} />
+            <Start picker={this.picker} />
           </Tab>
 
           <Tab label="Resume" style={tabLabelStyle}>
-            <Resume pickerBuilder={this.pickerBuilder} />
+            <Resume picker={this.picker} />
           </Tab>
 
           <Tab label="Pause" style={tabLabelStyle}>

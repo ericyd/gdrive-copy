@@ -174,7 +174,7 @@ export default class Resume extends React.Component {
               handleFolderSelect={this.handleFolderSelect}
               showError={this.showError}
               processing={this.processing}
-              pickerBuilder={this.props.pickerBuilder}
+              picker={this.props.picker}
             />
           </Page>
 
