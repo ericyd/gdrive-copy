@@ -50,7 +50,7 @@ export default class Pause extends Component {
     if (process.env.NODE_ENV === 'production') {
       google.script.run
         .withSuccessHandler(_this.showSuccess)
-        .withErrorHandler(_this.showError)
+        .withFailureHandler(_this.showError)
         .setStopFlag();
     } else {
       if (window.location.search.indexOf('testmode') !== -1) {

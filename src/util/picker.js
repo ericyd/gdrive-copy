@@ -7,6 +7,9 @@ for providing the working backbone of this script
 export class Picker {
   constructor(cb) {
     this.pickerCallback = cb;
+    this.onApiLoad = this.onApiLoad.bind(this);
+    this.createPicker = this.createPicker.bind(this);
+    this.showPicker = this.showPicker.bind(this);
   }
   onApiLoad() {
     var _this = this;
