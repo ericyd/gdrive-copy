@@ -14,14 +14,6 @@ export default function Success(props) {
       icon={<Checkmark width="1em" height="1em" />}
     >
       {props.children}
-      <a
-        className="github-button"
-        href="https://github.com/ericyd/gdrive-copy"
-        aria-label="Star ericyd/gdrive-copy on GitHub"
-        target="_blank"
-      >
-        <Star width="1em" height="1em" /> Star
-      </a>
     </Alert>
   );
 }

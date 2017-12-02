@@ -2,6 +2,7 @@
 
 import React from 'react';
 import SelectFolder from '../components/SelectFolder';
+import Appreciation from '../components/Appreciation';
 import PageChanger from '../components/PageChanger';
 import Page from '../components/Page';
 import Success from '../components/Success';
@@ -144,7 +145,6 @@ export default class Start extends React.Component {
         .withFailureHandler(_this.showError)
         .getTriggersQuantity();
     } else {
-      console.log(window.location.search);
       if (window.location.search.indexOf('testmode') !== -1) {
         return setTimeout(
           () => this.showError('This is a testmode error'),
@@ -204,25 +204,37 @@ export default class Start extends React.Component {
   render() {
     if (this.state.success && !this.state.error) {
       return (
-        <Success msg={this.state.successMsg}>
-          <ul>
-            <li>
-              Copying folder "{this.state.srcFolderName}". You may close this
-              window and the copying will continue in the background.
-            </li>
-            <li>
-              Please check the {this.state.srcFolderURL} for progress updates.
-              This log is located inside the newly created folder.
-            </li>
-            <li>
-              The new folder copy can be found {this.state.destFolderName}.
-            </li>
-            <li>
-              At this time, you can only copy one folder at a time. Please wait
-              until this copy completes before starting another.
-            </li>
-          </ul>
-        </Success>
+        <div>
+          <Success msg={this.state.successMsg}>
+            Things you should know:
+            <ul>
+              <li>
+                You can close this window, copying will continue in background
+              </li>
+              <li>
+                The Copy Log will tell you when copying is complete. This page
+                will <b>not</b> update
+              </li>
+              <li>
+                Original folder:{' '}
+                <a href={this.state.srcFolderURL} target="_blank">
+                  {this.state.srcFolderName}
+                </a>
+              </li>
+              <li>
+                Copy:{' '}
+                <a href={this.state.destFolderURL} target="_blank">
+                  {this.state.destFolderName}
+                </a>
+              </li>
+              <li>
+                Please do not try to start another copy until this one is
+                finished
+              </li>
+            </ul>
+          </Success>
+          <Appreciation />
+        </div>
       );
     }
     return (
