@@ -5,7 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import SelectFolder from '../components/SelectFolder';
 import Page from '../components/Page';
-import ViewContainer from '../components/ViewContainer';
+import PageChanger from '../components/PageChanger';
 import Panel from '../components/Panel';
 import Success from '../components/Success';
 import Error from '../components/Error';
@@ -162,7 +162,7 @@ export default class Resume extends React.Component {
           </Step>
         </Stepper>
 
-        <ViewContainer activeStep={this.state.stepNum}>
+        <PageChanger activeStep={this.state.stepNum}>
           <Page stepNum={0} label="Which folder are you resuming?">
             Please select the folder copy, not the original folder.
             <SelectFolder
@@ -192,7 +192,7 @@ export default class Resume extends React.Component {
               onClick={this.handleSubmit}
             />
           </Page>
-        </ViewContainer>
+        </PageChanger>
 
         {/* show sample folder URL in test mode */}
         {process.env.NODE_ENV !== 'production' && (

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import SelectFolder from '../components/SelectFolder';
-import ViewContainer from '../components/ViewContainer';
+import PageChanger from '../components/PageChanger';
 import Page from '../components/Page';
 import Success from '../components/Success';
 import Error from '../components/Error';
@@ -245,7 +245,7 @@ export default class Start extends React.Component {
           </Step>
         </Stepper>
 
-        <ViewContainer activeStep={this.state.stepNum}>
+        <PageChanger activeStep={this.state.stepNum}>
           <Page stepNum={0} label="Which folder would you like to copy?">
             <SelectFolder
               srcFolderID={this.state.srcFolderID}
@@ -345,7 +345,7 @@ export default class Start extends React.Component {
               onClick={this.handleSubmit}
             />
           </Page>
-        </ViewContainer>
+        </PageChanger>
       </div>
     );
   }
