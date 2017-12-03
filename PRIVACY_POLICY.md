@@ -1,8 +1,5 @@
 # Privacy Policy for Copy Folder
 
-If you require any more information or have any questions about our privacy
-policy, please feel free to contact us by email at Privacy.
-
 At
 https://script.google.com/macros/s/AKfycbxbGNGajrxv-HbX2sVY2OTu7yj9VvxlOMOeQblZFuq7rYm7uyo/exec,
 the site hereafter referred to as "Copy Folder", we consider the privacy of our
