@@ -9,9 +9,9 @@ Folder and how we use it.
 
 ## How We Collect and Use Information
 
-We collect the following types of information about you to use the app, but we
-do not permanently store **any** information in any location other than your
-personal Google Drive account.
+We collect your Google username and password to use the app, but we do not
+permanently store **any** information in any location other than your personal
+Google Drive account.
 
 ### Information you provide us directly:
 
