@@ -15,7 +15,7 @@ Google Drive account.
 
 ### Information you provide us directly:
 
-Google authorization will require your usernam and password to access this
+Google authorization will require your username and password to access this
 service. The Copy Folder service does not store this information or interact
 with it directly.
 
@@ -42,15 +42,15 @@ code in any way you see fit.
 
 ## Log Files
 
-Like many other Web sites, Copy Folder makes use of log files. These files
-merely logs visitors to the site - usually a standard procedure for hosting
-companies and a part of hosting services's analytics. The information inside the
-log files includes internet protocol (IP) addresses, browser type, Internet
-Service Provider (ISP), date/time stamp, referring/exit pages, and possibly the
-number of clicks. This information is used to analyze trends, administer the
-site, track user's movement around the site, and gather demographic information.
-IP addresses, and other such information are not linked to any information that
-is personally identifiable.
+Like many other Web sites, Copy Folder may use log files. These files merely
+logs visitors to the site - usually a standard procedure for hosting companies
+and a part of hosting services's analytics. The information inside the log files
+includes internet protocol (IP) addresses, browser type, Internet Service
+Provider (ISP), date/time stamp, referring/exit pages, and possibly the number
+of clicks. This information is used to analyze trends, administer the site,
+track user's movement around the site, and gather demographic information. IP
+addresses, and other such information are not linked to any information that is
+personally identifiable.
 
 ## Cookies and Web Beacons
 
@@ -70,18 +70,6 @@ Copy Folder does not use cookies.
 Currently we do not have any advertising partners. However, the site does
 include some external links. Copy Folder is not responsible for your information
 once you leave our site.
-
-## Third Party Privacy Policies
-
-You should consult the respective privacy policies of these third-party ad
-servers for more detailed information on their practices as well as for
-instructions about how to opt-out of certain practices. Copy Folder's privacy
-policy does not apply to, and we cannot control the activities of, such other
-advertisers or web sites. You may find a comprehensive listing of these privacy
-policies and their links here: Privacy Policy Links. If you wish to disable
-cookies, you may do so through your individual browser options. More detailed
-information about cookie management with specific web browsers can be found at
-the browsers' respective websites. What Are Cookies?
 
 ## Children's Information
 
