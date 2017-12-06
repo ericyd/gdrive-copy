@@ -10,18 +10,11 @@ var svg2png = require('svg2png');
 var fs = require('fs');
 var rename = require('gulp-rename');
 
-// controls minification of JS, CSS, HTML, and building of images with `build`
-var isProd = process.env.NODE_ENV === 'production';
-
 gulp.task('default', function() {
   // Default task
 });
 
-gulp.task('build', ['js', 'html', 'gs', 'css'], function() {
-  if (isProd) {
-    buildImages();
-  }
-});
+gulp.task('build', ['js', 'html', 'gs', 'css-prod', 'img']);
 
 gulp.task('watch', function() {
   var watcher = gulp.watch(['./src/**/*'], ['build']);
@@ -37,42 +30,34 @@ gulp.task('watch-test-site', function() {
   });
 });
 
-gulp.task('generate-test-site', ['build'], function() {
-  return;
-});
+gulp.task('generate-test-site', ['html-test-site', 'css-dev']);
 
 gulp.task('js', function() {
-  if (isProd) {
-    return gulp
-      .src('./dist/bundle.js')
-      .pipe(insert.wrap('<script>', '</script>'))
-      .pipe(rename('js.html'))
-      .pipe(gulp.dest('dist'));
-  }
-  return;
+  return gulp
+    .src('./dist/bundle.js')
+    .pipe(insert.wrap('<script>', '</script>'))
+    .pipe(rename('js.html'))
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('gs', function() {
-  // concatenate
-  if (isProd) {
-    return gulp
-      .src('./lib/**/*.js')
-      .pipe(concat('application.gs'))
-      .pipe(gulp.dest('dist'));
-  }
-  return;
+  return gulp
+    .src('./lib/**/*.js')
+    .pipe(concat('application.gs'))
+    .pipe(gulp.dest('dist'));
 });
 
-gulp.task('css', function() {
-  if (isProd) {
-    return gulp
-      .src('./src/css/main.scss')
-      .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-      .pipe(autoprefixer({ browsers: ['last 10 versions'] }))
-      .pipe(concat('css.html'))
-      .pipe(insert.wrap('<style>', '</style>'))
-      .pipe(gulp.dest('dist'));
-  }
+gulp.task('css-prod', function() {
+  return gulp
+    .src('./src/css/main.scss')
+    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+    .pipe(autoprefixer({ browsers: ['last 10 versions'] }))
+    .pipe(concat('css.html'))
+    .pipe(insert.wrap('<style>', '</style>'))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('css-dev', function() {
   return gulp
     .src('./src/css/main.scss')
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
@@ -83,10 +68,18 @@ gulp.task('css', function() {
 
 gulp.task('html', function() {
   // process html
-
   return gulp
     .src('src/templates/index.html')
-    .pipe(gulpHogan({ isProd: isProd }))
+    .pipe(gulpHogan({ isProd: true }))
+    .pipe(concat('index.html'))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('html-test-site', function() {
+  // process html
+  return gulp
+    .src('src/templates/index.html')
+    .pipe(gulpHogan({ isProd: false }))
     .pipe(concat('index.html'))
     .pipe(gulp.dest('dist'));
 });

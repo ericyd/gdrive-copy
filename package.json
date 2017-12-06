@@ -49,25 +49,22 @@
   },
   "scripts": {
     "watch": "gulp watch",
-    "webpack": "webpack --config ./config/webpack.config.js",
-    "build": "NODE_ENV=production webpack --config ./config/webpack.config.js && NODE_ENV=production gulp build",
-    "test-site": "NODE_ENV=development webpack --config ./config/webpack.config.js && NODE_ENV=development gulp generate-test-site",
-    "gulp-test-site": "NODE_ENV=development gulp generate-test-site",
+    "webpack": "webpack --config ./config/webpack.config.dev.js",
+    "build": "webpack --config ./config/webpack.config.prod.js && gulp build",
+    "test-site":
+      "webpack --config ./config/webpack.config.dev.js && gulp generate-test-site",
+    "gulp-test-site": "gulp generate-test-site",
     "watch-test-site": "webpack && gulp watch-test-site",
     "test": "mocha",
     "prettier": "prettier --write --single-quote",
-    "prettier:all": "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
+    "prettier:all":
+      "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ericyd/gdrive-copy.git"
   },
-  "keywords": [
-    "google",
-    "drive",
-    "copy",
-    "folder"
-  ],
+  "keywords": ["google", "drive", "copy", "folder"],
   "author": "Eric Dauenhauer",
   "license": "MIT",
   "bugs": {
