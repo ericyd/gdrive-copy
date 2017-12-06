@@ -25,6 +25,7 @@ export default class Resume extends React.Component {
       srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
+      destFolderID: '',
       success: false,
       successMsg: '',
       error: false,
@@ -225,7 +226,10 @@ export default class Resume extends React.Component {
 
           <Page stepNum={1} label="Resume the copy">
             <Panel label="Selected folder">
-              <a href={this.state.srcFolderURL} target="_blank">
+              <a
+                href={getDriveFolderURL(this.state.srcFolderID)}
+                target="_blank"
+              >
                 {this.state.srcFolderName}
               </a>
             </Panel>

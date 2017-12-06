@@ -30,6 +30,7 @@ export default class Start extends React.Component {
       srcFolderName: '',
       srcParentID: '',
       destFolderName: '',
+      destFolderID: '',
       // must match IDs of copyOptions objects
       copyPermissions: false,
       copyToRoot: false,
@@ -353,7 +354,10 @@ export default class Start extends React.Component {
 
           <Page label="Review and start copying" stepNum={3}>
             <Panel label="Original folder">
-              <a href={this.state.srcFolderURL} target="_blank">
+              <a
+                href={getDriveFolderURL(this.state.srcFolderID)}
+                target="_blank"
+              >
                 {this.state.srcFolderName}
               </a>
             </Panel>
