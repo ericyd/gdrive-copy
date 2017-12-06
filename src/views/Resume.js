@@ -113,6 +113,8 @@ export default class Resume extends React.Component {
             destFolderID: results.destFolderId
           });
           _this.showSuccess('Copying has resumed');
+          // after initialized, this begins the copy loop
+          google.script.run.copy();
         })
         .withFailureHandler(_this.showError)
         .resume(_this.state);

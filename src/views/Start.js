@@ -151,6 +151,8 @@ export default class Start extends React.Component {
             copyLogID: result.spreadsheetId
           });
           _this.showSuccess('Copying has started in background');
+          // after initialized, this begins the copy loop
+          google.script.run.copy();
         })
         .withFailureHandler(_this.showError)
         .initialize({
