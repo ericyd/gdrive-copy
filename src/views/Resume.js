@@ -129,7 +129,6 @@ export default class Resume extends React.Component {
 
   /**
    * Sets this.state.srcFolderID, srcFolderURL, srcFolderName
-   * @param {string} url
    * @param {string} id
    * @param {string} name
    * @param {string} parentID
