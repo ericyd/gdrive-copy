@@ -4,8 +4,6 @@
 
 .test-mode-banner {
   position: 'absolute';
-  top: '4em';
-  left: '0';
   transform: 'rotate(270deg)';
   background: red;
 }
@@ -16,15 +14,22 @@
 
 .browsehappy {
   position: 'absolute';
-  top: '10em';
-  left: '0';
+  top: 0;
+  left: 0;
+  height: 2em;
   transform: 'rotate(270deg)';
   background: lighten(red, 15%);
   text-align: center;
+  color: #000;
+  font-size: 2rem;
+}
 
-  p {
-    text-align: center;
-    color: #000;
-    font-size: 2rem;
-  }
+.circle-or {
+  display: inline-block;
+  margin: 1em;
+  padding: 0.25em 0.25em 0.25em 0.4em;
+  width: 2em;
+  height: 2em;
+  border-radius: 1em;
+  border: 2px solid #000;
 }

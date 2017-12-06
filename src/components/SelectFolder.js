@@ -80,8 +80,8 @@ export default class SelectFolder extends React.Component {
           onPaste={this.handlePaste}
           value={this.state.value}
           errorText={this.state.errorText}
-        />{' '}
-        or{' '}
+        />
+        <span className="circle-or">or</span>
         <RaisedButton
           label="Search your Drive"
           primary={true}
