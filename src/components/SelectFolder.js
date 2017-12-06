@@ -3,7 +3,7 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import parseURL from '../util/parseURL';
+import { parseURL } from '../util/helpers';
 import { showPicker } from '../util/picker';
 
 export default class SelectFolder extends React.Component {
@@ -46,12 +46,7 @@ export default class SelectFolder extends React.Component {
           _this.setState({
             srcFolderURL: url
           });
-          _this.props.handleFolderSelect(
-            url,
-            id,
-            folder.name,
-            folder.parents[0].id
-          );
+          _this.props.handleFolderSelect(id, folder.name, folder.parents[0].id);
         })
         .withFailureHandler(err => {
           _this.props.showError(err);

@@ -12,6 +12,7 @@ import Error from '../components/Error';
 import Appreciation from '../components/Appreciation';
 import Overlay from '../components/Overlay';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
+import { getDriveFolderURL, getDriveSpreadsheetURL } from '../util/helpers';
 
 export default class Resume extends React.Component {
   constructor() {
@@ -106,7 +107,13 @@ export default class Resume extends React.Component {
     if (process.env.NODE_ENV === 'production') {
       // if not too many triggers, initialize script
       google.script.run
-        .withSuccessHandler(_this.showSuccess)
+        .withSuccessHandler(function(result) {
+          _this.setState({
+            copyLogID: results.spreadsheetId,
+            destFolderID: results.destFolderId
+          });
+          _this.showSuccess('Copying has resumed');
+        })
         .withFailureHandler(_this.showError)
         .resume(_this.state);
     } else {
@@ -125,12 +132,12 @@ export default class Resume extends React.Component {
    * @param {string} url
    * @param {string} id
    * @param {string} name
+   * @param {string} parentID
    */
-  handleFolderSelect(url, id, name, parentID) {
+  handleFolderSelect(id, name, parentID) {
     this.setState({
       processing: false,
       stepNum: this.state.stepNum + 1,
-      srcFolderURL: url,
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID
@@ -148,18 +155,31 @@ export default class Resume extends React.Component {
                 You can close this window, copying will continue in background
               </li>
               <li>
-                The Copy Log will tell you when copying is complete. This page
-                will <b>not</b> update
+                The{' '}
+                <a
+                  href={getDriveSpreadsheetURL(this.state.copyLogID)}
+                  target="_blank"
+                >
+                  Copy Log
+                </a>{' '}
+                will tell you when copying is complete. This page will{' '}
+                <b>not</b> update
               </li>
               <li>
                 Original folder:{' '}
-                <a href={this.state.srcFolderURL} target="_blank">
+                <a
+                  href={getDriveFolderURL(this.state.srcFolderID)}
+                  target="_blank"
+                >
                   {this.state.srcFolderName}
                 </a>
               </li>
               <li>
                 Copy:{' '}
-                <a href={this.state.destFolderURL} target="_blank">
+                <a
+                  href={getDriveFolderURL(this.state.destFolderID)}
+                  target="_blank"
+                >
                   {this.state.destFolderName}
                 </a>
               </li>

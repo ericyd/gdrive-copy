@@ -15,6 +15,7 @@ import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
 import { List, ListItem } from 'material-ui/List';
+import { getDriveFolderURL, getDriveSpreadsheetURL } from '../util/helpers';
 
 export default class Start extends React.Component {
   constructor() {
@@ -144,12 +145,17 @@ export default class Start extends React.Component {
     const _this = this;
     if (process.env.NODE_ENV === 'production') {
       google.script.run
-        .withSuccessHandler(_this.showSuccess)
+        .withSuccessHandler(function(result) {
+          _this.setState({
+            destFolderID: result.destFolderId,
+            copyLogID: result.spreadsheetId
+          });
+          _this.showSuccess('Copying has started in background');
+        })
         .withFailureHandler(_this.showError)
         .initialize({
           srcFolderID: this.state.srcFolderID,
           srcFolderName: this.state.srcFolderName,
-          srcFolderURL: this.state.srcFolderURL,
           srcParentID: this.state.srcParentID,
           destFolderName: this.state.destFolderName,
           copyPermissions: this.state.copyPermissions,
@@ -171,14 +177,13 @@ export default class Start extends React.Component {
 
   /**
    * Sets this.state.srcFolderID, srcFolderURL, srcFolderName
-   * @param {string} url
    * @param {string} id
    * @param {string} name
+   * @param {string} parentID
    */
-  handleFolderSelect(url, id, name, parentID) {
+  handleFolderSelect(id, name, parentID) {
     this.setState({
       processing: false,
-      srcFolderURL: url,
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID,
@@ -216,18 +221,31 @@ export default class Start extends React.Component {
                 You can close this window, copying will continue in background
               </li>
               <li>
-                The Copy Log will tell you when copying is complete. This page
-                will <b>not</b> update
+                The{' '}
+                <a
+                  href={getDriveSpreadsheetURL(this.state.copyLogID)}
+                  target="_blank"
+                >
+                  Copy Log
+                </a>{' '}
+                will tell you when copying is complete. This page will{' '}
+                <b>not</b> update
               </li>
               <li>
                 Original folder:{' '}
-                <a href={this.state.srcFolderURL} target="_blank">
+                <a
+                  href={getDriveFolderURL(this.state.srcFolderID)}
+                  target="_blank"
+                >
                   {this.state.srcFolderName}
                 </a>
               </li>
               <li>
                 Copy:{' '}
-                <a href={this.state.destFolderURL} target="_blank">
+                <a
+                  href={getDriveFolderURL(this.state.destFolderID)}
+                  target="_blank"
+                >
                   {this.state.destFolderName}
                 </a>
               </li>
