@@ -29,11 +29,12 @@ let plugins = [
     mangle: {
       screw_ie8: true
     },
-    beautify: true,
     output: {
       comments: false,
       screw_ie8: true
-    }
+    },
+    // Google Apps Script works better if the code is not on a single line
+    beautify: true
   })
 ];
 
