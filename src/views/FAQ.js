@@ -132,7 +132,7 @@ export default function FAQ() {
           aria-label="Issue ericyd/gdrive-copy on GitHub"
           target="_blank"
         >
-          <Warning width="1em" height="1em" /> Issue
+          <Warning /> Issue
         </a>{' '}
         on Github., or better yet, contribute to the repo! 'Cuz I don't know how
         to add an Account Switcher, otherwise I would have done it already :)
@@ -150,7 +150,7 @@ export default function FAQ() {
           aria-label="Issue ericyd/gdrive-copy on GitHub"
           target="_blank"
         >
-          <Warning width="1em" height="1em" /> Issue
+          <Warning /> Issue
         </a>{' '}
       </div>
       <a href="#top">Top</a>
@@ -191,7 +191,7 @@ export default function FAQ() {
           aria-label="Issue ericyd/gdrive-copy on GitHub"
           target="_blank"
         >
-          <Warning width="1em" height="1em" /> Issue
+          <Warning /> Issue
         </a>{' '}
         on Github.
       </div>

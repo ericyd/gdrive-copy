@@ -10,7 +10,7 @@ export default function Error(props) {
     <Alert
       label="Oh no! Something went wrong"
       className="alert--error"
-      icon={<Warning width="1em" height="1em" />}
+      icon={<Warning />}
     >
       {props.children}
     </Alert>

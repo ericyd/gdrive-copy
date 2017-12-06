@@ -1,16 +1,11 @@
 import React from 'react';
+import Icon from './Icon';
 import './spinner.css';
 
 export default function Spinner(props) {
   return (
     <span>
-      <svg
-        className="spinner"
-        width={props.width}
-        height={props.height}
-        viewBox="0 0 100 100"
-        aria-hidden="true"
-      >
+      <Icon {...props} className="spinner" viewBox="0 0 100 100">
         {/* Major arc */}
         <path
           id="path1"
@@ -30,7 +25,7 @@ export default function Spinner(props) {
           d="M10.123310854875854 25.123310854875854 a47 47 1 0 1 15 -15"
           transform="rotate(35 50 50)"
         />
-      </svg>
+      </Icon>
     </span>
   );
 }

@@ -10,7 +10,8 @@ export default class SelectFolder extends React.Component {
   constructor() {
     super();
     this.state = {
-      value: ''
+      value: '',
+      errorText: ''
     };
     this.launchPicker = this.launchPicker.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
@@ -25,7 +26,8 @@ export default class SelectFolder extends React.Component {
   // todo: should this be removed to only support pasting?
   handleChange(e) {
     this.setState({
-      value: e.target.value
+      value: e.target.value,
+      errorText: 'Paste a folder URL with Ctrl+V'
     });
   }
 
@@ -61,7 +63,7 @@ export default class SelectFolder extends React.Component {
         _this.setState({
           srcFolderURL: url
         });
-        return _this.props.handleFolderSelect(url, id, 'test mode folder', id);
+        return _this.props.handleFolderSelect(id, 'test mode folder', id);
       }, 1000);
     }
   }
@@ -77,8 +79,9 @@ export default class SelectFolder extends React.Component {
           onChange={this.handleChange}
           onPaste={this.handlePaste}
           value={this.state.value}
-        />
-        <br />or<br />
+          errorText={this.state.errorText}
+        />{' '}
+        or{' '}
         <RaisedButton
           label="Search your Drive"
           primary={true}

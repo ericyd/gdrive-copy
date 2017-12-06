@@ -11,7 +11,7 @@ export default function Success(props) {
     <Alert
       label={'Success! ' + props.msg}
       className="alert--success"
-      icon={<Checkmark width="1em" height="1em" />}
+      icon={<Checkmark />}
     >
       {props.children}
     </Alert>
