@@ -13,3 +13,18 @@
 .flex-wrapper {
   @include flex-wrapper($align: middle);
 }
+
+.browsehappy {
+  position: 'absolute';
+  top: '10em';
+  left: '0';
+  transform: 'rotate(270deg)';
+  background: lighten(red, 15%);
+  text-align: center;
+
+  p {
+    text-align: center;
+    color: #000;
+    font-size: 2rem;
+  }
+}
