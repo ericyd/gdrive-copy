@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import { Picker } from '../util/picker';
 import SelectFolder from '../components/SelectFolder';
 import Appreciation from '../components/Appreciation';
 import PageChanger from '../components/PageChanger';
@@ -73,6 +74,15 @@ export default class Start extends React.Component {
     this.showSuccess = this.showSuccess.bind(this);
     this.resetForm = this.resetForm.bind(this);
     this.processing = this.processing.bind(this);
+    this.pickerCallback = this.pickerCallback.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // initialize Picker if gapi is loaded
+    if (nextProps.isAPILoaded) {
+      this.picker = new Picker(this.pickerCallback);
+      this.picker.onApiLoad();
+    }
   }
 
   showError(msg) {
@@ -116,6 +126,31 @@ export default class Start extends React.Component {
     const settings = {};
     settings[e.target.id] = e.target.checked;
     this.setState(settings);
+  }
+
+  /**
+   * A callback function that extracts the chosen document's metadata from the
+   * response object. For details on the response object, see
+   * https://developers.google.com/picker/docs/result
+   *
+   * @param {object} data The response object.
+   */
+  pickerCallback(data) {
+    var action = data[google.picker.Response.ACTION];
+
+    if (action == google.picker.Action.PICKED) {
+      var doc = data[google.picker.Response.DOCUMENTS][0];
+      this.setState({
+        srcFolderID: doc[google.picker.Document.ID],
+        srcParentID: doc[google.picker.Document.PARENT_ID],
+        srcFolderName: doc[google.picker.Document.NAME],
+        destFolderName: 'Copy of ' + doc[google.picker.Document.NAME],
+        stepNum: this.state.stepNum + 1,
+        processing: false
+      });
+    } else if (action == google.picker.Action.CANCEL) {
+      google.script.host.close();
+    }
   }
 
   handleSubmit(e) {
@@ -268,7 +303,7 @@ export default class Start extends React.Component {
               handleFolderSelect={this.handleFolderSelect}
               showError={this.showError}
               processing={this.processing}
-              picker={this.props.picker}
+              picker={this.picker}
             />
             {/* show sample folder URL in test mode */}
             {process.env.NODE_ENV !== 'production' && (
