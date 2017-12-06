@@ -18,7 +18,7 @@ export default class SelectFolder extends React.Component {
   }
 
   launchPicker() {
-    this.props.picker.showPicker();
+    this.props.picker.showPicker(this.props.pickerCallback);
   }
 
   // allow TextInput to update if typing in

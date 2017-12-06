@@ -5,8 +5,7 @@ for providing the working backbone of this script
 
 // Declare variables
 export class Picker {
-  constructor(cb) {
-    this.pickerCallback = cb;
+  constructor() {
     this.onApiLoad = this.onApiLoad.bind(this);
     this.createPicker = this.createPicker.bind(this);
     this.showPicker = this.showPicker.bind(this);
@@ -37,7 +36,6 @@ export class Picker {
         .hideTitleBar()
         .setOAuthToken(token)
         .setMaxItems(1)
-        .setCallback(this.pickerCallback)
         .setTitle('Select a folder to copy')
         .setOrigin('https://script.google.com')
         .build();
@@ -47,8 +45,8 @@ export class Picker {
   }
 
   // Allows method binding from external scripts, e.g. init.js
-  showPicker() {
-    return this.pickerBuilder.setVisible(true);
+  showPicker(cb) {
+    return this.pickerBuilder.setCallback(cb).setVisible(true);
   }
 }
 
