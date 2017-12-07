@@ -346,11 +346,11 @@ export default class Start extends React.Component {
                         checked={this.state[option.id]}
                         onCheck={this.handleCheck}
                         id={option.id}
-                        key={option.id}
                       />
                     }
                     primaryText={option.label}
                     secondaryText={option.tooltip}
+                    key={option.id}
                   />
                 );
               })}

@@ -16,7 +16,7 @@ export default function Icon(props) {
   );
 }
 
-Icon.PropTypes = {
+Icon.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
   viewBox: PropTypes.string
