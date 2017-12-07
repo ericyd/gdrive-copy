@@ -34,7 +34,6 @@ export default class App extends React.Component {
   }
 
   render() {
-    const tabLabelStyle = { color: '#383838' };
     return (
       <MuiThemeProvider>
         <div>
@@ -44,29 +43,30 @@ export default class App extends React.Component {
           <AccountSwitcher />
           <Tabs
             // this is what keeps everything centered
-            // if I want the bar to span and the contents to be contained, I can use the
-            // contentContainerClassName="container" property
-            className="container"
-            tabItemContainerStyle={{ backgroundColor: '#f7f7f7' }}
+            // if I want the bar to be inside the container too, remove the contentContainerClassName attr and add these
+            // className="container"
+            // tabItemContainerStyle={{ backgroundColor: '#f7f7f7' }}
+            // style={{ color: '#383838' }} // <-- this should go on each Tab component
+            contentContainerClassName="container"
             initialSelectedIndex={1}
           >
-            <Tab label="About" style={tabLabelStyle}>
+            <Tab label="About">
               <About />
             </Tab>
 
-            <Tab label="Start" style={tabLabelStyle}>
+            <Tab label="Start">
               <Start isAPILoaded={this.state.isAPILoaded} />
             </Tab>
 
-            <Tab label="Resume" style={tabLabelStyle}>
+            <Tab label="Resume">
               <Resume isAPILoaded={this.state.isAPILoaded} />
             </Tab>
 
-            <Tab label="Pause" style={tabLabelStyle}>
+            <Tab label="Pause">
               <Pause />
             </Tab>
 
-            <Tab label="FAQ" style={tabLabelStyle}>
+            <Tab label="FAQ">
               <FAQ />
             </Tab>
           </Tabs>
