@@ -18,4 +18,6 @@ export default function Success(props) {
   );
 }
 
-// Success.propTypes = {};
+Success.propTypes = {
+  msg: PropTypes.string
+};

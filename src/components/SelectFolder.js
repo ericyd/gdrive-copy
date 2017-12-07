@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { parseURL } from '../util/helpers';
@@ -91,3 +92,9 @@ export default class SelectFolder extends React.Component {
     );
   }
 }
+
+SelectFolder.propTypes = {
+  handleFolderSelect: PropTypes.func.isRequired,
+  processing: PropTypes.func.isRequired,
+  showError: PropTypes.func.isRequired
+};

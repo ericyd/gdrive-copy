@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import Alert from './Alert';
 import Warning from './icons/Warning';
 
@@ -16,5 +15,3 @@ export default function Error(props) {
     </Alert>
   );
 }
-
-// Error.propTypes = {};
