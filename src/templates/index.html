@@ -1,6 +1,6 @@
  {{#isProd}}
-    <!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
-    <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+<!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
+<?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
 {{/isProd}}
 
 <html>
@@ -21,9 +21,6 @@
 </head>
 
 <body>
-    <!--[if gt IE 4]>
-      <p class="browsehappy">Internet explorer is not supported. Please use <a href="https://www.google.com/chrome">Chrome</a> or <a href="https://www.firefox.com/">Firefox</a> to access this utility.</p>
-    <![endif]-->
     {{> header }}
     <!-- react-dom mounts to this node -->
     <div id="root"></div>
@@ -37,6 +34,6 @@
 </html>
 
 {{#isProd}}
-    <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
-    <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
+<!-- Use a templated HTML printing scriptlet to import JavaScript. -->
+<?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
 {{/isProd}}
