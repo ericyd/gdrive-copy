@@ -55,7 +55,7 @@
       "webpack --config ./config/webpack.config.dev.js && gulp generate-test-site",
     "gulp-test-site": "gulp generate-test-site",
     "watch-test-site": "webpack && gulp watch-test-site",
-    "test": "mocha",
+    "test": "mocha --compilers js:babel-core/register",
     "prettier": "prettier --write --single-quote",
     "prettier:all":
       "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""

@@ -4,7 +4,6 @@ process.env.NODE_ENV = 'production';
 // webpack 2 version
 
 const readFileSync = require('fs').readFileSync;
-const babelSettings = JSON.parse(readFileSync('./config/.babelrc'));
 const paths = require('./paths');
 const webpack = require('webpack');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
@@ -58,8 +57,7 @@ module.exports = {
         exclude: /node_modules/,
         include: paths.appSrc,
         use: {
-          loader: 'babel-loader',
-          query: babelSettings
+          loader: 'babel-loader'
         }
       },
       {
