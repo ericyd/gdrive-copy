@@ -42,25 +42,20 @@ directory houses the Google Apps Script files that actually access Google Drive.
 
 ## Step 5: Compile code
 
-This app uses Gulp to build and bundle the app. In the Gulpfile, you can set the
-`isProd` variable to `true` to enable minification of CSS, HTML, and JS files,
-or you can leave it `false` and things will not be compressed.
+This app uses Webpack and Gulp to build and bundle the app. There are a few ways
+you can run it.
 
-Simply run
+1. `npm run build`: Run this to compile production ready files that can be
+   updloaded to a Google Apps Script project. The output files will be placed in
+   the `dist` directory
+2. `npm run test-site`: Run this to compile development files that can be opened
+   from your local computer. This is useful for testing interface updates
+   without having to upload the entire file to Google Apps Script. If using this
+   option, you'll want to open the file `/dist/index.html` in your web browser
+   after compiling.
 
-```
-gulp build
-```
-
-and the files will be compiled into the `dist` directory. Alternately, you can
-run
-
-```
-gulp watch
-```
-
-before editing files, and the files will be compiled in realtime whenever
-changes are made.
+Alternatively, you can run `gulp watch` to compile updates whenever changes are
+made.
 
 ## Step 6: Upload code
 
