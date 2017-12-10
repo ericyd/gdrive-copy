@@ -73,22 +73,17 @@ a {
   }
 }
 
-// inspired by https://github.com/FortAwesome/Font-Awesome/blob/89a28f8b1f9882159dce581ee92d398bbc33ad59/scss/_list.scss
-.icon-ul {
-  padding-left: 0;
-  margin-left: 2em;
-  list-style-type: none;
-
-  /* generated at duri.me */
-  list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAADJViUEAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAANigAADYoB/S2jSAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAHESURBVCiRpZMxaFNRFIa/8/J8ERtSCAraJTTiJp10MC0pWQoVa6tDps4ZqsnuFAIFR6mhS9d26qDPaixkCYi8oXQqbuLgZEEJbWmKPl/ucehNjEkQwX87//n/e88951xRVQZRqN70wlSyBYwBba91ktqufAgHdc6QE4guJ+esEWDMxkNwAArPsqkusbg2nTOGzX6RMWwurk3nepVZvdxdv331Qsf9CHwFLgLXrKajwmdR0kDMcl+A78CVn7HohuNG7iqQACatsS2qZRMPk68eB9dNPEyKahlo2/wkkHAjd9UVkQT0NU2dwsvy+7fdcke4fwbulp7pfejmvculsmi5bnnlwihlgn6fsr+Wb9jw4LjlLTvNSjMC3T2/Vd+NMv6uqpvX3WalGY0c1b/CyVfzLsi8fUjur+peXubz1bzrjKfCLWDKpueWancWRvks312WqfFUuOWq6qnIH8dvP6hln3Ti4cZOcf/s/satS7EfXhHkab9KVU//b0nqK3uHXkTaLwUZvxRMqJFZ4AiIiZKxxiM1MuuXggm/FGS8iHR9Ze9QRv2qh+vZe8bwutdVh4UXj4I3g7qRo3K/nTQ4X0eAto2H8AvmG6+Ga4L37gAAAABJRU5ErkJggg==);
-
-  > li {
-    position: relative;
-  }
-}
-
 .account-switcher {
   position: absolute;
   right: 1em;
   margin-top: 4em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #333;
 }
