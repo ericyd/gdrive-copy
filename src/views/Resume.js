@@ -119,7 +119,7 @@ export default class Resume extends React.Component {
     if (process.env.NODE_ENV === 'production') {
       // if not too many triggers, initialize script
       google.script.run
-        .withSuccessHandler(function(result) {
+        .withSuccessHandler(function(results) {
           _this.setState({
             copyLogID: results.spreadsheetId,
             destFolderID: results.destFolderId
@@ -179,21 +179,12 @@ export default class Resume extends React.Component {
                 <b>not</b> update
               </li>
               <li>
-                Original folder:{' '}
+                Copy:{' '}
                 <a
                   href={getDriveFolderURL(this.state.srcFolderID)}
                   target="_blank"
                 >
                   {this.state.srcFolderName}
-                </a>
-              </li>
-              <li>
-                Copy:{' '}
-                <a
-                  href={getDriveFolderURL(this.state.destFolderID)}
-                  target="_blank"
-                >
-                  {this.state.destFolderName}
                 </a>
               </li>
               <li>
