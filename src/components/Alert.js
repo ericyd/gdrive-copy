@@ -1,3 +1,6 @@
+/**
+ * Basic panel to hold content
+ */
 'use strict';
 
 import React from 'react';

@@ -1,3 +1,6 @@
+/**
+ * Information message container
+ */
 'use strict';
 
 import React from 'react';

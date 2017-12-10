@@ -1,3 +1,7 @@
+/**
+ * Simple button with popover to indicate the email address associated
+ * with the account currently in use
+ */
 'use strict';
 
 import React from 'react';

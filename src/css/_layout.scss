@@ -25,34 +25,6 @@ main {
   margin-bottom: $footer-height / 2;
 }
 
-.overlay {
-  display: none;
-  position: absolute;
-  z-index: 1000;
-
-  .overlay__curtain {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    opacity: 0.8;
-    background: #fff;
-  }
-
-  .overlay__content {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    margin: auto;
-    width: 800px;
-    text-align: center;
-    height: 500px;
-  }
-}
-
 a {
   color: $primary--darker;
 

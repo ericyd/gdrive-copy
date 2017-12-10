@@ -1,3 +1,9 @@
+/**
+ * Holds three pre-defined list items:
+ * - donate form button
+ * - Star on github button
+ * - rate and review link
+ */
 'use strict';
 
 import React from 'react';

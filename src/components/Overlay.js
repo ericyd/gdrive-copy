@@ -1,3 +1,7 @@
+/**
+ * A static semi-opaque overlay with a spinner and optional message
+ * to indicate loading, processing, or other wait times.
+ */
 'use strict';
 
 import React from 'react';
@@ -18,7 +22,7 @@ export default function Overlay(props) {
           width: '100%',
           height: '100%',
           backgroundColor: '#fff',
-          opacity: 0.5,
+          opacity: 0.75,
           zIndex: 1000
         }}
       />

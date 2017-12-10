@@ -1,3 +1,10 @@
+/**
+ * A widget to select a folder from Google Drive.
+ * Supports two selection methods:
+ * 1. Pasting a folder URL
+ *    - can be the URL, folder ID, or Sharing URL
+ * 2. Using the Google Picker
+ */
 'use strict';
 
 import React from 'react';
