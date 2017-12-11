@@ -1,33 +1,60 @@
 /* Variables */
-@import "../../node_modules/cutestrap/dist/scss/variables/_colors";
-@import "../../node_modules/sass-colorscheme/colorscheme";
 
 //== Layout
-$container-width:       700px;
-$header-padding:        15%;
-$footer-height:         100px;
-$footer-height-sm:      250px;
-
-// todo: figure out why $primary isn't importing properly into Cutestrap (see radio buttons and btn hover for examples of inconsistency)
+$container-width: 700px;
+$header-padding: 15%;
+$footer-height: 100px;
+$footer-height-sm: 250px;
+$number-footer-sections: 5;
 
 //== Colors
-$seed-color:                #A32E2E;
-$colorscheme:               colorscheme($seed-color, $scheme: 'complementary');
-$primary:                   map-get($colorscheme, 'primary');
-$primary--lighter:          map-get($colorscheme, 'primary--lighter');
-$primary--lightest:         map-get($colorscheme, 'primary--lightest');
-$primary--darker:           map-get($colorscheme, 'primary--darker');
-$primary--darkest:          map-get($colorscheme, 'primary--darkest');
+$body-background: #f7f7f7;
+$primary: #7cb7de;
+$primary--lighter: lighten($primary, 10%);
+$primary--lightest: lighten($primary, 20%);
+$primary--darker: darken($primary, 10%);
+$primary--darkest: darken($primary, 20%);
+
+// credit: https://github.com/tylerchilds/cutestrap/blob/master/src/sass/variables/_colors.scss
+$gray1: #3c3c3d !default;
+$gray2: #5a5a5b !default;
+$gray3: #7d7d7e !default;
+$gray4: #cdcdce !default;
+$gray5: #dededf !default;
+$gray6: #efeff0 !default;
+
+$alert--success--base: #a1d490;
+$alert--success--background: lighten($alert--success--base, 20%);
+$alert--success--border: darken($alert--success--base, 40%);
+$alert--success--text: $alert--success--border;
+
+$alert--error--base: #e88282;
+$alert--error--background: lighten($alert--error--base, 20%);
+$alert--error--border: darken($alert--error--base, 30%);
+$alert--error--text: $alert--error--border;
+
+$alert--neutral--base: #999;
+$alert--neutral--background: lighten($alert--neutral--base, 35%);
+$alert--neutral--border: darken($alert--neutral--base, 40%);
+$alert--neutral--text: $alert--neutral--border;
 
 //= Colors used by Cutestrap
-$primary-dark:              $primary--darker;
-$link--visited:             $primary--lightest;
-$link--hover:               $primary--lightest;
+$primary-dark: $primary--darker;
+$link--visited: $primary--darkest;
+$link--hover: $primary--darkest;
 
 //== Typography
-$fs-smaller:                0.7em;
-$lh-smaller:                1.5em;
-
+$fs-smaller: 0.7em;
+$lh-smaller: 1.5em;
+$font-family: 'Roboto', sans-serif;
 
 //== buttons
-$border-radius:     0em;
+$border-radius: 0;
+
+//== Mixins
+
+@mixin flex-wrapper($align: baseline) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: $align;
+}

@@ -1,70 +1,21 @@
-@import "my-variables";
+@import 'my-variables';
 
-.btn, [type=button],
-[type=submit],
-button {
-  border-radius: $border-radius;
+.github-button {
+  display: inline-block;
+  border: 1px solid $alert--neutral--text;
+  padding: 0.25em;
+  margin: 0 0.25em;
+  text-decoration: none;
+  color: $alert--neutral--text !important;
+  background-color: $gray5;
+  border-radius: 0.1em;
 
-  &:focus, &:active, &:link, &:hover {
-    outline: 0;
+  svg {
+    position: relative;
+    top: 0.1em;
   }
 
-  &::-moz-focus-inner {
-    border: 0;
-  }
-
-  &.btn--small {
-    
-    // height: 2.8rem;
-    line-height: 1rem;
-    padding: 0.5rem; 
-    margin-bottom: 1rem;
-    border: 3px solid $primary;
-    background: transparent;
-    color: $primary;
-
-    &:hover {
-      background: $primary;
-      color: #fff; 
-      transition: all 0.25s ease;
-    } 
-
-    &:focus, &:active, &:link, &:hover {
-      outline: 0;
-    }
-
-    &::-moz-focus-inner {
-      border: 0;
-    }
-
-  }
-
-  &.btn--nav {
-    color: #fff;
-    margin: 0;
-    line-height: 0em;
-    padding: 2.0em 1em 2.0em 1em;
-    border: 0px;
-    background: none;
-
-    &:hover {
-      background: #fff;
-      color: $gray3; // same as nav background in _header   
-      transition: all 0.25s ease;
-    }
-
-    &:focus, &:active, &:link, &:hover {
-      outline: 0;
-    }
-
-    &::-moz-focus-inner {
-      border: 0;
-    }
-
-    &.active {
-      background: #fff;
-      color: $gray3; // same as nav background in _header
-    } 
+  &:hover {
+    cursor: pointer;
   }
 }
-

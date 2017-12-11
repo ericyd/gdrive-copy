@@ -1,0 +1,41 @@
+/*TODO: Is there any way to use sass with svelte components?
+If not, perhaps consider a feature request or PR? */
+/*@import "my-variables";*/
+
+.spinner {
+  -webkit-animation: icon-spin 0.75s infinite linear;
+  animation: icon-spin 0.75s infinite linear;
+  /* width: 1em;
+  height: 1em;
+  border: 0.25em solid #777;
+  border-right-color: #7cb7de;
+  border-radius: 50%;
+  display: inline-block; */
+}
+
+/* 
+Pulled directly from 
+https://github.com/FortAwesome/Font-Awesome/blob/89a28f8b1f9882159dce581ee92d398bbc33ad59/scss/_animated.scss 
+*/
+
+@-webkit-keyframes icon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes icon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}

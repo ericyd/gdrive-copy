@@ -1,22 +1,13 @@
-@import "my-variables";
+@import 'my-variables';
 
-.push {
-    height: $footer-height;
-}
 footer {
-    padding: 1em 0 1em 0;
-    background: none;
-    height: $footer-height;
+  @include flex-wrapper($align: top);
+  box-sizing: border-box;
+  padding: 1em 0;
+  background: $gray4;
+  width: 100%;
 }
-
 
 .footer-section {
-    // defined in my-variables
-    font-size: $fs-smaller;
-    line-height: $lh-smaller;
-    border-right: 1px solid darken($gray4, 20%);
-    
-    &:last-of-type {
-        border-right: 0;
-    }
+  width: 100% / $number-footer-sections;
 }

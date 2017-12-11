@@ -1,68 +1,41 @@
-@import "my-variables";
+@import 'my-variables';
 
 header {
-    background: #393939;
-    background: -webkit-linear-gradient(#393939, #626262);
-    background: -o-linear-gradient(#393939, #626262);
-    background: -moz-linear-gradient(#393939, #626262);
-    background: linear-gradient(#393939, #626262);
-
-    > * {
-        padding: 10px 0;
-        color: #fff;
-    }
-
-    > .header-container {
-        text-align: center;
-    }
+  border-bottom: 1px solid #aaa;
 }
 
 .header-container {
-    width: $container-width;
-    margin: 0 auto;
+  @include flex-wrapper();
+  width: $container-width;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 0 10px;
+  text-align: left;
+  color: #333;
 
-    > .header-container__icon {
-        display: inline-block;
+  svg {
+    width: 3em;
+    height: 3em;
+    position: relative;
+    top: 0.5em;
+  }
 
-        > svg {
-            width: 5em;
-            height: 5em;
-            position: relative;
-            top: 0.5em;
-        }
-    }
+  h1 {
+    padding: 0.5rem;
+    margin: 0 1rem 0 0;
+  }
 
-    > .header-container__headings {
-        display: inline-block;
-        
-        > h1, 
-        > h4 {
-            padding: 0.5rem;
-            margin: 0;
-        }
-    }
-}
-
-nav {
-    width: 100%;
-    background: $gray3;
-    margin: 0; 
+  h5 {
     padding: 0;
-    // height: 4em;
-
-    
+    margin: 0;
+  }
 }
 
-.change-account {
-    float:right;
-    text-align: right;
-    margin: 0.5em 1em 0 0;
+h4 {
+  padding-top: 0;
+}
 
-    & > .change-account__box {
-        background: $gray6;
-        color: $gray1;
-        border: 1px solid $gray4;
-        padding: 0.25em 0.5em;
-        font-size: 0.65em;
-    }
+.doc h4,
+.doc h3 {
+  padding-top: 2.4em;
 }

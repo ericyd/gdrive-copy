@@ -2,34 +2,40 @@
 <footer class="grid">
 
     <!--Spacer-->
-    <section></section>
+    <section class="footer-section"></section>
 
     <!--Github-->
     <section class="footer-section">
-        <b>Source code</b><br />
+        <b>Source code</b>
+        <br />
         <a href="https://github.com/ericyd/gdrive-copy" target="_blank">Github</a>
     </section>
 
-    <!--Promotion for Transfer Ownership-->
+    <!-- Donate button for Paypal
+    Could also potentially use paypal.me/EricDauenhauer ? -->
     <section class="footer-section">
-        <b>Transfer folder ownership</b><br />
-        Check out <a href="https://chrome.google.com/webstore/detail/transfer-ownership/ndbdlpeegehlbhgnpifancfbnnehoofa" target="_blank">my other project</a>
-    </section>
-
-    <!--ericyd.com-->
-    <section class="footer-section">
-        <b>Developer's website</b><br />
-        <a href="http://ericyd.com" target="_blank">ericyd.com</a>
+        <form class="no-padding" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="JUVGC2A5Y4VV6">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+        </form>
     </section>
 
     <!--email-->
     <section class="footer-section">
-        <b>Bugs? Questions?</b><br />
-        Please open an <a href="https://github.com/ericyd/gdrive-copy/issues" target="_blank">issue on Github</a>.
+        <b>Bugs? Questions?</b>
+        <br /> Please look at the FAQ or open an
+        <a class="github-button" href="https://github.com/ericyd/gdrive-copy/issues" aria-label="Issue ericyd/gdrive-copy on GitHub"
+            target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.31 7.526c-.099-.807.528-1.526 1.348-1.526.771 0 1.377.676 1.28 1.451l-.757 6.053c-.035.283-.276.496-.561.496s-.526-.213-.562-.496l-.748-5.978zm1.31 10.724c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"
+                />
+            </svg> Issue
+        </a>
     </section>
 
     <!--Spacer-->
-    <!--todo: figure out why the cutestrap grid isn't auto-removing this margin-->
-    <section style="margin-right:0"></section>
+    <section class="footer-section"></section>
 
 </footer>

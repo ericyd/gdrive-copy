@@ -1,39 +1,9 @@
 <!--Header-->
-
 <header>
     <section class="header-container">
-        
-
         <!--Header and Icon-->
-        <div class="header-container__icon">{{> icons/header-icon }}</div>
-        <div class="header-container__headings">
-            <h1> Copy Folder</h1>
-            <h4>Copy a google drive folder and all its contents</h4>
-        </div>
-
-
+        {{> header-icon }}
+        <h1>Copy Folder</h1>
+        <h5>for Google Drive</h5>
     </section>
-
-    <nav>
-        <!--Change Account link-->
-        <div class="change-account">
-            <div class="change-account__box">
-                Logged in as <span class="userEmail"><span class="rotate-contents"><i class="spinner"></i></span></span>.<br />
-                <!--Prod-->
-                {{#isProd}}
-                <a target="_blank" href="https://accounts.google.com/AccountChooser?continue=https://script.google.com/macros/s/AKfycbxbGNGajrxv-HbX2sVY2OTu7yj9VvxlOMOeQblZFuq7rYm7uyo/exec">Click here</a> to log in with a different account.
-                {{/isProd}}
-                <!--Dev-->
-                {{^isProd}}
-                <a target="_blank" href="https://accounts.google.com/AccountChooser?continue=https://script.google.com/macros/s/AKfycbzKJQO5CBf7WDmrYo8FGDb20YWfoIyUZZhsbF844SI/dev">Click here</a> to log in with a different account.
-                {{/isProd}}
-            </div>
-        </div>
-        <section class="header-container">
-            <button role="button" data-template="start" class="active btn--nav" id="start-button" href="javascript:;">Start</button>
-            <button role="button" data-template="resume" class="btn--nav" id="resume-button" href="javascript:;">Resume</button>
-            <button role="button" data-template="pause" class="btn--nav" id="stop-button" href="javascript:;">Pause</button>
-            <button role="button" data-template="faq" class="btn--nav" id="faq-button" href="javascript:;">FAQ</button>
-        </section>
-    </nav>
 </header>

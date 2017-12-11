@@ -1,32 +1,54 @@
-@import "my-variables";
-
+@import 'my-variables';
 .alert {
-    display: block;
-    padding: 1em;
-    margin: 0 0 1em 0; 
-    background: #fff;
-    font-size: $fs-smaller;
-    line-height: $lh-smaller;
-    border-radius: 2px;
+  display: block;
+  padding: 1em;
+  margin: 1em 0 1em;
+  background: #fff;
+  // border-radius: $border-radius;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0;
+    color: inherit;
+  }
 }
 
-.alert-success {
-    background: #A1D490;
-    color: darken(#A1D490, 30%);
+.alert--success {
+  background: $alert--success--background;
+  color: $alert--success--text !important;
+
+  h3 svg {
+    fill: $alert--success--text;
+    margin-right: 0.5em;
+    position: relative;
+    top: 0.15em;
+  }
 }
 
-.alert-danger {
-    background: #E88282;
-    color: darken(#E88282, 30%);
+.alert--error {
+  background: $alert--error--background;
+  color: $alert--error--text !important;
+
+  h3 svg {
+    fill: $alert--error--text;
+    margin-right: 0.5em;
+    position: relative;
+    top: 0.15em;
+  }
 }
 
-.panel {
-    @extend .alert;
-    border: 1px solid $gray4;
-}
+.alert--neutral {
+  background: $alert--neutral--background;
+  color: $alert--neutral--text !important;
 
- .panel-heading {
-    border-bottom: 1px solid $gray6;
-    font-weight:bold;
-    margin: 0 0 0.5rem 0;
+  h3 svg {
+    fill: $alert--neutral--text;
+    margin-right: 0.5em;
+    position: relative;
+    top: 0.15em;
+  }
 }
