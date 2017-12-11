@@ -128,7 +128,9 @@ export default class Resume extends React.Component {
           // after initialized, this begins the copy loop
           google.script.run.copy();
         })
-        .withFailureHandler(_this.showError)
+        .withFailureHandler(function(err) {
+          _this.showError(err.message);
+        })
         .resume(_this.state);
     } else {
       if (window.location.search.indexOf('testmode') !== -1) {

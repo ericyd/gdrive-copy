@@ -53,14 +53,12 @@ export default class SelectFolder extends React.Component {
     if (process.env.NODE_ENV === 'production') {
       google.script.run
         .withSuccessHandler(folder => {
-          _this.props.handleFolderSelect(
-            folder.id,
-            folder.title,
-            folder.parents[0].id
-          );
+          var parentid =
+            folder.parents && folder.parents[0] ? folder.parents[0].id : null;
+          _this.props.handleFolderSelect(folder.id, folder.title, parentid);
         })
         .withFailureHandler(err => {
-          _this.props.showError(err);
+          _this.props.showError(err.message);
         })
         .getMetadata(id);
     } else {

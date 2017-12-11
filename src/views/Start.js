@@ -167,7 +167,9 @@ export default class Start extends React.Component {
           // after initialized, this begins the copy loop
           google.script.run.copy();
         })
-        .withFailureHandler(_this.showError)
+        .withFailureHandler(function(err) {
+          _this.showError(err.message);
+        })
         .initialize({
           srcFolderID: this.state.srcFolderID,
           srcFolderName: this.state.srcFolderName,
@@ -202,6 +204,7 @@ export default class Start extends React.Component {
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID,
+      copyToRoot: parentID ? false : true,
       destFolderName: 'Copy of ' + name,
       stepNum: this.state.stepNum + 1
     });
