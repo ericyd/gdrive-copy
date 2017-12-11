@@ -65,11 +65,17 @@ export default function About() {
       <h2>Privacy</h2>
 
       <p>
-        This app does not expose your files in any way. The copying takes place
-        exclusively through Google Drive, meaning that no one except the user
-        running the app will have access to the copied files. The only exception
-        to this is if a user copies sharing permissions, in which case
-        collaborators will be able to see the new files just like before.
+        Please see the{' '}
+        <a
+          href="https://github.com/ericyd/gdrive-copy/blob/master/PRIVACY_POLICY.md"
+          target="_blank"
+        >
+          Privacy Policy
+        </a>.
+      </p>
+      <p>
+        This app does not store any data relating to your account or Google
+        Drive contents.
       </p>
 
       <h2>When issues arise...</h2>

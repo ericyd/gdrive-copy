@@ -26,7 +26,7 @@ of shared information when someone leaves an organization.
 Please see the
 [Privacy Policy](https://github.com/ericyd/gdrive-copy/blob/master/PRIVACY_POLICY.md).
 
-TLDR: This app does not store any data relating to your account or Google Drive
+This app does not store any data relating to your account or Google Drive
 contents.
 
 ## Notes
