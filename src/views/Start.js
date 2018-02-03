@@ -15,7 +15,9 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
+import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import { List, ListItem } from 'material-ui/List';
+import Divider from 'material-ui/Divider';
 import { getDriveFolderURL, getDriveSpreadsheetURL } from '../util/helpers';
 
 export default class Start extends React.Component {
@@ -34,7 +36,8 @@ export default class Start extends React.Component {
       destFolderID: '',
       // must match IDs of copyOptions objects
       copyPermissions: false,
-      copyToRoot: false,
+      copyTo: 'same',
+      destParentID: '',
 
       // success/error/processing
       success: false,
@@ -45,29 +48,12 @@ export default class Start extends React.Component {
       processingMsg: ''
     };
 
-    this.copyOptions = [
-      {
-        name: 'copyPermissions',
-        value: '1',
-        id: 'copyPermissions',
-        label: 'Copy permissions',
-        tooltip:
-          'Sharing settings from the original folder and files will be copied'
-      },
-      {
-        name: 'copyToRoot',
-        value: '1',
-        id: 'copyToRoot',
-        label: 'Copy to root of My Drive',
-        tooltip:
-          'By default, it will copy to the same location as the original folder'
-      }
-    ];
-
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
+    this.handleDestFolderSelect = this.handleDestFolderSelect.bind(this);
     this.handleDestFolderChange = this.handleDestFolderChange.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
+    this.handleRadio = this.handleRadio.bind(this);
     this.nextView = this.nextView.bind(this);
     this.prevView = this.prevView.bind(this);
     this.showError = this.showError.bind(this);
@@ -128,6 +114,10 @@ export default class Start extends React.Component {
     this.setState(settings);
   }
 
+  handleRadio(e, val) {
+    this.setState({ copyTo: val });
+  }
+
   /**
    * A callback function that extracts the chosen document's metadata from the
    * response object. For details on the response object, see
@@ -176,7 +166,8 @@ export default class Start extends React.Component {
           srcParentID: this.state.srcParentID,
           destFolderName: this.state.destFolderName,
           copyPermissions: this.state.copyPermissions,
-          copyToRoot: this.state.copyToRoot
+          copyTo: this.state.copyTo,
+          destParentID: this.state.destParentID
         });
     } else {
       if (window.location.search.indexOf('testmode') !== -1) {
@@ -204,9 +195,15 @@ export default class Start extends React.Component {
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID,
-      copyToRoot: parentID ? false : true,
       destFolderName: 'Copy of ' + name,
       stepNum: this.state.stepNum + 1
+    });
+  }
+
+  handleDestFolderSelect(id) {
+    this.setState({
+      processing: false,
+      destParentID: id
     });
   }
 
@@ -229,6 +226,10 @@ export default class Start extends React.Component {
   }
 
   render() {
+    const radioStyle = {
+      marginBottom: 16
+    };
+
     if (this.state.success && !this.state.error) {
       return (
         <div>
@@ -301,8 +302,6 @@ export default class Start extends React.Component {
         <PageChanger activeStep={this.state.stepNum}>
           <Page stepNum={0} label="Which folder would you like to copy?">
             <SelectFolder
-              srcFolderID={this.state.srcFolderID}
-              srcFolderURL={this.state.srcFolderURL}
               handleFolderSelect={this.handleFolderSelect}
               showError={this.showError}
               processing={this.processing}
@@ -341,23 +340,45 @@ export default class Start extends React.Component {
 
           <Page label="Choose copying options" stepNum={2}>
             <List>
-              {this.copyOptions.map(option => {
-                return (
-                  <ListItem
-                    leftCheckbox={
-                      <Checkbox
-                        checked={this.state[option.id]}
-                        onCheck={this.handleCheck}
-                        id={option.id}
-                      />
-                    }
-                    primaryText={option.label}
-                    secondaryText={option.tooltip}
-                    key={option.id}
+              <ListItem
+                leftCheckbox={
+                  <Checkbox
+                    checked={this.state['copyPermissions']}
+                    onCheck={this.handleCheck}
+                    id="copyPermissions"
                   />
-                );
-              })}
+                }
+                primaryText="Copy permissions"
+                secondaryText="Sharing settings from the original folder and files will be copied"
+              />
             </List>
+
+            <RadioButtonGroup
+              name="copyTo"
+              defaultSelected="0"
+              onChange={this.handleRadio}
+            >
+              <RadioButton
+                value="same"
+                label="Same as original"
+                style={radioStyle}
+              />
+              <RadioButton
+                value="root"
+                label="Root of My Drive"
+                style={radioStyle}
+              />
+              <RadioButton value="custom" label="Custom" style={radioStyle} />
+            </RadioButtonGroup>
+
+            {this.state.copyTo === 'custom' && (
+              <SelectFolder
+                handleFolderSelect={this.handleDestFolderSelect}
+                showError={this.showError}
+                processing={this.processing}
+              />
+            )}
+
             <FlatButton
               label="Go back"
               onClick={this.prevView}
@@ -367,26 +388,32 @@ export default class Start extends React.Component {
           </Page>
 
           <Page label="Review and start copying" stepNum={3}>
-            <Panel label="Original folder">
+            <Panel>
+              <h3>Original Folder</h3>
               <a
                 href={getDriveFolderURL(this.state.srcFolderID)}
                 target="_blank"
               >
                 {this.state.srcFolderName}
               </a>
-            </Panel>
-
-            <Panel label="Name your copy">
+              
+              <br /><br />
+              <h3>Name your copy</h3>
               <span>{this.state.destFolderName}</span>
-            </Panel>
 
-            <Panel label="Options">
+              <br /><br />
+              <h3>Options</h3>
               <div>
                 Copy permissions to new folder?{' '}
                 {this.state.copyPermissions ? 'Yes' : 'No'}
               </div>
               <div>
-                Copy to root of My Drive? {this.state.copyToRoot ? 'Yes' : 'No'}
+                Copy to:{' '}
+                {this.state.copyTo === 'custom'
+                  ? getDriveFolderURL(this.state.destParentID)
+                  : this.state.copyTo === 'root'
+                    ? 'Root of My Drive'
+                    : 'Same of original folder'}
               </div>
             </Panel>
 

@@ -87,12 +87,14 @@ export default class SelectFolder extends React.Component {
           value={this.state.value}
           errorText={this.state.errorText}
         />
-        <span className="circle-or">or</span>
-        <RaisedButton
-          label="Search your Drive"
-          primary={true}
-          onClick={this.launchPicker}
-        />
+        {this.props.picker && [
+          <span className="circle-or">or</span>,
+          <RaisedButton
+            label="Search your Drive"
+            primary={true}
+            onClick={this.launchPicker}
+          />
+        ]}
       </div>
     );
   }
@@ -101,5 +103,6 @@ export default class SelectFolder extends React.Component {
 SelectFolder.propTypes = {
   handleFolderSelect: PropTypes.func.isRequired,
   processing: PropTypes.func.isRequired,
-  showError: PropTypes.func.isRequired
+  showError: PropTypes.func.isRequired,
+  picker: PropTypes.object
 };
