@@ -13,21 +13,32 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { parseURL } from '../util/helpers';
 import { showPicker } from '../util/picker';
+import { getDriveFolderURL } from '../util/helpers';
 
 export default class SelectFolder extends React.Component {
   constructor() {
     super();
     this.state = {
       value: '',
-      errorText: ''
+      errorText: '',
+      folder: false
     };
     this.launchPicker = this.launchPicker.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   launchPicker() {
     this.props.picker.showPicker();
+  }
+
+  reset() {
+    this.setState({
+      folder: false,
+      errorText: '',
+      value: ''
+    });
   }
 
   // allow TextInput to update if typing in
@@ -55,6 +66,9 @@ export default class SelectFolder extends React.Component {
         .withSuccessHandler(folder => {
           var parentid =
             folder.parents && folder.parents[0] ? folder.parents[0].id : null;
+          _this.setState({
+            folder: folder
+          })
           _this.props.handleFolderSelect(folder.id, folder.title, parentid);
         })
         .withFailureHandler(err => {
@@ -75,6 +89,19 @@ export default class SelectFolder extends React.Component {
   }
 
   render() {
+    if (this.state.folder) {
+      <div>
+        <h4>You selected</h4>
+        <a href={getDriveFolderURL(folder.id)} target="_blank">{folder.title}</a>
+        <br />
+        <RaisedButton
+          label="Select a different folder"
+          primary={true}
+          onClick={this.reset}
+        />
+      </div>
+    }
+
     return (
       <div>
         <TextField

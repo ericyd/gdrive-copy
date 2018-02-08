@@ -135,7 +135,6 @@ export default class Start extends React.Component {
         srcParentID: doc[google.picker.Document.PARENT_ID],
         srcFolderName: doc[google.picker.Document.NAME],
         destFolderName: 'Copy of ' + doc[google.picker.Document.NAME],
-        stepNum: this.state.stepNum + 1,
         processing: false
       });
     } else if (action == google.picker.Action.CANCEL) {
@@ -195,8 +194,7 @@ export default class Start extends React.Component {
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID,
-      destFolderName: 'Copy of ' + name,
-      stepNum: this.state.stepNum + 1
+      destFolderName: 'Copy of ' + name
     });
   }
 
@@ -312,6 +310,13 @@ export default class Start extends React.Component {
               <div>
                 https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
               </div>
+            )}
+            {this.state.srcFolderID !== '' && (
+              <RaisedButton
+                onClick={this.nextView}
+                primary={true}
+                label="Next"
+              />
             )}
           </Page>
 

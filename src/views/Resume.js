@@ -89,6 +89,14 @@ export default class Resume extends React.Component {
     });
   }
 
+  nextView() {
+    if (this.state.stepNum === this.maxSteps) {
+      return;
+    } else {
+      this.setState({ stepNum: this.state.stepNum + 1 });
+    }
+  }
+
   /**
    * A callback function that extracts the chosen document's metadata from the
    * response object. For details on the response object, see
@@ -105,7 +113,6 @@ export default class Resume extends React.Component {
         srcFolderID: doc[google.picker.Document.ID],
         srcParentID: doc[google.picker.Document.PARENT_ID],
         srcFolderName: doc[google.picker.Document.NAME],
-        stepNum: this.state.stepNum + 1,
         processing: false
       });
     } else if (action == google.picker.Action.CANCEL) {
@@ -152,7 +159,6 @@ export default class Resume extends React.Component {
   handleFolderSelect(id, name, parentID) {
     this.setState({
       processing: false,
-      stepNum: this.state.stepNum + 1,
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID
@@ -225,6 +231,13 @@ export default class Resume extends React.Component {
               processing={this.processing}
               picker={this.picker}
             />
+            {this.state.srcFolderID !== '' && (
+              <RaisedButton
+                onClick={this.nextView}
+                primary={true}
+                label="Next"
+              />
+            )}
           </Page>
 
           <Page stepNum={1} label="Resume the copy">
