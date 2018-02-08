@@ -20,8 +20,7 @@ export default class SelectFolder extends React.Component {
     super();
     this.state = {
       value: '',
-      errorText: '',
-      folder: false
+      errorText: ''
     };
     this.launchPicker = this.launchPicker.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
@@ -59,6 +58,7 @@ export default class SelectFolder extends React.Component {
   handlePaste(e) {
     const url = e.clipboardData.getData('Text');
     const id = parseURL(url);
+    this.setState({errorText: ''});
     this.props.processing('Getting folder info');
     const _this = this;
     if (process.env.NODE_ENV === 'production') {
@@ -67,7 +67,8 @@ export default class SelectFolder extends React.Component {
           var parentid =
             folder.parents && folder.parents[0] ? folder.parents[0].id : null;
           _this.setState({
-            folder: folder
+            folder: folder,
+            errorText: ''
           })
           _this.props.handleFolderSelect(folder.id, folder.title, parentid);
         })
@@ -81,25 +82,22 @@ export default class SelectFolder extends React.Component {
       const _this = this;
       return setTimeout(function() {
         _this.setState({
-          srcFolderURL: url
-        });
+          folder: {id: id, title: "testing"},
+          errorText: ''
+        })
         return _this.props.handleFolderSelect(id, 'test mode folder', id);
       }, 1000);
     }
   }
 
   render() {
-    if (this.state.folder) {
-      <div>
-        <h4>You selected</h4>
-        <a href={getDriveFolderURL(folder.id)} target="_blank">{folder.title}</a>
-        <br />
-        <RaisedButton
-          label="Select a different folder"
-          primary={true}
-          onClick={this.reset}
-        />
-      </div>
+    if (this.props.folderID && this.props.folderID !== '') {
+      return (
+        <div>
+          <h4>You selected</h4>
+          <a href={getDriveFolderURL(this.props.folderID)} target="_blank">{this.props.folderName}</a>
+        </div>
+      );
     }
 
     return (
@@ -115,8 +113,9 @@ export default class SelectFolder extends React.Component {
           errorText={this.state.errorText}
         />
         {this.props.picker && [
-          <span className="circle-or">or</span>,
+          <span className="circle-or" key="1">or</span>,
           <RaisedButton
+            key="2"
             label="Search your Drive"
             primary={true}
             onClick={this.launchPicker}
@@ -131,5 +130,7 @@ SelectFolder.propTypes = {
   handleFolderSelect: PropTypes.func.isRequired,
   processing: PropTypes.func.isRequired,
   showError: PropTypes.func.isRequired,
-  picker: PropTypes.object
+  picker: PropTypes.object,
+  folderID: PropTypes.string,
+  folderName: PropTypes.string
 };

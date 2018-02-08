@@ -28,7 +28,6 @@ export default class Start extends React.Component {
 
     this.state = {
       stepNum: 0,
-      srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
       srcParentID: '',
@@ -38,6 +37,7 @@ export default class Start extends React.Component {
       copyPermissions: false,
       copyTo: 'same',
       destParentID: '',
+      destParentFolderName: '',
 
       // success/error/processing
       success: false,
@@ -58,7 +58,7 @@ export default class Start extends React.Component {
     this.prevView = this.prevView.bind(this);
     this.showError = this.showError.bind(this);
     this.showSuccess = this.showSuccess.bind(this);
-    this.resetForm = this.resetForm.bind(this);
+    this.reset = this.reset.bind(this);
     this.processing = this.processing.bind(this);
     this.pickerCallback = this.pickerCallback.bind(this);
   }
@@ -96,7 +96,7 @@ export default class Start extends React.Component {
     });
   }
 
-  resetForm() {
+  reset() {
     this.setState({
       stepNum: 0,
       error: false,
@@ -104,7 +104,9 @@ export default class Start extends React.Component {
       processing: false,
       srcFolderID: '',
       srcFolderName: '',
-      srcFolderURL: ''
+      copyTo: 'same',
+      destParentID: '',
+      destParentFolderName: ''
     });
   }
 
@@ -183,7 +185,7 @@ export default class Start extends React.Component {
   }
 
   /**
-   * Sets this.state.srcFolderID, srcFolderURL, srcFolderName
+   * Sets folder info in state
    * @param {string} id
    * @param {string} name
    * @param {string} parentID
@@ -198,10 +200,11 @@ export default class Start extends React.Component {
     });
   }
 
-  handleDestFolderSelect(id) {
+  handleDestFolderSelect(id, name) {
     this.setState({
       processing: false,
-      destParentID: id
+      destParentID: id,
+      destParentFolderName: name
     });
   }
 
@@ -304,6 +307,8 @@ export default class Start extends React.Component {
               showError={this.showError}
               processing={this.processing}
               picker={this.picker}
+              folderID={this.state.srcFolderID}
+              folderName={this.state.srcFolderName}
             />
             {/* show sample folder URL in test mode */}
             {process.env.NODE_ENV !== 'production' && (
@@ -312,11 +317,18 @@ export default class Start extends React.Component {
               </div>
             )}
             {this.state.srcFolderID !== '' && (
-              <RaisedButton
-                onClick={this.nextView}
-                primary={true}
-                label="Next"
-              />
+              <div class="controls">
+                <FlatButton
+                  label="Select a different folder"
+                  onClick={this.reset}
+                  style={{ marginRight: '1em' }}
+                />
+                <RaisedButton
+                  onClick={this.nextView}
+                  primary={true}
+                  label="Next"
+                />
+              </div>
             )}
           </Page>
 
@@ -329,10 +341,10 @@ export default class Start extends React.Component {
               floatingLabelText="Copy name"
               value={this.state.destFolderName}
             />
-            <div>
+            <div class="controls">
               <FlatButton
                 label="Go back"
-                onClick={this.resetForm}
+                onClick={this.reset}
                 style={{ marginRight: '1em' }}
               />
               <RaisedButton
@@ -381,15 +393,19 @@ export default class Start extends React.Component {
                 handleFolderSelect={this.handleDestFolderSelect}
                 showError={this.showError}
                 processing={this.processing}
+                folderID={this.state.destParentID}
+                folderName={this.state.destParentFolderName}
               />
             )}
 
-            <FlatButton
-              label="Go back"
-              onClick={this.prevView}
-              style={{ marginRight: '1em' }}
-            />
-            <RaisedButton onClick={this.nextView} primary={true} label="Next" />
+            <div class="controls">
+              <FlatButton
+                label="Go back"
+                onClick={this.prevView}
+                style={{ marginRight: '1em' }}
+              />
+              <RaisedButton onClick={this.nextView} primary={true} label="Next" />
+            </div>
           </Page>
 
           <Page label="Review and start copying" stepNum={3}>
@@ -422,16 +438,18 @@ export default class Start extends React.Component {
               </div>
             </Panel>
 
-            <FlatButton
-              label="Start over"
-              onClick={this.resetForm}
-              style={{ marginRight: '1em' }}
-            />
-            <RaisedButton
-              label="Copy Folder"
-              primary={true}
-              onClick={this.handleSubmit}
-            />
+            <div class="controls">
+              <FlatButton
+                label="Start over"
+                onClick={this.reset}
+                style={{ marginRight: '1em' }}
+              />
+              <RaisedButton
+                label="Copy Folder"
+                primary={true}
+                onClick={this.handleSubmit}
+              />
+            </div>
           </Page>
         </PageChanger>
       </div>

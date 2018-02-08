@@ -23,7 +23,6 @@ export default class Resume extends React.Component {
 
     this.state = {
       stepNum: 0,
-      srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
       destFolderID: '',
@@ -40,7 +39,7 @@ export default class Resume extends React.Component {
     this.showError = this.showError.bind(this);
     this.showSuccess = this.showSuccess.bind(this);
     this.processing = this.processing.bind(this);
-    this.resetForm = this.resetForm.bind(this);
+    this.reset = this.reset.bind(this);
     this.pickerCallback = this.pickerCallback.bind(this);
   }
 
@@ -77,15 +76,14 @@ export default class Resume extends React.Component {
     });
   }
 
-  resetForm() {
+  reset() {
     this.setState({
       stepNum: 0,
       error: false,
       success: false,
       processing: false,
       srcFolderID: '',
-      srcFolderName: '',
-      srcFolderURL: ''
+      srcFolderName: ''
     });
   }
 
@@ -151,7 +149,7 @@ export default class Resume extends React.Component {
   }
 
   /**
-   * Sets this.state.srcFolderID, srcFolderURL, srcFolderName
+   * Sets folder info in state
    * @param {string} id
    * @param {string} name
    * @param {string} parentID
@@ -225,18 +223,24 @@ export default class Resume extends React.Component {
             Please select the folder copy, not the original folder.
             <SelectFolder
               srcFolderID={this.state.srcFolderID}
-              srcFolderURL={this.state.srcFolderURL}
               handleFolderSelect={this.handleFolderSelect}
               showError={this.showError}
               processing={this.processing}
               picker={this.picker}
             />
             {this.state.srcFolderID !== '' && (
-              <RaisedButton
-                onClick={this.nextView}
-                primary={true}
-                label="Next"
-              />
+              <div class="controls">
+                <FlatButton
+                  label="Select a different folder"
+                  onClick={this.reset}
+                  style={{ marginRight: '1em' }}
+                />
+                <RaisedButton
+                  onClick={this.nextView}
+                  primary={true}
+                  label="Next"
+                />
+              </div>
             )}
           </Page>
 
@@ -249,16 +253,18 @@ export default class Resume extends React.Component {
                 {this.state.srcFolderName}
               </a>
             </Panel>
-            <FlatButton
-              label="Start over"
-              onClick={this.resetForm}
-              style={{ marginRight: '1em' }}
-            />
-            <RaisedButton
-              label="Resume copying"
-              primary={true}
-              onClick={this.handleSubmit}
-            />
+            <div class="controls">
+              <FlatButton
+                label="Start over"
+                onClick={this.reset}
+                style={{ marginRight: '1em' }}
+              />
+              <RaisedButton
+                label="Resume copying"
+                primary={true}
+                onClick={this.handleSubmit}
+              />
+            </div>
           </Page>
         </PageChanger>
 
