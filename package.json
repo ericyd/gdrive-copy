@@ -30,14 +30,14 @@
     "jsdom": "^9.8.3",
     "material-ui": "^0.19.4",
     "mocha": "^3.1.2",
-    "node-sass": "^3.11.2",
+    "node-sass": "^4.7.2",
     "open": "0.0.5",
     "prettier": "^1.8.2",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-addons-test-utils": "^15.4.1",
     "react-dom": "^16.2.0",
-    "sass-loader": "^4.0.2",
+    "sass-loader": "^6.0.6",
     "shallowequal": "^0.2.2",
     "style-loader": "^0.13.1",
     "stylelint": "^8.2.0",
@@ -51,20 +51,23 @@
     "watch": "gulp watch",
     "webpack": "webpack --config ./config/webpack.config.dev.js",
     "build": "webpack --config ./config/webpack.config.prod.js && gulp build",
-    "test-site":
-      "webpack --config ./config/webpack.config.dev.js && gulp generate-test-site",
+    "test-site": "webpack --config ./config/webpack.config.dev.js && gulp generate-test-site",
     "gulp-test-site": "gulp generate-test-site",
     "watch-test-site": "webpack && gulp watch-test-site",
     "test": "mocha --compilers js:babel-core/register",
     "prettier": "prettier --write --single-quote",
-    "prettier:all":
-      "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
+    "prettier:all": "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ericyd/gdrive-copy.git"
   },
-  "keywords": ["google", "drive", "copy", "folder"],
+  "keywords": [
+    "google",
+    "drive",
+    "copy",
+    "folder"
+  ],
   "author": "Eric Dauenhauer",
   "license": "MIT",
   "bugs": {
