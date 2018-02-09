@@ -435,7 +435,7 @@ export default class Start extends React.Component {
                 ) : this.state.copyTo === 'root' ? (
                   'Root of My Drive'
                 ) : (
-                  'Same of original folder'
+                  'Same as original folder'
                 )}
               </div>
             </Panel>
