@@ -155,7 +155,7 @@ export default function FAQ() {
       </div>
       <a href="#top">Top</a>
       <h3>
-        <a name="uninstall" />How do I unintall the app and remove all
+        <a name="uninstall" />How do I uninstall the app and remove all
         permissions?
       </h3>
       <div>
