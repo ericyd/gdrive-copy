@@ -310,12 +310,6 @@ export default class Start extends React.Component {
               folderID={this.state.srcFolderID}
               folderName={this.state.srcFolderName}
             />
-            {/* show sample folder URL in test mode */}
-            {process.env.NODE_ENV !== 'production' && (
-              <div>
-                https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
-              </div>
-            )}
             {this.state.srcFolderID !== '' && (
               <div class="controls">
                 <FlatButton
@@ -452,6 +446,13 @@ export default class Start extends React.Component {
             </div>
           </Page>
         </PageChanger>
+
+        {/* show sample folder URL in test mode */}
+        {process.env.NODE_ENV !== 'production' && (
+          <div>
+            https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
+          </div>
+        )}
       </div>
     );
   }

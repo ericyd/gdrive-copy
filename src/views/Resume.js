@@ -41,6 +41,7 @@ export default class Resume extends React.Component {
     this.processing = this.processing.bind(this);
     this.reset = this.reset.bind(this);
     this.pickerCallback = this.pickerCallback.bind(this);
+    this.nextView = this.nextView.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -222,11 +223,12 @@ export default class Resume extends React.Component {
           <Page stepNum={0} label="Which folder are you resuming?">
             Please select the folder copy, not the original folder.
             <SelectFolder
-              srcFolderID={this.state.srcFolderID}
               handleFolderSelect={this.handleFolderSelect}
               showError={this.showError}
               processing={this.processing}
               picker={this.picker}
+              folderID={this.state.srcFolderID}
+              folderName={this.state.srcFolderName}
             />
             {this.state.srcFolderID !== '' && (
               <div class="controls">
