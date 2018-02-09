@@ -13,30 +13,35 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { parseURL } from '../util/helpers';
 import { showPicker } from '../util/picker';
+import FolderLink from './FolderLink';
 
 export default class SelectFolder extends React.Component {
   constructor() {
     super();
     this.state = {
-      value: '',
-      errorText: ''
+      value: ''
     };
     this.launchPicker = this.launchPicker.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   launchPicker() {
     this.props.picker.showPicker();
   }
 
+  reset() {
+    this.setState({ value: '' });
+  }
+
   // allow TextInput to update if typing in
-  // todo: should this be removed to only support pasting?
   handleChange(e) {
-    this.setState({
-      value: e.target.value,
-      errorText: 'Paste a folder URL with Ctrl+V'
-    });
+    // 2018-02-08: removed to avoid confusing error text
+    // this.setState({
+    //   value: e.target.value,
+    //   errorText: 'Paste a folder URL with Ctrl+V'
+    // });
   }
 
   /**
@@ -48,6 +53,7 @@ export default class SelectFolder extends React.Component {
   handlePaste(e) {
     const url = e.clipboardData.getData('Text');
     const id = parseURL(url);
+    this.setState({ value: url });
     this.props.processing('Getting folder info');
     const _this = this;
     if (process.env.NODE_ENV === 'production') {
@@ -55,6 +61,7 @@ export default class SelectFolder extends React.Component {
         .withSuccessHandler(folder => {
           var parentid =
             folder.parents && folder.parents[0] ? folder.parents[0].id : null;
+          _this.reset();
           _this.props.handleFolderSelect(folder.id, folder.title, parentid);
         })
         .withFailureHandler(err => {
@@ -66,15 +73,25 @@ export default class SelectFolder extends React.Component {
       // ======================
       const _this = this;
       return setTimeout(function() {
-        _this.setState({
-          srcFolderURL: url
-        });
+        _this.reset();
         return _this.props.handleFolderSelect(id, 'test mode folder', id);
       }, 1000);
     }
   }
 
   render() {
+    if (this.props.folderID && this.props.folderID !== '') {
+      return (
+        <div>
+          <h4>You selected</h4>
+          <FolderLink
+            folderID={this.props.folderID}
+            name={this.props.folderName}
+          />
+        </div>
+      );
+    }
+
     return (
       <div>
         <TextField
@@ -85,14 +102,18 @@ export default class SelectFolder extends React.Component {
           onChange={this.handleChange}
           onPaste={this.handlePaste}
           value={this.state.value}
-          errorText={this.state.errorText}
         />
-        <span className="circle-or">or</span>
-        <RaisedButton
-          label="Search your Drive"
-          primary={true}
-          onClick={this.launchPicker}
-        />
+        {this.props.picker && [
+          <span className="circle-or" key="1">
+            or
+          </span>,
+          <RaisedButton
+            key="2"
+            label="Search your Drive"
+            primary={true}
+            onClick={this.launchPicker}
+          />
+        ]}
       </div>
     );
   }
@@ -101,5 +122,8 @@ export default class SelectFolder extends React.Component {
 SelectFolder.propTypes = {
   handleFolderSelect: PropTypes.func.isRequired,
   processing: PropTypes.func.isRequired,
-  showError: PropTypes.func.isRequired
+  showError: PropTypes.func.isRequired,
+  picker: PropTypes.object,
+  folderID: PropTypes.string,
+  folderName: PropTypes.string
 };

@@ -12,8 +12,9 @@ import Success from '../components/Success';
 import Error from '../components/Error';
 import Appreciation from '../components/Appreciation';
 import Overlay from '../components/Overlay';
+import FolderLink from '../components/FolderLink';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
-import { getDriveFolderURL, getDriveSpreadsheetURL } from '../util/helpers';
+import { getDriveSpreadsheetURL } from '../util/helpers';
 
 export default class Resume extends React.Component {
   constructor() {
@@ -23,7 +24,6 @@ export default class Resume extends React.Component {
 
     this.state = {
       stepNum: 0,
-      srcFolderURL: '',
       srcFolderID: '',
       srcFolderName: '',
       destFolderID: '',
@@ -40,8 +40,9 @@ export default class Resume extends React.Component {
     this.showError = this.showError.bind(this);
     this.showSuccess = this.showSuccess.bind(this);
     this.processing = this.processing.bind(this);
-    this.resetForm = this.resetForm.bind(this);
+    this.reset = this.reset.bind(this);
     this.pickerCallback = this.pickerCallback.bind(this);
+    this.nextView = this.nextView.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -77,16 +78,23 @@ export default class Resume extends React.Component {
     });
   }
 
-  resetForm() {
+  reset() {
     this.setState({
       stepNum: 0,
       error: false,
       success: false,
       processing: false,
       srcFolderID: '',
-      srcFolderName: '',
-      srcFolderURL: ''
+      srcFolderName: ''
     });
+  }
+
+  nextView() {
+    if (this.state.stepNum === this.maxSteps) {
+      return;
+    } else {
+      this.setState({ stepNum: this.state.stepNum + 1 });
+    }
   }
 
   /**
@@ -105,7 +113,6 @@ export default class Resume extends React.Component {
         srcFolderID: doc[google.picker.Document.ID],
         srcParentID: doc[google.picker.Document.PARENT_ID],
         srcFolderName: doc[google.picker.Document.NAME],
-        stepNum: this.state.stepNum + 1,
         processing: false
       });
     } else if (action == google.picker.Action.CANCEL) {
@@ -144,7 +151,7 @@ export default class Resume extends React.Component {
   }
 
   /**
-   * Sets this.state.srcFolderID, srcFolderURL, srcFolderName
+   * Sets folder info in state
    * @param {string} id
    * @param {string} name
    * @param {string} parentID
@@ -152,7 +159,6 @@ export default class Resume extends React.Component {
   handleFolderSelect(id, name, parentID) {
     this.setState({
       processing: false,
-      stepNum: this.state.stepNum + 1,
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID
@@ -182,12 +188,10 @@ export default class Resume extends React.Component {
               </li>
               <li>
                 Copy:{' '}
-                <a
-                  href={getDriveFolderURL(this.state.srcFolderID)}
-                  target="_blank"
-                >
-                  {this.state.srcFolderName}
-                </a>
+                <FolderLink
+                  folderID={this.state.srcFolderID}
+                  name={this.state.srcFolderName}
+                />
               </li>
               <li>
                 Please do not try to start another copy until this one is
@@ -218,34 +222,48 @@ export default class Resume extends React.Component {
           <Page stepNum={0} label="Which folder are you resuming?">
             Please select the folder copy, not the original folder.
             <SelectFolder
-              srcFolderID={this.state.srcFolderID}
-              srcFolderURL={this.state.srcFolderURL}
               handleFolderSelect={this.handleFolderSelect}
               showError={this.showError}
               processing={this.processing}
               picker={this.picker}
+              folderID={this.state.srcFolderID}
+              folderName={this.state.srcFolderName}
             />
+            {this.state.srcFolderID !== '' && (
+              <div class="controls">
+                <FlatButton
+                  label="Select a different folder"
+                  onClick={this.reset}
+                  style={{ marginRight: '1em' }}
+                />
+                <RaisedButton
+                  onClick={this.nextView}
+                  primary={true}
+                  label="Next"
+                />
+              </div>
+            )}
           </Page>
 
           <Page stepNum={1} label="Resume the copy">
             <Panel label="Selected folder">
-              <a
-                href={getDriveFolderURL(this.state.srcFolderID)}
-                target="_blank"
-              >
-                {this.state.srcFolderName}
-              </a>
+              <FolderLink
+                folderID={this.state.srcFolderID}
+                name={this.state.srcFolderName}
+              />
             </Panel>
-            <FlatButton
-              label="Start over"
-              onClick={this.resetForm}
-              style={{ marginRight: '1em' }}
-            />
-            <RaisedButton
-              label="Resume copying"
-              primary={true}
-              onClick={this.handleSubmit}
-            />
+            <div class="controls">
+              <FlatButton
+                label="Start over"
+                onClick={this.reset}
+                style={{ marginRight: '1em' }}
+              />
+              <RaisedButton
+                label="Resume copying"
+                primary={true}
+                onClick={this.handleSubmit}
+              />
+            </div>
           </Page>
         </PageChanger>
 

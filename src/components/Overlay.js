@@ -22,7 +22,7 @@ export default function Overlay(props) {
           width: '100%',
           height: '100%',
           backgroundColor: '#fff',
-          opacity: 0.75,
+          opacity: 0.5,
           zIndex: 1000
         }}
       />
@@ -35,7 +35,10 @@ export default function Overlay(props) {
           transform: 'translate(-50%, -50%)',
           opacity: 1,
           zIndex: 1001,
-          textAlign: 'center'
+          textAlign: 'center',
+          backgroundColor: '#fff',
+          padding: '2em',
+          boxShadow: '0px 0px 20px 0px #bababa'
         }}
       >
         <Spinner width="4em" height="4em" />
