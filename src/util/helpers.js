@@ -30,10 +30,6 @@ export function parseURL(url) {
   return id;
 }
 
-export function getDriveFolderURL(id) {
-  return `https://drive.google.com/drive/folders/${id}`;
-}
-
 export function getDriveSpreadsheetURL(id) {
   return `https://docs.google.com/spreadsheets/d/${id}/edit`;
 }

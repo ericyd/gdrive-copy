@@ -13,7 +13,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { parseURL } from '../util/helpers';
 import { showPicker } from '../util/picker';
-import { getDriveFolderURL } from '../util/helpers';
+import FolderLink from './FolderLink';
 
 export default class SelectFolder extends React.Component {
   constructor() {
@@ -53,7 +53,7 @@ export default class SelectFolder extends React.Component {
   handlePaste(e) {
     const url = e.clipboardData.getData('Text');
     const id = parseURL(url);
-    this.setState({value: url});
+    this.setState({ value: url });
     this.props.processing('Getting folder info');
     const _this = this;
     if (process.env.NODE_ENV === 'production') {
@@ -84,7 +84,10 @@ export default class SelectFolder extends React.Component {
       return (
         <div>
           <h4>You selected</h4>
-          <a href={getDriveFolderURL(this.props.folderID)} target="_blank">{this.props.folderName}</a>
+          <FolderLink
+            folderID={this.props.folderID}
+            name={this.props.folderName}
+          />
         </div>
       );
     }
@@ -101,7 +104,9 @@ export default class SelectFolder extends React.Component {
           value={this.state.value}
         />
         {this.props.picker && [
-          <span className="circle-or" key="1">or</span>,
+          <span className="circle-or" key="1">
+            or
+          </span>,
           <RaisedButton
             key="2"
             label="Search your Drive"

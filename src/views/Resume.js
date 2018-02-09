@@ -12,8 +12,9 @@ import Success from '../components/Success';
 import Error from '../components/Error';
 import Appreciation from '../components/Appreciation';
 import Overlay from '../components/Overlay';
+import FolderLink from '../components/FolderLink';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
-import { getDriveFolderURL, getDriveSpreadsheetURL } from '../util/helpers';
+import { getDriveSpreadsheetURL } from '../util/helpers';
 
 export default class Resume extends React.Component {
   constructor() {
@@ -187,12 +188,10 @@ export default class Resume extends React.Component {
               </li>
               <li>
                 Copy:{' '}
-                <a
-                  href={getDriveFolderURL(this.state.srcFolderID)}
-                  target="_blank"
-                >
-                  {this.state.srcFolderName}
-                </a>
+                <FolderLink
+                  folderID={this.state.srcFolderID}
+                  name={this.state.srcFolderName}
+                />
               </li>
               <li>
                 Please do not try to start another copy until this one is
@@ -248,12 +247,10 @@ export default class Resume extends React.Component {
 
           <Page stepNum={1} label="Resume the copy">
             <Panel label="Selected folder">
-              <a
-                href={getDriveFolderURL(this.state.srcFolderID)}
-                target="_blank"
-              >
-                {this.state.srcFolderName}
-              </a>
+              <FolderLink
+                folderID={this.state.srcFolderID}
+                name={this.state.srcFolderName}
+              />
             </Panel>
             <div class="controls">
               <FlatButton

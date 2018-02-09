@@ -10,15 +10,15 @@ import Success from '../components/Success';
 import Error from '../components/Error';
 import Panel from '../components/Panel';
 import Overlay from '../components/Overlay';
+import FolderLink from '../components/FolderLink';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
-import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
-import { getDriveFolderURL, getDriveSpreadsheetURL } from '../util/helpers';
+import { getDriveSpreadsheetURL } from '../util/helpers';
 
 export default class Start extends React.Component {
   constructor() {
@@ -37,7 +37,7 @@ export default class Start extends React.Component {
       copyPermissions: false,
       copyTo: 'same',
       destParentID: '',
-      destParentFolderName: '',
+      destParentName: '',
 
       // success/error/processing
       success: false,
@@ -106,7 +106,7 @@ export default class Start extends React.Component {
       srcFolderName: '',
       copyTo: 'same',
       destParentID: '',
-      destParentFolderName: ''
+      destParentName: ''
     });
   }
 
@@ -204,7 +204,7 @@ export default class Start extends React.Component {
     this.setState({
       processing: false,
       destParentID: id,
-      destParentFolderName: name
+      destParentName: name
     });
   }
 
@@ -253,21 +253,17 @@ export default class Start extends React.Component {
               </li>
               <li>
                 Original folder:{' '}
-                <a
-                  href={getDriveFolderURL(this.state.srcFolderID)}
-                  target="_blank"
-                >
-                  {this.state.srcFolderName}
-                </a>
+                <FolderLink
+                  folderID={this.state.srcFolderID}
+                  name={this.state.srcFolderName}
+                />
               </li>
               <li>
                 Copy:{' '}
-                <a
-                  href={getDriveFolderURL(this.state.destFolderID)}
-                  target="_blank"
-                >
-                  {this.state.destFolderName}
-                </a>
+                <FolderLink
+                  folderID={this.state.destFolderID}
+                  name={this.state.destFolderName}
+                />
               </li>
               <li>
                 Please do not try to start another copy until this one is
@@ -350,23 +346,25 @@ export default class Start extends React.Component {
           </Page>
 
           <Page label="Choose copying options" stepNum={2}>
-            <List>
-              <ListItem
-                leftCheckbox={
-                  <Checkbox
-                    checked={this.state['copyPermissions']}
-                    onCheck={this.handleCheck}
-                    id="copyPermissions"
-                  />
-                }
-                primaryText="Copy permissions"
-                secondaryText="Sharing settings from the original folder and files will be copied"
-              />
-            </List>
+            <h3>Permissions</h3>
+            <Checkbox
+              checked={this.state['copyPermissions']}
+              onCheck={this.handleCheck}
+              id="copyPermissions"
+              label={
+                <span>
+                  Copy permissions<br />
+                  Sharing settings from the original folder and files will be
+                  copied
+                </span>
+              }
+            />
+
+            <h3>Copy to</h3>
 
             <RadioButtonGroup
               name="copyTo"
-              defaultSelected="0"
+              defaultSelected="same"
               onChange={this.handleRadio}
             >
               <RadioButton
@@ -388,7 +386,7 @@ export default class Start extends React.Component {
                 showError={this.showError}
                 processing={this.processing}
                 folderID={this.state.destParentID}
-                folderName={this.state.destParentFolderName}
+                folderName={this.state.destParentName}
               />
             )}
 
@@ -398,25 +396,30 @@ export default class Start extends React.Component {
                 onClick={this.prevView}
                 style={{ marginRight: '1em' }}
               />
-              <RaisedButton onClick={this.nextView} primary={true} label="Next" />
+              <RaisedButton
+                onClick={this.nextView}
+                primary={true}
+                label="Next"
+              />
             </div>
           </Page>
 
           <Page label="Review and start copying" stepNum={3}>
             <Panel>
               <h3>Original Folder</h3>
-              <a
-                href={getDriveFolderURL(this.state.srcFolderID)}
-                target="_blank"
-              >
-                {this.state.srcFolderName}
-              </a>
-              
-              <br /><br />
+
+              <FolderLink
+                folderID={this.state.srcFolderID}
+                name={this.state.srcFolderName}
+              />
+
+              <br />
+              <br />
               <h3>Name your copy</h3>
               <span>{this.state.destFolderName}</span>
 
-              <br /><br />
+              <br />
+              <br />
               <h3>Options</h3>
               <div>
                 Copy permissions to new folder?{' '}
@@ -424,11 +427,16 @@ export default class Start extends React.Component {
               </div>
               <div>
                 Copy to:{' '}
-                {this.state.copyTo === 'custom'
-                  ? getDriveFolderURL(this.state.destParentID)
-                  : this.state.copyTo === 'root'
-                    ? 'Root of My Drive'
-                    : 'Same of original folder'}
+                {this.state.copyTo === 'custom' ? (
+                  <FolderLink
+                    folderID={this.state.destParentID}
+                    name={this.state.destParentName}
+                  />
+                ) : this.state.copyTo === 'root' ? (
+                  'Root of My Drive'
+                ) : (
+                  'Same of original folder'
+                )}
               </div>
             </Panel>
 
