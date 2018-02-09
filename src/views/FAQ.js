@@ -40,7 +40,7 @@ export default function FAQ() {
         </li>
         <li>
           <a href="#uninstall">
-            How do I unintall the app and remove all permissions?
+            How do I uninstall the app and remove all permissions?
           </a>
         </li>
         <li>
