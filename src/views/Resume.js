@@ -89,6 +89,15 @@ export default class Resume extends React.Component {
     });
   }
 
+  clearSelection(id, name) {
+    return () => {
+      let state = {};
+      state[id] = '';
+      state[name] = '';
+      this.setState(state);
+    }
+  }
+
   nextView() {
     if (this.state.stepNum === this.maxSteps) {
       return;
@@ -228,14 +237,10 @@ export default class Resume extends React.Component {
               picker={this.picker}
               folderID={this.state.srcFolderID}
               folderName={this.state.srcFolderName}
+              reset={this.clearSelection('srcFolderID', 'srcFolderName')}
             />
             {this.state.srcFolderID !== '' && (
-              <div class="controls">
-                <FlatButton
-                  label="Select a different folder"
-                  onClick={this.reset}
-                  style={{ marginRight: '1em' }}
-                />
+              <div className="controls">
                 <RaisedButton
                   onClick={this.nextView}
                   primary={true}
@@ -252,7 +257,7 @@ export default class Resume extends React.Component {
                 name={this.state.srcFolderName}
               />
             </Panel>
-            <div class="controls">
+            <div className="controls">
               <FlatButton
                 label="Start over"
                 onClick={this.reset}
