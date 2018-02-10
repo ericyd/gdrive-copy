@@ -7,14 +7,23 @@ Drive folder. As long as you have viewing rights on a folder, you can copy it in
 its entirety to your own Google Drive. The folder will be placed in your Google
 Drive, and you can move it from there.
 
-To launch app: click "Visit Website" button at top of window in the
-[Chrome Web Store](https://chrome.google.com/webstore/detail/copy-folder/kfbicpdhiofpicipfggljdhjokjblnhl).
+This project is not associated with Google in any way.
+
+To launch app: <https://script.google.com/macros/s/AKfycbxbGNGajrxv-HbX2sVY2OTu7yj9VvxlOMOeQblZFuq7rYm7uyo/exec>
+
+## Unable to sign in
+
+If you are having issues signing in to the app, please try one of these options:
+1. Use a different browser
+2. Use an incognito/private window
+3. Clear your cookies and cache (Ctrl+Shift+Delete is a shortcut on Windows)
 
 ## Usage
 
 1. Select your folder with the Google Picker, or paste a folder URL with Ctrl-C
 2. Choose a name for the new folder
-3. Click "Copy Folder". When the copy begins, you will be alerted that you can
+3. Select copying options
+4. Click "Copy Folder". When the copy begins, you will be alerted that you can
    close the window.
 
 In addition, the app user will become the owner of the new folder and all
@@ -36,8 +45,8 @@ contents.
   that you can close the window while the copying completes. You can view the
   source code on the Github page, listed below, to review the app and launch
   your own copy of the app if security is a concern.
-* If you'd like to copy sharing permissions from the original folder, select
-  "Yes" for Copy Sharing Permissions
+* If you'd like to copy sharing permissions from the original folder, check the
+  appropriate box on the Options page
 * By default the folder will copy to the same location as the original folder.
   You can copy it to the root directory by selecting "Root directory" under
   "Copy folder to"
@@ -48,7 +57,7 @@ Please open an [issue on Github](https://github.com/ericyd/gdrive-copy/issues).
 
 # Project maintenance
 
-This project is no longer being actively developed. I will try to keep it
+This project is not updated very frequently. I will try to keep it
 updated to remain functional with any changes to the Drive API, but I have a
 limited amount of time and other projects which I would like to focus on.
 
