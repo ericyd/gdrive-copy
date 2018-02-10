@@ -96,6 +96,15 @@ export default class Start extends React.Component {
     });
   }
 
+  clearSelection(id, name) {
+    return () => {
+      let state = {};
+      state[id] = '';
+      state[name] = '';
+      this.setState(state);
+    }
+  }
+
   reset() {
     this.setState({
       stepNum: 0,
@@ -305,14 +314,10 @@ export default class Start extends React.Component {
               picker={this.picker}
               folderID={this.state.srcFolderID}
               folderName={this.state.srcFolderName}
+              reset={this.clearSelection('srcFolderID', 'srcFolderName')}
             />
             {this.state.srcFolderID !== '' && (
-              <div class="controls">
-                <FlatButton
-                  label="Select a different folder"
-                  onClick={this.reset}
-                  style={{ marginRight: '1em' }}
-                />
+              <div className="controls">
                 <RaisedButton
                   onClick={this.nextView}
                   primary={true}
@@ -331,7 +336,7 @@ export default class Start extends React.Component {
               floatingLabelText="Copy name"
               value={this.state.destFolderName}
             />
-            <div class="controls">
+            <div className="controls">
               <FlatButton
                 label="Go back"
                 onClick={this.reset}
@@ -387,10 +392,11 @@ export default class Start extends React.Component {
                 processing={this.processing}
                 folderID={this.state.destParentID}
                 folderName={this.state.destParentName}
+                reset={this.clearSelection('destParentID', 'destParentName')}
               />
             )}
 
-            <div class="controls">
+            <div className="controls">
               <FlatButton
                 label="Go back"
                 onClick={this.prevView}
@@ -440,7 +446,7 @@ export default class Start extends React.Component {
               </div>
             </Panel>
 
-            <div class="controls">
+            <div className="controls">
               <FlatButton
                 label="Start over"
                 onClick={this.reset}
