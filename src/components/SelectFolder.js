@@ -33,6 +33,7 @@ export default class SelectFolder extends React.Component {
 
   reset() {
     this.setState({ value: '' });
+    this.props.reset();
   }
 
   // allow TextInput to update if typing in
@@ -87,6 +88,12 @@ export default class SelectFolder extends React.Component {
           <FolderLink
             folderID={this.props.folderID}
             name={this.props.folderName}
+          />
+          <RaisedButton
+            label="Select a different folder"
+            primary={false}
+            onClick={this.reset}
+            style={{marginLeft: '1em'}}
           />
         </div>
       );
