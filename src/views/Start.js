@@ -102,7 +102,7 @@ export default class Start extends React.Component {
       state[id] = '';
       state[name] = '';
       this.setState(state);
-    }
+    };
   }
 
   reset() {

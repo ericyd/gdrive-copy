@@ -95,7 +95,7 @@ export default class Resume extends React.Component {
       state[id] = '';
       state[name] = '';
       this.setState(state);
-    }
+    };
   }
 
   nextView() {

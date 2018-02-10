@@ -93,7 +93,7 @@ export default class SelectFolder extends React.Component {
             label="Select a different folder"
             primary={false}
             onClick={this.reset}
-            style={{marginLeft: '1em'}}
+            style={{ marginLeft: '1em' }}
           />
         </div>
       );
