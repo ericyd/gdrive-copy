@@ -37,6 +37,7 @@
     "react-dom": "^16.2.0",
     "sass-loader": "^6.0.6",
     "shallowequal": "^0.2.2",
+    "sinon": "^4.3.0",
     "style-loader": "^0.13.1",
     "stylelint": "^8.2.0",
     "stylelint-scss": "^2.1.0",
