@@ -3,16 +3,13 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var sass = require('gulp-sass');
+var removeCode = require('gulp-remove-code');
 var insert = require('gulp-insert');
 var autoprefixer = require('gulp-autoprefixer');
 var gulpHogan = require('gulp-hogan');
 var svg2png = require('svg2png');
 var fs = require('fs');
 var rename = require('gulp-rename');
-
-gulp.task('default', function() {
-  // Default task
-});
 
 gulp.task('build', ['js', 'html', 'gs', 'css-prod', 'img']);
 
@@ -43,6 +40,7 @@ gulp.task('js', function() {
 gulp.task('gs', function() {
   return gulp
     .src('./lib/**/*.js')
+    .pipe(removeCode({ production: true }))
     .pipe(concat('application.gs'))
     .pipe(gulp.dest('dist'));
 });
