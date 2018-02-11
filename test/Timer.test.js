@@ -1,5 +1,5 @@
 const Timer = require('../lib/Timer');
-var assert = require('chai').assert;
+var assert = require('assert');
 
 describe('timers', function() {
   beforeEach(function() {
@@ -26,8 +26,8 @@ describe('timers', function() {
     it('should be true when currTime is greater than 4.7 minutes after START_TIME', function() {
       assert.equal(this.timer.timeIsUp, false);
       this.timer.currTime = this.timer.START_TIME + 4.8 * 1000 * 60;
-      assert.isAtLeast(
-        this.timer.currTime - this.timer.START_TIME, this.timer.MAX_RUNNING_TIME
+      assert(
+        this.timer.currTime - this.timer.START_TIME >= this.timer.MAX_RUNNING_TIME
       );
     });
   });

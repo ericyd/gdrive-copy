@@ -1,4 +1,4 @@
-var assert = require('chai').assert;
+var assert = require('assert');
 
 describe('sanity check', function() {
   it('should be able to do basic math', function() {

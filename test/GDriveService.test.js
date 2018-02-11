@@ -1,5 +1,5 @@
 var GDriveService = require('../lib/GDriveService');
-var assert = require('chai').assert;
+var assert = require('assert');
 
 describe('gdriveService', function() {
   it('should be importable', function() {

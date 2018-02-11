@@ -1,5 +1,5 @@
 'use strict';
-var assert = require('chai').assert;
+var assert = require('assert');
 var { parseURL } = require('../src/util/helpers');
 
 describe('parseURL.js', function() {
