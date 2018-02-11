@@ -46,13 +46,15 @@
     "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
-    "watch": "gulp watch",
-    "webpack": "webpack --config ./config/webpack.config.dev.js",
-    "build": "webpack --config ./config/webpack.config.prod.js && gulp build",
-    "test-site": "webpack --config ./config/webpack.config.dev.js && gulp generate-test-site",
-    "gulp-test-site": "gulp generate-test-site",
-    "watch-test-site": "webpack && gulp watch-test-site",
     "test": "mocha --compilers js:babel-core/register",
+    "watch": "gulp watch",
+    "watch-test-site": "webpack && gulp watch-test-site",
+    "webpack:dev": "webpack --config ./config/webpack.config.dev.js",
+    "gulp:dev": "gulp generate-test-site",
+    "build:dev": "npm run webpack:dev && npm run gulp:dev",
+    "webpack:prod": "webpack --config ./config/webpack.config.prod.js",
+    "gulp:prod": "gulp build",
+    "build:prod": "npm run webpack:prod && npm run gulp:prod",
     "prettier": "prettier --write --single-quote",
     "prettier:all": "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
   },

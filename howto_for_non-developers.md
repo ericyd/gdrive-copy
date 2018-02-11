@@ -45,17 +45,14 @@ directory houses the Google Apps Script files that actually access Google Drive.
 This app uses Webpack and Gulp to build and bundle the app. There are a few ways
 you can run it.
 
-1. `npm run build`: Run this to compile production ready files that can be
+1. `npm run build:prod`: Run this to compile production ready files that can be
    updloaded to a Google Apps Script project. The output files will be placed in
    the `dist` directory
-2. `npm run test-site`: Run this to compile development files that can be opened
+2. `npm run build:dev`: Run this to compile development files that can be opened
    from your local computer. This is useful for testing interface updates
    without having to upload the entire file to Google Apps Script. If using this
    option, you'll want to open the file `/dist/index.html` in your web browser
    after compiling.
-
-Alternatively, you can run `gulp watch` to compile updates whenever changes are
-made.
 
 ## Step 6: Upload code
 
