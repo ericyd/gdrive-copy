@@ -5,5 +5,5 @@ describe('Properties', function() {
   it('should be importable', function() {
     var service = new Properties();
     assert(true);
-  })
-})
+  });
+});

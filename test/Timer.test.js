@@ -7,7 +7,6 @@ describe('timers', function() {
   });
 
   describe('timers.START_TIME', function() {
-
     it('should update when initialized', function() {
       assert.notEqual(this.timer.START_TIME, 0);
     });
@@ -27,7 +26,8 @@ describe('timers', function() {
       assert.equal(this.timer.timeIsUp, false);
       this.timer.currTime = this.timer.START_TIME + 4.8 * 1000 * 60;
       assert(
-        this.timer.currTime - this.timer.START_TIME >= this.timer.MAX_RUNNING_TIME
+        this.timer.currTime - this.timer.START_TIME >=
+          this.timer.MAX_RUNNING_TIME
       );
     });
   });
