@@ -1,0 +1,29 @@
+{
+ "kind": "drive#permissionList",
+ "etag": "\"G9mQazc6pdRCuGfUPB_oyY074Ug/lzj2ht1nA7HSuUzGPdLCSi2-oik\"",
+ "selfLink": "https://www.googleapis.com/drive/v2/files/1Nj7jv4FSBqiR7ZAVUqfWkILyM3nc4RUivsDKBBS-Gr4/permissions",
+ "items": [
+  {
+   "kind": "drive#permission",
+   "etag": "\"G9mQazc6pdRCuGfUPB_oyY074Ug/HINSHkl4AMyulX4vw2qgy9x7OW4\"",
+   "id": "09563211953493156811",
+   "selfLink": "https://www.googleapis.com/drive/v2/files/1Nj7jv4FSBqiR7ZAVUqfWkILyM3nc4RUivsDKBBS-Gr4/permissions/09563211953493156811",
+   "name": "Eric Dauenhauer",
+   "emailAddress": "eric@ericyd.com",
+   "domain": "ericyd.com",
+   "role": "owner",
+   "type": "user",
+   "photoLink": "https://lh6.googleusercontent.com/-t2CzMrU_66E/AAAAAAAAAAI/AAAAAAAAADg/nbum6einNP8/s64/photo.jpg",
+   "deleted": false
+  },
+  {
+   "kind": "drive#permission",
+   "etag": "\"G9mQazc6pdRCuGfUPB_oyY074Ug/qP_Ccto1RPk52Hus58OpCd7LtFg\"",
+   "id": "anyoneWithLink",
+   "selfLink": "https://www.googleapis.com/drive/v2/files/1Nj7jv4FSBqiR7ZAVUqfWkILyM3nc4RUivsDKBBS-Gr4/permissions/anyoneWithLink",
+   "role": "reader",
+   "type": "anyone",
+   "withLink": true
+  }
+ ]
+}

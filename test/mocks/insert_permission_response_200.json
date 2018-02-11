@@ -1,0 +1,12 @@
+{
+ "kind": "drive#permission",
+ "etag": "\"G9mQazc6pdRCuGfUPB_oyY074Ug/PxN8k7anFxmZk2WJ7UWhJsDb6-w\"",
+ "id": "04690040302608077275",
+ "selfLink": "https://www.googleapis.com/drive/v2/files/1Nj7jv4FSBqiR7ZAVUqfWkILyM3nc4RUivsDKBBS-Gr4/permissions/04690040302608077275",
+ "name": "Eric Dauenhauer",
+ "emailAddress": "theguy3421@yahoo.com",
+ "domain": "yahoo.com",
+ "role": "writer",
+ "type": "user",
+ "deleted": false
+}

@@ -1,0 +1,15 @@
+{
+ "error": {
+  "errors": [
+   {
+    "domain": "global",
+    "reason": "notFound",
+    "message": "Permission not found: 04690040302608077275",
+    "locationType": "other",
+    "location": "permission"
+   }
+  ],
+  "code": 404,
+  "message": "Permission not found: 04690040302608077275"
+ }
+}
