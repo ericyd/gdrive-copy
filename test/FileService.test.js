@@ -17,7 +17,7 @@ describe('FileService', function() {
         .toString();
       stub.returns(mockCopy);
       const expected = {
-        today: new Date().getDate(),
+        today: new Date().getTime(),
         destID: '1234'
       };
       const copy = FileService.createLoggerSpreadsheet(
@@ -55,6 +55,58 @@ describe('FileService', function() {
       stub.throws(new Error(errMsg));
       const copy = FileService.createLoggerSpreadsheet(1, 2);
       assert.equal(copy, errMsg, 'does not return error message');
+
+      stub.restore();
     });
+  });
+
+  describe('initializeDestinationFolder()', function() {
+    it('should copy to options.srcFolderID when copyTo == same', function() {
+      const stub = sinon.stub(GDriveService, 'insertFolder');
+      const spy = sinon.spy(FileService, 'copyPermissions');
+      const mockFolder = fs
+        .readFileSync('test/mocks/insert_folder_response_200.json')
+        .toString();
+      stub.returns(mockFolder);
+      const options = {
+        srcFolderID: '123',
+        copyTo: 'same',
+        copyPermissions: false,
+        srcFolderName: '234',
+        destFolderName: '345',
+        srcParentID: '456'
+      };
+      const today = new Date().getTime();
+      const requestBody = {
+        description: 'Copy of ' + options.srcFolderName + ', created ' + today,
+        title: options.destFolderName,
+        parents: [
+          {
+            kind: 'drive#fileLink',
+            id: options.srcParentID
+          }
+        ],
+        mimeType: 'application/vnd.google-apps.folder'
+      };
+      const destFolder = FileService.initializeDestinationFolder(options, today);
+      assert.deepEqual(
+        stub.getCall(0).args[0],
+        requestBody,
+        'GDriveService.insertFolder called with wrong args'
+      );
+
+      assert(
+        spy.notCalled,
+        'copyPermissions called when it was not supposed to be called'
+      );
+      stub.restore();
+    });
+
+    it('should copy to root when copyTo == root', function() {
+      assert(false, "write test");
+    })
+    it('should copy to custom when copyTo == custom', function() {
+      assert(false, "write test");
+    })
   });
 });
