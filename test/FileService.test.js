@@ -7,6 +7,9 @@ const sinon = require('sinon');
 describe('FileService', function() {
   beforeEach(function() {
     this.service = new FileService();
+    this.mockFolder = JSON.parse(
+      fs.readFileSync('test/mocks/insert_folder_response_200.json').toString()
+    );
   });
 
   describe('createLoggerSpreadsheet()', function() {
@@ -64,10 +67,7 @@ describe('FileService', function() {
     it('should copy to options.srcFolderID when copyTo == same', function() {
       const stub = sinon.stub(GDriveService, 'insertFolder');
       const spy = sinon.spy(FileService, 'copyPermissions');
-      const mockFolder = fs
-        .readFileSync('test/mocks/insert_folder_response_200.json')
-        .toString();
-      stub.returns(mockFolder);
+      stub.returns(this.mockFolder);
       const options = {
         srcFolderID: '123',
         copyTo: 'same',
@@ -88,7 +88,10 @@ describe('FileService', function() {
         ],
         mimeType: 'application/vnd.google-apps.folder'
       };
-      const destFolder = FileService.initializeDestinationFolder(options, today);
+      const destFolder = FileService.initializeDestinationFolder(
+        options,
+        today
+      );
       assert.deepEqual(
         stub.getCall(0).args[0],
         requestBody,
@@ -100,13 +103,272 @@ describe('FileService', function() {
         'copyPermissions called when it was not supposed to be called'
       );
       stub.restore();
+      spy.restore();
     });
 
     it('should copy to root when copyTo == root', function() {
-      assert(false, "write test");
-    })
+      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+      const stubRoot = sinon.stub(GDriveService, 'getRootID');
+      const spy = sinon.spy(FileService, 'copyPermissions');
+      stubInsert.returns(this.mockFolder);
+      const expectedRootID = 'myRootID';
+      stubRoot.returns(expectedRootID);
+      const options = {
+        srcFolderID: '123',
+        copyTo: 'root',
+        copyPermissions: false,
+        srcFolderName: '234',
+        destFolderName: '345',
+        srcParentID: '456'
+      };
+      const today = new Date().getTime();
+      const requestBody = {
+        description: 'Copy of ' + options.srcFolderName + ', created ' + today,
+        title: options.destFolderName,
+        parents: [
+          {
+            kind: 'drive#fileLink',
+            id: expectedRootID
+          }
+        ],
+        mimeType: 'application/vnd.google-apps.folder'
+      };
+      const destFolder = FileService.initializeDestinationFolder(
+        options,
+        today
+      );
+      assert.deepEqual(
+        stubInsert.getCall(0).args[0],
+        requestBody,
+        'GDriveService.insertFolder called with wrong args'
+      );
+
+      assert(
+        spy.notCalled,
+        'copyPermissions called when it was not supposed to be called'
+      );
+      stubInsert.restore();
+      stubRoot.restore();
+      spy.restore();
+    });
+
     it('should copy to custom when copyTo == custom', function() {
-      assert(false, "write test");
-    })
+      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+      const stubDescendant = sinon.stub(FileService, 'isDescendant');
+      const spy = sinon.spy(FileService, 'copyPermissions');
+      stubInsert.returns(this.mockFolder);
+      stubDescendant.returns(false);
+      const options = {
+        srcFolderID: '123',
+        copyTo: 'custom',
+        copyPermissions: false,
+        srcFolderName: '234',
+        destFolderName: '345',
+        destParentID: 'myDestParentID',
+        srcParentID: '456'
+      };
+      const today = new Date().getTime();
+      const requestBody = {
+        description: 'Copy of ' + options.srcFolderName + ', created ' + today,
+        title: options.destFolderName,
+        parents: [
+          {
+            kind: 'drive#fileLink',
+            id: options.destParentID
+          }
+        ],
+        mimeType: 'application/vnd.google-apps.folder'
+      };
+      const destFolder = FileService.initializeDestinationFolder(
+        options,
+        today
+      );
+      assert.deepEqual(
+        stubInsert.getCall(0).args[0],
+        requestBody,
+        'GDriveService.insertFolder called with wrong args'
+      );
+
+      assert(
+        spy.notCalled,
+        'copyPermissions called when it was not supposed to be called'
+      );
+      stubInsert.restore();
+      stubDescendant.restore();
+      spy.restore();
+    });
+    it('should test `isDescendent()` when copyTo == custom', function() {
+      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+      const stubDescendant = sinon.stub(FileService, 'isDescendant');
+      const spy = sinon.spy(FileService, 'copyPermissions');
+      stubInsert.returns(this.mockFolder);
+      stubDescendant.returns(false);
+      const options = {
+        copyTo: 'custom',
+        copyPermissions: false,
+        srcFolderName: '234',
+        srcFolderID: '234',
+        destFolderName: '345',
+        destParentID: 'myDestParentID'
+      };
+      const today = new Date().getTime();
+      const destFolder = FileService.initializeDestinationFolder(
+        options,
+        today
+      );
+
+      assert(
+        spy.notCalled,
+        'copyPermissions called when it was not supposed to be called'
+      );
+      assert(
+        stubDescendant.calledOnce,
+        'isDescendant should have been called once'
+      );
+      stubInsert.restore();
+      stubDescendant.restore();
+      spy.restore();
+    });
+
+    it('should copy permissions when copyPermissions == custom', function() {
+      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+      const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
+      stubInsert.returns(this.mockFolder);
+      stubCopyPermissions.returns(false);
+      const options = {
+        copyTo: 'same',
+        copyPermissions: true,
+        srcFolderName: '234',
+        srcFolderID: '234',
+        destFolderName: '345',
+        destParentID: 'myDestParentID'
+      };
+      const today = new Date().getTime();
+      const destFolder = FileService.initializeDestinationFolder(
+        options,
+        today
+      );
+
+      assert(
+        stubCopyPermissions.calledOnce,
+        'copy permissions should have been called once'
+      );
+      assert.equal(
+        stubCopyPermissions.getCall(0).args[0],
+        options.srcFolderID,
+        'copy permissions called with wrong source id'
+      );
+      assert.equal(
+        stubCopyPermissions.getCall(0).args[1],
+        null,
+        'copy permissions called with wrong owners'
+      );
+      assert.equal(
+        stubCopyPermissions.getCall(0).args[2],
+        destFolder.id,
+        'copy permissions called with wrong destination id'
+      );
+      stubInsert.restore();
+      stubCopyPermissions.restore();
+    });
+  });
+
+  describe('copyFile()', function() {
+    // folders are files too in GDrive
+    describe('when file is a folder', function() {
+      it('should insert folder', function() {
+        const file = {
+          description: 'myDescription',
+          title: 'myTitle',
+          parents: [
+            {
+              kind: 'drive#fileLink',
+              id: 'myParentID'
+            }
+          ],
+          mimeType: 'application/vnd.google-apps.folder'
+        };
+        const request = Object.assign({}, file, {
+          parents: [
+            {
+              kind: 'drive#fileLink',
+              id: 'newParentID'
+            }
+          ]
+        });
+        const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+        stubInsert.returns(this.mockFolder);
+        const map = {
+          myParentID: 'newParentID'
+        };
+        const properties = { remaining: [] };
+
+        const newFolder = FileService.copyFile(file, map, properties);
+        assert.deepEqual(
+          stubInsert.getCall(0).args[0],
+          request,
+          'GDriveService.insertFolder called with wrong args'
+        );
+        assert.deepEqual(
+          newFolder,
+          this.mockFolder,
+          'copyFile did not return correct value'
+        );
+
+        stubInsert.restore();
+      });
+
+      it('should add new folder to properties.remaining and map', function() {
+        const file = {
+          id: 'myFileID',
+          description: 'myDescription',
+          title: 'myTitle',
+          parents: [
+            {
+              kind: 'drive#fileLink',
+              id: 'myParentID'
+            }
+          ],
+          mimeType: 'application/vnd.google-apps.folder'
+        };
+        const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+
+        stubInsert.returns(this.mockFolder);
+        const map = {
+          myParentID: 'newParentID'
+        };
+        const properties = { remaining: [] };
+
+        const newFolder = FileService.copyFile(file, map, properties);
+        assert.deepEqual(
+          newFolder,
+          this.mockFolder,
+          'copyFile did not return correct value'
+        );
+        console.log(properties, map);
+        assert.equal(
+          properties.remaining[0],
+          file.id,
+          'properties.remaining did not get correct value added'
+        );
+        assert.equal(
+          map[file.id],
+          newFolder.id,
+          'folder did not get mapped correctly from source to destination'
+        );
+
+        stubInsert.restore();
+      });
+
+      xit('should log an error if insert fails', function() {
+        const stubLog = sinon.stub(GDriveService, 'log');
+        stubLog.restore();
+      });
+    });
+
+    describe('when file is not a folder', function() {
+      xit('should copy a file', function() {});
+      xit('should log an error if copy fails', function() {});
+    });
   });
 });
