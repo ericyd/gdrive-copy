@@ -61,7 +61,14 @@ is create a new Google Apps Script file from within your Google Drive, and
 upload the contents of the files in `dist` into the appropriate files. You may
 need to create additional files via `File > New > Script | HTML file`.
 
-## Step 7: Deploy as web app
+## Step 7: Enable Drive API
+
+1. Toolbar > Resources > Advanced Google Services
+2. Enable the Drive API v2
+3. Click the link that says "These services must also be enabled in the Google API Console"
+4. This interface changes frequently so specific steps are not provided here. You basically want to find the place where you can enable the Drive API for that project. At that point it should work.
+
+## Step 8: Deploy as web app
 
 Select `Publish > Deploy as Web App`. Select the options you'd like, such as who
 can execute the and how the script will run.
@@ -70,3 +77,9 @@ Access the deployed web app with the link provided by Google Apps Script after
 you deploy the app. This will be privately hosted through your own Google Drive,
 meaning any changes you have made will not be accessible to others unless you
 publish it to the Chrome Web Store.
+
+
+## Resources
+
+* [Google Apps Script reference](https://developers.google.com/apps-script/reference/drive/)
+* [Drive API reference](https://developers.google.com/drive/v2/reference/)
