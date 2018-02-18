@@ -345,7 +345,6 @@ describe('FileService', function() {
           this.mockFolder,
           'copyFile did not return correct value'
         );
-        console.log(properties, map);
         assert.equal(
           properties.remaining[0],
           file.id,
