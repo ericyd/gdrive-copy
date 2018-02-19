@@ -1,6 +1,10 @@
+global.Utilities = require('./mocks/Utilities');
 const FileService = require('../lib/FileService');
 const GDriveService = require('../lib/GDriveService');
 const Util = require('../lib/Util');
+const Timer = require('../lib/Timer');
+const Properties = require('../lib/Properties');
+const PropertiesService = require('./mocks/PropertiesService');
 const assert = require('assert');
 const fs = require('fs');
 const sinon = require('sinon');
@@ -41,7 +45,9 @@ describe('FileService', function() {
     this.map = {
       myParentID: 'newParentID'
     };
-    this.properties = { remaining: [] };
+    this.properties = new Properties();
+    this.userProperties = PropertiesService.getUserProperties();
+    this.timer = new Timer();
   });
 
   describe('createLoggerSpreadsheet()', function() {
@@ -526,6 +532,228 @@ describe('FileService', function() {
   });
 
   describe('processFileList()', function() {
-    xit('should work', function() {});
+    it('should return if !timer.canContinue()', function() {
+      // set up mocks
+      this.userProperties.getProperties().stop = 'true';
+      this.timer.update(this.userProperties);
+      const stubCopy = sinon.stub(FileService, 'copyFile');
+
+      // set up actual
+      FileService.processFileList(
+        [1, 2, 3],
+        'GTM-7',
+        false,
+        this.userProperties,
+        this.timer,
+        this.map,
+        {},
+        this.properties
+      );
+
+      // assertions
+      assert(stubCopy.notCalled, 'FileService.copyFile was called');
+
+      // reset mocks
+      this.userProperties.getProperties().stop = false;
+      stubCopy.restore();
+    });
+    it('should return if items.length == 0', function() {
+      // set up mocks
+      const stubCopy = sinon.stub(FileService, 'copyFile');
+
+      // set up actual
+      FileService.processFileList(
+        [],
+        'GTM-7',
+        false,
+        this.userProperties,
+        this.timer,
+        this.map,
+        {},
+        this.properties
+      );
+
+      // assertions
+      assert(stubCopy.notCalled, 'FileService.copyFile was called');
+      stubCopy.restore();
+    });
+
+    it('should call copyPermissions if copyPermissions is true and file is native GDrive mimeType', function() {
+      // set up mocks
+      const stubCopy = sinon
+        .stub(FileService, 'copyFile')
+        .returns(this.mockFile);
+      const stubLog = sinon.stub(Util, 'log');
+      const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
+
+      // run actual
+      FileService.processFileList(
+        [{ mimeType: 'application/vnd.google-apps.document' }],
+        'GTM-7',
+        true,
+        this.userProperties,
+        this.timer,
+        this.map,
+        {},
+        this.properties
+      );
+
+      // assertions
+      assert(
+        stubCopyPermissions.calledOnce,
+        'FileService.copyPermissions not called once. Expected 1, actual: ' +
+          stubCopyPermissions.callCount
+      );
+
+      // restore mocks
+      stubCopy.restore();
+      stubLog.restore();
+      stubCopyPermissions.restore();
+    });
+
+    it('should skip copyPermissions if file is not native GDrive mimeType', function() {
+      // set up mocks
+      const stubCopy = sinon
+        .stub(FileService, 'copyFile')
+        .returns(this.mockFile);
+      const stubLog = sinon.stub(Util, 'log');
+      const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
+
+      // run actual
+      FileService.processFileList(
+        [{ mimeType: 'application/json' }],
+        'GTM-7',
+        true,
+        this.userProperties,
+        this.timer,
+        this.map,
+        {},
+        this.properties
+      );
+
+      // assertions
+      assert(
+        stubCopyPermissions.notCalled,
+        'FileService.copyPermissions called. Expected 0, actual: ' +
+          stubCopyPermissions.callCount
+      );
+
+      // restore mocks
+      stubCopy.restore();
+      stubLog.restore();
+      stubCopyPermissions.restore();
+    });
+
+    it('should update timer after every file', function() {
+      // set up mocks
+      const stubCopy = sinon
+        .stub(FileService, 'copyFile')
+        .returns(this.mockFile);
+      const stubLog = sinon.stub(Util, 'log');
+      const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
+      const stubTimerUpdate = sinon.stub(this.timer, 'update');
+
+      // run actual
+      const items = [1, 2, 3];
+      FileService.processFileList(
+        items,
+        'GTM-7',
+        false,
+        this.userProperties,
+        this.timer,
+        this.map,
+        {},
+        this.properties
+      );
+
+      // assertions
+      assert(
+        stubTimerUpdate.callCount,
+        items.length,
+        'timer.update called incorrect number of times'
+      );
+
+      // restore mocks
+      stubCopy.restore();
+      stubLog.restore();
+      stubCopyPermissions.restore();
+      stubTimerUpdate.restore();
+    });
+
+    // TODO: should I remove the try/catch blocks from FileService.copyFile and just catch errors, then log them directly in processFileList???
+    it('should log errors if returned', function() {
+      // set up mocks
+      const errMsg = "failed to copy file";
+      const stubCopy = sinon
+        .stub(FileService, 'copyFile')
+        .returns(new Error(errMsg));
+      const stubLog = sinon.stub(Util, 'log');
+
+      // run actual
+      const items = [1, 2, 3];
+      const itemsLength = items.length; // must set here because items is mutated in processFileList
+      FileService.processFileList(
+        items,
+        'GTM-7',
+        false,
+        this.userProperties,
+        this.timer,
+        this.map,
+        {},
+        this.properties
+      );
+
+      // assertions
+      assert(
+        stubLog.called,
+        'Util.log not called'
+      );
+      assert.equal(stubLog.callCount, itemsLength, 'Util.log called incorrect number of times');
+      assert.equal(
+        stubLog.getCall(0).args[1][0].indexOf('Error'), 0, 
+        'Util.log not called with Error. Called with ' + stubLog.getCall(0).args[1][0]
+      );
+
+      // restore mocks
+      stubCopy.restore();
+      stubLog.restore();
+    });
+    it('should log copy details if successful', function() {
+      // set up mocks
+      const errMsg = "failed to copy file";
+      const stubCopy = sinon
+        .stub(FileService, 'copyFile')
+        .returns(this.mockFile);
+      const stubLog = sinon.stub(Util, 'log');
+
+      // run actual
+      const items = [1, 2, 3];
+      const itemsLength = items.length; // must set here because items is mutated in processFileList
+      FileService.processFileList(
+        items,
+        'GTM-7',
+        false,
+        this.userProperties,
+        this.timer,
+        this.map,
+        {},
+        this.properties
+      );
+
+      // assertions
+      assert(
+        stubLog.called,
+        'Util.log not called.'
+      );
+      assert.equal(stubLog.callCount, itemsLength, "Util.log not called once");
+      assert.equal(
+        stubLog.getCall(0).args[1][0].indexOf('Copied'), 0, 
+        'Util.log not called with "Copied". Called with ' + stubLog.getCall(0).args[1][0]
+      );
+
+      // restore mocks
+      stubCopy.restore();
+      stubLog.restore();
+    });
   });
 });
