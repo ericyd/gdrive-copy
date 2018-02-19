@@ -6,10 +6,10 @@ const assert = require('assert');
 describe('Util', function() {
   beforeEach(function() {
     this.clock = sinon.useFakeTimers();
-  })
+  });
   afterEach(function() {
     this.clock.restore();
-  })
+  });
   describe('exponentialBackoff()', function() {
     it('should retry 6 times on failure', function() {
       // set up mocks
@@ -19,17 +19,16 @@ describe('Util', function() {
 
       const failingFunc2 = () => {
         throw new Error(errMsg);
-      }
+      };
 
       // set up actual
       try {
         Util.exponentialBackoff(failingFunc, 'failure message');
-      } catch (e) {
-      }
+      } catch (e) {}
 
       // assertions
-      assert.equal(failingFunc.callCount, 6, "failing func not called 6 times");
-      assert.equal(stubLog.callCount, 7, "Util.log not called 7 times");
+      assert.equal(failingFunc.callCount, 6, 'failing func not called 6 times');
+      assert.equal(stubLog.callCount, 7, 'Util.log not called 7 times');
 
       // reset mocks
       stubLog.restore();
@@ -40,12 +39,16 @@ describe('Util', function() {
       const stubLog = sinon.stub(Util, 'log');
       const failingFunc2 = () => {
         throw new Error(errMsg);
-      }
+      };
 
       // set up actual and assert
-      assert.throws(() => {
-        Util.exponentialBackoff(failingFunc, 'failure message');
-      }, errMsg, "threw wrong error after 6 attempts");
+      assert.throws(
+        () => {
+          Util.exponentialBackoff(failingFunc, 'failure message');
+        },
+        errMsg,
+        'threw wrong error after 6 attempts'
+      );
 
       // reset mocks
       stubLog.restore();

@@ -14,13 +14,13 @@ describe('timers', function() {
     this.clock.restore();
   });
 
-  describe('timers.START_TIME', function() {
+  describe('START_TIME property', function() {
     it('should update when initialized', function() {
       assert.equal(this.timer.START_TIME, this.now);
     });
   });
 
-  describe('timers.timeIsUp', function() {
+  describe('timeIsUp()', function() {
     it('should begin as false', function() {
       assert.equal(this.timer.timeIsUp, false);
     });
@@ -45,5 +45,18 @@ describe('timers', function() {
       );
       assert(!this.timer.canContinue(), 'timer should not be able to continue');
     });
+  });
+
+  it('should update stop property if userProperties.stop is true', function() {
+    this.userProperties.getProperties().stop = false;
+    this.timer.update(this.userProperties);
+    assert(this.timer.canContinue(), 'stopped when stop flag is false');
+
+    this.userProperties.getProperties().stop = 'true';
+    this.timer.update(this.userProperties);
+    assert(!this.timer.canContinue(), 'did not stop when stop flag is true');
+
+    // reset stop flag
+    this.userProperties.getProperties().stop = false;
   });
 });
