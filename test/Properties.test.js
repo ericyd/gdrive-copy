@@ -1,4 +1,5 @@
 global.PropertiesService = require('./mocks/PropertiesService');
+global.Utilities = require('./mocks/Utilities');
 const Properties = require('../lib/Properties');
 const GDriveService = require('../lib/GDriveService');
 const sinon = require('sinon');
@@ -65,7 +66,31 @@ describe('Properties', function() {
         Properties.saveProperties(circular);
       }, 'Failed to serialize script properties. This is a critical failure. Please start your copy again.');
     });
-    xit('should stringify whatever props are sent to it', function() {});
-    xit('should update file with stringified props', function() {});
+    it('should update file with stringified props', function() {
+      // set up mocks
+      const stubUpdate = sinon.stub(GDriveService, 'updateFile');
+
+      // set up actual
+      const myProps = {
+        prop1: 1,
+        prop2: 2,
+        leftovers: [
+          { id: 123, parents: [{ id: 234 }] },
+          { id: 345, parents: [{ id: 985 }] }
+        ],
+        map: {
+          prop3: 3,
+          prop4: 4
+        }
+      };
+      Properties.saveProperties(myProps);
+
+      // assertions
+      assert.equal(
+        stubUpdate.getCall(0).args[2],
+        JSON.stringify(myProps),
+        'properties argument not stringified correctly'
+      );
+    });
   });
 });
