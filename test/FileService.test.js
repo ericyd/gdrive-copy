@@ -524,4 +524,8 @@ describe('FileService', function() {
       });
     });
   });
+
+  describe('processFileList()', function() {
+    xit('should work', function() {});
+  });
 });
