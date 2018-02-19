@@ -336,14 +336,17 @@ describe('FileService', function() {
     describe('when file is a folder', function() {
       it('should insert folder', function() {
         // set up mocks
-        const request = Object.assign({}, file, {
+        const request = {
+          description: 'myDescription',
+          title: 'myTitle',
           parents: [
             {
               kind: 'drive#fileLink',
               id: 'newParentID'
             }
-          ]
-        });
+          ],
+          mimeType: 'application/vnd.google-apps.folder'
+        };
         const stubInsert = sinon.stub(GDriveService, 'insertFolder');
         stubInsert.returns(this.mockFolder);
 
@@ -390,11 +393,11 @@ describe('FileService', function() {
         );
         assert.equal(
           this.properties.remaining[0],
-          file.id,
+          this.mockFileResource.id,
           'properties.remaining did not get correct value added'
         );
         assert.equal(
-          this.map[file.id],
+          this.map[this.mockFileResource.id],
           newFolder.id,
           'folder did not get mapped correctly from source to destination'
         );
@@ -483,7 +486,7 @@ describe('FileService', function() {
         // restore mocks
         stubCopy.restore();
       });
-      it.only('should log an error if copy fails', function() {
+      it('should log an error if copy fails', function() {
         // set up mocks
         const stubCopy = sinon.stub(GDriveService, 'copyFile');
         const stubLog = sinon.stub(Util, 'log');
