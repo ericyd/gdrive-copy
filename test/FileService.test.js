@@ -411,43 +411,6 @@ describe('FileService', function() {
         // restore mocks
         stubInsert.restore();
       });
-
-      it('should log an error if insert fails', function() {
-        // setup mocks
-        const stubLog = sinon.stub(Util, 'log');
-        const stubInsert = sinon.stub(GDriveService, 'insertFolder');
-        const errMsg = 'failed to insert folder';
-        stubInsert.throws(new Error(errMsg));
-
-        // set up actual
-        const newFolder = FileService.copyFile(
-          this.mockFolderResource,
-          this.map,
-          this.properties
-        );
-
-        // assertions
-        assert.deepEqual(
-          newFolder,
-          new Error(errMsg),
-          "didn't return correct value"
-        );
-        assert(stubLog.calledOnce, 'Util.log not called once');
-        assert.equal(
-          stubLog.getCall(0).args[0],
-          null,
-          "first arg to Util.log wasn't null"
-        );
-        assert.equal(
-          stubLog.getCall(0).args[1][0],
-          errMsg,
-          'Util.log not called with correct error message'
-        );
-
-        // restore mocks
-        stubLog.restore();
-        stubInsert.restore();
-      });
     });
 
     describe('when file is not a folder', function() {
@@ -490,42 +453,6 @@ describe('FileService', function() {
         );
 
         // restore mocks
-        stubCopy.restore();
-      });
-      it('should log an error if copy fails', function() {
-        // set up mocks
-        const stubCopy = sinon.stub(GDriveService, 'copyFile');
-        const stubLog = sinon.stub(Util, 'log');
-        const errMsg = 'file not copied';
-        stubCopy.throws(new Error(errMsg));
-
-        // set up actual
-        const fileCopy = FileService.copyFile(
-          this.mockFileResource,
-          this.map,
-          this.properties
-        );
-
-        // assertions
-        assert.deepEqual(
-          fileCopy,
-          new Error(errMsg),
-          "FileService.copyFile didn't return correct value"
-        );
-        assert(stubLog.calledOnce, 'Util.log not called once');
-        assert.equal(
-          stubLog.getCall(0).args[0],
-          null,
-          "first arg to Util.log wasn't null"
-        );
-        assert.equal(
-          stubLog.getCall(0).args[1][0],
-          errMsg,
-          'Util.log not called with correct error message'
-        );
-
-        // restore mocks
-        stubLog.restore();
         stubCopy.restore();
       });
     });
@@ -680,13 +607,10 @@ describe('FileService', function() {
       stubTimerUpdate.restore();
     });
 
-    // TODO: should I remove the try/catch blocks from FileService.copyFile and just catch errors, then log them directly in processFileList???
-    it('should log errors if returned', function() {
+    it('should log errors if thrown during copy', function() {
       // set up mocks
-      const errMsg = "failed to copy file";
-      const stubCopy = sinon
-        .stub(FileService, 'copyFile')
-        .returns(new Error(errMsg));
+      const errMsg = 'failed to copy file';
+      const stubCopy = sinon.stub(FileService, 'copyFile').throws(errMsg);
       const stubLog = sinon.stub(Util, 'log');
 
       // run actual
@@ -704,14 +628,17 @@ describe('FileService', function() {
       );
 
       // assertions
-      assert(
-        stubLog.called,
-        'Util.log not called'
-      );
-      assert.equal(stubLog.callCount, itemsLength, 'Util.log called incorrect number of times');
+      assert(stubLog.called, 'Util.log not called');
       assert.equal(
-        stubLog.getCall(0).args[1][0].indexOf('Error'), 0, 
-        'Util.log not called with Error. Called with ' + stubLog.getCall(0).args[1][0]
+        stubLog.callCount,
+        itemsLength,
+        'Util.log called incorrect number of times'
+      );
+      assert.equal(
+        stubLog.getCall(0).args[1][0].indexOf('Error'),
+        0,
+        'Util.log not called with Error. Called with ' +
+          stubLog.getCall(0).args[1][0]
       );
 
       // restore mocks
@@ -720,7 +647,7 @@ describe('FileService', function() {
     });
     it('should log copy details if successful', function() {
       // set up mocks
-      const errMsg = "failed to copy file";
+      const errMsg = 'failed to copy file';
       const stubCopy = sinon
         .stub(FileService, 'copyFile')
         .returns(this.mockFile);
@@ -741,14 +668,13 @@ describe('FileService', function() {
       );
 
       // assertions
-      assert(
-        stubLog.called,
-        'Util.log not called.'
-      );
-      assert.equal(stubLog.callCount, itemsLength, "Util.log not called once");
+      assert(stubLog.called, 'Util.log not called.');
+      assert.equal(stubLog.callCount, itemsLength, 'Util.log not called once');
       assert.equal(
-        stubLog.getCall(0).args[1][0].indexOf('Copied'), 0, 
-        'Util.log not called with "Copied". Called with ' + stubLog.getCall(0).args[1][0]
+        stubLog.getCall(0).args[1][0].indexOf('Copied'),
+        0,
+        'Util.log not called with "Copied". Called with ' +
+          stubLog.getCall(0).args[1][0]
       );
 
       // restore mocks
