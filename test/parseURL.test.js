@@ -2,6 +2,7 @@
 var assert = require('assert');
 var { parseURL } = require('../src/util/helpers');
 
+// TODO: WHY ARE THESE TESTS NOT USING ACTUAL FOLDER URLS???????!?!?!?!?!?!
 describe('parseURL.js', function() {
   it('should return the input string if it does not contain the search terms', function() {
     const url = 'http://www.ericyd.com/resume';
@@ -29,4 +30,11 @@ describe('parseURL.js', function() {
     expected = expected.slice(0, expected.indexOf('&'));
     assert.equal(expected, parseURL(url));
   });
+
+  it('should trim query params', function() {
+    // Folders are coming in like this: FOLDERID-13123123?usp=sharing
+    // Need to eliminate the query params
+    // But, also need to accept "sharing links"
+    assert.fail("need to write test")
+  })
 });
