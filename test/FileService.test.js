@@ -682,4 +682,8 @@ describe('FileService', function() {
       stubLog.restore();
     });
   });
+
+  describe('isDescendant()', function() {
+    xit('should be tested', function() {});
+  })
 });
