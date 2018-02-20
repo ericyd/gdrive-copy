@@ -4,30 +4,23 @@
  * @param {string} url the folder URL for the selected folder
  * @return {string} id the folder ID for the selected folder
  */
-export function parseURL(url) {
-  var id, amp;
+export function parseURL(input) {
+  try {
+    const url = new URL(input);
+    const idParam = url.searchParams.get('id');
+    if (idParam) {
+      return idParam;
+    }
 
-  // Get the index of the string at which the folderId starts
-  var idStart = url.search('id=');
-  var foldersStart = url.search('folders');
+    const path = url.pathname.split('/');
+    if (path.indexOf('folders') !== -1) {
+      return path[path.indexOf('folders') + 1];
+    }
 
-  if (idStart > 0) {
-    id = url.slice(idStart + 3);
-  } else if (foldersStart > 0) {
-    id = url.slice(foldersStart + 8);
-  } else {
-    id = url;
+    return input;
+  } catch (e) {
+    return input;
   }
-
-  // Find the ampersand in the remaining string, which is the delimiter between the folderId and the sharing privileges
-  amp = id.indexOf('&');
-
-  // Slice the string up to the ampersand
-  if (amp > 0) {
-    id = id.slice(0, amp);
-  }
-
-  return id;
 }
 
 export function getDriveSpreadsheetURL(id) {

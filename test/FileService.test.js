@@ -685,5 +685,5 @@ describe('FileService', function() {
 
   describe('isDescendant()', function() {
     xit('should be tested', function() {});
-  })
+  });
 });

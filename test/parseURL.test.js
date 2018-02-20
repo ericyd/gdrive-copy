@@ -1,4 +1,4 @@
-'use strict';
+global.URL = require('url').URL;
 var assert = require('assert');
 var { parseURL } = require('../src/util/helpers');
 
@@ -9,7 +9,7 @@ var { parseURL } = require('../src/util/helpers');
 // https://drive.google.com/open?id=19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
 // https://drive.google.com/open?id=19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-&usp=sharing
 // https://drive.google.com/new/api/ + this.folderID + /folderview
-describe.only('parseURL.js', function() {
+describe('parseURL.js', function() {
   beforeEach(function() {
     this.folderID = '19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-';
   });
@@ -40,7 +40,9 @@ describe.only('parseURL.js', function() {
   });
 
   it('should trim all query params when no `id` param present', function() {
-    const url = `https://drive.google.com/drive/folders/${this.folderID}?usp=sharing`;
+    const url = `https://drive.google.com/drive/folders/${
+      this.folderID
+    }?usp=sharing`;
     assert.equal(parseURL(url), this.folderID);
   });
 });
