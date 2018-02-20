@@ -2,39 +2,45 @@
 var assert = require('assert');
 var { parseURL } = require('../src/util/helpers');
 
-// TODO: WHY ARE THESE TESTS NOT USING ACTUAL FOLDER URLS???????!?!?!?!?!?!
-describe('parseURL.js', function() {
-  it('should return the input string if it does not contain the search terms', function() {
-    const url = 'http://www.ericyd.com/resume';
-    assert.equal(url, parseURL(url));
+// Tests against all of these patterns
+// https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
+// https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-/
+// https://drive.google.com/drive/folders/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-?usp=sharing
+// https://drive.google.com/open?id=19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-
+// https://drive.google.com/open?id=19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-&usp=sharing
+// https://drive.google.com/new/api/ + this.folderID + /folderview
+describe.only('parseURL.js', function() {
+  beforeEach(function() {
+    this.folderID = '19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-';
   });
 
-  it('should trim any characters at or after the first ampersand in the url', function() {
-    const url = 'http://www.ericyd.com/resume?name=eric&age=27';
-    assert.equal(url.slice(0, url.indexOf('&')), parseURL(url));
+  it('should return the input string if cannot be parsed', function() {
+    const url = `https://drive.google.com/new/api/${this.folderID}/folderview`;
+    assert.equal(parseURL(url), url);
   });
 
-  it('should trim any characters preceding the substring "id="', function() {
-    const url = 'http://www.ericyd.com/resume?id=8448449448&age=27';
-    let expected = url.slice(url.indexOf('id=') + 3);
-    expected = expected.slice(0, expected.indexOf('&'));
-    assert.equal(expected, parseURL(url));
+  it('should get ID from folder URL', function() {
+    const url = `https://drive.google.com/drive/folders/${this.folderID}`;
+    assert.equal(parseURL(url), this.folderID);
   });
 
-  it('should trim any characters preceding the substring "folders"', function() {
-    const url =
-      'http://www.ericyd.com/resume/folders/8448449448/?name=eric&age=27';
-    const searchString = 'folders';
-    const offset = url.indexOf(searchString) + searchString.length + 1; // +1 accounts for forward slash in url
-    let expected = url.slice(offset);
-    expected = expected.slice(0, expected.indexOf('&'));
-    assert.equal(expected, parseURL(url));
+  it('should remove trailing slashes if present', function() {
+    const url = `https://drive.google.com/drive/folders/${this.folderID}/`;
+    assert.equal(parseURL(url), this.folderID);
   });
 
-  it('should trim query params', function() {
-    // Folders are coming in like this: FOLDERID-13123123?usp=sharing
-    // Need to eliminate the query params
-    // But, also need to accept "sharing links"
-    assert.fail("need to write test")
-  })
+  it('should get ID from `id` query param', function() {
+    const url = `https://drive.google.com/open?id=${this.folderID}`;
+    assert.equal(parseURL(url), this.folderID);
+  });
+
+  it('should trim any extraneous query params', function() {
+    const url = `https://drive.google.com/open?id=${this.folderID}&usp=sharing`;
+    assert.equal(parseURL(url), this.folderID);
+  });
+
+  it('should trim all query params when no `id` param present', function() {
+    const url = `https://drive.google.com/drive/folders/${this.folderID}?usp=sharing`;
+    assert.equal(parseURL(url), this.folderID);
+  });
 });
