@@ -56,8 +56,9 @@
     "webpack:prod": "webpack --config ./config/webpack.config.prod.js",
     "gulp:prod": "gulp build",
     "build:prod": "npm run webpack:prod && npm run gulp:prod",
-    "prettier": "prettier --write --single-quote",
-    "prettier:all": "npm run prettier -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
+    "prettier:config": "prettier --write --single-quote",
+    "prettier": "npm run prettier:config -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\"",
+    "prettier:all": "npm run prettier:config -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
   },
   "repository": {
     "type": "git",
