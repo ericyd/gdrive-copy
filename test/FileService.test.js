@@ -42,10 +42,10 @@ describe('FileService', function() {
       ],
       mimeType: 'application/vnd.google-apps.document'
     };
-    this.map = {
+    this.properties = new Properties();
+    this.properties.map = {
       myParentID: 'newParentID'
     };
-    this.properties = new Properties();
     this.userProperties = PropertiesService.getUserProperties();
     this.timer = new Timer();
   });
@@ -359,7 +359,6 @@ describe('FileService', function() {
         // set up actual
         const newFolder = FileService.copyFile(
           this.mockFolderResource,
-          this.map,
           this.properties
         );
 
@@ -387,7 +386,6 @@ describe('FileService', function() {
         // set up actual
         const newFolder = FileService.copyFile(
           this.mockFolderResource,
-          this.map,
           this.properties
         );
 
@@ -403,7 +401,7 @@ describe('FileService', function() {
           'properties.remaining did not get correct value added'
         );
         assert.equal(
-          this.map[this.mockFileResource.id],
+          this.properties.map[this.mockFileResource.id],
           newFolder.id,
           'folder did not get mapped correctly from source to destination'
         );
@@ -431,7 +429,6 @@ describe('FileService', function() {
         // set up actual
         const fileCopy = FileService.copyFile(
           this.mockFileResource,
-          this.map,
           this.properties
         );
 
@@ -472,7 +469,7 @@ describe('FileService', function() {
         false,
         this.userProperties,
         this.timer,
-        this.map,
+        this.properties.map,
         {},
         this.properties
       );
@@ -495,7 +492,7 @@ describe('FileService', function() {
         false,
         this.userProperties,
         this.timer,
-        this.map,
+        this.properties.map,
         {},
         this.properties
       );
@@ -520,7 +517,7 @@ describe('FileService', function() {
         true,
         this.userProperties,
         this.timer,
-        this.map,
+        this.properties.map,
         {},
         this.properties
       );
@@ -553,7 +550,7 @@ describe('FileService', function() {
         true,
         this.userProperties,
         this.timer,
-        this.map,
+        this.properties.map,
         {},
         this.properties
       );
@@ -588,7 +585,7 @@ describe('FileService', function() {
         false,
         this.userProperties,
         this.timer,
-        this.map,
+        this.properties.map,
         {},
         this.properties
       );
@@ -622,7 +619,7 @@ describe('FileService', function() {
         false,
         this.userProperties,
         this.timer,
-        this.map,
+        this.properties.map,
         {},
         this.properties
       );
@@ -662,7 +659,7 @@ describe('FileService', function() {
         false,
         this.userProperties,
         this.timer,
-        this.map,
+        this.properties.map,
         {},
         this.properties
       );
