@@ -13,14 +13,14 @@ describe('Properties', function() {
       .readFileSync('test/mocks/properties_document_stringified.txt')
       .toString();
   });
-  describe('loadProperties()', function() {
+  describe('load()', function() {
     it('should assign properties to `this`', function() {
       // set up mocks
       const stubFile = sinon.stub(GDriveService, 'downloadFile');
       stubFile.returns(this.mockPropertiesDoc);
 
       // set up actual
-      const loadedProps = this.properties.loadProperties.call(this.properties);
+      const loadedProps = this.properties.load.call(this.properties);
 
       // assertions
       assert.deepEqual(loadedProps, JSON.parse(this.mockPropertiesDoc));
@@ -35,7 +35,7 @@ describe('Properties', function() {
 
       // assertions
       assert.throws(() => {
-        this.properties.loadProperties.call(this.properties);
+        this.properties.load.call(this.properties);
       }, "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke.");
 
       // reset mocks
@@ -48,14 +48,14 @@ describe('Properties', function() {
 
       // assertions
       assert.throws(() => {
-        this.properties.loadProperties.call(this.properties);
+        this.properties.load.call(this.properties);
       }, 'Could not determine properties document ID. Please try running the script again');
 
       // reset mocks
       stubFile.restore();
     });
   });
-  describe('saveProperties()', function() {
+  describe('save()', function() {
     it('should throw critical error if properties cannot be serialized', function() {
       function Circular() {
         this.abc = 'Hello';
@@ -63,7 +63,7 @@ describe('Properties', function() {
       }
       const circular = new Circular();
       assert.throws(() => {
-        Properties.saveProperties(circular);
+        Properties.save(circular);
       }, 'Failed to serialize script properties. This is a critical failure. Please start your copy again.');
     });
     it('should update file with stringified props', function() {
@@ -83,7 +83,7 @@ describe('Properties', function() {
           prop4: 4
         }
       };
-      Properties.saveProperties(myProps);
+      Properties.save(myProps);
 
       // assertions
       assert.equal(
