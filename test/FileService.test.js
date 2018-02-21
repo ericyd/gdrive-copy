@@ -465,13 +465,10 @@ describe('FileService', function() {
       // set up actual
       FileService.processFileList(
         [1, 2, 3],
-        'GTM-7',
-        false,
+        this.properties,
         this.userProperties,
         this.timer,
-        this.properties.map,
-        {},
-        this.properties
+        {}
       );
 
       // assertions
@@ -488,13 +485,10 @@ describe('FileService', function() {
       // set up actual
       FileService.processFileList(
         [],
-        'GTM-7',
-        false,
+        this.properties,
         this.userProperties,
         this.timer,
-        this.properties.map,
-        {},
-        this.properties
+        {}
       );
 
       // assertions
@@ -511,15 +505,13 @@ describe('FileService', function() {
       const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
 
       // run actual
+      this.properties.copyPermissions = true;
       FileService.processFileList(
         [{ mimeType: 'application/vnd.google-apps.document' }],
-        'GTM-7',
-        true,
+        this.properties,
         this.userProperties,
         this.timer,
-        this.properties.map,
-        {},
-        this.properties
+        {}
       );
 
       // assertions
@@ -533,6 +525,7 @@ describe('FileService', function() {
       stubCopy.restore();
       stubLog.restore();
       stubCopyPermissions.restore();
+      this.properties.copyPermissions = false;
     });
 
     it('should skip copyPermissions if file is not native GDrive mimeType', function() {
@@ -544,15 +537,13 @@ describe('FileService', function() {
       const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
 
       // run actual
+      this.properties.copyPermissions = true;
       FileService.processFileList(
         [{ mimeType: 'application/json' }],
-        'GTM-7',
-        true,
+        this.properties,
         this.userProperties,
         this.timer,
-        this.properties.map,
-        {},
-        this.properties
+        {}
       );
 
       // assertions
@@ -566,6 +557,7 @@ describe('FileService', function() {
       stubCopy.restore();
       stubLog.restore();
       stubCopyPermissions.restore();
+      this.properties.copyPermissions = false;
     });
 
     it('should update timer after every file', function() {
@@ -581,13 +573,10 @@ describe('FileService', function() {
       const items = [1, 2, 3];
       FileService.processFileList(
         items,
-        'GTM-7',
-        false,
+        this.properties,
         this.userProperties,
         this.timer,
-        this.properties.map,
-        {},
-        this.properties
+        {}
       );
 
       // assertions
@@ -615,13 +604,10 @@ describe('FileService', function() {
       const itemsLength = items.length; // must set here because items is mutated in processFileList
       FileService.processFileList(
         items,
-        'GTM-7',
-        false,
+        this.properties,
         this.userProperties,
         this.timer,
-        this.properties.map,
-        {},
-        this.properties
+        {}
       );
 
       // assertions
@@ -655,13 +641,10 @@ describe('FileService', function() {
       const itemsLength = items.length; // must set here because items is mutated in processFileList
       FileService.processFileList(
         items,
-        'GTM-7',
-        false,
+        this.properties,
         this.userProperties,
         this.timer,
-        this.properties.map,
-        {},
-        this.properties
+        {}
       );
 
       // assertions
