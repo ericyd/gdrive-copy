@@ -29,6 +29,7 @@
     "material-ui": "^0.19.4",
     "mocha": "^3.1.2",
     "node-sass": "^4.7.2",
+    "nyc": "^11.4.1",
     "open": "0.0.5",
     "prettier": "^1.8.2",
     "prop-types": "^15.6.0",
@@ -47,7 +48,7 @@
     "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register",
+    "test": "nyc mocha --compilers js:babel-core/register",
     "watch": "gulp watch",
     "watch-test-site": "webpack && gulp watch-test-site",
     "webpack:dev": "webpack --config ./config/webpack.config.dev.js",
