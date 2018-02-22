@@ -11,7 +11,6 @@ const sinon = require('sinon');
 
 describe('FileService', function() {
   beforeEach(function() {
-    this.service = new FileService();
     this.mockFolder = JSON.parse(
       fs.readFileSync('test/mocks/insert_folder_response_200.json').toString()
     );
