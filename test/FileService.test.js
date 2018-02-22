@@ -595,7 +595,9 @@ describe('FileService', function() {
     it('should log errors if thrown during copy', function() {
       // set up mocks
       const errMsg = 'failed to copy file';
-      const stubCopy = sinon.stub(FileService, 'copyFile').throws(errMsg);
+      const stubCopy = sinon
+        .stub(FileService, 'copyFile')
+        .throws(new Error(errMsg));
       const stubLog = sinon.stub(Util, 'log');
 
       // run actual
@@ -616,11 +618,11 @@ describe('FileService', function() {
         itemsLength,
         'Util.log called incorrect number of times'
       );
-      assert.equal(
-        stubLog.getCall(0).args[1][0].indexOf('Error'),
-        0,
-        'Util.log not called with Error. Called with ' +
-          stubLog.getCall(0).args[1][0]
+      const logMsg = stubLog.getCall(0).args[1][0];
+      assert.notEqual(
+        logMsg.indexOf('Error'),
+        -1,
+        'Util.log not called with Error. Called with ' + logMsg
       );
 
       // restore mocks

@@ -1,6 +1,7 @@
 const props = {
   propertiesDocId: 'myPropertiesDocID',
-  stop: false
+  stop: false,
+  triggerId: 'myTriggerId'
 };
 
 module.exports = {
@@ -8,6 +9,12 @@ module.exports = {
     return {
       getProperties: function() {
         return props;
+      },
+      getProperty: function(x) {
+        return props[x];
+      },
+      setProperty: function(x, y) {
+        props[x] = y;
       }
     };
   }
