@@ -65,10 +65,9 @@ describe('FileService', function() {
         expected.destID
       );
       assert.equal(copy, mockCopy, 'returns wrong value');
-      // TODO: this id shouldn't be hardcoded like this
       assert.equal(
         stub.getCall(0).args[1],
-        '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg',
+        FileService.baseCopyLogID,
         'GDriveService.copyFile called with wrong id'
       );
       const requestBody = {
