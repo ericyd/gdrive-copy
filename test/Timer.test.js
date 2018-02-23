@@ -36,10 +36,7 @@ describe('timers', function() {
       assert.equal(this.timer.timeIsUp, false);
       this.clock.tick(4.8 * 1000 * 60);
       this.timer.update(this.userProperties);
-      assert(
-        this.timer.runtime >=
-          this.timer.MAX_RUNTIME
-      );
+      assert(this.timer.runtime >= this.timer.MAX_RUNTIME);
       assert(!this.timer.canContinue(), 'timer should not be able to continue');
     });
   });
