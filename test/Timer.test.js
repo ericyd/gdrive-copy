@@ -27,7 +27,6 @@ describe('timers', function() {
     it('should be false when currTime is less than 4.7 minutes after START_TIME', function() {
       assert.equal(this.timer.timeIsUp, false);
       this.clock.tick(4.6 * 1000 * 60);
-      // this.timer.currTime = this.timer.START_TIME + 4.6 * 1000 * 60;
       this.timer.update(this.userProperties);
       assert.equal(this.timer.timeIsUp, false);
       assert(this.timer.canContinue(), 'timer should be able to continue');
@@ -35,13 +34,11 @@ describe('timers', function() {
 
     it('should be true when currTime is greater than 4.7 minutes after START_TIME', function() {
       assert.equal(this.timer.timeIsUp, false);
-      // this.timer.currTime = this.timer.START_TIME + 4.8 * 1000 * 60;
       this.clock.tick(4.8 * 1000 * 60);
-      // this.timer.currTime = this.timer.START_TIME + 4.6 * 1000 * 60;
       this.timer.update(this.userProperties);
       assert(
-        this.timer.currTime - this.timer.START_TIME >=
-          this.timer.MAX_RUNNING_TIME
+        this.timer.runtime >=
+          this.timer.MAX_RUNTIME
       );
       assert(!this.timer.canContinue(), 'timer should not be able to continue');
     });
