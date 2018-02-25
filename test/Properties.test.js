@@ -93,4 +93,12 @@ describe('Properties', function() {
       );
     });
   });
+  it('should increment totalRuntime', function() {
+    this.properties.incrementTotalRuntime(50);
+    assert.equal(
+      this.properties.totalRuntime,
+      50,
+      'totalRuntime not incremented properly'
+    );
+  });
 });
