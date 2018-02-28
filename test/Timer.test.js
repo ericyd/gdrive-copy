@@ -1,4 +1,5 @@
 const Timer = require('../lib/Timer');
+const Properties = require('../lib/Properties');
 const assert = require('assert');
 const sinon = require('sinon');
 const PropertiesService = require('./mocks/PropertiesService');
@@ -32,11 +33,14 @@ describe('timers', function() {
       assert(this.timer.canContinue(), 'timer should be able to continue');
     });
 
-    it('should be true when currTime is greater than 4.7 minutes after START_TIME', function() {
+    it('should be true when runtime is greater than 4.7 minutes after START_TIME', function() {
       assert.equal(this.timer.timeIsUp, false);
       this.clock.tick(4.8 * 1000 * 60);
       this.timer.update(this.userProperties);
-      assert(this.timer.runtime >= Timer.MAX_RUNTIME);
+      assert(
+        this.timer.runtime >= Timer.MAX_RUNTIME,
+        'runtime not >= max runtime'
+      );
       assert(!this.timer.canContinue(), 'timer should not be able to continue');
     });
   });
@@ -52,5 +56,36 @@ describe('timers', function() {
 
     // reset stop flag
     this.userProperties.getProperties().stop = false;
+  });
+
+  it('should give trigger duration of 6 mins when under max runtime per day', function() {
+    const properties = new Properties();
+    properties.incrementTotalRuntime(10);
+    const duration = this.timer.calculateTriggerDuration(properties);
+    assert.equal(
+      duration,
+      Timer.sixMinutes,
+      'duration not equal to six minutes'
+    );
+  });
+
+  it('should subtract current runtime from duration', function() {
+    const properties = new Properties();
+    properties.incrementTotalRuntime(10);
+    const runtime = 1000;
+    this.timer.runtime = runtime;
+    const duration = this.timer.calculateTriggerDuration(properties);
+    assert.equal(
+      duration,
+      Timer.sixMinutes - runtime,
+      'duration not equal to six minutes'
+    );
+  });
+
+  it('should give trigger duration of 24 hours when over max runtime per day', function() {
+    const properties = new Properties();
+    properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
+    const duration = this.timer.calculateTriggerDuration(properties);
+    assert.equal(duration, Timer.oneDay, 'duration not equal to one day');
   });
 });

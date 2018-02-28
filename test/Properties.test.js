@@ -1,6 +1,7 @@
 global.PropertiesService = require('./mocks/PropertiesService');
 global.Utilities = require('./mocks/Utilities');
 const Properties = require('../lib/Properties');
+const Timer = require('../lib/Timer');
 const GDriveService = require('../lib/GDriveService');
 const sinon = require('sinon');
 const assert = require('assert');
@@ -99,6 +100,17 @@ describe('Properties', function() {
       this.properties.totalRuntime,
       50,
       'totalRuntime not incremented properly'
+    );
+  });
+  it('should determine if max runtime is exceeded', function() {
+    assert(
+      !this.properties.isOverMaxRuntime(),
+      'initialized properties over max runtime'
+    );
+    this.properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
+    assert(
+      this.properties.isOverMaxRuntime(),
+      "properties doesn't calculate max runtime correctly"
     );
   });
 });

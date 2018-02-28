@@ -69,7 +69,9 @@ describe('Util', function() {
       const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const properties = new Properties();
 
-      // actual and assertions
+      // scenarios
+
+      // normal pause
       let stopMsg = Util.msgs.singleRunExceeded;
       Util.cleanup(properties, fileList, userProperties, timer, {});
       assert(stubSaveState.calledOnce, 'saveState not called');
@@ -79,8 +81,10 @@ describe('Util', function() {
         'saveState called with wrong stopMsg'
       );
 
-      properties.maxRuntimeExceeded = true;
-      stopMsg = Util.msgs.maxRuntimeExceeded;
+      // user set stop flag
+      userProperties.setProperty('stop', 'true');
+      timer.update(userProperties);
+      stopMsg = Util.msgs.userStoppedScript;
       Util.cleanup(properties, fileList, userProperties, timer, {});
       assert.equal(stubSaveState.callCount, 2, 'saveState not called twice');
       assert.equal(
@@ -88,11 +92,12 @@ describe('Util', function() {
         stopMsg,
         'saveState called with wrong stopMsg'
       );
-
-      properties.maxRuntimeExceeded = false;
-      userProperties.setProperty('stop', 'true');
+      userProperties.setProperty('stop', false);
       timer.update(userProperties);
-      stopMsg = Util.msgs.userStoppedScript;
+
+      // max runtime exceeded
+      properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
+      stopMsg = Util.msgs.maxRuntimeExceeded;
       Util.cleanup(properties, fileList, userProperties, timer, {});
       assert.equal(stubSaveState.callCount, 3, 'saveState not called thrice');
       assert.equal(
