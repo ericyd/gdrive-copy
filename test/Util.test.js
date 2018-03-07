@@ -97,6 +97,7 @@ describe('Util', function() {
 
       // max runtime exceeded
       properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
+      properties.checkMaxRuntime();
       stopMsg = Util.msgs.maxRuntimeExceeded;
       Util.cleanup(properties, fileList, userProperties, timer, {});
       assert.equal(stubSaveState.callCount, 3, 'saveState not called thrice');

@@ -104,12 +104,12 @@ describe('Properties', function() {
   });
   it('should determine if max runtime is exceeded', function() {
     assert(
-      !this.properties.isOverMaxRuntime(),
+      !this.properties.checkMaxRuntime(),
       'initialized properties over max runtime'
     );
     this.properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
     assert(
-      this.properties.isOverMaxRuntime(),
+      this.properties.checkMaxRuntime(),
       "properties doesn't calculate max runtime correctly"
     );
   });
