@@ -1,16 +1,6 @@
-/*TODO: Is there any way to use sass with svelte components?
-If not, perhaps consider a feature request or PR? */
-/*@import "my-variables";*/
-
 .spinner {
-  -webkit-animation: icon-spin 0.75s infinite linear;
-  animation: icon-spin 0.75s infinite linear;
-  /* width: 1em;
-  height: 1em;
-  border: 0.25em solid #777;
-  border-right-color: #7cb7de;
-  border-radius: 50%;
-  display: inline-block; */
+  -webkit-animation: icon-spin 1.25s infinite linear;
+  animation: icon-spin 1.25s infinite linear;
 }
 
 /* 

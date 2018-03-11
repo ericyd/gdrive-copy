@@ -95,7 +95,7 @@ export default class Resume extends React.Component {
       state[id] = '';
       state[name] = '';
       this.setState(state);
-    }
+    };
   }
 
   nextView() {
@@ -118,12 +118,11 @@ export default class Resume extends React.Component {
 
     if (action == google.picker.Action.PICKED) {
       var doc = data[google.picker.Response.DOCUMENTS][0];
-      this.setState({
-        srcFolderID: doc[google.picker.Document.ID],
-        srcParentID: doc[google.picker.Document.PARENT_ID],
-        srcFolderName: doc[google.picker.Document.NAME],
-        processing: false
-      });
+      this.handleFolderSelect(
+        doc[google.picker.Document.ID],
+        doc[google.picker.Document.NAME],
+        doc[google.picker.Document.PARENT_ID]
+      );
     } else if (action == google.picker.Action.CANCEL) {
       google.script.host.close();
     }
@@ -168,6 +167,7 @@ export default class Resume extends React.Component {
   handleFolderSelect(id, name, parentID) {
     this.setState({
       processing: false,
+      error: false,
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID

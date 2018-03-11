@@ -1,0 +1,90 @@
+{
+  "kind": "drive#file",
+  "id": "1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ",
+  "etag": "\"G9mQazc6pdRCuGfUPB_oyY074Ug/MTUxODMwODExNzIwNg\"",
+  "selfLink": "https://www.googleapis.com/drive/v2/files/1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ",
+  "webViewLink": "https://3c58135f4c2a186d5bd208692516690d4febe784.googledrive.com/host/1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ/",
+  "alternateLink": "https://drive.google.com/drive/folders/1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ",
+  "embedLink": "https://drive.google.com/embeddedfolderview?id=1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ",
+  "openWithLinks": {
+   "431354931924": "https://app.ez34.net/folder-copy/?state=%7B%22ids%22:%5B%221f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ%22%5D,%22action%22:%22open%22,%22userId%22:%22100764734981931668578%22%7D",
+   "246275917195": "https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/drive.file+https://www.googleapis.com/auth/drive+https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/drive.install+https://www.googleapis.com/auth/drive.readonly&client_id=246275917195.apps.googleusercontent.com&response_type=code&access_type=offline&redirect_uri=https://multifolder.appspot.com&user_id=100764734981931668578&state=%7B%22ids%22:%5B%221f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ%22%5D,%22action%22:%22open%22,%22userId%22:%22100764734981931668578%22%7D",
+   "1095523759147": "https://drive.google.com/drive/folders/1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ"
+  },
+  "defaultOpenWithLink": "https://drive.google.com/drive/folders/1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ",
+  "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.folder+48+shared",
+  "title": "test title",
+  "mimeType": "application/vnd.google-apps.folder",
+  "description": "test description",
+  "labels": {
+   "starred": false,
+   "hidden": false,
+   "trashed": false,
+   "restricted": false,
+   "viewed": true
+  },
+  "createdDate": "2018-02-11T00:15:17.206Z",
+  "modifiedDate": "2018-02-11T00:15:17.206Z",
+  "modifiedByMeDate": "2018-02-11T00:15:17.206Z",
+  "lastViewedByMeDate": "2018-02-11T00:15:17.206Z",
+  "markedViewedByMeDate": "1970-01-01T00:00:00.000Z",
+  "version": "1",
+  "parents": [
+   {
+    "kind": "drive#parentReference",
+    "id": "19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-",
+    "selfLink": "https://www.googleapis.com/drive/v2/files/1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ/parents/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-",
+    "parentLink": "https://www.googleapis.com/drive/v2/files/19pDrhPLxYRSEgmMDGMdeo1lFW3nT8v9-",
+    "isRoot": false
+   }
+  ],
+  "userPermission": {
+   "kind": "drive#permission",
+   "etag": "\"G9mQazc6pdRCuGfUPB_oyY074Ug/5Plz9BhXSwoGzm5anq7ra30UB4w\"",
+   "id": "me",
+   "selfLink": "https://www.googleapis.com/drive/v2/files/1f5TU68ZBpodV2t13e2O9H4CJ54vRD3CZ/permissions/me",
+   "role": "owner",
+   "type": "user"
+  },
+  "quotaBytesUsed": "0",
+  "ownerNames": [
+   "Eric Dauenhauer"
+  ],
+  "owners": [
+   {
+    "kind": "drive#user",
+    "displayName": "Eric Dauenhauer",
+    "picture": {
+     "url": "https://lh6.googleusercontent.com/-t2CzMrU_66E/AAAAAAAAAAI/AAAAAAAAADg/nbum6einNP8/s64/photo.jpg"
+    },
+    "isAuthenticatedUser": true,
+    "permissionId": "09563211953493156811",
+    "emailAddress": "eric@ericyd.com"
+   }
+  ],
+  "lastModifyingUserName": "Eric Dauenhauer",
+  "lastModifyingUser": {
+   "kind": "drive#user",
+   "displayName": "Eric Dauenhauer",
+   "picture": {
+    "url": "https://lh6.googleusercontent.com/-t2CzMrU_66E/AAAAAAAAAAI/AAAAAAAAADg/nbum6einNP8/s64/photo.jpg"
+   },
+   "isAuthenticatedUser": true,
+   "permissionId": "09563211953493156811",
+   "emailAddress": "eric@ericyd.com"
+  },
+  "capabilities": {
+   "canCopy": false,
+   "canEdit": true
+  },
+  "editable": true,
+  "copyable": false,
+  "writersCanShare": true,
+  "shared": true,
+  "explicitlyTrashed": false,
+  "appDataContents": false,
+  "spaces": [
+   "drive"
+  ]
+ }
+ 

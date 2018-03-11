@@ -1,0 +1,13 @@
+{
+ "error": {
+  "errors": [
+   {
+    "domain": "global",
+    "reason": "invalid",
+    "message": "Invalid value for: editor is not a valid value"
+   }
+  ],
+  "code": 400,
+  "message": "Invalid value for: editor is not a valid value"
+ }
+}
