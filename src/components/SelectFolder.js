@@ -68,7 +68,7 @@ export default class SelectFolder extends React.Component {
         .withFailureHandler(err => {
           _this.props.showError(err.message);
         })
-        .getMetadata(id);
+        .getMetadata(id, url);
     } else {
       // TEST MODE
       // ======================
