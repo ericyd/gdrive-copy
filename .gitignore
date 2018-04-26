@@ -4,3 +4,7 @@ node_modules
 .vscode
 .idea
 .nyc_output
+dist/css.css
+dist/bundle.js
+dist/icons
+dist/test.js
