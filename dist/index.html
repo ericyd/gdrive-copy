@@ -1,0 +1,76 @@
+<!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
+<?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+
+    <html>
+
+    <head>
+        <meta charset="UTF-8">
+        <!--Webfont loader for Google Apps Scripts-->
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+        <script>
+            WebFont.load({
+                google: {
+                    families: ['Roboto']
+                }
+            });
+        </script>  
+    </head>
+
+    <body>
+        <!--Header-->
+        <header>
+            <section class="header-container">
+                <!--Header and Icon-->
+                <svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:osb="http://www.openswatchbook.org/uri/2009/osb" height="36" width="36" version="1.1" xmlns:cc="http://creativecommons.org/ns#" viewBox="0 0 36 36.000001" xmlns:dc="http://purl.org/dc/elements/1.1/"><g><path d="m5.7599 1.1996-2.1822 1.8964h-3.0438v25.218h6.7741v-18.937h3.0418l2.1822-1.8943h8.0122l1.9588 1.8943h5.9467v-6.2809h-12.719l-1.9588-1.8964h-8.0122z" fill-rule="evenodd" stroke="#000" stroke-width=".25"/></g><g><path style="color-rendering:auto;text-decoration-color:#000000;color:#000000;isolation:auto;mix-blend-mode:normal;shape-rendering:auto;solid-color:#000000;block-progression:tb;text-decoration-line:none;text-decoration-style:solid;image-rendering:auto;white-space:normal;text-indent:0;text-transform:none" d="m12.093 7.0608-2.168 1.8828h-3.0234v11.053h-3.1009v1h3.1009v13.008h27.74v-25.061h-12.639l-1.9473-1.8828z" fill-rule="evenodd" stroke="#000" stroke-width=".5" fill="#fff"/></g><g stroke-linejoin="bevel" stroke="#000" stroke-width=".5" fill="none"><path d="m19.933 25.519 8.0838-5.023-8.0732-4.8707"/><path d="m27.994 20.496h-20.844"/></g></svg>        <h1>Copy Folder</h1>
+                <h5>for Google Drive</h5>
+            </section>
+        </header>        <!-- react-dom mounts to this node -->
+        <div id="root"></div>
+        <!--Footer-->
+        <footer class="grid">
+
+            <!--Spacer-->
+            <section class="footer-section"></section>
+
+            <!--Github-->
+            <section class="footer-section">
+                <b>Source code</b>
+                <br />
+                <a href="https://github.com/ericyd/gdrive-copy" target="_blank">Github</a>
+            </section>
+
+            <!-- Donate button for Paypal
+            Could also potentially use paypal.me/EricDauenhauer ? -->
+            <section class="footer-section">
+                <form class="no-padding" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                    <input type="hidden" name="cmd" value="_s-xclick">
+                    <input type="hidden" name="hosted_button_id" value="JUVGC2A5Y4VV6">
+                    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                </form>
+            </section>
+
+            <!--email-->
+            <section class="footer-section">
+                <b>Bugs? Questions?</b>
+                <br /> Please look at the FAQ or open an
+                <a class="github-button" href="https://github.com/ericyd/gdrive-copy/issues" aria-label="Issue ericyd/gdrive-copy on GitHub"
+                    target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.31 7.526c-.099-.807.528-1.526 1.348-1.526.771 0 1.377.676 1.28 1.451l-.757 6.053c-.035.283-.276.496-.561.496s-.526-.213-.562-.496l-.748-5.978zm1.31 10.724c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"
+                        />
+                    </svg> Issue
+                </a>
+            </section>
+
+            <!--Spacer-->
+            <section class="footer-section"></section>
+
+        </footer>    </body>
+
+
+
+    </html>
+
+    <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
+    <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
