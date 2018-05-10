@@ -9,7 +9,8 @@ const fs = require('fs');
 
 describe('Properties', function() {
   beforeEach(function() {
-    this.properties = new Properties();
+    this.gDriveService = new GDriveService();
+    this.properties = new Properties(this.gDriveService);
     this.mockPropertiesDoc = fs
       .readFileSync('test/mocks/properties_document_stringified.txt')
       .toString();
@@ -17,21 +18,25 @@ describe('Properties', function() {
   describe('load()', function() {
     it('should assign properties to `this`', function() {
       // set up mocks
-      const stubFile = sinon.stub(GDriveService, 'downloadFile');
+      const stubFile = sinon.stub(this.gDriveService, 'downloadFile');
       stubFile.returns(this.mockPropertiesDoc);
 
       // set up actual
-      const loadedProps = this.properties.load.call(this.properties);
+      const loadedProps = this.properties.load();
 
       // assertions
-      assert.deepEqual(loadedProps, JSON.parse(this.mockPropertiesDoc));
+      const mockDoc = JSON.parse(this.mockPropertiesDoc);
+      Object.entries(this.properties).forEach(([key, value]) => {
+        if (key == 'gDriveService') return;
+        assert.deepEqual(value, mockDoc[key]);
+      });
 
       // reset mocks
       stubFile.restore();
     });
     it('should return parsing error if not JSON-parsable', function() {
       // set up mocks
-      const stubFile = sinon.stub(GDriveService, 'downloadFile');
+      const stubFile = sinon.stub(this.gDriveService, 'downloadFile');
       stubFile.returns(this.mockPropertiesDoc.slice(3));
 
       // assertions
@@ -44,7 +49,7 @@ describe('Properties', function() {
     });
     it('should return human readable error if propertiesDocID is undefined', function() {
       // set up mocks
-      const stubFile = sinon.stub(GDriveService, 'downloadFile');
+      const stubFile = sinon.stub(this.gDriveService, 'downloadFile');
       stubFile.throws(new Error('Unsupported Output Format'));
 
       // assertions
@@ -69,7 +74,7 @@ describe('Properties', function() {
     });
     it('should update file with stringified props', function() {
       // set up mocks
-      const stubUpdate = sinon.stub(GDriveService, 'updateFile');
+      const stubUpdate = sinon.stub(this.gDriveService, 'updateFile');
 
       // set up actual
       const myProps = {
@@ -84,7 +89,7 @@ describe('Properties', function() {
           prop4: 4
         }
       };
-      Properties.save(myProps);
+      Properties.save(myProps, this.gDriveService);
 
       // assertions
       assert.equal(
