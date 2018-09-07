@@ -44,7 +44,7 @@ describe('Util', function() {
         () => {
           Util.exponentialBackoff(failingFunc, 'failure message');
         },
-        errMsg,
+        Error,
         'threw wrong error after 6 attempts'
       );
 

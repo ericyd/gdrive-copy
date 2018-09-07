@@ -76,7 +76,7 @@ describe('FileService', function() {
         title: 'Copy Folder Log ' + expected.today,
         parents: [
           {
-            kind: 'drive#fileLink',
+            kind: 'drive#parentReference',
             id: expected.destID
           }
         ]
@@ -350,7 +350,7 @@ describe('FileService', function() {
           title: 'myTitle',
           parents: [
             {
-              kind: 'drive#fileLink',
+              kind: 'drive#parentReference',
               id: 'newParentID'
             }
           ],
@@ -423,7 +423,7 @@ describe('FileService', function() {
           title: this.mockFileResource.title,
           parents: [
             {
-              kind: 'drive#fileLink',
+              kind: 'drive#parentReference',
               id: 'newParentID'
             }
           ]

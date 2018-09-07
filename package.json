@@ -48,7 +48,8 @@
     "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
-    "test": "nyc mocha --compilers js:babel-core/register",
+    "test": "nyc mocha --grep formatting --invert --compilers js:babel-core/register",
+    "prettier-test": "mocha test/formatting/prettier.test.js --compilers js:babel-core/register",
     "watch": "gulp watch",
     "watch-test-site": "webpack && gulp watch-test-site",
     "webpack:dev": "webpack --config ./config/webpack.config.dev.js",
