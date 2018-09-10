@@ -4,10 +4,13 @@ const sinon = require('sinon');
 
 describe('GDriveService', function() {
   describe('insertBlankFile()', function() {
+    beforeEach(function() {
+      this.gDriveService = new GDriveService();
+    });
     it('should insert a file to the folder ID it was called with', function() {
-      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+      const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
       const parentID = '1234345346';
-      const blankFile = GDriveService.insertBlankFile(parentID);
+      const blankFile = this.gDriveService.insertBlankFile(parentID);
       const arg = stubInsert.getCall(0).args[0];
       assert(
         stubInsert.calledOnce,
