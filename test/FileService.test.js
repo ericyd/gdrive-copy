@@ -11,6 +11,8 @@ const sinon = require('sinon');
 
 describe('FileService', function() {
   beforeEach(function() {
+    this.gDriveService = new GDriveService();
+    this.fileService = new FileService(this.gDriveService);
     this.mockFolder = JSON.parse(
       fs.readFileSync('test/mocks/insert_folder_response_200.json').toString()
     );
@@ -41,7 +43,7 @@ describe('FileService', function() {
       ],
       mimeType: 'application/vnd.google-apps.document'
     };
-    this.properties = new Properties();
+    this.properties = new Properties(this.gDriveService);
     this.properties.map = {
       myParentID: 'newParentID'
     };
@@ -51,7 +53,7 @@ describe('FileService', function() {
 
   describe('createLoggerSpreadsheet()', function() {
     it('should return newly created file resource', function() {
-      const stub = sinon.stub(GDriveService, 'copyFile');
+      const stub = sinon.stub(this.gDriveService, 'copyFile');
       const mockCopy = fs
         .readFileSync('test/mocks/copy_file_response_200.json')
         .toString();
@@ -60,21 +62,21 @@ describe('FileService', function() {
         today: new Date().getTime(),
         destID: '1234'
       };
-      const copy = FileService.createLoggerSpreadsheet(
+      const copy = this.fileService.createLoggerSpreadsheet(
         expected.today,
         expected.destID
       );
       assert.equal(copy, mockCopy, 'returns wrong value');
       assert.equal(
         stub.getCall(0).args[1],
-        FileService.baseCopyLogID,
-        'GDriveService.copyFile called with wrong id'
+        this.fileService.baseCopyLogID,
+        'this.gDriveService.copyFile called with wrong id'
       );
       const requestBody = {
         title: 'Copy Folder Log ' + expected.today,
         parents: [
           {
-            kind: 'drive#fileLink',
+            kind: 'drive#parentReference',
             id: expected.destID
           }
         ]
@@ -82,17 +84,17 @@ describe('FileService', function() {
       assert.deepEqual(
         stub.getCall(0).args[0],
         requestBody,
-        'GDriveService.copyFile called with wrong body'
+        'this.gDriveService.copyFile called with wrong body'
       );
 
       stub.restore();
     });
 
-    it('should return error message if GDriveService.copyFile fails', function() {
-      const stub = sinon.stub(GDriveService, 'copyFile');
+    it('should return error message if this.gDriveService.copyFile fails', function() {
+      const stub = sinon.stub(this.gDriveService, 'copyFile');
       const errMsg = 'Error copying selected folder';
       stub.throws(new Error(errMsg));
-      const copy = FileService.createLoggerSpreadsheet(1, 2);
+      const copy = this.fileService.createLoggerSpreadsheet(1, 2);
       assert.equal(copy, errMsg, 'does not return error message');
 
       stub.restore();
@@ -101,8 +103,8 @@ describe('FileService', function() {
 
   describe('initializeDestinationFolder()', function() {
     it('should copy to options.srcFolderID when copyTo == same', function() {
-      const stub = sinon.stub(GDriveService, 'insertFolder');
-      const spy = sinon.spy(FileService, 'copyPermissions');
+      const stub = sinon.stub(this.gDriveService, 'insertFolder');
+      const spy = sinon.spy(this.fileService, 'copyPermissions');
       stub.returns(this.mockFolder);
       const options = {
         srcFolderID: '123',
@@ -124,14 +126,14 @@ describe('FileService', function() {
         ],
         mimeType: 'application/vnd.google-apps.folder'
       };
-      const destFolder = FileService.initializeDestinationFolder(
+      const destFolder = this.fileService.initializeDestinationFolder(
         options,
         today
       );
       assert.deepEqual(
         stub.getCall(0).args[0],
         requestBody,
-        'GDriveService.insertFolder called with wrong args'
+        'this.gDriveService.insertFolder called with wrong args'
       );
 
       assert(
@@ -144,9 +146,9 @@ describe('FileService', function() {
 
     it('should copy to root when copyTo == root', function() {
       // set up mocks
-      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
-      const stubRoot = sinon.stub(GDriveService, 'getRootID');
-      const spy = sinon.spy(FileService, 'copyPermissions');
+      const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
+      const stubRoot = sinon.stub(this.gDriveService, 'getRootID');
+      const spy = sinon.spy(this.fileService, 'copyPermissions');
       stubInsert.returns(this.mockFolder);
       const expectedRootID = 'myRootID';
       stubRoot.returns(expectedRootID);
@@ -172,7 +174,7 @@ describe('FileService', function() {
         ],
         mimeType: 'application/vnd.google-apps.folder'
       };
-      const destFolder = FileService.initializeDestinationFolder(
+      const destFolder = this.fileService.initializeDestinationFolder(
         options,
         today
       );
@@ -181,7 +183,7 @@ describe('FileService', function() {
       assert.deepEqual(
         stubInsert.getCall(0).args[0],
         requestBody,
-        'GDriveService.insertFolder called with wrong args'
+        'this.gDriveService.insertFolder called with wrong args'
       );
 
       assert(
@@ -197,9 +199,9 @@ describe('FileService', function() {
 
     it('should copy to custom when copyTo == custom', function() {
       // set up mocks
-      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+      const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
       const stubDescendant = sinon.stub(FileService, 'isDescendant');
-      const spy = sinon.spy(FileService, 'copyPermissions');
+      const spy = sinon.spy(this.fileService, 'copyPermissions');
       stubInsert.returns(this.mockFolder);
       stubDescendant.returns(false);
 
@@ -225,7 +227,7 @@ describe('FileService', function() {
         ],
         mimeType: 'application/vnd.google-apps.folder'
       };
-      const destFolder = FileService.initializeDestinationFolder(
+      const destFolder = this.fileService.initializeDestinationFolder(
         options,
         today
       );
@@ -234,7 +236,7 @@ describe('FileService', function() {
       assert.deepEqual(
         stubInsert.getCall(0).args[0],
         requestBody,
-        'GDriveService.insertFolder called with wrong args'
+        'this.gDriveService.insertFolder called with wrong args'
       );
 
       assert(
@@ -249,9 +251,9 @@ describe('FileService', function() {
     });
     it('should test `isDescendent()` when copyTo == custom', function() {
       // set up mocks
-      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+      const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
       const stubDescendant = sinon.stub(FileService, 'isDescendant');
-      const spy = sinon.spy(FileService, 'copyPermissions');
+      const spy = sinon.spy(this.fileService, 'copyPermissions');
       stubInsert.returns(this.mockFolder);
       stubDescendant.returns(false);
       const options = {
@@ -265,7 +267,7 @@ describe('FileService', function() {
 
       // set up actual
       const today = new Date().getTime();
-      const destFolder = FileService.initializeDestinationFolder(
+      const destFolder = this.fileService.initializeDestinationFolder(
         options,
         today
       );
@@ -288,8 +290,11 @@ describe('FileService', function() {
 
     it('should copy permissions when copyPermissions == custom', function() {
       // set up mocks
-      const stubInsert = sinon.stub(GDriveService, 'insertFolder');
-      const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
+      const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
+      const stubCopyPermissions = sinon.stub(
+        this.fileService,
+        'copyPermissions'
+      );
       stubInsert.returns(this.mockFolder);
       stubCopyPermissions.returns(false);
 
@@ -303,7 +308,7 @@ describe('FileService', function() {
         destParentID: 'myDestParentID'
       };
       const today = new Date().getTime();
-      const destFolder = FileService.initializeDestinationFolder(
+      const destFolder = this.fileService.initializeDestinationFolder(
         options,
         today
       );
@@ -345,17 +350,17 @@ describe('FileService', function() {
           title: 'myTitle',
           parents: [
             {
-              kind: 'drive#fileLink',
+              kind: 'drive#parentReference',
               id: 'newParentID'
             }
           ],
           mimeType: 'application/vnd.google-apps.folder'
         };
-        const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+        const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
         stubInsert.returns(this.mockFolder);
 
         // set up actual
-        const newFolder = FileService.copyFile(
+        const newFolder = this.fileService.copyFile(
           this.mockFolderResource,
           this.properties
         );
@@ -364,7 +369,7 @@ describe('FileService', function() {
         assert.deepEqual(
           stubInsert.getCall(0).args[0],
           request,
-          'GDriveService.insertFolder called with wrong args'
+          'this.gDriveService.insertFolder called with wrong args'
         );
         assert.deepEqual(
           newFolder,
@@ -378,11 +383,11 @@ describe('FileService', function() {
 
       it('should add new folder to properties.remaining and map', function() {
         // set up mocks
-        const stubInsert = sinon.stub(GDriveService, 'insertFolder');
+        const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
         stubInsert.returns(this.mockFolder);
 
         // set up actual
-        const newFolder = FileService.copyFile(
+        const newFolder = this.fileService.copyFile(
           this.mockFolderResource,
           this.properties
         );
@@ -412,20 +417,20 @@ describe('FileService', function() {
     describe('when file is not a folder', function() {
       it('should copy a file', function() {
         // set up mocks
-        const stubCopy = sinon.stub(GDriveService, 'copyFile');
+        const stubCopy = sinon.stub(this.gDriveService, 'copyFile');
         stubCopy.returns(this.mockFile);
         const request = {
           title: this.mockFileResource.title,
           parents: [
             {
-              kind: 'drive#fileLink',
+              kind: 'drive#parentReference',
               id: 'newParentID'
             }
           ]
         };
 
         // set up actual
-        const fileCopy = FileService.copyFile(
+        const fileCopy = this.fileService.copyFile(
           this.mockFileResource,
           this.properties
         );
@@ -434,7 +439,7 @@ describe('FileService', function() {
         assert.deepEqual(
           stubCopy.getCall(0).args[0],
           request,
-          'GDriveService.copyFile called with wrong args'
+          'this.gDriveService.copyFile called with wrong args'
         );
         assert.deepEqual(
           fileCopy,
@@ -444,7 +449,7 @@ describe('FileService', function() {
         assert.equal(
           stubCopy.getCall(0).args[1],
           this.mockFileResource.id,
-          'GDriveService.copyFile called with wrong fileID'
+          'this.gDriveService.copyFile called with wrong fileID'
         );
 
         // restore mocks
@@ -458,10 +463,10 @@ describe('FileService', function() {
       // set up mocks
       this.userProperties.getProperties().stop = 'true';
       this.timer.update(this.userProperties);
-      const stubCopy = sinon.stub(FileService, 'copyFile');
+      const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      FileService.processFileList(
+      this.fileService.processFileList(
         [1, 2, 3],
         this.properties,
         this.userProperties,
@@ -470,7 +475,7 @@ describe('FileService', function() {
       );
 
       // assertions
-      assert(stubCopy.notCalled, 'FileService.copyFile was called');
+      assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
 
       // reset mocks
       this.userProperties.getProperties().stop = false;
@@ -478,10 +483,10 @@ describe('FileService', function() {
     });
     it('should return if items.length == 0', function() {
       // set up mocks
-      const stubCopy = sinon.stub(FileService, 'copyFile');
+      const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      FileService.processFileList(
+      this.fileService.processFileList(
         [],
         this.properties,
         this.userProperties,
@@ -490,21 +495,24 @@ describe('FileService', function() {
       );
 
       // assertions
-      assert(stubCopy.notCalled, 'FileService.copyFile was called');
+      assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
       stubCopy.restore();
     });
 
     it('should call copyPermissions if copyPermissions is true and file is native GDrive mimeType', function() {
       // set up mocks
       const stubCopy = sinon
-        .stub(FileService, 'copyFile')
+        .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
       const stubLog = sinon.stub(Util, 'log');
-      const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
+      const stubCopyPermissions = sinon.stub(
+        this.fileService,
+        'copyPermissions'
+      );
 
       // run actual
       this.properties.copyPermissions = true;
-      FileService.processFileList(
+      this.fileService.processFileList(
         [{ mimeType: 'application/vnd.google-apps.document' }],
         this.properties,
         this.userProperties,
@@ -515,7 +523,7 @@ describe('FileService', function() {
       // assertions
       assert(
         stubCopyPermissions.calledOnce,
-        'FileService.copyPermissions not called once. Expected 1, actual: ' +
+        'this.fileService.copyPermissions not called once. Expected 1, actual: ' +
           stubCopyPermissions.callCount
       );
 
@@ -529,14 +537,17 @@ describe('FileService', function() {
     it('should skip copyPermissions if file is not native GDrive mimeType', function() {
       // set up mocks
       const stubCopy = sinon
-        .stub(FileService, 'copyFile')
+        .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
       const stubLog = sinon.stub(Util, 'log');
-      const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
+      const stubCopyPermissions = sinon.stub(
+        this.fileService,
+        'copyPermissions'
+      );
 
       // run actual
       this.properties.copyPermissions = true;
-      FileService.processFileList(
+      this.fileService.processFileList(
         [{ mimeType: 'application/json' }],
         this.properties,
         this.userProperties,
@@ -547,7 +558,7 @@ describe('FileService', function() {
       // assertions
       assert(
         stubCopyPermissions.notCalled,
-        'FileService.copyPermissions called. Expected 0, actual: ' +
+        'this.fileService.copyPermissions called. Expected 0, actual: ' +
           stubCopyPermissions.callCount
       );
 
@@ -561,15 +572,18 @@ describe('FileService', function() {
     it('should update timer after every file', function() {
       // set up mocks
       const stubCopy = sinon
-        .stub(FileService, 'copyFile')
+        .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
       const stubLog = sinon.stub(Util, 'log');
-      const stubCopyPermissions = sinon.stub(FileService, 'copyPermissions');
+      const stubCopyPermissions = sinon.stub(
+        this.fileService,
+        'copyPermissions'
+      );
       const stubTimerUpdate = sinon.stub(this.timer, 'update');
 
       // run actual
       const items = [1, 2, 3];
-      FileService.processFileList(
+      this.fileService.processFileList(
         items,
         this.properties,
         this.userProperties,
@@ -595,14 +609,14 @@ describe('FileService', function() {
       // set up mocks
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
-        .stub(FileService, 'copyFile')
+        .stub(this.fileService, 'copyFile')
         .throws(new Error(errMsg));
       const stubLog = sinon.stub(Util, 'log');
 
       // run actual
       const items = [1, 2, 3];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      FileService.processFileList(
+      this.fileService.processFileList(
         items,
         this.properties,
         this.userProperties,
@@ -632,14 +646,14 @@ describe('FileService', function() {
       // set up mocks
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
-        .stub(FileService, 'copyFile')
+        .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
       const stubLog = sinon.stub(Util, 'log');
 
       // run actual
       const items = [1, 2, 3];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      FileService.processFileList(
+      this.fileService.processFileList(
         items,
         this.properties,
         this.userProperties,
