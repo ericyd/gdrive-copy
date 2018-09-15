@@ -810,6 +810,11 @@ Util.log = function(ss, values) {
     ).getSheetByName('Log');
   }
 
+  // avoid placing entries that are too long
+  values = values.map(function(cell) {
+    return cell.slice(0, 4999);
+  });
+
   // gets last row with content.
   // getMaxRows() gets returns the current number of rows in the sheet, regardless of content.
   var lastRow = ss.getLastRow();
@@ -830,8 +835,7 @@ Util.log = function(ss, values) {
       .setValues([values]);
   } catch (e) {
     // Google sheets doesn't allow inserting more than 2,000,000 rows into a spreadsheet
-    ss
-      .insertRowAfter(lastRow)
+    ss.insertRowAfter(lastRow)
       .getRange(lastRow, startColumn, numRows, 1)
       .setValues([
         [
@@ -977,19 +981,16 @@ Util.cleanup = function(
     } catch (e) {
       Util.log(ss, Util.composeErrorMsg(e));
     }
-    ss
-      .getRange(2, 3, 1, 1)
+    ss.getRange(2, 3, 1, 1)
       .setValue('Complete')
       .setBackground('#66b22c');
-    ss
-      .getRange(2, 4, 1, 1)
-      .setValue(
-        Utilities.formatDate(
-          new Date(),
-          properties.timeZone,
-          'MM-dd-yy hh:mm:ss a'
-        )
-      );
+    ss.getRange(2, 4, 1, 1).setValue(
+      Utilities.formatDate(
+        new Date(),
+        properties.timeZone,
+        'MM-dd-yy hh:mm:ss a'
+      )
+    );
   }
 };
 
@@ -1061,15 +1062,29 @@ function copy() {
     return;
   }
 
+  // Initialize logger spreadsheet
+  try {
+    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName(
+      'Log'
+    );
+  } catch (e) {
+    try {
+      ss = SpreadsheetApp.openById(
+        PropertiesService.getUserProperties().getProperty('spreadsheetId')
+      ).getSheetByName('Log');
+    } catch (e) {
+      // if the spreadsheet cannot be accessed, this should be considered a fatal error
+      // and the script should not continue
+      throw new Error('Cannot locate spreadsheet. Please try again.');
+    }
+  }
+
   // Create trigger for next run.
   // This trigger will be deleted if script finishes successfully
   // or if the stop flag is set.
   timer.update(userProperties);
   var duration = timer.calculateTriggerDuration(properties);
   TriggerService.createTrigger(duration);
-
-  // Initialize logger spreadsheet
-  ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName('Log');
 
   // Process leftover files from prior query results
   // that weren't processed before script timed out.
