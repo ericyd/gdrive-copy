@@ -358,7 +358,8 @@ export default class Start extends React.Component {
               id="copyPermissions"
               label={
                 <span>
-                  Copy permissions<br />
+                  Copy permissions
+                  <br />
                   Sharing settings from the original folder and files will be
                   copied
                 </span>

@@ -34,11 +34,13 @@ export default function About() {
         This app is licensed under the{' '}
         <a href="https://opensource.org/licenses/MIT" target="_blank">
           MIT License
-        </a>. Feel free to reuse or distribute this code in any way you see fit.
-        You can find the source code on{' '}
+        </a>
+        . Feel free to reuse or distribute this code in any way you see fit. You
+        can find the source code on{' '}
         <a href="http://www.github.com/ericyd/gdrive-copy" target="_blank">
           Github
-        </a>.
+        </a>
+        .
       </p>
 
       <p>
@@ -57,7 +59,8 @@ export default function About() {
 
       <p>
         To get started, simply select your folder and choose a new name, then
-        select Copy Folder!<br />
+        select Copy Folder!
+        <br />
         If the folder copy get's stuck, simply use the "Resume prior folder
         copy" button, then select the copy of your folder.
       </p>
@@ -71,7 +74,8 @@ export default function About() {
           target="_blank"
         >
           Privacy Policy
-        </a>.
+        </a>
+        .
       </p>
       <p>
         This app does not store any data relating to your account or Google
