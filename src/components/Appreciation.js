@@ -41,6 +41,10 @@ export default function Appreciation(props) {
       </div>
       <Divider />
       <div className="list-item-large">
+        <strong>Donate Bitcoin:</strong> 34zsD7nvD2zs7U7gUNjoWNobvGXMA9nLTr
+      </div>
+      <Divider />
+      <div className="list-item-large">
         <a
           className="github-button"
           href="https://github.com/ericyd/gdrive-copy"
