@@ -51,6 +51,11 @@ contents.
   You can copy it to the root directory by selecting "Root directory" under
   "Copy folder to"
 
+## Building
+
+* Use Node 8
+* run `npm rebuild` if needed
+
 ## Bugs? Questions?
 
 Please open an [issue on Github](https://github.com/ericyd/gdrive-copy/issues).

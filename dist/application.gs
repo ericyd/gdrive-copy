@@ -175,6 +175,7 @@ FileService.prototype.processFileList = function(
       var newfile = this.copyFile(item, properties);
 
       // Log result
+      var parentID = newfile.parents && newfile.parents[0] ? newfile.parents[0].id : null
       Util.log(ss, [
         'Copied',
         newfile.title,
@@ -184,7 +185,8 @@ FileService.prototype.processFileList = function(
           new Date(),
           properties.timeZone,
           'MM-dd-yy hh:mm:ss aaa'
-        )
+        ),
+        FileService.getFileLinkForSheet(parentID, '')
       ]);
 
       // Copy permissions if selected, and if permissions exist to copy
@@ -202,6 +204,7 @@ FileService.prototype.processFileList = function(
         }
       }
     } catch (e) {
+      var parentID = item.parents && item.parents[0] ? item.parents[0].id : null
       Util.log(ss, [
         Util.composeErrorMsg(e)[0],
         item.title,
@@ -211,7 +214,8 @@ FileService.prototype.processFileList = function(
           new Date(),
           properties.timeZone,
           'MM-dd-yy hh:mm:ss aaa'
-        )
+        ),
+        FileService.getFileLinkForSheet(parentID, '')
       ]);
     }
 
@@ -418,9 +422,14 @@ FileService.isDescendant = function(maybeChildIDs, maybeParentID) {
  * @returns {string}
  */
 FileService.getFileLinkForSheet = function(id, title) {
-  return (
-    '=HYPERLINK("https://drive.google.com/open?id=' + id + '","' + title + '")'
-  );
+  if (id) {
+    return 'https://drive.google.com/open?id=' + id;
+  }
+  return ''
+  // 2018-12-01: different locales use different delimiters. Simplify link so it works everywhere
+  // return (
+  //   '=HYPERLINK("https://drive.google.com/open?id=' + id + '","' + title + '")'
+  // );
 };
 
 
@@ -812,7 +821,10 @@ Util.log = function(ss, values) {
 
   // avoid placing entries that are too long
   values = values.map(function(cell) {
-    return cell.slice(0, 4999);
+    if (cell && typeof cell == 'string') {
+      return cell.slice(0, 4999);
+    }
+    return '';
   });
 
   // gets last row with content.
