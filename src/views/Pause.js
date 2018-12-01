@@ -83,8 +83,9 @@ export default class Pause extends Component {
         {this.state.processing && <Overlay label={this.state.processingMsg} />}
 
         {/* Error(s) */}
-        {this.state.error &&
-          !this.state.success && <Error>{this.state.errorMsg}</Error>}
+        {this.state.error && !this.state.success && (
+          <Error>{this.state.errorMsg}</Error>
+        )}
 
         {/* Default */}
         <div>

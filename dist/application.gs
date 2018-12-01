@@ -175,7 +175,8 @@ FileService.prototype.processFileList = function(
       var newfile = this.copyFile(item, properties);
 
       // Log result
-      var parentID = newfile.parents && newfile.parents[0] ? newfile.parents[0].id : null
+      var parentID =
+        newfile.parents && newfile.parents[0] ? newfile.parents[0].id : null;
       Util.log(ss, [
         'Copied',
         newfile.title,
@@ -204,7 +205,8 @@ FileService.prototype.processFileList = function(
         }
       }
     } catch (e) {
-      var parentID = item.parents && item.parents[0] ? item.parents[0].id : null
+      var parentID =
+        item.parents && item.parents[0] ? item.parents[0].id : null;
       Util.log(ss, [
         Util.composeErrorMsg(e)[0],
         item.title,
@@ -425,7 +427,7 @@ FileService.getFileLinkForSheet = function(id, title) {
   if (id) {
     return 'https://drive.google.com/open?id=' + id;
   }
-  return ''
+  return '';
   // 2018-12-01: different locales use different delimiters. Simplify link so it works everywhere
   // return (
   //   '=HYPERLINK("https://drive.google.com/open?id=' + id + '","' + title + '")'

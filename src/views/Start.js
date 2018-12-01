@@ -287,8 +287,9 @@ export default class Start extends React.Component {
     return (
       <div>
         {this.state.processing && <Overlay label={this.state.processingMsg} />}
-        {this.state.error &&
-          !this.state.success && <Error>{this.state.errorMsg}</Error>}
+        {this.state.error && !this.state.success && (
+          <Error>{this.state.errorMsg}</Error>
+        )}
 
         <Stepper activeStep={this.state.stepNum}>
           <Step>
