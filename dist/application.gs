@@ -439,8 +439,30 @@ FileService.getFileLinkForSheet = function(id, title) {
  * Namespace to wrap calls to Drive API
  **********************************************/
 function GDriveService() {
+  this.lastRequest = Timer.now();
+  this.minElapsed = 100; // 1/10th of a second, in ms
+  this.trottle = this.throttle.bind(this);
   return this;
 }
+
+/**
+ * Run passed function no more than 10 per second (1 per 1/10th of a second)
+ * Uses global `Utilities` object from Google Apps Script
+ *
+ * This is not my favorite way to implement, but using an async queue is problematic
+ * when the script has to stop, save state, and restart. Better implementations may be considered
+ * in the future.
+ * @param {closure} func
+ */
+GDriveService.prototype.throttle = function(func) {
+  var elapsed = Timer.now() - this.lastRequest;
+  if (elapsed < this.minElapsed) {
+    // Util.log(null, ['sleeping for ' + (this.minElapsed - elapsed).toString()])
+    Utilities.sleep(this.minElapsed - elapsed);
+  }
+  this.lastRequest = Timer.now();
+  return func();
+};
 
 /**
  * Returns metadata for input file ID
@@ -448,7 +470,9 @@ function GDriveService() {
  * @return {object} the permissions for the folder
  */
 GDriveService.prototype.getPermissions = function(id) {
-  return Drive.Permissions.list(id);
+  return this.throttle(function() {
+    return Drive.Permissions.list(id);
+  });
 };
 
 /**
@@ -458,11 +482,13 @@ GDriveService.prototype.getPermissions = function(id) {
  * @return {File List} fileList object where fileList.items is an array of children files
  */
 GDriveService.prototype.getFiles = function(query, pageToken, orderBy) {
-  return Drive.Files.list({
-    q: query,
-    maxResults: 1000,
-    pageToken: pageToken,
-    orderBy: orderBy
+  return this.throttle(function() {
+    return Drive.Files.list({
+      q: query,
+      maxResults: 1000,
+      pageToken: pageToken,
+      orderBy: orderBy
+    });
   });
 };
 
@@ -472,7 +498,9 @@ GDriveService.prototype.getFiles = function(query, pageToken, orderBy) {
  * @returns {File Resource}
  */
 GDriveService.prototype.downloadFile = function(id) {
-  return Drive.Files.get(id, { alt: 'media' });
+  return this.throttle(function() {
+    return Drive.Files.get(id, { alt: 'media' });
+  });
 };
 
 /**
@@ -483,7 +511,9 @@ GDriveService.prototype.downloadFile = function(id) {
  * @returns {File Resource}
  */
 GDriveService.prototype.updateFile = function(metadata, fileID, mediaData) {
-  return Drive.Files.update(metadata, fileID, mediaData);
+  return this.throttle(function() {
+    return Drive.Files.update(metadata, fileID, mediaData);
+  });
 };
 
 /**
@@ -492,7 +522,9 @@ GDriveService.prototype.updateFile = function(metadata, fileID, mediaData) {
  * @returns {File Resource}
  */
 GDriveService.prototype.insertFolder = function(body) {
-  return Drive.Files.insert(body);
+  return this.throttle(function() {
+    return Drive.Files.insert(body);
+  });
 };
 
 /**
@@ -501,6 +533,7 @@ GDriveService.prototype.insertFolder = function(body) {
  * @returns {File Resource}
  */
 GDriveService.prototype.insertBlankFile = function(parentID) {
+  // doesn't need to be throttled because it returns a throttled function
   return this.insertFolder({
     description:
       'This document will be deleted after the folder copy is complete. It is only used to store properties necessary to complete the copying procedure',
@@ -521,7 +554,9 @@ GDriveService.prototype.insertBlankFile = function(parentID) {
  * @returns {File Resource}
  */
 GDriveService.prototype.copyFile = function(body, id) {
-  return Drive.Files.copy(body, id);
+  return this.throttle(function() {
+    return Drive.Files.copy(body, id);
+  });
 };
 
 /**
@@ -531,7 +566,9 @@ GDriveService.prototype.copyFile = function(body, id) {
  * @param {object} options
  */
 GDriveService.prototype.insertPermission = function(body, id, options) {
-  return Drive.Permissions.insert(body, id, options);
+  return this.throttle(function() {
+    return Drive.Permissions.insert(body, id, options);
+  });
 };
 
 /**
@@ -540,14 +577,18 @@ GDriveService.prototype.insertPermission = function(body, id, options) {
  * @param {string} permissionID
  */
 GDriveService.prototype.removePermission = function(fileID, permissionID) {
-  return Drive.Permissions.remove(fileID, permissionID);
+  return this.throttle(function() {
+    return Drive.Permissions.remove(fileID, permissionID);
+  });
 };
 
 /**
  * @returns {string} ID of root Drive folder
  */
 GDriveService.prototype.getRootID = function() {
-  return DriveApp.getRootFolder().getId();
+  return this.throttle(function() {
+    return DriveApp.getRootFolder().getId();
+  });
 };
 
 
@@ -711,7 +752,7 @@ Timer.sixMinutes = 6.2 * 1000 * 60;
  * @param {UserPropertiesService} userProperties
  */
 Timer.prototype.update = function(userProperties) {
-  this.runtime = this.now() - this.START_TIME;
+  this.runtime = Timer.now() - this.START_TIME;
   this.timeIsUp = this.runtime >= Timer.MAX_RUNTIME;
   this.stop = userProperties.getProperty('stop') == 'true';
 };
@@ -724,13 +765,6 @@ Timer.prototype.canContinue = function() {
 };
 
 /**
- * @returns {number}
- */
-Timer.prototype.now = function() {
-  return new Date().getTime();
-};
-
-/**
  * Calculate how far in the future the trigger should be set
  * @param {Properties} properties
  * @returns {number}
@@ -739,6 +773,13 @@ Timer.prototype.calculateTriggerDuration = function(properties) {
   return properties.checkMaxRuntime()
     ? Timer.oneDay
     : Timer.sixMinutes - this.runtime;
+};
+
+/**
+ * @returns {number}
+ */
+Timer.now = function() {
+  return new Date().getTime();
 };
 
 
