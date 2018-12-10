@@ -94,8 +94,12 @@ describe('FileService', function() {
       const stub = sinon.stub(this.gDriveService, 'copyFile');
       const errMsg = 'Error copying selected folder';
       stub.throws(new Error(errMsg));
-      const copy = this.fileService.createLoggerSpreadsheet(1, 2);
-      assert.equal(copy, errMsg, 'does not return error message');
+      try {
+        const copy = this.fileService.createLoggerSpreadsheet(1, 2);
+        assert.equal(copy, errMsg, 'did not bubble up error');
+      } catch (e) {
+        assert.equal(e.message, errMsg, 'does not return error message');
+      }
 
       stub.restore();
     });
