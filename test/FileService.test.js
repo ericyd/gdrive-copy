@@ -368,10 +368,7 @@ describe('FileService', function() {
         stubInsert.returns(this.mockFolder);
 
         // set up actual
-        const newFolder = this.fileService.copyFile(
-          this.mockFolderResource,
-          this.properties
-        );
+        const newFolder = this.fileService.copyFile(this.mockFolderResource);
 
         // assertions
         assert.deepEqual(
@@ -395,10 +392,7 @@ describe('FileService', function() {
         stubInsert.returns(this.mockFolder);
 
         // set up actual
-        const newFolder = this.fileService.copyFile(
-          this.mockFolderResource,
-          this.properties
-        );
+        const newFolder = this.fileService.copyFile(this.mockFolderResource);
 
         // assertions
         assert.deepEqual(
@@ -438,10 +432,7 @@ describe('FileService', function() {
         };
 
         // set up actual
-        const fileCopy = this.fileService.copyFile(
-          this.mockFileResource,
-          this.properties
-        );
+        const fileCopy = this.fileService.copyFile(this.mockFileResource);
 
         // assertions
         assert.deepEqual(
@@ -474,12 +465,7 @@ describe('FileService', function() {
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      this.fileService.processFileList(
-        [1, 2, 3],
-        this.properties,
-        this.userProperties,
-        {}
-      );
+      this.fileService.processFileList([1, 2, 3], this.userProperties, {});
 
       // assertions
       assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
@@ -493,12 +479,7 @@ describe('FileService', function() {
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      this.fileService.processFileList(
-        [],
-        this.properties,
-        this.userProperties,
-        {}
-      );
+      this.fileService.processFileList([], this.userProperties, {});
 
       // assertions
       assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
@@ -520,7 +501,6 @@ describe('FileService', function() {
       this.properties.copyPermissions = true;
       this.fileService.processFileList(
         [{ mimeType: 'application/vnd.google-apps.document' }],
-        this.properties,
         this.userProperties,
         {}
       );
@@ -554,7 +534,6 @@ describe('FileService', function() {
       this.properties.copyPermissions = true;
       this.fileService.processFileList(
         [{ mimeType: 'application/json' }],
-        this.properties,
         this.userProperties,
         {}
       );
@@ -587,12 +566,7 @@ describe('FileService', function() {
 
       // run actual
       const items = [1, 2, 3];
-      this.fileService.processFileList(
-        items,
-        this.properties,
-        this.userProperties,
-        {}
-      );
+      this.fileService.processFileList(items, this.userProperties, {});
 
       // assertions
       assert(
@@ -620,12 +594,7 @@ describe('FileService', function() {
       });
       const items = [this.mockFile, previouslyRetriedFile, this.mockFile];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(
-        items,
-        this.properties,
-        this.userProperties,
-        {}
-      );
+      this.fileService.processFileList(items, this.userProperties, {});
 
       assert.equal(
         this.properties.retries.length,
@@ -656,12 +625,9 @@ describe('FileService', function() {
         error: new Error(errMsg)
       });
       const items = [previouslyRetriedFile, this.mockFile, this.mockFile];
-      this.fileService.processFileList(
-        items,
-        this.properties,
-        this.userProperties,
-        { spreadsheetStub: true }
-      );
+      this.fileService.processFileList(items, this.userProperties, {
+        spreadsheetStub: true
+      });
 
       // assertions
       assert(stubLog.called, 'Util.logCopyError not called');
@@ -701,12 +667,9 @@ describe('FileService', function() {
       // run actual
       const items = [1, 2, 3];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(
-        items,
-        this.properties,
-        this.userProperties,
-        { spreadsheetStub: true }
-      );
+      this.fileService.processFileList(items, this.userProperties, {
+        spreadsheetStub: true
+      });
 
       // assertions
       assert(stubLog.called, 'Util.logCopySuccess not called.');
