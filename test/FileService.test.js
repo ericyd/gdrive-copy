@@ -582,7 +582,7 @@ describe('FileService', function() {
       stubTimerUpdate.restore();
     });
 
-    it('should push failed item to properties.retries', function() {
+    it('should push failed item to properties.retryQueue', function() {
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
@@ -597,15 +597,15 @@ describe('FileService', function() {
       this.fileService.processFileList(items, this.userProperties, {});
 
       assert.equal(
-        this.properties.retries.length,
+        this.properties.retryQueue.length,
         itemsLength,
-        "properties.retries doesn't contain enough items"
+        "properties.retryQueue doesn't contain enough items"
       );
-      assert.equal(this.properties.retries[0].id, this.mockFile.id);
-      assert.equal(this.properties.retries[0].title, this.mockFile.title);
-      assert.equal(this.properties.retries[0].numberOfAttempts, 1);
-      assert.equal(this.properties.retries[1].numberOfAttempts, 2);
-      assert.equal(this.properties.retries[1].error.message, errMsg);
+      assert.equal(this.properties.retryQueue[0].id, this.mockFile.id);
+      assert.equal(this.properties.retryQueue[0].title, this.mockFile.title);
+      assert.equal(this.properties.retryQueue[0].numberOfAttempts, 1);
+      assert.equal(this.properties.retryQueue[1].numberOfAttempts, 2);
+      assert.equal(this.properties.retryQueue[1].error.message, errMsg);
 
       // restore mocks
       stubCopy.restore();
