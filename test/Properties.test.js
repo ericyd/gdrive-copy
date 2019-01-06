@@ -28,7 +28,7 @@ describe('Properties', function() {
       const mockDoc = JSON.parse(this.mockPropertiesDoc);
       Object.entries(this.properties).forEach(([key, value]) => {
         if (key == 'gDriveService') return;
-        assert.deepEqual(value, mockDoc[key]);
+        assert.deepEqual(value, mockDoc[key], 'properties not equal');
       });
 
       // reset mocks

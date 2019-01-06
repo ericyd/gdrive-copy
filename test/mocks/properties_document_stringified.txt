@@ -10,6 +10,7 @@
 	"spreadsheetId": "14dNrBnfPVuO55vNsQXbaKKzY9KM7YZfJaISkXiCgyS0",
 	"propertiesDocId": "1PJNPuX-nqsvXFD940XuUgKxzmI6HLtEs",
 	"timeZone": "GMT-7",
+	"retries": [],
 	"totalRuntime": 0,
 	"leftovers": {
 		"kind": "drive#fileList",
