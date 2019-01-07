@@ -121,7 +121,7 @@ describe('Util', function() {
       const timer = new Timer();
       const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const properties = new Properties();
-      properties.retryQueue.push(...fileList)
+      properties.retryQueue.push(...fileList);
 
       // normal pause
       Util.cleanup(properties, fileList, userProperties, timer, {});

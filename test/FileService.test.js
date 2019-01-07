@@ -474,6 +474,7 @@ describe('FileService', function() {
       this.userProperties.getProperties().stop = false;
       stubCopy.restore();
     });
+
     it('should return if items.length == 0', function() {
       // set up mocks
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
@@ -606,6 +607,30 @@ describe('FileService', function() {
       assert.equal(this.properties.retryQueue[0].numberOfAttempts, 1);
       assert.equal(this.properties.retryQueue[1].numberOfAttempts, 2);
       assert.equal(this.properties.retryQueue[1].error.message, errMsg);
+
+      // restore mocks
+      stubCopy.restore();
+    });
+
+    it('should treat retryQueue as FIFO', function() {
+      const errMsg = 'failed to copy file';
+      const stubCopy = sinon
+        .stub(this.fileService, 'copyFile')
+        .throws(new Error(errMsg));
+
+      // run actual
+      const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
+      const itemsLength = items.length; // must set here because items is mutated in processFileList
+      this.fileService.processFileList(items, this.userProperties, {});
+
+      assert.equal(
+        this.properties.retryQueue.length,
+        itemsLength,
+        "properties.retryQueue doesn't contain enough items"
+      );
+      assert.equal(this.properties.retryQueue[0].id, 1);
+      assert.equal(this.properties.retryQueue[1].id, 2);
+      assert.equal(this.properties.retryQueue[2].id, 3);
 
       // restore mocks
       stubCopy.restore();
