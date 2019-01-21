@@ -1058,6 +1058,10 @@ Util.isSome = function(obj) {
   return !Util.isNone(obj);
 };
 
+Util.hasSome = function(obj, prop) {
+  return obj && obj[prop] && obj[prop].length > 0;
+};
+
 
 /**********************************************
  * Main copy loop
@@ -1141,11 +1145,7 @@ function copy() {
   // that weren't processed before script timed out.
   // Destination folder must be set to the parent of the first leftover item.
   // The list of leftover items is an equivalent array to fileList returned from the getFiles() query
-  if (
-    properties.leftovers &&
-    properties.leftovers.items &&
-    properties.leftovers.items.length > 0
-  ) {
+  if (Util.hasSome(properties.leftovers, 'items')) {
     properties.destFolder = properties.leftovers.items[0].parents[0].id;
     fileService.processFileList(
       properties.leftovers.items,
@@ -1194,7 +1194,7 @@ function copy() {
       }
 
       // Send items to processFileList() to copy if there is anything to copy
-      if (fileList && fileList.items && fileList.items.length > 0) {
+      if (Util.hasSome(fileList, 'items')) {
         fileService.processFileList(
           fileList.items,
           properties,
