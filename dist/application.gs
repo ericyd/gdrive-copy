@@ -401,7 +401,9 @@ GDriveService.prototype.getFiles = function(query, pageToken, orderBy) {
  */
 GDriveService.prototype.downloadFile = function(id) {
   return this.throttle(function() {
-    return DriveApp.getFileById(id).getBlob().getDataAsString();
+    return DriveApp.getFileById(id)
+      .getBlob()
+      .getDataAsString();
   });
 };
 

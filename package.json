@@ -61,7 +61,7 @@
     "webpack:prod": "webpack --config ./config/webpack.config.prod.js",
     "gulp:prod": "gulp build",
     "build:prod": "npm run webpack:prod && npm run gulp:prod",
-    "build:lib": "rollup -c",
+    "build:lib": "rollup -c config/rollup.config.js",
     "prettier:config": "prettier --write --single-quote",
     "prettier": "npm run prettier:config -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\"",
     "prettier:all": "npm run prettier:config -- \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
