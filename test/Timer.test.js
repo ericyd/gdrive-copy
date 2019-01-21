@@ -1,5 +1,5 @@
-const Timer = require('../lib/Timer');
-const Properties = require('../lib/Properties');
+import Timer from '../lib/Timer';
+import Properties from '../lib/Properties';
 const assert = require('assert');
 const sinon = require('sinon');
 const PropertiesService = require('./mocks/PropertiesService');

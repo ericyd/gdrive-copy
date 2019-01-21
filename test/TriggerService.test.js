@@ -1,4 +1,4 @@
-var TriggerService = require('../lib/TriggerService');
+import TriggerService from '../lib/TriggerService';
 var assert = require('assert');
 
 describe('TriggerService', function() {
