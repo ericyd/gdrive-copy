@@ -487,7 +487,9 @@ GDriveService.prototype.getFiles = function(query, pageToken, orderBy) {
  */
 GDriveService.prototype.downloadFile = function(id) {
   return this.throttle(function() {
-    return DriveApp.getFileById(id).getBlob().getDataAsString();
+    return DriveApp.getFileById(id)
+      .getBlob()
+      .getDataAsString();
   });
 };
 
@@ -1048,6 +1050,14 @@ Util.composeErrorMsg = function(e, customMsg) {
   ];
 };
 
+Util.isNone = function(obj) {
+  return obj === null || obj === undefined;
+};
+
+Util.isSome = function(obj) {
+  return !Util.isNone(obj);
+};
+
 
 /**********************************************
  * Main copy loop
@@ -1150,14 +1160,14 @@ function copy() {
   timer.update(userProperties);
 
   // When leftovers are complete, query next folder from properties.remaining
-  while (properties.remaining.length > 0 && timer.canContinue()) {
+  while (
+    (properties.remaining.length > 0 || Util.isSome(properties.pageToken)) &&
+    timer.canContinue()
+  ) {
     // if pages remained in the previous query, use them first
     if (properties.pageToken) {
       currFolder = properties.destFolder;
     } else {
-      // TODO: This is throwing tons of errors but I don't know why.
-      // for some reason properties.remaining is not being parsed correctly,
-      // so it's a JSON stringy object instead of an actual array.
       try {
         currFolder = properties.remaining.shift();
       } catch (e) {
