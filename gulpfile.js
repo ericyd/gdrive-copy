@@ -3,7 +3,6 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var sass = require('gulp-sass');
-var removeCode = require('gulp-remove-code');
 var insert = require('gulp-insert');
 var autoprefixer = require('gulp-autoprefixer');
 var gulpHogan = require('gulp-hogan');
@@ -11,7 +10,7 @@ var svg2png = require('svg2png');
 var fs = require('fs');
 var rename = require('gulp-rename');
 
-gulp.task('build', ['js', 'html', 'gs', 'css-prod', 'img']);
+gulp.task('build', ['js', 'html', 'css-prod', 'img']);
 
 gulp.task('watch', function() {
   var watcher = gulp.watch(['./src/**/*'], ['build']);
@@ -34,14 +33,6 @@ gulp.task('js', function() {
     .src('./dist/bundle.js')
     .pipe(insert.wrap('<script>', '</script>'))
     .pipe(rename('js.html'))
-    .pipe(gulp.dest('dist'));
-});
-
-gulp.task('gs', function() {
-  return gulp
-    .src('./lib/**/*.js')
-    .pipe(removeCode({ production: true }))
-    .pipe(concat('application.gs'))
     .pipe(gulp.dest('dist'));
 });
 
