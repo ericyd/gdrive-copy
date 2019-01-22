@@ -476,7 +476,7 @@ function GDriveService() {
   this.lastRequest = Timer.now();
   this.minElapsed = 100; // 1/10th of a second, in ms
   this.trottle = this.throttle.bind(this);
-  this.maxResults = 200;
+  this.maxResults = 1000;
   return this;
 }
 
