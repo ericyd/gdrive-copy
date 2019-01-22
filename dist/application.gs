@@ -3,6 +3,63 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 /**********************************************
+ * Tracks runtime of application to avoid
+ * exceeding Google quotas
+ **********************************************/
+
+function Timer() {
+  this.START_TIME = new Date().getTime();
+  this.runtime = 0;
+  this.timeIsUp = false;
+  this.stop = false;
+
+  return this;
+}
+
+// Max runtime per day is 90 minutes. Set max as 88 mins for padding.
+// https://developers.google.com/apps-script/guides/services/quotas
+Timer.MAX_RUNTIME_PER_DAY = 88 * 1000 * 60;
+Timer.MAX_RUNTIME = 4.7 * 1000 * 60;
+// durations used for setting Triggers
+Timer.oneDay = 24 * 60 * 60 * 1000;
+Timer.sixMinutes = 6.2 * 1000 * 60;
+
+/**
+ * Update current time
+ * @param {UserPropertiesService} userProperties
+ */
+Timer.prototype.update = function(userProperties) {
+  this.runtime = Timer.now() - this.START_TIME;
+  this.timeIsUp = this.runtime >= Timer.MAX_RUNTIME;
+  this.stop = userProperties.getProperty('stop') == 'true';
+};
+
+/**
+ * @returns {boolean}
+ */
+Timer.prototype.canContinue = function() {
+  return !this.timeIsUp && !this.stop;
+};
+
+/**
+ * Calculate how far in the future the trigger should be set
+ * @param {Properties} properties
+ * @returns {number}
+ */
+Timer.prototype.calculateTriggerDuration = function(properties) {
+  return properties.checkMaxRuntime()
+    ? Timer.oneDay
+    : Timer.sixMinutes - this.runtime;
+};
+
+/**
+ * @returns {number}
+ */
+Timer.now = function() {
+  return new Date().getTime();
+};
+
+/**********************************************
  * Namespace for trigger-related methods
  **********************************************/
 
@@ -51,6 +108,138 @@ TriggerService.deleteTrigger = function(triggerId) {
       Util.log(null, Util.composeErrorMsg(e));
     }
   }
+};
+
+/**********************************************
+ * Contains runtime properties for script
+ **********************************************/
+
+function Properties(gDriveService) {
+  this.gDriveService = gDriveService;
+  this.srcFolderID = '';
+  this.srcFolderName = '';
+  this.srcParentID = '';
+  this.destFolderName = '';
+  this.copyPermissions = false;
+  this.copyTo = '';
+  this.destParentID = '';
+  this.destId = '';
+  this.spreadsheetId = '';
+  this.propertiesDocId = '';
+  this.leftovers = {};
+  this.map = {};
+  this.remaining = [];
+  this.timeZone = 'GMT-7';
+  this.totalRuntime = 0;
+
+  return this;
+}
+
+/**
+ * Load properties document from user's drive and parse.
+ * @return {object} properties object
+ */
+Properties.prototype.load = function() {
+  var _this = this;
+  try {
+    var propertiesDocId = PropertiesService.getUserProperties().getProperties()
+      .propertiesDocId;
+    var propertiesDoc = this.gDriveService.downloadFile(propertiesDocId);
+  } catch (e) {
+    if (e.message.indexOf('Unsupported Output Format') !== -1) {
+      throw new Error(
+        'Could not determine properties document ID. Please try running the script again'
+      );
+    }
+    throw e;
+  }
+
+  try {
+    var properties = JSON.parse(propertiesDoc);
+  } catch (e) {
+    throw new Error(
+      "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke."
+    );
+  }
+
+  Object.keys(properties).forEach(function(prop) {
+    try {
+      _this[prop] = properties[prop];
+    } catch (e) {
+      throw new Error(
+        'Error loading property ' +
+          prop +
+          ' to properties object. Attempted to save: ' +
+          properties[prop]
+      );
+    }
+  });
+
+  return this;
+};
+
+/**
+ * Increment `totalRuntime` property
+ * @param {number} ms amount in milliseconds to increment
+ */
+Properties.prototype.incrementTotalRuntime = function(ms) {
+  this.totalRuntime += ms;
+};
+
+/**
+ * Determine if script has exceeded max daily runtime
+ * If yes, need to sleep for one day to avoid throwing
+ * "Script using too much computer time" error
+ * @returns {boolean}
+ */
+Properties.prototype.checkMaxRuntime = function() {
+  this.isOverMaxRuntime =
+    this.totalRuntime + Timer.MAX_RUNTIME >= Timer.MAX_RUNTIME_PER_DAY;
+  return this.isOverMaxRuntime;
+};
+
+/**
+ * Stringify properties argument and save to file in user's Drive
+ *
+ * @param {object} properties - contains all properties that need to be saved to userProperties
+ */
+Properties.save = function(properties, gDriveService) {
+  try {
+    var stringifiedProps = JSON.stringify(properties);
+  } catch (e) {
+    throw new Error(
+      'Failed to serialize script properties. This is a critical failure. Please start your copy again.'
+    );
+  }
+  return gDriveService.updateFile(
+    {
+      upload: 'multipart',
+      alt: 'json'
+    },
+    properties.propertiesDocId,
+    Utilities.newBlob(stringifiedProps)
+  );
+};
+
+/**
+ * save srcId, destId, copyPermissions, spreadsheetId to userProperties.
+ *
+ * This is used when resuming, in which case the IDs of the logger spreadsheet and
+ * properties document will not be known.
+ */
+Properties.setUserPropertiesStore = function(
+  spreadsheetId,
+  propertiesDocId,
+  destId,
+  resuming
+) {
+  var userProperties = PropertiesService.getUserProperties();
+  userProperties.setProperty('destId', destId);
+  userProperties.setProperty('spreadsheetId', spreadsheetId);
+  userProperties.setProperty('propertiesDocId', propertiesDocId);
+  userProperties.setProperty('trials', 0);
+  userProperties.setProperty('resuming', resuming);
+  userProperties.setProperty('stop', 'false');
 };
 
 /**********************************************
@@ -281,67 +470,10 @@ Util.composeErrorMsg = function(e, customMsg) {
 };
 
 /**********************************************
- * Tracks runtime of application to avoid
- * exceeding Google quotas
- **********************************************/
-
-function Timer$1() {
-  this.START_TIME = new Date().getTime();
-  this.runtime = 0;
-  this.timeIsUp = false;
-  this.stop = false;
-
-  return this;
-}
-
-// Max runtime per day is 90 minutes. Set max as 88 mins for padding.
-// https://developers.google.com/apps-script/guides/services/quotas
-Timer$1.MAX_RUNTIME_PER_DAY = 88 * 1000 * 60;
-Timer$1.MAX_RUNTIME = 4.7 * 1000 * 60;
-// durations used for setting Triggers
-Timer$1.oneDay = 24 * 60 * 60 * 1000;
-Timer$1.sixMinutes = 6.2 * 1000 * 60;
-
-/**
- * Update current time
- * @param {UserPropertiesService} userProperties
- */
-Timer$1.prototype.update = function(userProperties) {
-  this.runtime = Timer$1.now() - this.START_TIME;
-  this.timeIsUp = this.runtime >= Timer$1.MAX_RUNTIME;
-  this.stop = userProperties.getProperty('stop') == 'true';
-};
-
-/**
- * @returns {boolean}
- */
-Timer$1.prototype.canContinue = function() {
-  return !this.timeIsUp && !this.stop;
-};
-
-/**
- * Calculate how far in the future the trigger should be set
- * @param {Properties} properties
- * @returns {number}
- */
-Timer$1.prototype.calculateTriggerDuration = function(properties) {
-  return properties.checkMaxRuntime()
-    ? Timer$1.oneDay
-    : Timer$1.sixMinutes - this.runtime;
-};
-
-/**
- * @returns {number}
- */
-Timer$1.now = function() {
-  return new Date().getTime();
-};
-
-/**********************************************
  * Namespace to wrap calls to Drive API
  **********************************************/
 function GDriveService() {
-  this.lastRequest = Timer$1.now();
+  this.lastRequest = Timer.now();
   this.minElapsed = 100; // 1/10th of a second, in ms
   this.trottle = this.throttle.bind(this);
   return this;
@@ -357,12 +489,12 @@ function GDriveService() {
  * @param {closure} func
  */
 GDriveService.prototype.throttle = function(func) {
-  var elapsed = Timer$1.now() - this.lastRequest;
+  var elapsed = Timer.now() - this.lastRequest;
   if (elapsed < this.minElapsed) {
     // Util.log(null, ['sleeping for ' + (this.minElapsed - elapsed).toString()])
     Utilities.sleep(this.minElapsed - elapsed);
   }
-  this.lastRequest = Timer$1.now();
+  this.lastRequest = Timer.now();
   return func();
 };
 
@@ -496,138 +628,6 @@ GDriveService.prototype.getRootID = function() {
 };
 
 /**********************************************
- * Contains runtime properties for script
- **********************************************/
-
-function Properties$1(gDriveService) {
-  this.gDriveService = gDriveService;
-  this.srcFolderID = '';
-  this.srcFolderName = '';
-  this.srcParentID = '';
-  this.destFolderName = '';
-  this.copyPermissions = false;
-  this.copyTo = '';
-  this.destParentID = '';
-  this.destId = '';
-  this.spreadsheetId = '';
-  this.propertiesDocId = '';
-  this.leftovers = {};
-  this.map = {};
-  this.remaining = [];
-  this.timeZone = 'GMT-7';
-  this.totalRuntime = 0;
-
-  return this;
-}
-
-/**
- * Load properties document from user's drive and parse.
- * @return {object} properties object
- */
-Properties$1.prototype.load = function() {
-  var _this = this;
-  try {
-    var propertiesDocId = PropertiesService.getUserProperties().getProperties()
-      .propertiesDocId;
-    var propertiesDoc = this.gDriveService.downloadFile(propertiesDocId);
-  } catch (e) {
-    if (e.message.indexOf('Unsupported Output Format') !== -1) {
-      throw new Error(
-        'Could not determine properties document ID. Please try running the script again'
-      );
-    }
-    throw e;
-  }
-
-  try {
-    var properties = JSON.parse(propertiesDoc);
-  } catch (e) {
-    throw new Error(
-      "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke."
-    );
-  }
-
-  Object.keys(properties).forEach(function(prop) {
-    try {
-      _this[prop] = properties[prop];
-    } catch (e) {
-      throw new Error(
-        'Error loading property ' +
-          prop +
-          ' to properties object. Attempted to save: ' +
-          properties[prop]
-      );
-    }
-  });
-
-  return this;
-};
-
-/**
- * Increment `totalRuntime` property
- * @param {number} ms amount in milliseconds to increment
- */
-Properties$1.prototype.incrementTotalRuntime = function(ms) {
-  this.totalRuntime += ms;
-};
-
-/**
- * Determine if script has exceeded max daily runtime
- * If yes, need to sleep for one day to avoid throwing
- * "Script using too much computer time" error
- * @returns {boolean}
- */
-Properties$1.prototype.checkMaxRuntime = function() {
-  this.isOverMaxRuntime =
-    this.totalRuntime + Timer$1.MAX_RUNTIME >= Timer$1.MAX_RUNTIME_PER_DAY;
-  return this.isOverMaxRuntime;
-};
-
-/**
- * Stringify properties argument and save to file in user's Drive
- *
- * @param {object} properties - contains all properties that need to be saved to userProperties
- */
-Properties$1.save = function(properties, gDriveService) {
-  try {
-    var stringifiedProps = JSON.stringify(properties);
-  } catch (e) {
-    throw new Error(
-      'Failed to serialize script properties. This is a critical failure. Please start your copy again.'
-    );
-  }
-  return gDriveService.updateFile(
-    {
-      upload: 'multipart',
-      alt: 'json'
-    },
-    properties.propertiesDocId,
-    Utilities.newBlob(stringifiedProps)
-  );
-};
-
-/**
- * save srcId, destId, copyPermissions, spreadsheetId to userProperties.
- *
- * This is used when resuming, in which case the IDs of the logger spreadsheet and
- * properties document will not be known.
- */
-Properties$1.setUserPropertiesStore = function(
-  spreadsheetId,
-  propertiesDocId,
-  destId,
-  resuming
-) {
-  var userProperties = PropertiesService.getUserProperties();
-  userProperties.setProperty('destId', destId);
-  userProperties.setProperty('spreadsheetId', spreadsheetId);
-  userProperties.setProperty('propertiesDocId', propertiesDocId);
-  userProperties.setProperty('trials', 0);
-  userProperties.setProperty('resuming', resuming);
-  userProperties.setProperty('stop', 'false');
-};
-
-/**********************************************
  * These functions are called from the front end via
  * google.script.run
  *
@@ -743,13 +743,13 @@ function initialize(options) {
   }
 
   // Set UserProperties values and save properties to propertiesDoc
-  Properties$1.setUserPropertiesStore(
+  Properties.setUserPropertiesStore(
     options.spreadsheetId,
     options.propertiesDocId,
     options.destId,
     'false'
   );
-  Properties$1.save(options, gDriveService);
+  Properties.save(options, gDriveService);
 
   // Delete all existing triggers so no scripts overlap
   deleteAllTriggers();
@@ -801,7 +801,7 @@ function resume(options) {
     fileService = new FileService(gDriveService);
   var priorCopy = fileService.findPriorCopy(options.srcFolderID);
 
-  Properties$1.setUserPropertiesStore(
+  Properties.setUserPropertiesStore(
     priorCopy.spreadsheetId,
     priorCopy.propertiesDocId,
     options.destFolderId,
@@ -1285,8 +1285,8 @@ FileService.getFileLinkForSheet = function(id, title) {
 function copy() {
   // initialize vars
   var gDriveService = new GDriveService(),
-    properties = new Properties$1(gDriveService),
-    timer = new Timer$1(),
+    properties = new Properties(gDriveService),
+    timer = new Timer(),
     ss, // {object} instance of Sheet class
     query, // {string} query to generate Files list
     fileList, // {object} list of files within Drive folder
