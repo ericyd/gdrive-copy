@@ -6,14 +6,8 @@ process.env.NODE_ENV = 'production';
 const readFileSync = require('fs').readFileSync;
 const paths = require('./paths');
 const webpack = require('webpack');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
 
 let plugins = [
-  new StyleLintPlugin({
-    configFile: './config/stylelint.config.js',
-    syntax: 'scss',
-    failOnError: false
-  }),
   // this gives the compiled codebase access to process.env.NODE_ENV
   new webpack.EnvironmentPlugin(['NODE_ENV']),
   new webpack.DefinePlugin({
