@@ -473,7 +473,7 @@ GDriveService.prototype.getFiles = function(query, pageToken, orderBy) {
   return this.throttle(function() {
     return Drive.Files.list({
       q: query,
-      maxResults: 1000,
+      maxResults: 200,
       pageToken: pageToken,
       orderBy: orderBy
     });
