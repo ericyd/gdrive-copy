@@ -1,10 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
-var concat = require('gulp-concat');
-var sass = require('gulp-sass');
 var insert = require('gulp-insert');
-var autoprefixer = require('gulp-autoprefixer');
 var gulpHogan = require('gulp-hogan');
 var svg2png = require('svg2png');
 var fs = require('fs');
@@ -38,20 +35,9 @@ gulp.task('js', function() {
 
 gulp.task('css-prod', function() {
   return gulp
-    .src('./src/css/main.scss')
-    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-    .pipe(autoprefixer({ browsers: ['last 10 versions'] }))
-    .pipe(concat('css.html'))
+    .src('./dist/styles.css')
     .pipe(insert.wrap('<style>', '</style>'))
-    .pipe(gulp.dest('dist'));
-});
-
-gulp.task('css-dev', function() {
-  return gulp
-    .src('./src/css/main.scss')
-    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-    .pipe(autoprefixer({ browsers: ['last 10 versions'] }))
-    .pipe(concat('css.css'))
+    .pipe(rename('css.html'))
     .pipe(gulp.dest('dist'));
 });
 
@@ -60,7 +46,7 @@ gulp.task('html', function() {
   return gulp
     .src('src/templates/index.html')
     .pipe(gulpHogan({ isProd: true }))
-    .pipe(concat('index.html'))
+    .pipe(rename('index.html'))
     .pipe(gulp.dest('dist'));
 });
 
@@ -69,7 +55,7 @@ gulp.task('html-test-site', function() {
   return gulp
     .src('src/templates/index.html')
     .pipe(gulpHogan({ isProd: false }))
-    .pipe(concat('index.html'))
+    .pipe(rename('index.html'))
     .pipe(gulp.dest('dist'));
 });
 
