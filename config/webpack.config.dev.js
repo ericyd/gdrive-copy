@@ -6,7 +6,7 @@ process.env.NODE_ENV = 'development';
 const readFileSync = require('fs').readFileSync;
 const paths = require('./paths');
 const webpack = require('webpack');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 let plugins = [
   // this gives the compiled codebase access to process.env.NODE_ENV
@@ -17,7 +17,7 @@ let plugins = [
     sourceMap: false,
     comments: false
   }),
-  new ExtractTextPlugin("styles.css"),
+  new ExtractTextPlugin('styles.css')
 ];
 
 module.exports = {
@@ -46,9 +46,9 @@ module.exports = {
       {
         test: /\.(sc|sa|c)ss$/,
         use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: ['css-loader', "postcss-loader", 'sass-loader']
-        }),
+          fallback: 'style-loader',
+          use: ['css-loader', 'postcss-loader', 'sass-loader']
+        })
       }
     ]
   },

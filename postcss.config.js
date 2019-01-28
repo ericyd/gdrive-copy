@@ -1,10 +1,10 @@
 const autoprefixer = require('autoprefixer');
 module.exports = {
-    // parser: 'css',
-    plugins: {
+  // parser: 'css',
+  plugins: {
     //   'postcss-import': {},
     //   'postcss-preset-env': {},
     //   'cssnano': {}
-        'autoprefixer': { browsers: ['last 10 versions'] }
-    }
+    autoprefixer: { browsers: ['last 10 versions'] }
   }
+};
