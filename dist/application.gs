@@ -1051,6 +1051,18 @@ Util.composeErrorMsg = function(e, customMsg) {
   ];
 };
 
+Util.isNone = function(obj) {
+  return obj === null || obj === undefined;
+};
+
+Util.isSome = function(obj) {
+  return !Util.isNone(obj);
+};
+
+Util.hasSome = function(obj, prop) {
+  return obj && obj[prop] && obj[prop].length > 0;
+};
+
 
 /**********************************************
  * Main copy loop
@@ -1134,11 +1146,7 @@ function copy() {
   // that weren't processed before script timed out.
   // Destination folder must be set to the parent of the first leftover item.
   // The list of leftover items is an equivalent array to fileList returned from the getFiles() query
-  if (
-    properties.leftovers &&
-    properties.leftovers.items &&
-    properties.leftovers.items.length > 0
-  ) {
+  if (Util.hasSome(properties.leftovers, 'items')) {
     properties.destFolder = properties.leftovers.items[0].parents[0].id;
     fileService.processFileList(
       properties.leftovers.items,
@@ -1153,14 +1161,14 @@ function copy() {
   timer.update(userProperties);
 
   // When leftovers are complete, query next folder from properties.remaining
-  while (properties.remaining.length > 0 && timer.canContinue()) {
+  while (
+    (properties.remaining.length > 0 || Util.isSome(properties.pageToken)) &&
+    timer.canContinue()
+  ) {
     // if pages remained in the previous query, use them first
     if (properties.pageToken) {
       currFolder = properties.destFolder;
     } else {
-      // TODO: This is throwing tons of errors but I don't know why.
-      // for some reason properties.remaining is not being parsed correctly,
-      // so it's a JSON stringy object instead of an actual array.
       try {
         currFolder = properties.remaining.shift();
       } catch (e) {
@@ -1187,7 +1195,7 @@ function copy() {
       }
 
       // Send items to processFileList() to copy if there is anything to copy
-      if (fileList && fileList.items && fileList.items.length > 0) {
+      if (Util.hasSome(fileList, 'items')) {
         fileService.processFileList(
           fileList.items,
           properties,
