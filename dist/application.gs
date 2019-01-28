@@ -430,6 +430,7 @@ function GDriveService() {
   this.lastRequest = Timer.now();
   this.minElapsed = 100; // 1/10th of a second, in ms
   this.trottle = this.throttle.bind(this);
+  this.maxResults = 200;
   return this;
 }
 
@@ -473,7 +474,7 @@ GDriveService.prototype.getFiles = function(query, pageToken, orderBy) {
   return this.throttle(function() {
     return Drive.Files.list({
       q: query,
-      maxResults: 200,
+      maxResults: this.maxResults,
       pageToken: pageToken,
       orderBy: orderBy
     });
