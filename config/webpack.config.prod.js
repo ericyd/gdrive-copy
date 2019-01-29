@@ -60,7 +60,7 @@ module.exports = {
         test: /\.(sc|sa|c)ss$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ['css-loader', 'postcss-loader', 'sass-loader']
+          use: ['css-loader', 'postcss-loader']
         })
       }
     ]

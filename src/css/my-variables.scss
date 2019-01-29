@@ -1,21 +1,19 @@
 /* Variables */
 
-//== Layout
+/* Layout*/
 $container-width: 700px;
 $header-padding: 15%;
 $footer-height: 100px;
 $footer-height-sm: 250px;
 $number-footer-sections: 6;
 
-//== Colors
+/* Colors*/
 $body-background: #f7f7f7;
 $primary: #7cb7de;
-$primary--lighter: lighten($primary, 10%);
-$primary--lightest: lighten($primary, 20%);
-$primary--darker: darken($primary, 10%);
-$primary--darkest: darken($primary, 20%);
+$primary--darker: #53a1d4;
+$primary--darkest: #3189c3;
 
-// credit: https://github.com/tylerchilds/cutestrap/blob/master/src/sass/variables/_colors.scss
+/* credit: https://github.com/tylerchilds/cutestrap/blob/master/src/sass/variables/_colors.scss */
 $gray1: #3c3c3d !default;
 $gray2: #5a5a5b !default;
 $gray3: #7d7d7e !default;
@@ -24,37 +22,44 @@ $gray5: #dededf !default;
 $gray6: #efeff0 !default;
 
 $alert--success--base: #a1d490;
-$alert--success--background: lighten($alert--success--base, 20%);
-$alert--success--border: darken($alert--success--base, 40%);
+$alert--success--background: #dff0da;
+$alert--success--border: #3b6e2a;
 $alert--success--text: $alert--success--border;
 
 $alert--error--base: #e88282;
-$alert--error--background: lighten($alert--error--base, 20%);
-$alert--error--border: darken($alert--error--base, 30%);
+$alert--error--background: #f8d8d8;
+$alert--error--border: #b12020;
 $alert--error--text: $alert--error--border;
 
 $alert--neutral--base: #999;
-$alert--neutral--background: lighten($alert--neutral--base, 35%);
-$alert--neutral--border: darken($alert--neutral--base, 40%);
+$alert--neutral--background: #f2f2f2;
+$alert--neutral--border: #333333;
 $alert--neutral--text: $alert--neutral--border;
 
-//= Colors used by Cutestrap
-$primary-dark: $primary--darker;
-$link--visited: $primary--darkest;
-$link--hover: $primary--darkest;
-
-//== Typography
+/* Typography*/
 $fs-smaller: 0.7em;
 $lh-smaller: 1.5em;
 $font-family: 'Roboto', sans-serif;
 
-//== buttons
+/* buttons*/
 $border-radius: 0;
 
-//== Mixins
+/* Mixins*/
 
-@mixin flex-wrapper($align: baseline) {
+@mixin flex-wrapper-baseline() {
   display: flex;
   flex-wrap: wrap;
-  align-items: $align;
+  align-items: baseline;
+}
+
+@mixin flex-wrapper-middle() {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: middle;
+}
+
+@mixin flex-wrapper-top() {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: top;
 }

@@ -1,7 +1,7 @@
 @import 'my-variables';
 
 footer {
-  @include flex-wrapper($align: top);
+  @include flex-wrapper-top();
   box-sizing: border-box;
   padding: 1em 0;
   background: $gray4;
@@ -9,7 +9,7 @@ footer {
 }
 
 .footer-section {
-  width: 100% / $number-footer-sections;
+  width: calc(100% / $number-footer-sections);
 }
 
 .small-font {
