@@ -9,7 +9,7 @@
 }
 
 .flex-wrapper {
-  @include flex-wrapper($align: middle);
+  @include flex-wrapper-middle();
 }
 
 .circle-or {

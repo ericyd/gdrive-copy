@@ -6,14 +6,9 @@ process.env.NODE_ENV = 'development';
 const readFileSync = require('fs').readFileSync;
 const paths = require('./paths');
 const webpack = require('webpack');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 let plugins = [
-  new StyleLintPlugin({
-    configFile: './config/stylelint.config.js',
-    syntax: 'scss',
-    failOnError: false
-  }),
   // this gives the compiled codebase access to process.env.NODE_ENV
   new webpack.EnvironmentPlugin(['NODE_ENV']),
   new webpack.optimize.UglifyJsPlugin({
@@ -21,7 +16,8 @@ let plugins = [
     mangle: false,
     sourceMap: false,
     comments: false
-  })
+  }),
+  new ExtractTextPlugin('styles.css')
 ];
 
 module.exports = {
@@ -49,7 +45,10 @@ module.exports = {
       },
       {
         test: /\.(sc|sa|c)ss$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader']
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'postcss-loader']
+        })
       }
     ]
   },

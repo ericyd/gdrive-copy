@@ -1,4 +1,4 @@
-const GDriveService = require('../lib/GDriveService');
+import GDriveService from '../lib/GDriveService';
 const assert = require('assert');
 const sinon = require('sinon');
 

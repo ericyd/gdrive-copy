@@ -6,14 +6,9 @@ process.env.NODE_ENV = 'production';
 const readFileSync = require('fs').readFileSync;
 const paths = require('./paths');
 const webpack = require('webpack');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 let plugins = [
-  new StyleLintPlugin({
-    configFile: './config/stylelint.config.js',
-    syntax: 'scss',
-    failOnError: false
-  }),
   // this gives the compiled codebase access to process.env.NODE_ENV
   new webpack.EnvironmentPlugin(['NODE_ENV']),
   new webpack.DefinePlugin({
@@ -34,12 +29,13 @@ let plugins = [
     },
     // Google Apps Script works better if the code is not on a single line
     beautify: true
-  })
+  }),
+  new ExtractTextPlugin('styles.css')
 ];
 
 module.exports = {
   entry: {
-    index: ['./src/index.js']
+    index: ['./src/index.js', './src/css/main.scss']
   },
   resolve: {
     extensions: ['.js', '.html']
@@ -62,7 +58,10 @@ module.exports = {
       },
       {
         test: /\.(sc|sa|c)ss$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader']
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'postcss-loader']
+        })
       }
     ]
   },

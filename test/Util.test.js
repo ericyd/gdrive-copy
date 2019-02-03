@@ -1,9 +1,9 @@
 global.Utilities = require('./mocks/Utilities');
-const Util = require('../lib/Util');
-const Timer = require('../lib/Timer');
-const TriggerService = require('../lib/TriggerService');
+import Util from '../lib/Util';
+import Timer from '../lib/Timer';
+import TriggerService from '../lib/TriggerService';
+import Properties from '../lib/Properties';
 const userProperties = require('./mocks/PropertiesService').getUserProperties();
-const Properties = require('../lib/Properties');
 const sinon = require('sinon');
 const assert = require('assert');
 
