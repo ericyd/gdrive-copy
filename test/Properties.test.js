@@ -1,8 +1,8 @@
 global.PropertiesService = require('./mocks/PropertiesService');
 global.Utilities = require('./mocks/Utilities');
-const Properties = require('../lib/Properties');
-const Timer = require('../lib/Timer');
-const GDriveService = require('../lib/GDriveService');
+import Properties from '../lib/Properties';
+import Timer from '../lib/Timer';
+import GDriveService from '../lib/GDriveService';
 const sinon = require('sinon');
 const assert = require('assert');
 const fs = require('fs');

@@ -61,6 +61,8 @@ is create a new Google Apps Script file from within your Google Drive, and
 upload the contents of the files in `dist` into the appropriate files. You may
 need to create additional files via `File > New > Script | HTML file`.
 
+Note that the `empty.gs` file is required because of the way the script is build.
+
 ## Step 7: Enable Drive API
 
 1. Toolbar > Resources > Advanced Google Services
