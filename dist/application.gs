@@ -127,6 +127,7 @@ function Properties(gDriveService) {
   this.spreadsheetId = '';
   this.propertiesDocId = '';
   this.leftovers = {};
+  this.retryQueue = [];
   this.map = {};
   this.remaining = [];
   this.timeZone = 'GMT-7';
@@ -308,6 +309,36 @@ Util.log = function(ss, values) {
 };
 
 /**
+ * @param {Spreadsheet} ss
+ * @param {Error} error
+ * @param {File} item
+ * @param {string} timeZone
+ */
+Util.logCopyError = function(ss, error, item, timeZone) {
+  var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
+  Util.log(ss, [
+    Util.composeErrorMsg(error)[0],
+    item.title,
+    FileService.getFileLinkForSheet(item.id, item.title),
+    item.id,
+    Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
+    FileService.getFileLinkForSheet(parentId, '')
+  ]);
+};
+
+Util.logCopySuccess = function(ss, item, timeZone) {
+  var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
+  Util.log(ss, [
+    'Copied',
+    item.title,
+    FileService.getFileLinkForSheet(item.id, item.title),
+    item.id,
+    Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
+    FileService.getFileLinkForSheet(parentId, '')
+  ]);
+};
+
+/**
  * Invokes a function, performing up to 5 retries with exponential backoff.
  * Retries with delays of approximately 1, 2, 4, 8 then 16 seconds for a total of
  * about 32 seconds before it gives up and rethrows the last error.
@@ -426,7 +457,7 @@ Util.cleanup = function(
   }
 
   // Either stop flag or runtime exceeded. Must save state
-  if (!timer.canContinue()) {
+  if (!timer.canContinue() || properties.retryQueue.length > 0) {
     Util.saveState(properties, fileList, stopMsg, ss, gDriveService);
   } else {
     // The copy is complete!
@@ -640,6 +671,24 @@ GDriveService.prototype.getRootID = function() {
   });
 };
 
+GDriveService.prototype.openSpreadsheet = function(spreadsheetId) {
+  var ss;
+  try {
+    ss = SpreadsheetApp.openById(spreadsheetId).getSheetByName('Log');
+  } catch (e) {
+    try {
+      ss = SpreadsheetApp.openById(
+        PropertiesService.getUserProperties().getProperty('spreadsheetId')
+      ).getSheetByName('Log');
+    } catch (e) {
+      // if the spreadsheet cannot be accessed, this should be considered a fatal error
+      // and the script should not continue
+      throw new Error('Cannot locate spreadsheet. Please try again.');
+    }
+  }
+  return ss;
+};
+
 /**********************************************
  * These functions are called from the front end via
  * google.script.run
@@ -691,7 +740,9 @@ function initialize(options) {
     propertiesDocId, // {Object} metadata for Google Document created to hold properties
     today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'), // {string} date of copy
     gDriveService = new GDriveService(),
-    fileService = new FileService(gDriveService);
+    timer = new Timer(),
+    properties = new Properties(gDriveService),
+    fileService = new FileService(gDriveService, timer, properties);
 
   // Create Files used in copy process
   destFolder = fileService.initializeDestinationFolder(options, today);
@@ -811,7 +862,9 @@ function getUserEmail() {
 
 function resume(options) {
   var gDriveService = new GDriveService(),
-    fileService = new FileService(gDriveService);
+    timer = new Timer(),
+    properties = new Properties(gDriveService),
+    fileService = new FileService(gDriveService, timer, properties);
   var priorCopy = fileService.findPriorCopy(options.srcFolderID);
 
   Properties.setUserPropertiesStore(
@@ -863,9 +916,21 @@ function getOAuthToken() {
  * Namespace for file-related functions
  **********************************************/
 
-function FileService(gDriveService) {
+function FileService(gDriveService, timer, properties) {
   this.gDriveService = gDriveService;
+  this.timer = timer;
+  this.properties = properties;
   this.baseCopyLogID = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
+  this.nativeMimeTypes = [
+    'application/vnd.google-apps.document',
+    'application/vnd.google-apps.folder',
+    'application/vnd.google-apps.spreadsheet',
+    'application/vnd.google-apps.presentation',
+    'application/vnd.google-apps.drawing',
+    'application/vnd.google-apps.form',
+    'application/vnd.google-apps.script'
+  ];
+  this.maxNumberOfAttempts = 3; // this is arbitrary, could go up or down
   return this;
 }
 
@@ -873,7 +938,7 @@ function FileService(gDriveService) {
  * Try to copy file to destination parent, or add new folder if it's a folder
  * @param {Object} file File Resource with metadata from source file
  */
-FileService.prototype.copyFile = function(file, properties) {
+FileService.prototype.copyFile = function(file) {
   // if folder, use insert, else use copy
   if (file.mimeType == 'application/vnd.google-apps.folder') {
     var r = this.gDriveService.insertFolder({
@@ -882,17 +947,17 @@ FileService.prototype.copyFile = function(file, properties) {
       parents: [
         {
           kind: 'drive#parentReference',
-          id: properties.map[file.parents[0].id]
+          id: this.properties.map[file.parents[0].id]
         }
       ],
       mimeType: 'application/vnd.google-apps.folder'
     });
 
     // Update list of remaining folders
-    properties.remaining.push(file.id);
+    this.properties.remaining.push(file.id);
 
     // map source to destination
-    properties.map[file.id] = r.id;
+    this.properties.map[file.id] = r.id;
 
     return r;
   } else {
@@ -902,7 +967,7 @@ FileService.prototype.copyFile = function(file, properties) {
         parents: [
           {
             kind: 'drive#parentReference',
-            id: properties.map[file.parents[0].id]
+            id: this.properties.map[file.parents[0].id]
           }
         ]
       },
@@ -1011,6 +1076,30 @@ FileService.prototype.copyPermissions = function(srcId, owners, destId) {
 };
 
 /**
+ * Process leftover files from prior query results
+ * that weren't processed before script timed out.
+ * Destination folder must be set to the parent of the first leftover item.
+ * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
+ * @param {UserPropertiesStore} userProperties
+ * @param {Spreadsheet} ss
+ */
+FileService.prototype.handleLeftovers = function(userProperties, ss) {
+  if (Util.hasSome(this.properties.leftovers, 'items')) {
+    // Commented out on 2018-01-05 because I don't think this is necessary
+    // properties.destFolder = properties.leftovers.items[0].parents[0].id;
+    this.processFileList(this.properties.leftovers.items, userProperties, ss);
+  }
+};
+
+FileService.prototype.handleRetries = function(userProperties, ss) {
+  if (Util.hasSome(this.properties, 'retryQueue')) {
+    // Commented out on 2018-01-05 because I don't think this is necessary
+    // this.properties.destFolder = this.properties.retryQueue[0].parents[0].id;
+    this.processFileList(this.properties.retryQueue, userProperties, ss);
+  }
+};
+
+/**
  * Loops through array of files.items,
  * Applies Drive function to each (i.e. copy),
  * Logs result,
@@ -1019,71 +1108,49 @@ FileService.prototype.copyPermissions = function(srcId, owners, destId) {
  *
  * @param {Array} items the list of files over which to iterate
  */
-FileService.prototype.processFileList = function(
-  items,
-  properties,
-  userProperties,
-  timer,
-  ss
-) {
-  while (items.length > 0 && timer.canContinue()) {
+FileService.prototype.processFileList = function(items, userProperties, ss) {
+  while (items.length > 0 && this.timer.canContinue()) {
     // Get next file from passed file list.
     var item = items.pop();
 
+    if (
+      item.numberOfAttempts &&
+      item.numberOfAttempts > this.maxNumberOfAttempts
+    ) {
+      Util.logCopyError(ss, item.error, item, this.properties.timeZone);
+      continue;
+    }
+
     // Copy each (files and folders are both represented the same in Google Drive)
-    // if error, log and continue
     try {
-      var newfile = this.copyFile(item, properties);
+      var newfile = this.copyFile(item);
+      Util.logCopySuccess(ss, newfile, this.properties.timeZone);
+    } catch (e) {
+      this.properties.retryQueue.unshift({
+        id: item.id,
+        title: item.title,
+        parents: item.parents,
+        mimeType: item.mimeType,
+        error: e,
+        owners: item.owners,
+        numberOfAttempts: item.numberOfAttempts ? item.numberOfAttempts + 1 : 1
+      });
+    }
 
-      // Log result
-      var parentID =
-        newfile.parents && newfile.parents[0] ? newfile.parents[0].id : null;
-      Util.log(ss, [
-        'Copied',
-        newfile.title,
-        FileService.getFileLinkForSheet(newfile.id, newfile.title),
-        newfile.id,
-        Utilities.formatDate(
-          new Date(),
-          properties.timeZone,
-          'MM-dd-yy hh:mm:ss aaa'
-        ),
-        FileService.getFileLinkForSheet(parentID, '')
-      ]);
-
-      // Copy permissions if selected, and if permissions exist to copy
-      if (properties.copyPermissions) {
-        if (
-          item.mimeType == 'application/vnd.google-apps.document' ||
-          item.mimeType == 'application/vnd.google-apps.folder' ||
-          item.mimeType == 'application/vnd.google-apps.spreadsheet' ||
-          item.mimeType == 'application/vnd.google-apps.presentation' ||
-          item.mimeType == 'application/vnd.google-apps.drawing' ||
-          item.mimeType == 'application/vnd.google-apps.form' ||
-          item.mimeType == 'application/vnd.google-apps.script'
-        ) {
-          this.copyPermissions(item.id, item.owners, newfile.id);
-        }
+    // Copy permissions if selected, and if permissions exist to copy
+    try {
+      if (
+        this.properties.copyPermissions &&
+        this.nativeMimeTypes.indexOf(item.mimeType) !== -1
+      ) {
+        this.copyPermissions(item.id, item.owners, newfile.id);
       }
     } catch (e) {
-      var parentID =
-        item.parents && item.parents[0] ? item.parents[0].id : null;
-      Util.log(ss, [
-        Util.composeErrorMsg(e)[0],
-        item.title,
-        FileService.getFileLinkForSheet(item.id, item.title),
-        item.id,
-        Utilities.formatDate(
-          new Date(),
-          properties.timeZone,
-          'MM-dd-yy hh:mm:ss aaa'
-        ),
-        FileService.getFileLinkForSheet(parentID, '')
-      ]);
+      // TODO: logging needed for failed permissions copying?
     }
 
     // Update current runtime and user stop flag
-    timer.update(userProperties);
+    this.timer.update(userProperties);
   }
 };
 
@@ -1306,7 +1373,7 @@ function copy() {
     currFolder, // {object} metadata of folder whose children are currently being processed
     userProperties = PropertiesService.getUserProperties(), // reference to userProperties store
     triggerId = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
-    fileService = new FileService(gDriveService);
+    fileService = new FileService(gDriveService, timer, properties);
 
   // Delete previous trigger
   TriggerService.deleteTrigger(triggerId);
@@ -1338,21 +1405,7 @@ function copy() {
   }
 
   // Initialize logger spreadsheet
-  try {
-    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName(
-      'Log'
-    );
-  } catch (e) {
-    try {
-      ss = SpreadsheetApp.openById(
-        PropertiesService.getUserProperties().getProperty('spreadsheetId')
-      ).getSheetByName('Log');
-    } catch (e) {
-      // if the spreadsheet cannot be accessed, this should be considered a fatal error
-      // and the script should not continue
-      throw new Error('Cannot locate spreadsheet. Please try again.');
-    }
-  }
+  ss = gDriveService.openSpreadsheet(properties.spreadsheetId);
 
   // Create trigger for next run.
   // This trigger will be deleted if script finishes successfully
@@ -1362,19 +1415,7 @@ function copy() {
   TriggerService.createTrigger(duration);
 
   // Process leftover files from prior query results
-  // that weren't processed before script timed out.
-  // Destination folder must be set to the parent of the first leftover item.
-  // The list of leftover items is an equivalent array to fileList returned from the getFiles() query
-  if (Util.hasSome(properties.leftovers, 'items')) {
-    properties.destFolder = properties.leftovers.items[0].parents[0].id;
-    fileService.processFileList(
-      properties.leftovers.items,
-      properties,
-      userProperties,
-      timer,
-      ss
-    );
-  }
+  fileService.handleLeftovers(userProperties, ss);
 
   // Update current runtime and user stop flag
   timer.update(userProperties);
@@ -1415,13 +1456,7 @@ function copy() {
 
       // Send items to processFileList() to copy if there is anything to copy
       if (Util.hasSome(fileList, 'items')) {
-        fileService.processFileList(
-          fileList.items,
-          properties,
-          userProperties,
-          timer,
-          ss
-        );
+        fileService.processFileList(fileList.items, userProperties, ss);
       } else {
         Logger.log('No children found.');
       }
@@ -1432,6 +1467,9 @@ function copy() {
       timer.update(userProperties);
     } while (properties.pageToken && timer.canContinue());
   }
+
+  // Retry files that errored during initial run
+  fileService.handleRetries(userProperties, ss);
 
   // Cleanup
   Util.cleanup(properties, fileList, userProperties, timer, ss, gDriveService);
