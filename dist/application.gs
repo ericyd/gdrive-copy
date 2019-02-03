@@ -469,6 +469,18 @@ Util.composeErrorMsg = function(e, customMsg) {
   ];
 };
 
+Util.isNone = function(obj) {
+  return obj === null || obj === undefined;
+};
+
+Util.isSome = function(obj) {
+  return !Util.isNone(obj);
+};
+
+Util.hasSome = function(obj, prop) {
+  return obj && obj[prop] && obj[prop].length > 0;
+};
+
 /**********************************************
  * Namespace to wrap calls to Drive API
  **********************************************/
@@ -1270,19 +1282,6 @@ FileService.getFileLinkForSheet = function(id, title) {
   //   '=HYPERLINK("https://drive.google.com/open?id=' + id + '","' + title + '")'
   // );
 };
-
-Util.isNone = function(obj) {
-  return obj === null || obj === undefined;
-};
-
-Util.isSome = function(obj) {
-  return !Util.isNone(obj);
-};
-
-Util.hasSome = function(obj, prop) {
-  return obj && obj[prop] && obj[prop].length > 0;
-};
-
 
 /**********************************************
  * Main copy loop
