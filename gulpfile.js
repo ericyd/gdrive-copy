@@ -23,7 +23,7 @@ gulp.task('watch-test-site', function() {
   });
 });
 
-gulp.task('generate-test-site', ['html-test-site', 'css-dev']);
+gulp.task('generate-test-site', ['html-test-site']);
 
 gulp.task('js', function() {
   return gulp
