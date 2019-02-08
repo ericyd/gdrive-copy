@@ -1,6 +1,6 @@
 {
   "name": "google-drive-copy-folder",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "Web app to recursively copy Google Drive folder and contents",
   "main": "gulpfile.js",
   "dependencies": {},
