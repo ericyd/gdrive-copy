@@ -113,6 +113,26 @@ describe('Util', function() {
       userProperties.setProperty('stop', false);
       timer.update(userProperties);
     });
+
+    it('should save state if retryQueue is not empty', function() {
+      // set up mocks
+      const stubSaveState = sinon.stub(Util, 'saveState');
+      const stubDeleteTrigger = sinon.stub(TriggerService, 'deleteTrigger');
+      const timer = new Timer();
+      const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
+      const properties = new Properties();
+      properties.retryQueue.push(...fileList);
+
+      // normal pause
+      Util.cleanup(properties, fileList, userProperties, timer, {});
+      assert.equal(stubSaveState.callCount, 1, 'saveState not called once');
+
+      // restore mocks
+      stubSaveState.restore();
+      stubDeleteTrigger.restore();
+      userProperties.setProperty('stop', false);
+      timer.update(userProperties);
+    });
   });
   describe('composeErrorMsg()', function() {
     it('should return an array', function() {

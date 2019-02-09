@@ -158,3 +158,21 @@ GDriveService.prototype.getRootID = function() {
     return DriveApp.getRootFolder().getId();
   });
 };
+
+GDriveService.prototype.openSpreadsheet = function(spreadsheetId) {
+  var ss;
+  try {
+    ss = SpreadsheetApp.openById(spreadsheetId).getSheetByName('Log');
+  } catch (e) {
+    try {
+      ss = SpreadsheetApp.openById(
+        PropertiesService.getUserProperties().getProperty('spreadsheetId')
+      ).getSheetByName('Log');
+    } catch (e) {
+      // if the spreadsheet cannot be accessed, this should be considered a fatal error
+      // and the script should not continue
+      throw new Error('Cannot locate spreadsheet. Please try again.');
+    }
+  }
+  return ss;
+};

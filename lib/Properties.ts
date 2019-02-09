@@ -17,6 +17,7 @@ export default function Properties(gDriveService) {
   this.spreadsheetId = '';
   this.propertiesDocId = '';
   this.leftovers = {};
+  this.retryQueue = [];
   this.map = {};
   this.remaining = [];
   this.timeZone = 'GMT-7';

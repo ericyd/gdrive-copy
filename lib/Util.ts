@@ -4,6 +4,7 @@
 
 import TriggerService from './TriggerService';
 import Properties from './Properties';
+import FileService from './FileService';
 
 var Util = {
   msgs: {
@@ -64,6 +65,36 @@ Util.log = function(ss, values) {
       ]
     ]);
   }
+};
+
+/**
+ * @param {Spreadsheet} ss
+ * @param {Error} error
+ * @param {File} item
+ * @param {string} timeZone
+ */
+Util.logCopyError = function(ss, error, item, timeZone) {
+  var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
+  Util.log(ss, [
+    Util.composeErrorMsg(error)[0],
+    item.title,
+    FileService.getFileLinkForSheet(item.id, item.title),
+    item.id,
+    Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
+    FileService.getFileLinkForSheet(parentId, '')
+  ]);
+};
+
+Util.logCopySuccess = function(ss, item, timeZone) {
+  var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
+  Util.log(ss, [
+    'Copied',
+    item.title,
+    FileService.getFileLinkForSheet(item.id, item.title),
+    item.id,
+    Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
+    FileService.getFileLinkForSheet(parentId, '')
+  ]);
 };
 
 /**
@@ -185,7 +216,7 @@ Util.cleanup = function(
   }
 
   // Either stop flag or runtime exceeded. Must save state
-  if (!timer.canContinue()) {
+  if (!timer.canContinue() || properties.retryQueue.length > 0) {
     Util.saveState(properties, fileList, stopMsg, ss, gDriveService);
   } else {
     // The copy is complete!

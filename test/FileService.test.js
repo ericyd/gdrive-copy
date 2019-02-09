@@ -12,7 +12,16 @@ const sinon = require('sinon');
 describe('FileService', function() {
   beforeEach(function() {
     this.gDriveService = new GDriveService();
-    this.fileService = new FileService(this.gDriveService);
+    this.timer = new Timer();
+    this.properties = new Properties(this.gDriveService);
+    this.properties.map = {
+      myParentID: 'newParentID'
+    };
+    this.fileService = new FileService(
+      this.gDriveService,
+      this.timer,
+      this.properties
+    );
     this.mockFolder = JSON.parse(
       fs.readFileSync('test/mocks/insert_folder_response_200.json').toString()
     );
@@ -43,12 +52,7 @@ describe('FileService', function() {
       ],
       mimeType: 'application/vnd.google-apps.document'
     };
-    this.properties = new Properties(this.gDriveService);
-    this.properties.map = {
-      myParentID: 'newParentID'
-    };
     this.userProperties = PropertiesService.getUserProperties();
-    this.timer = new Timer();
   });
 
   describe('createLoggerSpreadsheet()', function() {
@@ -364,10 +368,7 @@ describe('FileService', function() {
         stubInsert.returns(this.mockFolder);
 
         // set up actual
-        const newFolder = this.fileService.copyFile(
-          this.mockFolderResource,
-          this.properties
-        );
+        const newFolder = this.fileService.copyFile(this.mockFolderResource);
 
         // assertions
         assert.deepEqual(
@@ -391,10 +392,7 @@ describe('FileService', function() {
         stubInsert.returns(this.mockFolder);
 
         // set up actual
-        const newFolder = this.fileService.copyFile(
-          this.mockFolderResource,
-          this.properties
-        );
+        const newFolder = this.fileService.copyFile(this.mockFolderResource);
 
         // assertions
         assert.deepEqual(
@@ -434,10 +432,7 @@ describe('FileService', function() {
         };
 
         // set up actual
-        const fileCopy = this.fileService.copyFile(
-          this.mockFileResource,
-          this.properties
-        );
+        const fileCopy = this.fileService.copyFile(this.mockFileResource);
 
         // assertions
         assert.deepEqual(
@@ -470,13 +465,7 @@ describe('FileService', function() {
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      this.fileService.processFileList(
-        [1, 2, 3],
-        this.properties,
-        this.userProperties,
-        this.timer,
-        {}
-      );
+      this.fileService.processFileList([1, 2, 3], this.userProperties, {});
 
       // assertions
       assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
@@ -485,18 +474,13 @@ describe('FileService', function() {
       this.userProperties.getProperties().stop = false;
       stubCopy.restore();
     });
+
     it('should return if items.length == 0', function() {
       // set up mocks
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      this.fileService.processFileList(
-        [],
-        this.properties,
-        this.userProperties,
-        this.timer,
-        {}
-      );
+      this.fileService.processFileList([], this.userProperties, {});
 
       // assertions
       assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
@@ -518,9 +502,7 @@ describe('FileService', function() {
       this.properties.copyPermissions = true;
       this.fileService.processFileList(
         [{ mimeType: 'application/vnd.google-apps.document' }],
-        this.properties,
         this.userProperties,
-        this.timer,
         {}
       );
 
@@ -553,9 +535,7 @@ describe('FileService', function() {
       this.properties.copyPermissions = true;
       this.fileService.processFileList(
         [{ mimeType: 'application/json' }],
-        this.properties,
         this.userProperties,
-        this.timer,
         {}
       );
 
@@ -587,13 +567,7 @@ describe('FileService', function() {
 
       // run actual
       const items = [1, 2, 3];
-      this.fileService.processFileList(
-        items,
-        this.properties,
-        this.userProperties,
-        this.timer,
-        {}
-      );
+      this.fileService.processFileList(items, this.userProperties, {});
 
       // assertions
       assert(
@@ -609,70 +583,137 @@ describe('FileService', function() {
       stubTimerUpdate.restore();
     });
 
-    it('should log errors if thrown during copy', function() {
+    it('should push failed item to properties.retryQueue', function() {
+      const errMsg = 'failed to copy file';
+      const stubCopy = sinon
+        .stub(this.fileService, 'copyFile')
+        .throws(new Error(errMsg));
+
+      // run actual
+      const previouslyRetriedFile = Object.assign({}, this.mockFile, {
+        numberOfAttempts: 1
+      });
+      const items = [this.mockFile, previouslyRetriedFile, this.mockFile];
+      const itemsLength = items.length; // must set here because items is mutated in processFileList
+      this.fileService.processFileList(items, this.userProperties, {});
+
+      assert.equal(
+        this.properties.retryQueue.length,
+        itemsLength,
+        "properties.retryQueue doesn't contain enough items"
+      );
+      assert.equal(this.properties.retryQueue[0].id, this.mockFile.id);
+      assert.equal(this.properties.retryQueue[0].title, this.mockFile.title);
+      assert.equal(this.properties.retryQueue[0].numberOfAttempts, 1);
+      assert.equal(this.properties.retryQueue[1].numberOfAttempts, 2);
+      assert.equal(this.properties.retryQueue[1].error.message, errMsg);
+
+      // restore mocks
+      stubCopy.restore();
+    });
+
+    it('should treat retryQueue as FIFO', function() {
+      const errMsg = 'failed to copy file';
+      const stubCopy = sinon
+        .stub(this.fileService, 'copyFile')
+        .throws(new Error(errMsg));
+
+      // run actual
+      const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
+      const itemsLength = items.length; // must set here because items is mutated in processFileList
+      this.fileService.processFileList(items, this.userProperties, {});
+
+      assert.equal(
+        this.properties.retryQueue.length,
+        itemsLength,
+        "properties.retryQueue doesn't contain enough items"
+      );
+      assert.equal(this.properties.retryQueue[0].id, 1);
+      assert.equal(this.properties.retryQueue[1].id, 2);
+      assert.equal(this.properties.retryQueue[2].id, 3);
+
+      // restore mocks
+      stubCopy.restore();
+    });
+
+    it('should log errors if item has been retried too many tiems', function() {
       // set up mocks
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .throws(new Error(errMsg));
-      const stubLog = sinon.stub(Util, 'log');
+      const stubLog = sinon.stub(Util, 'logCopyError');
 
       // run actual
-      const items = [1, 2, 3];
-      const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(
-        items,
-        this.properties,
-        this.userProperties,
-        this.timer,
-        {}
-      );
+      const previouslyRetriedFile = Object.assign({}, this.mockFile, {
+        numberOfAttempts: this.fileService.maxNumberOfAttempts + 1,
+        error: new Error(errMsg)
+      });
+      const items = [previouslyRetriedFile, this.mockFile, this.mockFile];
+      this.fileService.processFileList(items, this.userProperties, {
+        spreadsheetStub: true
+      });
 
       // assertions
-      assert(stubLog.called, 'Util.log not called');
+      assert(stubLog.called, 'Util.logCopyError not called');
       assert.equal(
         stubLog.callCount,
-        itemsLength,
+        1,
         'Util.log called incorrect number of times'
       );
-      const logMsg = stubLog.getCall(0).args[1][0];
-      assert.notEqual(
-        logMsg.indexOf('Error'),
-        -1,
-        'Util.log not called with Error. Called with ' + logMsg
+      assert(
+        stubLog.getCall(0).args[0].spreadsheetStub,
+        'Util.logCopyError not called with spreadsheetStub'
+      );
+      assert.equal(
+        stubLog.getCall(0).args[1].message,
+        errMsg,
+        'Error not passed to Util.logCopyError correctly'
+      );
+      assert.equal(stubLog.getCall(0).args[2].id, previouslyRetriedFile.id);
+      assert.equal(
+        stubLog.getCall(0).args[2].numberOfAttempts,
+        previouslyRetriedFile.numberOfAttempts
       );
 
       // restore mocks
       stubCopy.restore();
       stubLog.restore();
     });
+
     it('should log copy details if successful', function() {
       // set up mocks
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      const stubLog = sinon.stub(Util, 'log');
+      const stubLog = sinon.stub(Util, 'logCopySuccess');
 
       // run actual
       const items = [1, 2, 3];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(
-        items,
-        this.properties,
-        this.userProperties,
-        this.timer,
-        {}
-      );
+      this.fileService.processFileList(items, this.userProperties, {
+        spreadsheetStub: true
+      });
 
       // assertions
-      assert(stubLog.called, 'Util.log not called.');
-      assert.equal(stubLog.callCount, itemsLength, 'Util.log not called once');
+      assert(stubLog.called, 'Util.logCopySuccess not called.');
       assert.equal(
-        stubLog.getCall(0).args[1][0].indexOf('Copied'),
-        0,
-        'Util.log not called with "Copied". Called with ' +
-          stubLog.getCall(0).args[1][0]
+        stubLog.callCount,
+        itemsLength,
+        'Util.logCopySuccess not called once'
+      );
+      assert.equal(
+        stubLog.getCall(0).args[0].spreadsheetStub,
+        true,
+        'Util.logCopySuccess not called with "spreadsheetStub". Called with ' +
+          stubLog.getCall(0).args[0]
+      );
+      assert.deepEqual(
+        stubLog.getCall(0).args[1],
+        this.mockFile,
+        'Util.logCopySuccess not called with "this.mockFile". Called with ' +
+          stubLog.getCall(0).args[1]
       );
 
       // restore mocks

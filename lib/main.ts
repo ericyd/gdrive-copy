@@ -39,7 +39,7 @@ function copy() {
     currFolder, // {object} metadata of folder whose children are currently being processed
     userProperties = PropertiesService.getUserProperties(), // reference to userProperties store
     triggerId = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
-    fileService = new FileService(gDriveService);
+    fileService = new FileService(gDriveService, timer, properties);
 
   // Delete previous trigger
   TriggerService.deleteTrigger(triggerId);
@@ -71,21 +71,7 @@ function copy() {
   }
 
   // Initialize logger spreadsheet
-  try {
-    ss = SpreadsheetApp.openById(properties.spreadsheetId).getSheetByName(
-      'Log'
-    );
-  } catch (e) {
-    try {
-      ss = SpreadsheetApp.openById(
-        PropertiesService.getUserProperties().getProperty('spreadsheetId')
-      ).getSheetByName('Log');
-    } catch (e) {
-      // if the spreadsheet cannot be accessed, this should be considered a fatal error
-      // and the script should not continue
-      throw new Error('Cannot locate spreadsheet. Please try again.');
-    }
-  }
+  ss = gDriveService.openSpreadsheet(properties.spreadsheetId);
 
   // Create trigger for next run.
   // This trigger will be deleted if script finishes successfully
@@ -95,19 +81,7 @@ function copy() {
   TriggerService.createTrigger(duration);
 
   // Process leftover files from prior query results
-  // that weren't processed before script timed out.
-  // Destination folder must be set to the parent of the first leftover item.
-  // The list of leftover items is an equivalent array to fileList returned from the getFiles() query
-  if (Util.hasSome(properties.leftovers, 'items')) {
-    properties.destFolder = properties.leftovers.items[0].parents[0].id;
-    fileService.processFileList(
-      properties.leftovers.items,
-      properties,
-      userProperties,
-      timer,
-      ss
-    );
-  }
+  fileService.handleLeftovers(userProperties, ss);
 
   // Update current runtime and user stop flag
   timer.update(userProperties);
@@ -148,13 +122,7 @@ function copy() {
 
       // Send items to processFileList() to copy if there is anything to copy
       if (Util.hasSome(fileList, 'items')) {
-        fileService.processFileList(
-          fileList.items,
-          properties,
-          userProperties,
-          timer,
-          ss
-        );
+        fileService.processFileList(fileList.items, userProperties, ss);
       } else {
         Logger.log('No children found.');
       }
@@ -165,6 +133,9 @@ function copy() {
       timer.update(userProperties);
     } while (properties.pageToken && timer.canContinue());
   }
+
+  // Retry files that errored during initial run
+  fileService.handleRetries(userProperties, ss);
 
   // Cleanup
   Util.cleanup(properties, fileList, userProperties, timer, ss, gDriveService);

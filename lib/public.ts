@@ -8,6 +8,7 @@
 import GDriveService from './GDriveService';
 import FileService from './FileService';
 import Properties from './Properties';
+import Timer from './Timer';
 
 /**
  * Serves HTML of the application for HTTP GET requests.
@@ -53,7 +54,9 @@ export function initialize(options) {
     propertiesDocId, // {Object} metadata for Google Document created to hold properties
     today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'), // {string} date of copy
     gDriveService = new GDriveService(),
-    fileService = new FileService(gDriveService);
+    timer = new Timer(),
+    properties = new Properties(gDriveService),
+    fileService = new FileService(gDriveService, timer, properties);
 
   // Create Files used in copy process
   destFolder = fileService.initializeDestinationFolder(options, today);
@@ -173,7 +176,9 @@ export function getUserEmail() {
 
 export function resume(options) {
   var gDriveService = new GDriveService(),
-    fileService = new FileService(gDriveService);
+    timer = new Timer(),
+    properties = new Properties(gDriveService),
+    fileService = new FileService(gDriveService, timer, properties);
   var priorCopy = fileService.findPriorCopy(options.srcFolderID);
 
   Properties.setUserPropertiesStore(

@@ -5,9 +5,21 @@
 import Util from './Util';
 import { getMetadata } from './public';
 
-export default function FileService(gDriveService) {
+export default function FileService(gDriveService, timer, properties) {
   this.gDriveService = gDriveService;
+  this.timer = timer;
+  this.properties = properties;
   this.baseCopyLogID = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
+  this.nativeMimeTypes = [
+    'application/vnd.google-apps.document',
+    'application/vnd.google-apps.folder',
+    'application/vnd.google-apps.spreadsheet',
+    'application/vnd.google-apps.presentation',
+    'application/vnd.google-apps.drawing',
+    'application/vnd.google-apps.form',
+    'application/vnd.google-apps.script'
+  ];
+  this.maxNumberOfAttempts = 3; // this is arbitrary, could go up or down
   return this;
 }
 
@@ -15,7 +27,7 @@ export default function FileService(gDriveService) {
  * Try to copy file to destination parent, or add new folder if it's a folder
  * @param {Object} file File Resource with metadata from source file
  */
-FileService.prototype.copyFile = function(file, properties) {
+FileService.prototype.copyFile = function(file) {
   // if folder, use insert, else use copy
   if (file.mimeType == 'application/vnd.google-apps.folder') {
     var r = this.gDriveService.insertFolder({
@@ -24,17 +36,17 @@ FileService.prototype.copyFile = function(file, properties) {
       parents: [
         {
           kind: 'drive#parentReference',
-          id: properties.map[file.parents[0].id]
+          id: this.properties.map[file.parents[0].id]
         }
       ],
       mimeType: 'application/vnd.google-apps.folder'
     });
 
     // Update list of remaining folders
-    properties.remaining.push(file.id);
+    this.properties.remaining.push(file.id);
 
     // map source to destination
-    properties.map[file.id] = r.id;
+    this.properties.map[file.id] = r.id;
 
     return r;
   } else {
@@ -44,7 +56,7 @@ FileService.prototype.copyFile = function(file, properties) {
         parents: [
           {
             kind: 'drive#parentReference',
-            id: properties.map[file.parents[0].id]
+            id: this.properties.map[file.parents[0].id]
           }
         ]
       },
@@ -153,6 +165,30 @@ FileService.prototype.copyPermissions = function(srcId, owners, destId) {
 };
 
 /**
+ * Process leftover files from prior query results
+ * that weren't processed before script timed out.
+ * Destination folder must be set to the parent of the first leftover item.
+ * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
+ * @param {UserPropertiesStore} userProperties
+ * @param {Spreadsheet} ss
+ */
+FileService.prototype.handleLeftovers = function(userProperties, ss) {
+  if (Util.hasSome(this.properties.leftovers, 'items')) {
+    // Commented out on 2018-01-05 because I don't think this is necessary
+    // properties.destFolder = properties.leftovers.items[0].parents[0].id;
+    this.processFileList(this.properties.leftovers.items, userProperties, ss);
+  }
+};
+
+FileService.prototype.handleRetries = function(userProperties, ss) {
+  if (Util.hasSome(this.properties, 'retryQueue')) {
+    // Commented out on 2018-01-05 because I don't think this is necessary
+    // this.properties.destFolder = this.properties.retryQueue[0].parents[0].id;
+    this.processFileList(this.properties.retryQueue, userProperties, ss);
+  }
+};
+
+/**
  * Loops through array of files.items,
  * Applies Drive function to each (i.e. copy),
  * Logs result,
@@ -161,71 +197,49 @@ FileService.prototype.copyPermissions = function(srcId, owners, destId) {
  *
  * @param {Array} items the list of files over which to iterate
  */
-FileService.prototype.processFileList = function(
-  items,
-  properties,
-  userProperties,
-  timer,
-  ss
-) {
-  while (items.length > 0 && timer.canContinue()) {
+FileService.prototype.processFileList = function(items, userProperties, ss) {
+  while (items.length > 0 && this.timer.canContinue()) {
     // Get next file from passed file list.
     var item = items.pop();
 
+    if (
+      item.numberOfAttempts &&
+      item.numberOfAttempts > this.maxNumberOfAttempts
+    ) {
+      Util.logCopyError(ss, item.error, item, this.properties.timeZone);
+      continue;
+    }
+
     // Copy each (files and folders are both represented the same in Google Drive)
-    // if error, log and continue
     try {
-      var newfile = this.copyFile(item, properties);
+      var newfile = this.copyFile(item);
+      Util.logCopySuccess(ss, newfile, this.properties.timeZone);
+    } catch (e) {
+      this.properties.retryQueue.unshift({
+        id: item.id,
+        title: item.title,
+        parents: item.parents,
+        mimeType: item.mimeType,
+        error: e,
+        owners: item.owners,
+        numberOfAttempts: item.numberOfAttempts ? item.numberOfAttempts + 1 : 1
+      });
+    }
 
-      // Log result
-      var parentID =
-        newfile.parents && newfile.parents[0] ? newfile.parents[0].id : null;
-      Util.log(ss, [
-        'Copied',
-        newfile.title,
-        FileService.getFileLinkForSheet(newfile.id, newfile.title),
-        newfile.id,
-        Utilities.formatDate(
-          new Date(),
-          properties.timeZone,
-          'MM-dd-yy hh:mm:ss aaa'
-        ),
-        FileService.getFileLinkForSheet(parentID, '')
-      ]);
-
-      // Copy permissions if selected, and if permissions exist to copy
-      if (properties.copyPermissions) {
-        if (
-          item.mimeType == 'application/vnd.google-apps.document' ||
-          item.mimeType == 'application/vnd.google-apps.folder' ||
-          item.mimeType == 'application/vnd.google-apps.spreadsheet' ||
-          item.mimeType == 'application/vnd.google-apps.presentation' ||
-          item.mimeType == 'application/vnd.google-apps.drawing' ||
-          item.mimeType == 'application/vnd.google-apps.form' ||
-          item.mimeType == 'application/vnd.google-apps.script'
-        ) {
-          this.copyPermissions(item.id, item.owners, newfile.id);
-        }
+    // Copy permissions if selected, and if permissions exist to copy
+    try {
+      if (
+        this.properties.copyPermissions &&
+        this.nativeMimeTypes.indexOf(item.mimeType) !== -1
+      ) {
+        this.copyPermissions(item.id, item.owners, newfile.id);
       }
     } catch (e) {
-      var parentID =
-        item.parents && item.parents[0] ? item.parents[0].id : null;
-      Util.log(ss, [
-        Util.composeErrorMsg(e)[0],
-        item.title,
-        FileService.getFileLinkForSheet(item.id, item.title),
-        item.id,
-        Utilities.formatDate(
-          new Date(),
-          properties.timeZone,
-          'MM-dd-yy hh:mm:ss aaa'
-        ),
-        FileService.getFileLinkForSheet(parentID, '')
-      ]);
+      // TODO: logging needed for failed permissions copying?
     }
 
     // Update current runtime and user stop flag
-    timer.update(userProperties);
+    this.timer.update(userProperties);
   }
 };
 
