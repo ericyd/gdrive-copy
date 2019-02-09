@@ -2,1477 +2,831 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-/**********************************************
- * Tracks runtime of application to avoid
- * exceeding Google quotas
- **********************************************/
-
 function Timer() {
-  this.START_TIME = new Date().getTime();
-  this.runtime = 0;
-  this.timeIsUp = false;
-  this.stop = false;
-
-  return this;
+    this.START_TIME = new Date().getTime();
+    this.runtime = 0;
+    this.timeIsUp = false;
+    this.stop = false;
+    return this;
 }
-
-// Max runtime per day is 90 minutes. Set max as 88 mins for padding.
-// https://developers.google.com/apps-script/guides/services/quotas
 Timer.MAX_RUNTIME_PER_DAY = 88 * 1000 * 60;
 Timer.MAX_RUNTIME = 4.7 * 1000 * 60;
-// durations used for setting Triggers
 Timer.oneDay = 24 * 60 * 60 * 1000;
 Timer.sixMinutes = 6.2 * 1000 * 60;
-
-/**
- * Update current time
- * @param {UserPropertiesService} userProperties
- */
-Timer.prototype.update = function(userProperties) {
-  this.runtime = Timer.now() - this.START_TIME;
-  this.timeIsUp = this.runtime >= Timer.MAX_RUNTIME;
-  this.stop = userProperties.getProperty('stop') == 'true';
+Timer.prototype.update = function (userProperties) {
+    this.runtime = Timer.now() - this.START_TIME;
+    this.timeIsUp = this.runtime >= Timer.MAX_RUNTIME;
+    this.stop = userProperties.getProperty('stop') == 'true';
 };
-
-/**
- * @returns {boolean}
- */
-Timer.prototype.canContinue = function() {
-  return !this.timeIsUp && !this.stop;
+Timer.prototype.canContinue = function () {
+    return !this.timeIsUp && !this.stop;
 };
-
-/**
- * Calculate how far in the future the trigger should be set
- * @param {Properties} properties
- * @returns {number}
- */
-Timer.prototype.calculateTriggerDuration = function(properties) {
-  return properties.checkMaxRuntime()
-    ? Timer.oneDay
-    : Timer.sixMinutes - this.runtime;
+Timer.prototype.calculateTriggerDuration = function (properties) {
+    return properties.checkMaxRuntime()
+        ? Timer.oneDay
+        : Timer.sixMinutes - this.runtime;
 };
-
-/**
- * @returns {number}
- */
-Timer.now = function() {
-  return new Date().getTime();
+Timer.now = function () {
+    return new Date().getTime();
 };
-
-/**********************************************
- * Namespace for trigger-related methods
- **********************************************/
 
 var TriggerService = {};
-
-/**
- * Create a trigger to run copy() in 121 seconds.
- * Save trigger ID to userProperties so it can be deleted later
- */
-TriggerService.createTrigger = function(duration) {
-  // default is 6.2 minutes from now
-  // Timer will stop execution after 4.7 minutes, so this gives about 1.5 minutes buffer
-  duration = duration || Timer.sixMinutes;
-  var trigger = ScriptApp.newTrigger('copy')
-    .timeBased()
-    .after(duration)
-    .create();
-
-  if (trigger) {
-    // Save the triggerID so this trigger can be deleted later
-    PropertiesService.getUserProperties().setProperty(
-      'triggerId',
-      trigger.getUniqueId()
-    );
-  }
-};
-
-/**
- * Loop over all triggers
- * Delete if trigger ID matches parameter triggerId
- * @param {string} triggerId unique identifier for active trigger
- */
-TriggerService.deleteTrigger = function(triggerId) {
-  if (triggerId !== undefined && triggerId !== null) {
-    try {
-      // Loop over all triggers.
-      var allTriggers = ScriptApp.getProjectTriggers();
-      for (var i = 0; i < allTriggers.length; i++) {
-        // If the current trigger is the correct one, delete it.
-        if (allTriggers[i].getUniqueId() == triggerId) {
-          ScriptApp.deleteTrigger(allTriggers[i]);
-          break;
-        }
-      }
-    } catch (e) {
-      Util.log(null, Util.composeErrorMsg(e));
+TriggerService.createTrigger = function (duration) {
+    duration = duration || Timer.sixMinutes;
+    var trigger = ScriptApp.newTrigger('copy')
+        .timeBased()
+        .after(duration)
+        .create();
+    if (trigger) {
+        PropertiesService.getUserProperties().setProperty('triggerId', trigger.getUniqueId());
     }
-  }
 };
-
-/**********************************************
- * Contains runtime properties for script
- **********************************************/
+TriggerService.deleteTrigger = function (triggerId) {
+    if (triggerId !== undefined && triggerId !== null) {
+        try {
+            var allTriggers = ScriptApp.getProjectTriggers();
+            for (var i = 0; i < allTriggers.length; i++) {
+                if (allTriggers[i].getUniqueId() == triggerId) {
+                    ScriptApp.deleteTrigger(allTriggers[i]);
+                    break;
+                }
+            }
+        }
+        catch (e) {
+            Util.log(null, Util.composeErrorMsg(e));
+        }
+    }
+};
 
 function Properties(gDriveService) {
-  this.gDriveService = gDriveService;
-  this.srcFolderID = '';
-  this.srcFolderName = '';
-  this.srcParentID = '';
-  this.destFolderName = '';
-  this.copyPermissions = false;
-  this.copyTo = '';
-  this.destParentID = '';
-  this.destId = '';
-  this.spreadsheetId = '';
-  this.propertiesDocId = '';
-  this.leftovers = {};
-  this.retryQueue = [];
-  this.map = {};
-  this.remaining = [];
-  this.timeZone = 'GMT-7';
-  this.totalRuntime = 0;
-
-  return this;
+    this.gDriveService = gDriveService;
+    this.srcFolderID = '';
+    this.srcFolderName = '';
+    this.srcParentID = '';
+    this.destFolderName = '';
+    this.copyPermissions = false;
+    this.copyTo = '';
+    this.destParentID = '';
+    this.destId = '';
+    this.spreadsheetId = '';
+    this.propertiesDocId = '';
+    this.leftovers = {};
+    this.retryQueue = [];
+    this.map = {};
+    this.remaining = [];
+    this.timeZone = 'GMT-7';
+    this.totalRuntime = 0;
+    return this;
 }
-
-/**
- * Load properties document from user's drive and parse.
- * @return {object} properties object
- */
-Properties.prototype.load = function() {
-  var _this = this;
-  try {
-    var propertiesDocId = PropertiesService.getUserProperties().getProperties()
-      .propertiesDocId;
-    var propertiesDoc = this.gDriveService.downloadFile(propertiesDocId);
-  } catch (e) {
-    if (e.message.indexOf('Unsupported Output Format') !== -1) {
-      throw new Error(
-        'Could not determine properties document ID. Please try running the script again'
-      );
-    }
-    throw e;
-  }
-
-  try {
-    var properties = JSON.parse(propertiesDoc);
-  } catch (e) {
-    throw new Error(
-      "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke."
-    );
-  }
-
-  Object.keys(properties).forEach(function(prop) {
+Properties.prototype.load = function () {
+    var _this = this;
     try {
-      _this[prop] = properties[prop];
-    } catch (e) {
-      throw new Error(
-        'Error loading property ' +
-          prop +
-          ' to properties object. Attempted to save: ' +
-          properties[prop]
-      );
+        var propertiesDocId = PropertiesService.getUserProperties().getProperties()
+            .propertiesDocId;
+        var propertiesDoc = this.gDriveService.downloadFile(propertiesDocId);
     }
-  });
-
-  return this;
+    catch (e) {
+        if (e.message.indexOf('Unsupported Output Format') !== -1) {
+            throw new Error('Could not determine properties document ID. Please try running the script again');
+        }
+        throw e;
+    }
+    try {
+        var properties = JSON.parse(propertiesDoc);
+    }
+    catch (e) {
+        throw new Error("Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke.");
+    }
+    Object.keys(properties).forEach(function (prop) {
+        try {
+            _this[prop] = properties[prop];
+        }
+        catch (e) {
+            throw new Error('Error loading property ' +
+                prop +
+                ' to properties object. Attempted to save: ' +
+                properties[prop]);
+        }
+    });
+    return this;
 };
-
-/**
- * Increment `totalRuntime` property
- * @param {number} ms amount in milliseconds to increment
- */
-Properties.prototype.incrementTotalRuntime = function(ms) {
-  this.totalRuntime += ms;
+Properties.prototype.incrementTotalRuntime = function (ms) {
+    this.totalRuntime += ms;
 };
-
-/**
- * Determine if script has exceeded max daily runtime
- * If yes, need to sleep for one day to avoid throwing
- * "Script using too much computer time" error
- * @returns {boolean}
- */
-Properties.prototype.checkMaxRuntime = function() {
-  this.isOverMaxRuntime =
-    this.totalRuntime + Timer.MAX_RUNTIME >= Timer.MAX_RUNTIME_PER_DAY;
-  return this.isOverMaxRuntime;
+Properties.prototype.checkMaxRuntime = function () {
+    this.isOverMaxRuntime =
+        this.totalRuntime + Timer.MAX_RUNTIME >= Timer.MAX_RUNTIME_PER_DAY;
+    return this.isOverMaxRuntime;
 };
-
-/**
- * Stringify properties argument and save to file in user's Drive
- *
- * @param {object} properties - contains all properties that need to be saved to userProperties
- */
-Properties.save = function(properties, gDriveService) {
-  try {
-    var stringifiedProps = JSON.stringify(properties);
-  } catch (e) {
-    throw new Error(
-      'Failed to serialize script properties. This is a critical failure. Please start your copy again.'
-    );
-  }
-  return gDriveService.updateFile(
-    {
-      upload: 'multipart',
-      alt: 'json'
-    },
-    properties.propertiesDocId,
-    Utilities.newBlob(stringifiedProps)
-  );
+Properties.save = function (properties, gDriveService) {
+    try {
+        var stringifiedProps = JSON.stringify(properties);
+    }
+    catch (e) {
+        throw new Error('Failed to serialize script properties. This is a critical failure. Please start your copy again.');
+    }
+    return gDriveService.updateFile({
+        upload: 'multipart',
+        alt: 'json'
+    }, properties.propertiesDocId, Utilities.newBlob(stringifiedProps));
 };
-
-/**
- * save srcId, destId, copyPermissions, spreadsheetId to userProperties.
- *
- * This is used when resuming, in which case the IDs of the logger spreadsheet and
- * properties document will not be known.
- */
-Properties.setUserPropertiesStore = function(
-  spreadsheetId,
-  propertiesDocId,
-  destId,
-  resuming
-) {
-  var userProperties = PropertiesService.getUserProperties();
-  userProperties.setProperty('destId', destId);
-  userProperties.setProperty('spreadsheetId', spreadsheetId);
-  userProperties.setProperty('propertiesDocId', propertiesDocId);
-  userProperties.setProperty('trials', 0);
-  userProperties.setProperty('resuming', resuming);
-  userProperties.setProperty('stop', 'false');
+Properties.setUserPropertiesStore = function (spreadsheetId, propertiesDocId, destId, resuming) {
+    var userProperties = PropertiesService.getUserProperties();
+    userProperties.setProperty('destId', destId);
+    userProperties.setProperty('spreadsheetId', spreadsheetId);
+    userProperties.setProperty('propertiesDocId', propertiesDocId);
+    userProperties.setProperty('trials', 0);
+    userProperties.setProperty('resuming', resuming);
+    userProperties.setProperty('stop', 'false');
 };
-
-/**********************************************
- * Namespace to wrap utility functions
- **********************************************/
 
 var Util = {
-  msgs: {
-    maxRuntimeExceeded:
-      'Script has reached daily maximum run time of 90 minutes. ' +
-      'Script must pause for 24 hours to reset Google Quotas, and will resume at that time. ' +
-      'For more information, please see https://developers.google.com/apps-script/guides/services/quotas',
-    userStoppedScript:
-      'Stopped manually by user. Please use "Resume" button to restart copying',
-    singleRunExceeded:
-      'Paused due to Google quota limits - copy will resume in 1-2 minutes'
-  }
-};
-
-/**
- * Logs values to the logger spreadsheet
- * @param {object} ss instance of Sheet class representing the logger spreadsheet
- * @param {Array} values array of values to be written to the spreadsheet
- */
-Util.log = function(ss, values) {
-  if (ss === null || ss === undefined) {
-    ss = SpreadsheetApp.openById(
-      PropertiesService.getUserProperties().getProperty('spreadsheetId')
-    ).getSheetByName('Log');
-  }
-
-  // avoid placing entries that are too long
-  values = values.map(function(cell) {
-    if (cell && typeof cell == 'string') {
-      return cell.slice(0, 4999);
+    msgs: {
+        maxRuntimeExceeded: 'Script has reached daily maximum run time of 90 minutes. ' +
+            'Script must pause for 24 hours to reset Google Quotas, and will resume at that time. ' +
+            'For more information, please see https://developers.google.com/apps-script/guides/services/quotas',
+        userStoppedScript: 'Stopped manually by user. Please use "Resume" button to restart copying',
+        singleRunExceeded: 'Paused due to Google quota limits - copy will resume in 1-2 minutes'
     }
-    return '';
-  });
-
-  // gets last row with content.
-  // getMaxRows() gets returns the current number of rows in the sheet, regardless of content.
-  var lastRow = ss.getLastRow();
-  var startRow = lastRow + 1;
-  var startColumn = 1; // columns are 1-indexed
-  var numRows = 1;
-  var numColumns = values.length;
-
-  try {
-    ss
-      // 2018-02-23: fix `Service Error: Spreadsheets`
-      // Ensure that we don't try to insert to a row that doesn't exist
-      // resource: https://stackoverflow.com/questions/23165101/service-error-spreadsheets-on-google-scripts
-      .insertRowAfter(lastRow)
-      .getRange(startRow, startColumn, numRows, numColumns)
-      // setValues needs a 2-dimensional array in case you are inserting multiple rows.
-      // we always log one row at a time, though this could be changed in the future.
-      .setValues([values]);
-  } catch (e) {
-    // Google sheets doesn't allow inserting more than 2,000,000 rows into a spreadsheet
-    ss.getRange(lastRow, startColumn, numRows, 1).setValues([
-      [
-        'The spreadsheet is too large to continue logging, but the service will continue to run in the background'
-      ]
-    ]);
-  }
 };
-
-/**
- * @param {Spreadsheet} ss
- * @param {Error} error
- * @param {File} item
- * @param {string} timeZone
- */
-Util.logCopyError = function(ss, error, item, timeZone) {
-  var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
-  Util.log(ss, [
-    Util.composeErrorMsg(error)[0],
-    item.title,
-    FileService.getFileLinkForSheet(item.id, item.title),
-    item.id,
-    Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
-    FileService.getFileLinkForSheet(parentId, '')
-  ]);
-};
-
-Util.logCopySuccess = function(ss, item, timeZone) {
-  var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
-  Util.log(ss, [
-    'Copied',
-    item.title,
-    FileService.getFileLinkForSheet(item.id, item.title),
-    item.id,
-    Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
-    FileService.getFileLinkForSheet(parentId, '')
-  ]);
-};
-
-/**
- * Invokes a function, performing up to 5 retries with exponential backoff.
- * Retries with delays of approximately 1, 2, 4, 8 then 16 seconds for a total of
- * about 32 seconds before it gives up and rethrows the last error.
- * See: https://developers.google.com/google-apps/documents-list/#implementing_exponential_backoff
- * Author: peter.herrmann@gmail.com (Peter Herrmann)
- * @param {Function} func The anonymous or named function to call.
- * @param {string} errorMsg Message to output in case of error
- * @return {*} The value returned by the called function.
- */
-Util.exponentialBackoff = function(func, errorMsg) {
-  for (var n = 0; n < 6; n++) {
-    try {
-      return func();
-    } catch (e) {
-      Util.log(null, Util.composeErrorMsg(e));
-      if (n == 5) {
-        Util.log(null, [
-          errorMsg,
-          '',
-          '',
-          '',
-          Utilities.formatDate(new Date(), 'GMT-7', 'MM-dd-yy hh:mm:ss aaa')
-        ]);
-        throw e;
-      }
-      Utilities.sleep(Math.pow(2, n) * 1000 + Math.round(Math.random() * 1000));
+Util.log = function (ss, values) {
+    if (ss === null || ss === undefined) {
+        ss = SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperty('spreadsheetId')).getSheetByName('Log');
     }
-  }
-};
-
-/**
- * Save properties and update log
- * @param {Properties} properties
- * @param {File List} fileList
- * @param {string} logMessage - The message to output to the log when state is saved
- * @param {Sheet} ss spreadsheet instance
- */
-Util.saveState = function(properties, fileList, logMessage, ss, gDriveService) {
-  // save, create trigger, and assign pageToken for continuation
-  try {
-    properties.leftovers =
-      fileList && fileList.items ? fileList : properties.leftovers;
-    properties.pageToken = properties.leftovers.nextPageToken;
-  } catch (e) {
-    Util.log(
-      ss,
-      Util.composeErrorMsg(
-        e,
-        'Failed to set leftover file list. Error Message: '
-      )
-    );
-  }
-
-  try {
-    Properties.save(properties, gDriveService);
-  } catch (e) {
-    if (e.message.indexOf('exceeded their Drive storage quota') !== -1) {
-      // inform user that script will not restart
-      // they must clear space and manually resume
-      // if they resume, they will get duplicated files
-      try {
-        TriggerService.deleteTrigger(
-          PropertiesService.getUserProperties().getProperty('triggerId')
-        );
-      } catch (e) {
-        // likely already deleted, shouldn't be a big deal
-      }
-      Util.log(ss, [
-        'You have run out of space in your Drive! ' +
-          'You should delete some files and then come back ' +
-          'and use the "Resume" feature to restart your copy.'
-      ]);
-      Util.log(ss, [
-        'HEADS UP! Your most recently copied files WILL BE DUPLICATED if you resume. ' +
-          'To avoid duplicating, you will need to restart your copy from the beginning'
-      ]);
-      // return early to prevent logging `logMessage`
-      return;
-    }
-    Util.log(
-      ss,
-      Util.composeErrorMsg(
-        e,
-        'Failed to save properties. ' +
-          'This could affect script performance and may require restarting the copy. ' +
-          'Error Message: '
-      )
-    );
-  }
-
-  Util.log(ss, [logMessage]);
-};
-
-Util.cleanup = function(
-  properties,
-  fileList,
-  userProperties,
-  timer,
-  ss,
-  gDriveService
-) {
-  // track totalRuntime to avoid exceeding quota
-  properties.incrementTotalRuntime(timer.runtime);
-
-  // Set the stop message that will be displayed to user on script pause
-  var stopMsg = Util.msgs.singleRunExceeded;
-  if (timer.stop) {
-    // user manually stopped script
-    stopMsg = Util.msgs.userStoppedScript;
-    TriggerService.deleteTrigger(userProperties.getProperty('triggerId'));
-  } else if (properties.isOverMaxRuntime) {
-    // daily runtime exceeded.
-    stopMsg = Util.msgs.maxRuntimeExceeded;
-    // Reset totalRuntime - next trigger will be 24 hours in future
-    properties.totalRuntime = 0;
-  }
-
-  // Either stop flag or runtime exceeded. Must save state
-  if (!timer.canContinue() || properties.retryQueue.length > 0) {
-    Util.saveState(properties, fileList, stopMsg, ss, gDriveService);
-  } else {
-    // The copy is complete!
-
-    // Delete trigger created at beginning of script,
-    // move propertiesDoc to trash,
-    // and update logger spreadsheet
-    TriggerService.deleteTrigger(userProperties.getProperty('triggerId'));
-    try {
-      gDriveService.updateFile(
-        { labels: { trashed: true } },
-        properties.propertiesDocId
-      );
-    } catch (e) {
-      Util.log(ss, Util.composeErrorMsg(e));
-    }
-    ss.getRange(2, 3, 1, 1)
-      .setValue('Complete')
-      .setBackground('#66b22c');
-    ss.getRange(2, 4, 1, 1).setValue(
-      Utilities.formatDate(
-        new Date(),
-        properties.timeZone,
-        'MM-dd-yy hh:mm:ss a'
-      )
-    );
-  }
-};
-
-/**
- * Returns a reasonable error message wrapped in an array which is required by Util.log
- * @param {Error} e
- * @param {string} customMsg
- * @returns {Array}
- */
-Util.composeErrorMsg = function(e, customMsg) {
-  customMsg = customMsg || 'Error: ';
-  return [
-    customMsg + e.message + '. File: ' + e.fileName + '. Line: ' + e.lineNumber
-  ];
-};
-
-Util.isNone = function(obj) {
-  return obj === null || obj === undefined;
-};
-
-Util.isSome = function(obj) {
-  return !Util.isNone(obj);
-};
-
-Util.hasSome = function(obj, prop) {
-  return obj && obj[prop] && obj[prop].length > 0;
-};
-
-/**********************************************
- * Namespace to wrap calls to Drive API
- **********************************************/
-function GDriveService() {
-  this.lastRequest = Timer.now();
-  this.minElapsed = 100; // 1/10th of a second, in ms
-  this.trottle = this.throttle.bind(this);
-  this.maxResults = 200;
-  return this;
-}
-
-/**
- * Run passed function no more than 10 per second (1 per 1/10th of a second)
- * Uses global `Utilities` object from Google Apps Script
- *
- * This is not my favorite way to implement, but using an async queue is problematic
- * when the script has to stop, save state, and restart. Better implementations may be considered
- * in the future.
- * @param {closure} func
- */
-GDriveService.prototype.throttle = function(func) {
-  var elapsed = Timer.now() - this.lastRequest;
-  if (elapsed < this.minElapsed) {
-    // Util.log(null, ['sleeping for ' + (this.minElapsed - elapsed).toString()])
-    Utilities.sleep(this.minElapsed - elapsed);
-  }
-  this.lastRequest = Timer.now();
-  return func();
-};
-
-/**
- * Returns metadata for input file ID
- * @param {string} id the folder ID for which to return metadata
- * @return {object} the permissions for the folder
- */
-GDriveService.prototype.getPermissions = function(id) {
-  return this.throttle(function() {
-    return Drive.Permissions.list(id);
-  });
-};
-
-/**
- * Gets files from query and returns fileList with metadata
- * @param {string} query the query to select files from the Drive
- * @param {string} pageToken the pageToken (if any) for the existing query
- * @return {File List} fileList object where fileList.items is an array of children files
- */
-GDriveService.prototype.getFiles = function(query, pageToken, orderBy) {
-  return this.throttle(function() {
-    return Drive.Files.list({
-      q: query,
-      maxResults: this.maxResults,
-      pageToken: pageToken,
-      orderBy: orderBy
+    values = values.map(function (cell) {
+        if (cell && typeof cell == 'string') {
+            return cell.slice(0, 4999);
+        }
+        return '';
     });
-  });
-};
-
-/**
- * Download contents of file
- * @param {string} id
- * @returns {File Resource}
- */
-GDriveService.prototype.downloadFile = function(id) {
-  return this.throttle(function() {
-    return DriveApp.getFileById(id)
-      .getBlob()
-      .getDataAsString();
-  });
-};
-
-/**
- * Updates a file's content and metadata
- * @param {Object} metadata
- * @param {string} fileID
- * @param {Blob} mediaData
- * @returns {File Resource}
- */
-GDriveService.prototype.updateFile = function(metadata, fileID, mediaData) {
-  return this.throttle(function() {
-    return Drive.Files.update(metadata, fileID, mediaData);
-  });
-};
-
-/**
- * Insert a file with metadata defined by `body`
- * @param {object} body
- * @returns {File Resource}
- */
-GDriveService.prototype.insertFolder = function(body) {
-  return this.throttle(function() {
-    return Drive.Files.insert(body);
-  });
-};
-
-/**
- * Insert file with fixed metadata used to store properties
- * @param {string} parentID ID to insert the file beneath
- * @returns {File Resource}
- */
-GDriveService.prototype.insertBlankFile = function(parentID) {
-  // doesn't need to be throttled because it returns a throttled function
-  return this.insertFolder({
-    description:
-      'This document will be deleted after the folder copy is complete. It is only used to store properties necessary to complete the copying procedure',
-    title: 'DO NOT DELETE OR MODIFY - will be deleted after copying completes',
-    parents: [
-      {
-        kind: 'drive#fileLink',
-        id: parentID
-      }
-    ],
-    mimeType: 'text/plain'
-  });
-};
-
-/**
- * @param {File Resource} body details for the copied file
- * @param {string} id file to copy
- * @returns {File Resource}
- */
-GDriveService.prototype.copyFile = function(body, id) {
-  return this.throttle(function() {
-    return Drive.Files.copy(body, id);
-  });
-};
-
-/**
- * Inserts a permission on a file
- * @param {object} body metadata for permission
- * @param {string} id file ID to insert permissions
- * @param {object} options
- */
-GDriveService.prototype.insertPermission = function(body, id, options) {
-  return this.throttle(function() {
-    return Drive.Permissions.insert(body, id, options);
-  });
-};
-
-/**
- * Removes one permission from file
- * @param {string} fileID
- * @param {string} permissionID
- */
-GDriveService.prototype.removePermission = function(fileID, permissionID) {
-  return this.throttle(function() {
-    return Drive.Permissions.remove(fileID, permissionID);
-  });
-};
-
-/**
- * @returns {string} ID of root Drive folder
- */
-GDriveService.prototype.getRootID = function() {
-  return this.throttle(function() {
-    return DriveApp.getRootFolder().getId();
-  });
-};
-
-GDriveService.prototype.openSpreadsheet = function(spreadsheetId) {
-  var ss;
-  try {
-    ss = SpreadsheetApp.openById(spreadsheetId).getSheetByName('Log');
-  } catch (e) {
+    var lastRow = ss.getLastRow();
+    var startRow = lastRow + 1;
+    var startColumn = 1;
+    var numRows = 1;
+    var numColumns = values.length;
     try {
-      ss = SpreadsheetApp.openById(
-        PropertiesService.getUserProperties().getProperty('spreadsheetId')
-      ).getSheetByName('Log');
-    } catch (e) {
-      // if the spreadsheet cannot be accessed, this should be considered a fatal error
-      // and the script should not continue
-      throw new Error('Cannot locate spreadsheet. Please try again.');
+        ss
+            .insertRowAfter(lastRow)
+            .getRange(startRow, startColumn, numRows, numColumns)
+            .setValues([values]);
     }
-  }
-  return ss;
+    catch (e) {
+        ss.getRange(lastRow, startColumn, numRows, 1).setValues([
+            [
+                'The spreadsheet is too large to continue logging, but the service will continue to run in the background'
+            ]
+        ]);
+    }
+};
+Util.logCopyError = function (ss, error, item, timeZone) {
+    var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
+    Util.log(ss, [
+        Util.composeErrorMsg(error)[0],
+        item.title,
+        FileService.getFileLinkForSheet(item.id, item.title),
+        item.id,
+        Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
+        FileService.getFileLinkForSheet(parentId, '')
+    ]);
+};
+Util.logCopySuccess = function (ss, item, timeZone) {
+    var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
+    Util.log(ss, [
+        'Copied',
+        item.title,
+        FileService.getFileLinkForSheet(item.id, item.title),
+        item.id,
+        Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
+        FileService.getFileLinkForSheet(parentId, '')
+    ]);
+};
+Util.exponentialBackoff = function (func, errorMsg) {
+    for (var n = 0; n < 6; n++) {
+        try {
+            return func();
+        }
+        catch (e) {
+            Util.log(null, Util.composeErrorMsg(e));
+            if (n == 5) {
+                Util.log(null, [
+                    errorMsg,
+                    '',
+                    '',
+                    '',
+                    Utilities.formatDate(new Date(), 'GMT-7', 'MM-dd-yy hh:mm:ss aaa')
+                ]);
+                throw e;
+            }
+            Utilities.sleep(Math.pow(2, n) * 1000 + Math.round(Math.random() * 1000));
+        }
+    }
+};
+Util.saveState = function (properties, fileList, logMessage, ss, gDriveService) {
+    try {
+        properties.leftovers =
+            fileList && fileList.items ? fileList : properties.leftovers;
+        properties.pageToken = properties.leftovers.nextPageToken;
+    }
+    catch (e) {
+        Util.log(ss, Util.composeErrorMsg(e, 'Failed to set leftover file list. Error Message: '));
+    }
+    try {
+        Properties.save(properties, gDriveService);
+    }
+    catch (e) {
+        if (e.message.indexOf('exceeded their Drive storage quota') !== -1) {
+            try {
+                TriggerService.deleteTrigger(PropertiesService.getUserProperties().getProperty('triggerId'));
+            }
+            catch (e) {
+            }
+            Util.log(ss, [
+                'You have run out of space in your Drive! ' +
+                    'You should delete some files and then come back ' +
+                    'and use the "Resume" feature to restart your copy.'
+            ]);
+            Util.log(ss, [
+                'HEADS UP! Your most recently copied files WILL BE DUPLICATED if you resume. ' +
+                    'To avoid duplicating, you will need to restart your copy from the beginning'
+            ]);
+            return;
+        }
+        Util.log(ss, Util.composeErrorMsg(e, 'Failed to save properties. ' +
+            'This could affect script performance and may require restarting the copy. ' +
+            'Error Message: '));
+    }
+    Util.log(ss, [logMessage]);
+};
+Util.cleanup = function (properties, fileList, userProperties, timer, ss, gDriveService) {
+    properties.incrementTotalRuntime(timer.runtime);
+    var stopMsg = Util.msgs.singleRunExceeded;
+    if (timer.stop) {
+        stopMsg = Util.msgs.userStoppedScript;
+        TriggerService.deleteTrigger(userProperties.getProperty('triggerId'));
+    }
+    else if (properties.isOverMaxRuntime) {
+        stopMsg = Util.msgs.maxRuntimeExceeded;
+        properties.totalRuntime = 0;
+    }
+    if (!timer.canContinue() || properties.retryQueue.length > 0) {
+        Util.saveState(properties, fileList, stopMsg, ss, gDriveService);
+    }
+    else {
+        TriggerService.deleteTrigger(userProperties.getProperty('triggerId'));
+        try {
+            gDriveService.updateFile({ labels: { trashed: true } }, properties.propertiesDocId);
+        }
+        catch (e) {
+            Util.log(ss, Util.composeErrorMsg(e));
+        }
+        ss.getRange(2, 3, 1, 1)
+            .setValue('Complete')
+            .setBackground('#66b22c');
+        ss.getRange(2, 4, 1, 1).setValue(Utilities.formatDate(new Date(), properties.timeZone, 'MM-dd-yy hh:mm:ss a'));
+    }
+};
+Util.composeErrorMsg = function (e, customMsg) {
+    customMsg = customMsg || 'Error: ';
+    return [
+        customMsg + e.message + '. File: ' + e.fileName + '. Line: ' + e.lineNumber
+    ];
+};
+Util.isNone = function (obj) {
+    return obj === null || obj === undefined;
+};
+Util.isSome = function (obj) {
+    return !Util.isNone(obj);
+};
+Util.hasSome = function (obj, prop) {
+    return obj && obj[prop] && obj[prop].length > 0;
 };
 
-/**********************************************
- * These functions are called from the front end via
- * google.script.run
- *
- * They need to be globally available so the calls work as expected
- **********************************************/
+function GDriveService() {
+    this.lastRequest = Timer.now();
+    this.minElapsed = 100;
+    this.trottle = this.throttle.bind(this);
+    this.maxResults = 200;
+    return this;
+}
+GDriveService.prototype.throttle = function (func) {
+    var elapsed = Timer.now() - this.lastRequest;
+    if (elapsed < this.minElapsed) {
+        Utilities.sleep(this.minElapsed - elapsed);
+    }
+    this.lastRequest = Timer.now();
+    return func();
+};
+GDriveService.prototype.getPermissions = function (id) {
+    return this.throttle(function () {
+        return Drive.Permissions.list(id);
+    });
+};
+GDriveService.prototype.getFiles = function (query, pageToken, orderBy) {
+    return this.throttle(function () {
+        return Drive.Files.list({
+            q: query,
+            maxResults: this.maxResults,
+            pageToken: pageToken,
+            orderBy: orderBy
+        });
+    });
+};
+GDriveService.prototype.downloadFile = function (id) {
+    return this.throttle(function () {
+        return DriveApp.getFileById(id)
+            .getBlob()
+            .getDataAsString();
+    });
+};
+GDriveService.prototype.updateFile = function (metadata, fileID, mediaData) {
+    return this.throttle(function () {
+        return Drive.Files.update(metadata, fileID, mediaData);
+    });
+};
+GDriveService.prototype.insertFolder = function (body) {
+    return this.throttle(function () {
+        return Drive.Files.insert(body);
+    });
+};
+GDriveService.prototype.insertBlankFile = function (parentID) {
+    return this.insertFolder({
+        description: 'This document will be deleted after the folder copy is complete. It is only used to store properties necessary to complete the copying procedure',
+        title: 'DO NOT DELETE OR MODIFY - will be deleted after copying completes',
+        parents: [
+            {
+                kind: 'drive#fileLink',
+                id: parentID
+            }
+        ],
+        mimeType: 'text/plain'
+    });
+};
+GDriveService.prototype.copyFile = function (body, id) {
+    return this.throttle(function () {
+        return Drive.Files.copy(body, id);
+    });
+};
+GDriveService.prototype.insertPermission = function (body, id, options) {
+    return this.throttle(function () {
+        return Drive.Permissions.insert(body, id, options);
+    });
+};
+GDriveService.prototype.removePermission = function (fileID, permissionID) {
+    return this.throttle(function () {
+        return Drive.Permissions.remove(fileID, permissionID);
+    });
+};
+GDriveService.prototype.getRootID = function () {
+    return this.throttle(function () {
+        return DriveApp.getRootFolder().getId();
+    });
+};
+GDriveService.prototype.openSpreadsheet = function (spreadsheetId) {
+    var ss;
+    try {
+        ss = SpreadsheetApp.openById(spreadsheetId).getSheetByName('Log');
+    }
+    catch (e) {
+        try {
+            ss = SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperty('spreadsheetId')).getSheetByName('Log');
+        }
+        catch (e) {
+            throw new Error('Cannot locate spreadsheet. Please try again.');
+        }
+    }
+    return ss;
+};
 
-/**
- * Serves HTML of the application for HTTP GET requests.
- * If folderId is provided as a URL parameter, the web app will list
- * the contents of that folder (if permissions allow). Otherwise
- * the web app will list the contents of the root folder.
- *
- * @param {Object} e event parameter that can contain information
- *     about any URL parameters provided.
- */
 function doGet(e) {
-  var template = HtmlService.createTemplateFromFile('Index');
-
-  // Build and return HTML in IFRAME sandbox mode.
-  return template
-    .evaluate()
-    .setTitle('Copy a Google Drive folder')
-    .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+    var template = HtmlService.createTemplateFromFile('Index');
+    return template
+        .evaluate()
+        .setTitle('Copy a Google Drive folder')
+        .setSandboxMode(HtmlService.SandboxMode.IFRAME);
 }
-
-/**
- * Initialize destination folder, logger spreadsheet, and properties doc.
- * Build/add properties to options so it can be saved to the properties doc.
- * Set UserProperties values and save properties to propertiesDoc.
- * Add link for destination folder to logger spreadsheet.
- * Return IDs of created destination folder and logger spreadsheet
- *
- * @param {object} options
- *  {
- *    srcFolderID: string,
- *    srcParentId: string,
- *    srcFolderName: string,
- *    srcFolderURL: string,
- *    destFolderName: string,
- *    copyPermissions: boolean,
- *    copyTo: number,
- *    destParentID: string,
- *  }
- */
 function initialize(options) {
-  var destFolder, // {Object} instance of Folder class representing destination folder
-    spreadsheet, // {Object} instance of Spreadsheet class
-    propertiesDocId, // {Object} metadata for Google Document created to hold properties
-    today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'), // {string} date of copy
-    gDriveService = new GDriveService(),
-    timer = new Timer(),
-    properties = new Properties(gDriveService),
-    fileService = new FileService(gDriveService, timer, properties);
-
-  // Create Files used in copy process
-  destFolder = fileService.initializeDestinationFolder(options, today);
-  spreadsheet = fileService.createLoggerSpreadsheet(today, destFolder.id);
-  propertiesDocId = fileService.createPropertiesDocument(destFolder.id);
-
-  // Build/add properties to options so it can be saved to the properties doc
-  options.destId = destFolder.id;
-  options.spreadsheetId = spreadsheet.id;
-  options.propertiesDocId = propertiesDocId;
-
-  // initialize map with top level source and destination folder
-  options.leftovers = {}; // {Object} FileList object (returned from Files.list) for items not processed in prior execution (filled in saveState)
-  options.map = {}; // {Object} map of source ids (keys) to destination ids (values)
-  options.map[options.srcFolderID] = options.destId;
-  options.remaining = [options.srcFolderID];
-
-  // Add link for destination folder to logger spreadsheet
-  try {
-    SpreadsheetApp.openById(spreadsheet.id)
-      .getSheetByName('Log')
-      .getRange(2, 5)
-      .setValue(
-        FileService.getFileLinkForSheet(destFolder.id, options.destFolderName)
-      );
-  } catch (e) {
-    console.error('unable to set folder URL in copy log');
-    console.error(e);
-  }
-
-  // 2018-09-06: this often throws a "Bad Value" error, not sure of the cause
-  // but this data is low importance
-  try {
-    options.timeZone = SpreadsheetApp.openById(
-      spreadsheet.id
-    ).getSpreadsheetTimeZone();
-  } catch (e) {
-    options.timeZone = 'GMT-7';
-  }
-
-  // Adding a row to status list prevents weird style copying in Util.log
-  try {
-    SpreadsheetApp.openById(spreadsheet.id)
-      .getSheetByName('Log')
-      .getRange(5, 1, 1, 5)
-      .setValues([
-        [
-          'Started copying',
-          '',
-          '',
-          '',
-          Utilities.formatDate(
-            new Date(),
-            options.timeZone,
-            'MM-dd-yy hh:mm:ss aaa'
-          )
-        ]
-      ]);
-  } catch (e) {
-    console.error('unable to write "started copying"');
-    console.error(e);
-  }
-
-  // Set UserProperties values and save properties to propertiesDoc
-  Properties.setUserPropertiesStore(
-    options.spreadsheetId,
-    options.propertiesDocId,
-    options.destId,
-    'false'
-  );
-  Properties.save(options, gDriveService);
-
-  // Delete all existing triggers so no scripts overlap
-  deleteAllTriggers();
-
-  // Return IDs of created destination folder and logger spreadsheet
-  return {
-    spreadsheetId: options.spreadsheetId,
-    destFolderId: options.destId,
-    resuming: false
-  };
+    var destFolder, spreadsheet, propertiesDocId, today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'), gDriveService = new GDriveService(), timer = new Timer(), properties = new Properties(gDriveService), fileService = new FileService(gDriveService, timer, properties);
+    destFolder = fileService.initializeDestinationFolder(options, today);
+    spreadsheet = fileService.createLoggerSpreadsheet(today, destFolder.id);
+    propertiesDocId = fileService.createPropertiesDocument(destFolder.id);
+    options.destId = destFolder.id;
+    options.spreadsheetId = spreadsheet.id;
+    options.propertiesDocId = propertiesDocId;
+    options.leftovers = {};
+    options.map = {};
+    options.map[options.srcFolderID] = options.destId;
+    options.remaining = [options.srcFolderID];
+    try {
+        SpreadsheetApp.openById(spreadsheet.id)
+            .getSheetByName('Log')
+            .getRange(2, 5)
+            .setValue(FileService.getFileLinkForSheet(destFolder.id, options.destFolderName));
+    }
+    catch (e) {
+        console.error('unable to set folder URL in copy log');
+        console.error(e);
+    }
+    try {
+        options.timeZone = SpreadsheetApp.openById(spreadsheet.id).getSpreadsheetTimeZone();
+    }
+    catch (e) {
+        options.timeZone = 'GMT-7';
+    }
+    try {
+        SpreadsheetApp.openById(spreadsheet.id)
+            .getSheetByName('Log')
+            .getRange(5, 1, 1, 5)
+            .setValues([
+            [
+                'Started copying',
+                '',
+                '',
+                '',
+                Utilities.formatDate(new Date(), options.timeZone, 'MM-dd-yy hh:mm:ss aaa')
+            ]
+        ]);
+    }
+    catch (e) {
+        console.error('unable to write "started copying"');
+        console.error(e);
+    }
+    Properties.setUserPropertiesStore(options.spreadsheetId, options.propertiesDocId, options.destId, 'false');
+    Properties.save(options, gDriveService);
+    deleteAllTriggers();
+    return {
+        spreadsheetId: options.spreadsheetId,
+        destFolderId: options.destId,
+        resuming: false
+    };
 }
-
-/**
- * @param {string} id the folder ID for which to return metadata
- * @param {string} url the folder URL
- * @returns {object} the metadata for the folder (File Resource)
- */
 function getMetadata(id, url) {
-  try {
-    return Drive.Files.get(id);
-  } catch (e) {
-    var errMsg =
-      'Unable to find a folder with the supplied URL. ' +
-      'You submitted ' +
-      url +
-      '. ' +
-      'Please verify that you are using a valid folder URL and try again.';
-    throw new Error(errMsg);
-  }
+    try {
+        return Drive.Files.get(id);
+    }
+    catch (e) {
+        var errMsg = 'Unable to find a folder with the supplied URL. ' +
+            'You submitted ' +
+            url +
+            '. ' +
+            'Please verify that you are using a valid folder URL and try again.';
+        throw new Error(errMsg);
+    }
 }
-
-/**
- * @returns {string} email of the active user
- */
 function getUserEmail() {
-  return Session.getActiveUser().getEmail();
+    return Session.getActiveUser().getEmail();
 }
-
-/**
- * Find prior copy folder instance.
- * Find propertiesDoc and logger spreadsheet, and save IDs to userProperties, which will be used by load.
- *
- * @param options object containing information on folder selected in app
- * @returns {{spreadsheetId: string, destId: string, resuming: boolean}}
- */
-
 function resume(options) {
-  var gDriveService = new GDriveService(),
-    timer = new Timer(),
-    properties = new Properties(gDriveService),
-    fileService = new FileService(gDriveService, timer, properties);
-  var priorCopy = fileService.findPriorCopy(options.srcFolderID);
-
-  Properties.setUserPropertiesStore(
-    priorCopy.spreadsheetId,
-    priorCopy.propertiesDocId,
-    options.destFolderId,
-    'true'
-  );
-
-  return {
-    spreadsheetId: priorCopy.spreadsheetId,
-    destFolderId: options.srcFolderID,
-    resuming: true
-  };
+    var gDriveService = new GDriveService(), timer = new Timer(), properties = new Properties(gDriveService), fileService = new FileService(gDriveService, timer, properties);
+    var priorCopy = fileService.findPriorCopy(options.srcFolderID);
+    Properties.setUserPropertiesStore(priorCopy.spreadsheetId, priorCopy.propertiesDocId, options.destFolderId, 'true');
+    return {
+        spreadsheetId: priorCopy.spreadsheetId,
+        destFolderId: options.srcFolderID,
+        resuming: true
+    };
 }
-
-/**
- * Set a flag in the userProperties store that will cancel the current copy folder process
- */
 function setStopFlag() {
-  return PropertiesService.getUserProperties().setProperty('stop', 'true');
+    return PropertiesService.getUserProperties().setProperty('stop', 'true');
 }
-
-/**
- * Loop over all triggers and delete
- */
 function deleteAllTriggers() {
-  var allTriggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < allTriggers.length; i++) {
-    ScriptApp.deleteTrigger(allTriggers[i]);
-  }
+    var allTriggers = ScriptApp.getProjectTriggers();
+    for (var i = 0; i < allTriggers.length; i++) {
+        ScriptApp.deleteTrigger(allTriggers[i]);
+    }
 }
-
-/**
- * @return {number} number of active triggers for this user
- */
 function getTriggersQuantity() {
-  return ScriptApp.getProjectTriggers().length;
+    return ScriptApp.getProjectTriggers().length;
 }
-
-/**
- * @returns {string} token for use with Google Picker
- */
 function getOAuthToken() {
-  return ScriptApp.getOAuthToken();
+    return ScriptApp.getOAuthToken();
 }
-
-/**********************************************
- * Namespace for file-related functions
- **********************************************/
 
 function FileService(gDriveService, timer, properties) {
-  this.gDriveService = gDriveService;
-  this.timer = timer;
-  this.properties = properties;
-  this.baseCopyLogID = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
-  this.nativeMimeTypes = [
-    'application/vnd.google-apps.document',
-    'application/vnd.google-apps.folder',
-    'application/vnd.google-apps.spreadsheet',
-    'application/vnd.google-apps.presentation',
-    'application/vnd.google-apps.drawing',
-    'application/vnd.google-apps.form',
-    'application/vnd.google-apps.script'
-  ];
-  this.maxNumberOfAttempts = 3; // this is arbitrary, could go up or down
-  return this;
+    this.gDriveService = gDriveService;
+    this.timer = timer;
+    this.properties = properties;
+    this.baseCopyLogID = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
+    this.nativeMimeTypes = [
+        'application/vnd.google-apps.document',
+        'application/vnd.google-apps.folder',
+        'application/vnd.google-apps.spreadsheet',
+        'application/vnd.google-apps.presentation',
+        'application/vnd.google-apps.drawing',
+        'application/vnd.google-apps.form',
+        'application/vnd.google-apps.script'
+    ];
+    this.maxNumberOfAttempts = 3;
+    return this;
 }
-
-/**
- * Try to copy file to destination parent, or add new folder if it's a folder
- * @param {Object} file File Resource with metadata from source file
- */
-FileService.prototype.copyFile = function(file) {
-  // if folder, use insert, else use copy
-  if (file.mimeType == 'application/vnd.google-apps.folder') {
-    var r = this.gDriveService.insertFolder({
-      description: file.description,
-      title: file.title,
-      parents: [
-        {
-          kind: 'drive#parentReference',
-          id: this.properties.map[file.parents[0].id]
+FileService.prototype.copyFile = function (file) {
+    if (file.mimeType == 'application/vnd.google-apps.folder') {
+        var r = this.gDriveService.insertFolder({
+            description: file.description,
+            title: file.title,
+            parents: [
+                {
+                    kind: 'drive#parentReference',
+                    id: this.properties.map[file.parents[0].id]
+                }
+            ],
+            mimeType: 'application/vnd.google-apps.folder'
+        });
+        this.properties.remaining.push(file.id);
+        this.properties.map[file.id] = r.id;
+        return r;
+    }
+    else {
+        return this.gDriveService.copyFile({
+            title: file.title,
+            parents: [
+                {
+                    kind: 'drive#parentReference',
+                    id: this.properties.map[file.parents[0].id]
+                }
+            ]
+        }, file.id);
+    }
+};
+FileService.prototype.copyPermissions = function (srcId, owners, destId) {
+    var permissions, destPermissions, i, j;
+    try {
+        permissions = this.gDriveService.getPermissions(srcId).items;
+    }
+    catch (e) {
+        Util.log(null, Util.composeErrorMsg(e));
+    }
+    if (permissions && permissions.length > 0) {
+        for (i = 0; i < permissions.length; i++) {
+            try {
+                if (permissions[i].emailAddress) {
+                    if (permissions[i].role == 'owner')
+                        continue;
+                    this.gDriveService.insertPermission({
+                        role: permissions[i].role,
+                        type: permissions[i].type,
+                        value: permissions[i].emailAddress
+                    }, destId, {
+                        sendNotificationEmails: 'false'
+                    });
+                }
+                else {
+                    this.gDriveService.insertPermission({
+                        role: permissions[i].role,
+                        type: permissions[i].type,
+                        id: permissions[i].id,
+                        withLink: permissions[i].withLink
+                    }, destId, {
+                        sendNotificationEmails: 'false'
+                    });
+                }
+            }
+            catch (e) { }
         }
-      ],
-      mimeType: 'application/vnd.google-apps.folder'
-    });
-
-    // Update list of remaining folders
-    this.properties.remaining.push(file.id);
-
-    // map source to destination
-    this.properties.map[file.id] = r.id;
-
-    return r;
-  } else {
-    return this.gDriveService.copyFile(
-      {
-        title: file.title,
+    }
+    if (owners && owners.length > 0) {
+        for (i = 0; i < owners.length; i++) {
+            try {
+                this.gDriveService.insertPermission({
+                    role: 'writer',
+                    type: 'user',
+                    value: owners[i].emailAddress
+                }, destId, {
+                    sendNotificationEmails: 'false'
+                });
+            }
+            catch (e) { }
+        }
+    }
+    try {
+        destPermissions = this.gDriveService.getPermissions(destId).items;
+    }
+    catch (e) {
+        Util.log(null, Util.composeErrorMsg(e));
+    }
+    if (destPermissions && destPermissions.length > 0) {
+        for (i = 0; i < destPermissions.length; i++) {
+            for (j = 0; j < permissions.length; j++) {
+                if (destPermissions[i].id == permissions[j].id) {
+                    break;
+                }
+                if (j == permissions.length - 1 && destPermissions[i].role != 'owner') {
+                    this.gDriveService.removePermission(destId, destPermissions[i].id);
+                }
+            }
+        }
+    }
+};
+FileService.prototype.handleLeftovers = function (userProperties, ss) {
+    if (Util.hasSome(this.properties.leftovers, 'items')) {
+        this.processFileList(this.properties.leftovers.items, userProperties, ss);
+    }
+};
+FileService.prototype.handleRetries = function (userProperties, ss) {
+    if (Util.hasSome(this.properties, 'retryQueue')) {
+        this.processFileList(this.properties.retryQueue, userProperties, ss);
+    }
+};
+FileService.prototype.processFileList = function (items, userProperties, ss) {
+    while (items.length > 0 && this.timer.canContinue()) {
+        var item = items.pop();
+        if (item.numberOfAttempts &&
+            item.numberOfAttempts > this.maxNumberOfAttempts) {
+            Util.logCopyError(ss, item.error, item, this.properties.timeZone);
+            continue;
+        }
+        try {
+            var newfile = this.copyFile(item);
+            Util.logCopySuccess(ss, newfile, this.properties.timeZone);
+        }
+        catch (e) {
+            this.properties.retryQueue.unshift({
+                id: item.id,
+                title: item.title,
+                parents: item.parents,
+                mimeType: item.mimeType,
+                error: e,
+                owners: item.owners,
+                numberOfAttempts: item.numberOfAttempts ? item.numberOfAttempts + 1 : 1
+            });
+        }
+        try {
+            if (this.properties.copyPermissions &&
+                this.nativeMimeTypes.indexOf(item.mimeType) !== -1) {
+                this.copyPermissions(item.id, item.owners, newfile.id);
+            }
+        }
+        catch (e) {
+        }
+        this.timer.update(userProperties);
+    }
+};
+FileService.prototype.initializeDestinationFolder = function (options, today) {
+    var destFolder;
+    var destParentID;
+    switch (options.copyTo) {
+        case 'same':
+            destParentID = options.srcParentID;
+            break;
+        case 'custom':
+            destParentID = options.destParentID;
+            break;
+        default:
+            destParentID = this.gDriveService.getRootID();
+    }
+    if (options.copyTo === 'custom' &&
+        FileService.isDescendant([options.destParentID], options.srcFolderID)) {
+        throw new Error('Cannot select destination folder that exists within the source folder');
+    }
+    destFolder = this.gDriveService.insertFolder({
+        description: 'Copy of ' + options.srcFolderName + ', created ' + today,
+        title: options.destFolderName,
         parents: [
-          {
-            kind: 'drive#parentReference',
-            id: this.properties.map[file.parents[0].id]
-          }
+            {
+                kind: 'drive#fileLink',
+                id: destParentID
+            }
+        ],
+        mimeType: 'application/vnd.google-apps.folder'
+    });
+    if (options.copyPermissions) {
+        this.copyPermissions(options.srcFolderID, null, destFolder.id);
+    }
+    return destFolder;
+};
+FileService.prototype.createLoggerSpreadsheet = function (today, destId) {
+    return this.gDriveService.copyFile({
+        title: 'Copy Folder Log ' + today,
+        parents: [
+            {
+                kind: 'drive#parentReference',
+                id: destId
+            }
         ]
-      },
-      file.id
-    );
-  }
+    }, this.baseCopyLogID);
 };
-
-/**
- * copy permissions from source to destination file/folder
- *
- * @param {string} srcId metadata for the source folder
- * @param {string} owners list of owners of src file
- * @param {string} destId metadata for the destination folder
- */
-FileService.prototype.copyPermissions = function(srcId, owners, destId) {
-  var permissions, destPermissions, i, j;
-
-  try {
-    permissions = this.gDriveService.getPermissions(srcId).items;
-  } catch (e) {
-    Util.log(null, Util.composeErrorMsg(e));
-  }
-
-  // copy editors, viewers, and commenters from src file to dest file
-  if (permissions && permissions.length > 0) {
-    for (i = 0; i < permissions.length; i++) {
-      // if there is no email address, it is only sharable by link.
-      // These permissions will not include an email address, but they will include an ID
-      // Permissions.insert requests must include either value or id,
-      // thus the need to differentiate between permission types
-      try {
-        if (permissions[i].emailAddress) {
-          if (permissions[i].role == 'owner') continue;
-
-          this.gDriveService.insertPermission(
-            {
-              role: permissions[i].role,
-              type: permissions[i].type,
-              value: permissions[i].emailAddress
-            },
-            destId,
-            {
-              sendNotificationEmails: 'false'
-            }
-          );
-        } else {
-          this.gDriveService.insertPermission(
-            {
-              role: permissions[i].role,
-              type: permissions[i].type,
-              id: permissions[i].id,
-              withLink: permissions[i].withLink
-            },
-            destId,
-            {
-              sendNotificationEmails: 'false'
-            }
-          );
-        }
-      } catch (e) {}
-    }
-  }
-
-  // convert old owners to editors
-  if (owners && owners.length > 0) {
-    for (i = 0; i < owners.length; i++) {
-      try {
-        this.gDriveService.insertPermission(
-          {
-            role: 'writer',
-            type: 'user',
-            value: owners[i].emailAddress
-          },
-          destId,
-          {
-            sendNotificationEmails: 'false'
-          }
-        );
-      } catch (e) {}
-    }
-  }
-
-  // remove permissions that exist in dest but not source
-  // these were most likely inherited from parent
-
-  try {
-    destPermissions = this.gDriveService.getPermissions(destId).items;
-  } catch (e) {
-    Util.log(null, Util.composeErrorMsg(e));
-  }
-
-  if (destPermissions && destPermissions.length > 0) {
-    for (i = 0; i < destPermissions.length; i++) {
-      for (j = 0; j < permissions.length; j++) {
-        if (destPermissions[i].id == permissions[j].id) {
-          break;
-        }
-        // if destPermissions does not exist in permissions, delete it
-        if (j == permissions.length - 1 && destPermissions[i].role != 'owner') {
-          this.gDriveService.removePermission(destId, destPermissions[i].id);
-        }
-      }
-    }
-  }
+FileService.prototype.createPropertiesDocument = function (destId) {
+    var propertiesDoc = this.gDriveService.insertBlankFile(destId);
+    return propertiesDoc.id;
 };
-
-/**
- * Process leftover files from prior query results
- * that weren't processed before script timed out.
- * Destination folder must be set to the parent of the first leftover item.
- * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
- * @param {UserPropertiesStore} userProperties
- * @param {Spreadsheet} ss
- */
-FileService.prototype.handleLeftovers = function(userProperties, ss) {
-  if (Util.hasSome(this.properties.leftovers, 'items')) {
-    // Commented out on 2018-01-05 because I don't think this is necessary
-    // properties.destFolder = properties.leftovers.items[0].parents[0].id;
-    this.processFileList(this.properties.leftovers.items, userProperties, ss);
-  }
-};
-
-FileService.prototype.handleRetries = function(userProperties, ss) {
-  if (Util.hasSome(this.properties, 'retryQueue')) {
-    // Commented out on 2018-01-05 because I don't think this is necessary
-    // this.properties.destFolder = this.properties.retryQueue[0].parents[0].id;
-    this.processFileList(this.properties.retryQueue, userProperties, ss);
-  }
-};
-
-/**
- * Loops through array of files.items,
- * Applies Drive function to each (i.e. copy),
- * Logs result,
- * Copies permissions if selected and if file is a Drive document,
- * Get current runtime and decide if processing needs to stop.
- *
- * @param {Array} items the list of files over which to iterate
- */
-FileService.prototype.processFileList = function(items, userProperties, ss) {
-  while (items.length > 0 && this.timer.canContinue()) {
-    // Get next file from passed file list.
-    var item = items.pop();
-
-    if (
-      item.numberOfAttempts &&
-      item.numberOfAttempts > this.maxNumberOfAttempts
-    ) {
-      Util.logCopyError(ss, item.error, item, this.properties.timeZone);
-      continue;
-    }
-
-    // Copy each (files and folders are both represented the same in Google Drive)
+FileService.prototype.findPriorCopy = function (folderId) {
+    var query = "'" +
+        folderId +
+        "' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = 'text/plain'";
+    var p = this.gDriveService.getFiles(query, null, 'modifiedDate,createdDate');
+    query =
+        "'" +
+            folderId +
+            "' in parents and title contains 'Copy Folder Log' and mimeType = 'application/vnd.google-apps.spreadsheet'";
+    var s = this.gDriveService.getFiles(query, null, 'title desc');
     try {
-      var newfile = this.copyFile(item);
-      Util.logCopySuccess(ss, newfile, this.properties.timeZone);
-    } catch (e) {
-      this.properties.retryQueue.unshift({
-        id: item.id,
-        title: item.title,
-        parents: item.parents,
-        mimeType: item.mimeType,
-        error: e,
-        owners: item.owners,
-        numberOfAttempts: item.numberOfAttempts ? item.numberOfAttempts + 1 : 1
-      });
+        return {
+            spreadsheetId: s.items[0].id,
+            propertiesDocId: p.items[0].id
+        };
     }
-
-    // Copy permissions if selected, and if permissions exist to copy
-    try {
-      if (
-        this.properties.copyPermissions &&
-        this.nativeMimeTypes.indexOf(item.mimeType) !== -1
-      ) {
-        this.copyPermissions(item.id, item.owners, newfile.id);
-      }
-    } catch (e) {
-      // TODO: logging needed for failed permissions copying?
+    catch (e) {
+        throw new Error('Could not find the necessary data files in the selected folder. ' +
+            'Please ensure that you selected the in-progress copy and not the original folder.');
     }
-
-    // Update current runtime and user stop flag
-    this.timer.update(userProperties);
-  }
 };
-
-/**
- * Create the root folder of the new copy.
- * Copy permissions from source folder to destination folder if copyPermissions == yes
- * @param {object} options
- *  {
- *    srcFolderID: string,
- *    srcParentId: string,
- *    srcFolderName: string,
- *    srcFolderURL: string,
- *    destFolderName: string,
- *    copyPermissions: boolean,
- *    copyTo: number,
- *    destParentID: string,
- *  }
- * @param {string} today format mm/dd/yyyy
- * @return {File Resource} metadata for destination folder, or error on failure
- */
-FileService.prototype.initializeDestinationFolder = function(options, today) {
-  var destFolder;
-
-  var destParentID;
-
-  switch (options.copyTo) {
-    case 'same':
-      destParentID = options.srcParentID;
-      break;
-    case 'custom':
-      destParentID = options.destParentID;
-      break;
-    default:
-      destParentID = this.gDriveService.getRootID();
-  }
-
-  if (
-    options.copyTo === 'custom' &&
-    FileService.isDescendant([options.destParentID], options.srcFolderID)
-  ) {
-    throw new Error(
-      'Cannot select destination folder that exists within the source folder'
-    );
-  }
-
-  destFolder = this.gDriveService.insertFolder({
-    description: 'Copy of ' + options.srcFolderName + ', created ' + today,
-    title: options.destFolderName,
-    parents: [
-      {
-        kind: 'drive#fileLink',
-        id: destParentID
-      }
-    ],
-    mimeType: 'application/vnd.google-apps.folder'
-  });
-
-  if (options.copyPermissions) {
-    this.copyPermissions(options.srcFolderID, null, destFolder.id);
-  }
-
-  return destFolder;
-};
-
-/**
- * Create the spreadsheet used for logging progress of the copy
- * @param {string} today - Stringified version of today's date
- * @param {string} destId - ID of the destination folder, created in createDestinationFolder
- * @return {File Resource} metadata for logger spreadsheet, or error on fail
- */
-FileService.prototype.createLoggerSpreadsheet = function(today, destId) {
-  return this.gDriveService.copyFile(
-    {
-      title: 'Copy Folder Log ' + today,
-      parents: [
-        {
-          kind: 'drive#parentReference',
-          id: destId
+FileService.isDescendant = function (maybeChildIDs, maybeParentID) {
+    for (i = 0; i < maybeChildIDs.length; i++) {
+        if (maybeChildIDs[i] === maybeParentID) {
+            return true;
         }
-      ]
-    },
-    this.baseCopyLogID
-  );
-};
-
-/**
- * Create document that is used to store temporary properties information when the app pauses.
- * Create document as plain text.
- * This will be deleted upon script completion.
- * @param {string} destId - the ID of the destination folder
- * @return {File Resource} metadata for the properties document, or error on fail.
- */
-FileService.prototype.createPropertiesDocument = function(destId) {
-  var propertiesDoc = this.gDriveService.insertBlankFile(destId);
-  return propertiesDoc.id;
-};
-
-/**
- * @returns {object} copy log ID and properties doc ID from a paused folder copy
- */
-FileService.prototype.findPriorCopy = function(folderId) {
-  // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
-  var query =
-    "'" +
-    folderId +
-    "' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = 'text/plain'";
-  var p = this.gDriveService.getFiles(query, null, 'modifiedDate,createdDate');
-
-  // find copy log
-  query =
-    "'" +
-    folderId +
-    "' in parents and title contains 'Copy Folder Log' and mimeType = 'application/vnd.google-apps.spreadsheet'";
-  var s = this.gDriveService.getFiles(query, null, 'title desc');
-
-  try {
-    return {
-      spreadsheetId: s.items[0].id,
-      propertiesDocId: p.items[0].id
-    };
-  } catch (e) {
-    throw new Error(
-      'Could not find the necessary data files in the selected folder. ' +
-        'Please ensure that you selected the in-progress copy and not the original folder.'
-    );
-  }
-};
-
-// STATIC METHODS
-//===============
-
-/**
- * Determines if maybeChildID is a descendant of maybeParentID
- * @param {Array<String>} maybeChildIDs
- * @param {String} maybeParentID
- * @returns {boolean}
- */
-FileService.isDescendant = function(maybeChildIDs, maybeParentID) {
-  // cannot select same folder
-  for (i = 0; i < maybeChildIDs.length; i++) {
-    if (maybeChildIDs[i] === maybeParentID) {
-      return true;
     }
-  }
-
-  var results = [];
-
-  for (i = 0; i < maybeChildIDs.length; i++) {
-    // get parents of maybeChildID
-    var currentParents = getMetadata(maybeChildIDs[i]).parents;
-
-    // if at root or no parents, stop
-    if (!currentParents || currentParents.length === 0) {
-      continue;
+    var results = [];
+    for (i = 0; i < maybeChildIDs.length; i++) {
+        var currentParents = getMetadata(maybeChildIDs[i]).parents;
+        if (!currentParents || currentParents.length === 0) {
+            continue;
+        }
+        for (i = 0; i < currentParents.length; i++) {
+            if (currentParents[i].id === maybeParentID) {
+                return true;
+            }
+        }
+        results.push(FileService.isDescendant(currentParents.map(function (f) {
+            return f.id;
+        }), maybeParentID));
     }
-
-    // check all parents
-    for (i = 0; i < currentParents.length; i++) {
-      if (currentParents[i].id === maybeParentID) {
-        return true;
-      }
+    for (i = 0; i < results.length; i++) {
+        if (results[i]) {
+            return true;
+        }
     }
-
-    // recursively check the parents of the parents
-    results.push(
-      FileService.isDescendant(
-        currentParents.map(function(f) {
-          return f.id;
-        }),
-        maybeParentID
-      )
-    );
-  }
-
-  // check results array for any positives
-  for (i = 0; i < results.length; i++) {
-    if (results[i]) {
-      return true;
+    return false;
+};
+FileService.getFileLinkForSheet = function (id, title) {
+    if (id) {
+        return 'https://drive.google.com/open?id=' + id;
     }
-  }
-  return false;
+    return '';
 };
 
-/**
- * @param {string} id
- * @param {string} title
- * @returns {string}
- */
-FileService.getFileLinkForSheet = function(id, title) {
-  if (id) {
-    return 'https://drive.google.com/open?id=' + id;
-  }
-  return '';
-  // 2018-12-01: different locales use different delimiters. Simplify link so it works everywhere
-  // return (
-  //   '=HYPERLINK("https://drive.google.com/open?id=' + id + '","' + title + '")'
-  // );
-};
-
-/**********************************************
- * Main copy loop
- **********************************************/
-
-/**
- * Copy folders and files from source to destination.
- * Get parameters from userProperties,
- * Loop until time runs out,
- * then call timeout methods, save and createTrigger.
- *
- * @param {boolean} resuming whether or not the copy call is resuming an existing folder copy or starting fresh
- */
 function copy() {
-  // initialize vars
-  var gDriveService = new GDriveService(),
-    properties = new Properties(gDriveService),
-    timer = new Timer(),
-    ss, // {object} instance of Sheet class
-    query, // {string} query to generate Files list
-    fileList, // {object} list of files within Drive folder
-    currFolder, // {object} metadata of folder whose children are currently being processed
-    userProperties = PropertiesService.getUserProperties(), // reference to userProperties store
-    triggerId = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
-    fileService = new FileService(gDriveService, timer, properties);
-
-  // Delete previous trigger
-  TriggerService.deleteTrigger(triggerId);
-
-  // Load properties.
-  // If loading properties fails, return the function and
-  // set a trigger to retry in 6 minutes.
-  try {
-    Util.exponentialBackoff(
-      properties.load.bind(properties),
-      'Error restarting script, trying again...'
-    );
-  } catch (e) {
-    var n = Number(userProperties.getProperties().trials);
-    Logger.log(n);
-
-    if (n < 5) {
-      Logger.log('setting trials property');
-      userProperties.setProperty('trials', (n + 1).toString());
-
-      Util.exponentialBackoff(
-        TriggerService.createTrigger,
-        'Error setting trigger.  There has been a server error with Google Apps Script.' +
-          'To successfully finish copying, please refresh the app and click "Resume Copying"' +
-          'and follow the instructions on the page.'
-      );
+    var gDriveService = new GDriveService(), properties = new Properties(gDriveService), timer = new Timer(), ss, query, fileList, currFolder, userProperties = PropertiesService.getUserProperties(), triggerId = userProperties.getProperty('triggerId'), fileService = new FileService(gDriveService, timer, properties);
+    TriggerService.deleteTrigger(triggerId);
+    try {
+        Util.exponentialBackoff(properties.load.bind(properties), 'Error restarting script, trying again...');
     }
-    return;
-  }
-
-  // Initialize logger spreadsheet
-  ss = gDriveService.openSpreadsheet(properties.spreadsheetId);
-
-  // Create trigger for next run.
-  // This trigger will be deleted if script finishes successfully
-  // or if the stop flag is set.
-  timer.update(userProperties);
-  var duration = timer.calculateTriggerDuration(properties);
-  TriggerService.createTrigger(duration);
-
-  // Process leftover files from prior query results
-  fileService.handleLeftovers(userProperties, ss);
-
-  // Update current runtime and user stop flag
-  timer.update(userProperties);
-
-  // When leftovers are complete, query next folder from properties.remaining
-  while (
-    (properties.remaining.length > 0 || Util.isSome(properties.pageToken)) &&
-    timer.canContinue()
-  ) {
-    // if pages remained in the previous query, use them first
-    if (properties.pageToken) {
-      currFolder = properties.destFolder;
-    } else {
-      try {
-        currFolder = properties.remaining.shift();
-      } catch (e) {
-        console.error('properties.remaining is not parsed correctly');
-        console.error(e);
-        properties.remaining = JSON.parse(properties.remaining);
-        currFolder = properties.remaining.shift();
-      }
+    catch (e) {
+        var n = Number(userProperties.getProperties().trials);
+        Logger.log(n);
+        if (n < 5) {
+            Logger.log('setting trials property');
+            userProperties.setProperty('trials', (n + 1).toString());
+            Util.exponentialBackoff(TriggerService.createTrigger, 'Error setting trigger.  There has been a server error with Google Apps Script.' +
+                'To successfully finish copying, please refresh the app and click "Resume Copying"' +
+                'and follow the instructions on the page.');
+        }
+        return;
     }
-
-    // build query
-    query = '"' + currFolder + '" in parents and trashed = false';
-
-    // Query Drive to get the fileList (children) of the current folder, currFolder
-    // Repeat if pageToken exists (i.e. more than 1000 results return from the query)
-    do {
-      try {
-        fileList = gDriveService.getFiles(query, properties.pageToken);
-      } catch (e) {
-        Util.log(ss, Util.composeErrorMsg(e));
-      }
-      if (!fileList) {
-        console.log('fileList is undefined. currFolder:', currFolder);
-      }
-
-      // Send items to processFileList() to copy if there is anything to copy
-      if (Util.hasSome(fileList, 'items')) {
-        fileService.processFileList(fileList.items, userProperties, ss);
-      } else {
-        Logger.log('No children found.');
-      }
-
-      // get next page token to continue iteration
-      properties.pageToken = fileList ? fileList.nextPageToken : null;
-
-      timer.update(userProperties);
-    } while (properties.pageToken && timer.canContinue());
-  }
-
-  // Retry files that errored during initial run
-  fileService.handleRetries(userProperties, ss);
-
-  // Cleanup
-  Util.cleanup(properties, fileList, userProperties, timer, ss, gDriveService);
+    ss = gDriveService.openSpreadsheet(properties.spreadsheetId);
+    timer.update(userProperties);
+    var duration = timer.calculateTriggerDuration(properties);
+    TriggerService.createTrigger(duration);
+    fileService.handleLeftovers(userProperties, ss);
+    timer.update(userProperties);
+    while ((properties.remaining.length > 0 || Util.isSome(properties.pageToken)) &&
+        timer.canContinue()) {
+        if (properties.pageToken) {
+            currFolder = properties.destFolder;
+        }
+        else {
+            try {
+                currFolder = properties.remaining.shift();
+            }
+            catch (e) {
+                console.error('properties.remaining is not parsed correctly');
+                console.error(e);
+                properties.remaining = JSON.parse(properties.remaining);
+                currFolder = properties.remaining.shift();
+            }
+        }
+        query = '"' + currFolder + '" in parents and trashed = false';
+        do {
+            try {
+                fileList = gDriveService.getFiles(query, properties.pageToken);
+            }
+            catch (e) {
+                Util.log(ss, Util.composeErrorMsg(e));
+            }
+            if (!fileList) {
+                console.log('fileList is undefined. currFolder:', currFolder);
+            }
+            if (Util.hasSome(fileList, 'items')) {
+                fileService.processFileList(fileList.items, userProperties, ss);
+            }
+            else {
+                Logger.log('No children found.');
+            }
+            properties.pageToken = fileList ? fileList.nextPageToken : null;
+            timer.update(userProperties);
+        } while (properties.pageToken && timer.canContinue());
+    }
+    fileService.handleRetries(userProperties, ss);
+    Util.cleanup(properties, fileList, userProperties, timer, ss, gDriveService);
 }
 
 exports.doGet = doGet;
