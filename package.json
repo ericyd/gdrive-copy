@@ -36,6 +36,7 @@
     "webpack": "^2.5.1"
   },
   "scripts": {
+    "pretest": "tsc lib/*.ts --module commonjs || true",
     "test": "nyc mocha --grep formatting --invert --compilers js:babel-core/register",
     "prettier-test": "mocha test/formatting/prettier.test.js --compilers js:babel-core/register",
     "watch": "gulp watch",
@@ -47,7 +48,7 @@
     "gulp:prod": "gulp build",
     "build:prod": "npm run webpack:prod && npm run gulp:prod",
     "build:lib": "rollup -c config/rollup.config.js",
-    "prettier": "prettier --write --single-quote \"{,!(node_modules),!(public),!(dist)/**/}*.{js,css,scss}\""
+    "prettier": "prettier --write --single-quote \"{,!(node_modules),!(public),!(dist)/**/}*.{ts,js,css,scss}\""
   },
   "repository": {
     "type": "git",
