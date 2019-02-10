@@ -30,12 +30,12 @@ import {
  */
 function copy() {
   // initialize vars
-  var gDriveService = new GDriveService(),
-    properties = new Properties(gDriveService),
-    timer = new Timer(),
-    ss, // {object} instance of Sheet class
-    query, // {string} query to generate Files list
-    fileList, // {object} list of files within Drive folder
+  var gDriveService: GDriveService = new GDriveService(),
+    properties: Properties = new Properties(gDriveService),
+    timer: Timer = new Timer(),
+    ss: GoogleAppsScript.Spreadsheet.Sheet,
+    query: string,
+    fileList: gapi.client.drive.FileList,
     currFolder, // {object} metadata of folder whose children are currently being processed
     userProperties = PropertiesService.getUserProperties(), // reference to userProperties store
     triggerId = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
@@ -92,8 +92,8 @@ function copy() {
     timer.canContinue()
   ) {
     // if pages remained in the previous query, use them first
-    if (properties.pageToken) {
-      currFolder = properties.destFolder;
+    if (properties.pageToken && properties.currFolderId) {
+      currFolder = properties.currFolderId;
     } else {
       try {
         currFolder = properties.remaining.shift();

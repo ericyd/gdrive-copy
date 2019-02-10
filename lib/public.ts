@@ -35,24 +35,12 @@ export function doGet(e) {
  * Set UserProperties values and save properties to propertiesDoc.
  * Add link for destination folder to logger spreadsheet.
  * Return IDs of created destination folder and logger spreadsheet
- *
- * @param {object} options
- *  {
- *    srcFolderID: string,
- *    srcParentId: string,
- *    srcFolderName: string,
- *    srcFolderURL: string,
- *    destFolderName: string,
- *    copyPermissions: boolean,
- *    copyTo: number,
- *    destParentID: string,
- *  }
  */
-export function initialize(options) {
+export function initialize(options: FrontEndOptions) {
   var destFolder, // {Object} instance of Folder class representing destination folder
-    spreadsheet, // {Object} instance of Spreadsheet class
-    propertiesDocId, // {Object} metadata for Google Document created to hold properties
-    today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'), // {string} date of copy
+    spreadsheet: File,
+    propertiesDocId: string,
+    today: string = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'),
     gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
@@ -145,7 +133,7 @@ export function initialize(options) {
  * @param {string} url the folder URL
  * @returns {object} the metadata for the folder (File Resource)
  */
-export function getMetadata(id, url) {
+export function getMetadata(id: string, url?: string) {
   try {
     return Drive.Files.get(id);
   } catch (e) {

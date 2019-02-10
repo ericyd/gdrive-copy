@@ -4,437 +4,448 @@
 
 import Util from './Util';
 import { getMetadata } from './public';
+import Properties from './Properties';
+import Timer from './Timer';
+import GDriveService from './GDriveService';
 
-export default function FileService(gDriveService, timer, properties) {
-  this.gDriveService = gDriveService;
-  this.timer = timer;
-  this.properties = properties;
-  this.baseCopyLogID = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
-  this.nativeMimeTypes = [
-    'application/vnd.google-apps.document',
-    'application/vnd.google-apps.folder',
-    'application/vnd.google-apps.spreadsheet',
-    'application/vnd.google-apps.presentation',
-    'application/vnd.google-apps.drawing',
-    'application/vnd.google-apps.form',
-    'application/vnd.google-apps.script'
-  ];
-  this.maxNumberOfAttempts = 3; // this is arbitrary, could go up or down
-  return this;
-}
+export default class FileService {
+  gDriveService: GDriveService;
+  timer: Timer;
+  properties: Properties;
+  baseCopyLogID: string;
+  nativeMimeTypes: string[];
+  maxNumberOfAttempts: number;
 
-/**
- * Try to copy file to destination parent, or add new folder if it's a folder
- * @param {Object} file File Resource with metadata from source file
- */
-FileService.prototype.copyFile = function(file) {
-  // if folder, use insert, else use copy
-  if (file.mimeType == 'application/vnd.google-apps.folder') {
-    var r = this.gDriveService.insertFolder({
-      description: file.description,
-      title: file.title,
-      parents: [
-        {
-          kind: 'drive#parentReference',
-          id: this.properties.map[file.parents[0].id]
-        }
-      ],
-      mimeType: 'application/vnd.google-apps.folder'
-    });
+  constructor(
+    gDriveService: GDriveService,
+    timer: Timer,
+    properties: Properties
+  ) {
+    this.gDriveService = gDriveService;
+    this.timer = timer;
+    this.properties = properties;
+    this.baseCopyLogID = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
+    this.nativeMimeTypes = [
+      'application/vnd.google-apps.document',
+      'application/vnd.google-apps.folder',
+      'application/vnd.google-apps.spreadsheet',
+      'application/vnd.google-apps.presentation',
+      'application/vnd.google-apps.drawing',
+      'application/vnd.google-apps.form',
+      'application/vnd.google-apps.script'
+    ];
+    this.maxNumberOfAttempts = 3; // this is arbitrary, could go up or down
+    return this;
+  }
 
-    // Update list of remaining folders
-    this.properties.remaining.push(file.id);
-
-    // map source to destination
-    this.properties.map[file.id] = r.id;
-
-    return r;
-  } else {
-    return this.gDriveService.copyFile(
-      {
+  /**
+   * Try to copy file to destination parent, or add new folder if it's a folder
+   */
+  copyFile(file: gapi.client.drive.File) {
+    // if folder, use insert, else use copy
+    if (file.mimeType == 'application/vnd.google-apps.folder') {
+      var r = this.gDriveService.insertFolder({
+        description: file.description,
         title: file.title,
         parents: [
           {
             kind: 'drive#parentReference',
             id: this.properties.map[file.parents[0].id]
           }
-        ]
-      },
-      file.id
-    );
-  }
-};
+        ],
+        mimeType: 'application/vnd.google-apps.folder'
+      });
 
-/**
- * copy permissions from source to destination file/folder
- *
- * @param {string} srcId metadata for the source folder
- * @param {string} owners list of owners of src file
- * @param {string} destId metadata for the destination folder
- */
-FileService.prototype.copyPermissions = function(srcId, owners, destId) {
-  var permissions, destPermissions, i, j;
+      // Update list of remaining folders
+      this.properties.remaining.push(file.id);
 
-  try {
-    permissions = this.gDriveService.getPermissions(srcId).items;
-  } catch (e) {
-    Util.log(null, Util.composeErrorMsg(e));
-  }
+      // map source to destination
+      this.properties.map[file.id] = r.id;
 
-  // copy editors, viewers, and commenters from src file to dest file
-  if (permissions && permissions.length > 0) {
-    for (i = 0; i < permissions.length; i++) {
-      // if there is no email address, it is only sharable by link.
-      // These permissions will not include an email address, but they will include an ID
-      // Permissions.insert requests must include either value or id,
-      // thus the need to differentiate between permission types
-      try {
-        if (permissions[i].emailAddress) {
-          if (permissions[i].role == 'owner') continue;
-
-          this.gDriveService.insertPermission(
+      return r;
+    } else {
+      return this.gDriveService.copyFile(
+        {
+          title: file.title,
+          parents: [
             {
-              role: permissions[i].role,
-              type: permissions[i].type,
-              value: permissions[i].emailAddress
-            },
-            destId,
-            {
-              sendNotificationEmails: 'false'
+              kind: 'drive#parentReference',
+              id: this.properties.map[file.parents[0].id]
             }
-          );
-        } else {
-          this.gDriveService.insertPermission(
-            {
-              role: permissions[i].role,
-              type: permissions[i].type,
-              id: permissions[i].id,
-              withLink: permissions[i].withLink
-            },
-            destId,
-            {
-              sendNotificationEmails: 'false'
-            }
-          );
-        }
-      } catch (e) {}
+          ]
+        },
+        file.id
+      );
     }
   }
 
-  // convert old owners to editors
-  if (owners && owners.length > 0) {
-    for (i = 0; i < owners.length; i++) {
-      try {
-        this.gDriveService.insertPermission(
-          {
-            role: 'writer',
-            type: 'user',
-            value: owners[i].emailAddress
-          },
-          destId,
-          {
-            sendNotificationEmails: 'false'
+  /**
+   * copy permissions from source to destination file/folder
+   */
+  copyPermissions(
+    srcId: string,
+    owners: gapi.client.drive.User[],
+    destId: string
+  ) {
+    var permissions, destPermissions, i, j;
+
+    try {
+      permissions = this.gDriveService.getPermissions(srcId).items;
+    } catch (e) {
+      Util.log(null, Util.composeErrorMsg(e));
+    }
+
+    // copy editors, viewers, and commenters from src file to dest file
+    if (permissions && permissions.length > 0) {
+      for (i = 0; i < permissions.length; i++) {
+        // if there is no email address, it is only sharable by link.
+        // These permissions will not include an email address, but they will include an ID
+        // Permissions.insert requests must include either value or id,
+        // thus the need to differentiate between permission types
+        try {
+          if (permissions[i].emailAddress) {
+            if (permissions[i].role == 'owner') continue;
+
+            this.gDriveService.insertPermission(
+              {
+                role: permissions[i].role,
+                type: permissions[i].type,
+                value: permissions[i].emailAddress
+              },
+              destId,
+              {
+                sendNotificationEmails: 'false'
+              }
+            );
+          } else {
+            this.gDriveService.insertPermission(
+              {
+                role: permissions[i].role,
+                type: permissions[i].type,
+                id: permissions[i].id,
+                withLink: permissions[i].withLink
+              },
+              destId,
+              {
+                sendNotificationEmails: 'false'
+              }
+            );
           }
-        );
-      } catch (e) {}
+        } catch (e) {}
+      }
     }
-  }
 
-  // remove permissions that exist in dest but not source
-  // these were most likely inherited from parent
+    // convert old owners to editors
+    if (owners && owners.length > 0) {
+      for (i = 0; i < owners.length; i++) {
+        try {
+          this.gDriveService.insertPermission(
+            {
+              role: 'writer',
+              type: 'user',
+              value: owners[i].emailAddress
+            },
+            destId,
+            {
+              sendNotificationEmails: 'false'
+            }
+          );
+        } catch (e) {}
+      }
+    }
 
-  try {
-    destPermissions = this.gDriveService.getPermissions(destId).items;
-  } catch (e) {
-    Util.log(null, Util.composeErrorMsg(e));
-  }
+    // remove permissions that exist in dest but not source
+    // these were most likely inherited from parent
 
-  if (destPermissions && destPermissions.length > 0) {
-    for (i = 0; i < destPermissions.length; i++) {
-      for (j = 0; j < permissions.length; j++) {
-        if (destPermissions[i].id == permissions[j].id) {
-          break;
-        }
-        // if destPermissions does not exist in permissions, delete it
-        if (j == permissions.length - 1 && destPermissions[i].role != 'owner') {
-          this.gDriveService.removePermission(destId, destPermissions[i].id);
+    try {
+      destPermissions = this.gDriveService.getPermissions(destId).items;
+    } catch (e) {
+      Util.log(null, Util.composeErrorMsg(e));
+    }
+
+    if (destPermissions && destPermissions.length > 0) {
+      for (i = 0; i < destPermissions.length; i++) {
+        for (j = 0; j < permissions.length; j++) {
+          if (destPermissions[i].id == permissions[j].id) {
+            break;
+          }
+          // if destPermissions does not exist in permissions, delete it
+          if (
+            j == permissions.length - 1 &&
+            destPermissions[i].role != 'owner'
+          ) {
+            this.gDriveService.removePermission(destId, destPermissions[i].id);
+          }
         }
       }
     }
   }
-};
 
-/**
- * Process leftover files from prior query results
- * that weren't processed before script timed out.
- * Destination folder must be set to the parent of the first leftover item.
- * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
- * @param {UserPropertiesStore} userProperties
- * @param {Spreadsheet} ss
- */
-FileService.prototype.handleLeftovers = function(userProperties, ss) {
-  if (Util.hasSome(this.properties.leftovers, 'items')) {
-    // Commented out on 2018-01-05 because I don't think this is necessary
-    // properties.destFolder = properties.leftovers.items[0].parents[0].id;
-    this.processFileList(this.properties.leftovers.items, userProperties, ss);
+  /**
+   * Process leftover files from prior query results
+   * that weren't processed before script timed out.
+   * Destination folder must be set to the parent of the first leftover item.
+   * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
+   * @param {UserPropertiesStore} userProperties
+   * @param {Spreadsheet} ss
+   */
+  handleLeftovers(userProperties, ss) {
+    if (Util.hasSome(this.properties.leftovers, 'items')) {
+      this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
+      this.processFileList(this.properties.leftovers.items, userProperties, ss);
+    }
   }
-};
 
-FileService.prototype.handleRetries = function(userProperties, ss) {
-  if (Util.hasSome(this.properties, 'retryQueue')) {
-    // Commented out on 2018-01-05 because I don't think this is necessary
-    // this.properties.destFolder = this.properties.retryQueue[0].parents[0].id;
-    this.processFileList(this.properties.retryQueue, userProperties, ss);
+  handleRetries(userProperties, ss) {
+    if (Util.hasSome(this.properties, 'retryQueue')) {
+      this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
+      this.processFileList(this.properties.retryQueue, userProperties, ss);
+    }
   }
-};
 
-/**
- * Loops through array of files.items,
- * Applies Drive function to each (i.e. copy),
- * Logs result,
- * Copies permissions if selected and if file is a Drive document,
- * Get current runtime and decide if processing needs to stop.
- *
- * @param {Array} items the list of files over which to iterate
- */
-FileService.prototype.processFileList = function(items, userProperties, ss) {
-  while (items.length > 0 && this.timer.canContinue()) {
-    // Get next file from passed file list.
-    var item = items.pop();
+  /**
+   * Loops through array of files.items,
+   * Applies Drive function to each (i.e. copy),
+   * Logs result,
+   * Copies permissions if selected and if file is a Drive document,
+   * Get current runtime and decide if processing needs to stop.
+   *
+   * @param {Array} items the list of files over which to iterate
+   */
+  processFileList(items, userProperties, ss) {
+    while (items.length > 0 && this.timer.canContinue()) {
+      // Get next file from passed file list.
+      var item = items.pop();
+
+      if (
+        item.numberOfAttempts &&
+        item.numberOfAttempts > this.maxNumberOfAttempts
+      ) {
+        Util.logCopyError(ss, item.error, item, this.properties.timeZone);
+        continue;
+      }
+
+      // Copy each (files and folders are both represented the same in Google Drive)
+      try {
+        var newfile = this.copyFile(item);
+        Util.logCopySuccess(ss, newfile, this.properties.timeZone);
+      } catch (e) {
+        this.properties.retryQueue.unshift({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          parents: item.parents,
+          mimeType: item.mimeType,
+          error: e,
+          owners: item.owners,
+          numberOfAttempts: item.numberOfAttempts
+            ? item.numberOfAttempts + 1
+            : 1
+        });
+      }
+
+      // Copy permissions if selected, and if permissions exist to copy
+      try {
+        if (
+          this.properties.copyPermissions &&
+          this.nativeMimeTypes.indexOf(item.mimeType) !== -1
+        ) {
+          this.copyPermissions(item.id, item.owners, newfile.id);
+        }
+      } catch (e) {
+        // TODO: logging needed for failed permissions copying?
+      }
+
+      // Update current runtime and user stop flag
+      this.timer.update(userProperties);
+    }
+  }
+
+  /**
+   * Create the root folder of the new copy.
+   * Copy permissions from source folder to destination folder if copyPermissions == yes
+   */
+  initializeDestinationFolder(
+    options: FrontEndOptions,
+    today: string
+  ): gapi.client.drive.File {
+    var destFolder;
+    var destParentID;
+    switch (options.copyTo) {
+      case 'same':
+        destParentID = options.srcParentID;
+        break;
+      case 'custom':
+        destParentID = options.destParentID;
+        break;
+      default:
+        destParentID = this.gDriveService.getRootID();
+    }
 
     if (
-      item.numberOfAttempts &&
-      item.numberOfAttempts > this.maxNumberOfAttempts
+      options.copyTo === 'custom' &&
+      FileService.isDescendant([options.destParentID], options.srcFolderID)
     ) {
-      Util.logCopyError(ss, item.error, item, this.properties.timeZone);
-      continue;
+      throw new Error(
+        'Cannot select destination folder that exists within the source folder'
+      );
     }
 
-    // Copy each (files and folders are both represented the same in Google Drive)
-    try {
-      var newfile = this.copyFile(item);
-      Util.logCopySuccess(ss, newfile, this.properties.timeZone);
-    } catch (e) {
-      this.properties.retryQueue.unshift({
-        id: item.id,
-        title: item.title,
-        parents: item.parents,
-        mimeType: item.mimeType,
-        error: e,
-        owners: item.owners,
-        numberOfAttempts: item.numberOfAttempts ? item.numberOfAttempts + 1 : 1
-      });
-    }
-
-    // Copy permissions if selected, and if permissions exist to copy
-    try {
-      if (
-        this.properties.copyPermissions &&
-        this.nativeMimeTypes.indexOf(item.mimeType) !== -1
-      ) {
-        this.copyPermissions(item.id, item.owners, newfile.id);
-      }
-    } catch (e) {
-      // TODO: logging needed for failed permissions copying?
-    }
-
-    // Update current runtime and user stop flag
-    this.timer.update(userProperties);
-  }
-};
-
-/**
- * Create the root folder of the new copy.
- * Copy permissions from source folder to destination folder if copyPermissions == yes
- * @param {object} options
- *  {
- *    srcFolderID: string,
- *    srcParentId: string,
- *    srcFolderName: string,
- *    srcFolderURL: string,
- *    destFolderName: string,
- *    copyPermissions: boolean,
- *    copyTo: number,
- *    destParentID: string,
- *  }
- * @param {string} today format mm/dd/yyyy
- * @return {File Resource} metadata for destination folder, or error on failure
- */
-FileService.prototype.initializeDestinationFolder = function(options, today) {
-  var destFolder;
-
-  var destParentID;
-
-  switch (options.copyTo) {
-    case 'same':
-      destParentID = options.srcParentID;
-      break;
-    case 'custom':
-      destParentID = options.destParentID;
-      break;
-    default:
-      destParentID = this.gDriveService.getRootID();
-  }
-
-  if (
-    options.copyTo === 'custom' &&
-    FileService.isDescendant([options.destParentID], options.srcFolderID)
-  ) {
-    throw new Error(
-      'Cannot select destination folder that exists within the source folder'
-    );
-  }
-
-  destFolder = this.gDriveService.insertFolder({
-    description: 'Copy of ' + options.srcFolderName + ', created ' + today,
-    title: options.destFolderName,
-    parents: [
-      {
-        kind: 'drive#fileLink',
-        id: destParentID
-      }
-    ],
-    mimeType: 'application/vnd.google-apps.folder'
-  });
-
-  if (options.copyPermissions) {
-    this.copyPermissions(options.srcFolderID, null, destFolder.id);
-  }
-
-  return destFolder;
-};
-
-/**
- * Create the spreadsheet used for logging progress of the copy
- * @param {string} today - Stringified version of today's date
- * @param {string} destId - ID of the destination folder, created in createDestinationFolder
- * @return {File Resource} metadata for logger spreadsheet, or error on fail
- */
-FileService.prototype.createLoggerSpreadsheet = function(today, destId) {
-  return this.gDriveService.copyFile(
-    {
-      title: 'Copy Folder Log ' + today,
+    destFolder = this.gDriveService.insertFolder({
+      description: 'Copy of ' + options.srcFolderName + ', created ' + today,
+      title: options.destFolderName,
       parents: [
         {
-          kind: 'drive#parentReference',
-          id: destId
+          kind: 'drive#fileLink',
+          id: destParentID
         }
-      ]
-    },
-    this.baseCopyLogID
-  );
-};
+      ],
+      mimeType: 'application/vnd.google-apps.folder'
+    });
 
-/**
- * Create document that is used to store temporary properties information when the app pauses.
- * Create document as plain text.
- * This will be deleted upon script completion.
- * @param {string} destId - the ID of the destination folder
- * @return {File Resource} metadata for the properties document, or error on fail.
- */
-FileService.prototype.createPropertiesDocument = function(destId) {
-  var propertiesDoc = this.gDriveService.insertBlankFile(destId);
-  return propertiesDoc.id;
-};
+    if (options.copyPermissions) {
+      this.copyPermissions(options.srcFolderID, null, destFolder.id);
+    }
 
-/**
- * @returns {object} copy log ID and properties doc ID from a paused folder copy
- */
-FileService.prototype.findPriorCopy = function(folderId) {
-  // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
-  var query =
-    "'" +
-    folderId +
-    "' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = 'text/plain'";
-  var p = this.gDriveService.getFiles(query, null, 'modifiedDate,createdDate');
+    return destFolder;
+  }
 
-  // find copy log
-  query =
-    "'" +
-    folderId +
-    "' in parents and title contains 'Copy Folder Log' and mimeType = 'application/vnd.google-apps.spreadsheet'";
-  var s = this.gDriveService.getFiles(query, null, 'title desc');
-
-  try {
-    return {
-      spreadsheetId: s.items[0].id,
-      propertiesDocId: p.items[0].id
-    };
-  } catch (e) {
-    throw new Error(
-      'Could not find the necessary data files in the selected folder. ' +
-        'Please ensure that you selected the in-progress copy and not the original folder.'
+  /**
+   * Create the spreadsheet used for logging progress of the copy
+   * @return {File Resource} metadata for logger spreadsheet, or error on fail
+   */
+  createLoggerSpreadsheet(
+    today: string,
+    destId: string
+  ): gapi.client.drive.File {
+    return this.gDriveService.copyFile(
+      {
+        title: 'Copy Folder Log ' + today,
+        parents: [
+          {
+            kind: 'drive#parentReference',
+            id: destId
+          }
+        ]
+      },
+      this.baseCopyLogID
     );
   }
-};
 
-// STATIC METHODS
-//===============
+  /**
+   * Create document that is used to store temporary properties information when the app pauses.
+   * Create document as plain text.
+   * This will be deleted upon script completion.
+   * @return {File Resource} metadata for the properties document, or error on fail.
+   */
+  createPropertiesDocument(destId: string) {
+    var propertiesDoc = this.gDriveService.insertBlankFile(destId);
+    return propertiesDoc.id;
+  }
 
-/**
- * Determines if maybeChildID is a descendant of maybeParentID
- * @param {Array<String>} maybeChildIDs
- * @param {String} maybeParentID
- * @returns {boolean}
- */
-FileService.isDescendant = function(maybeChildIDs, maybeParentID) {
-  // cannot select same folder
-  for (i = 0; i < maybeChildIDs.length; i++) {
-    if (maybeChildIDs[i] === maybeParentID) {
-      return true;
+  /**
+   * @returns {object} copy log ID and properties doc ID from a paused folder copy
+   */
+  findPriorCopy(folderId: string) {
+    // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
+    var query =
+      "'" +
+      folderId +
+      "' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = 'text/plain'";
+    var p = this.gDriveService.getFiles(
+      query,
+      null,
+      'modifiedDate,createdDate'
+    );
+
+    // find copy log
+    query =
+      "'" +
+      folderId +
+      "' in parents and title contains 'Copy Folder Log' and mimeType = 'application/vnd.google-apps.spreadsheet'";
+    var s = this.gDriveService.getFiles(query, null, 'title desc');
+
+    try {
+      return {
+        spreadsheetId: s.items[0].id,
+        propertiesDocId: p.items[0].id
+      };
+    } catch (e) {
+      throw new Error(
+        'Could not find the necessary data files in the selected folder. ' +
+          'Please ensure that you selected the in-progress copy and not the original folder.'
+      );
     }
   }
 
-  var results = [];
-
-  for (i = 0; i < maybeChildIDs.length; i++) {
-    // get parents of maybeChildID
-    var currentParents = getMetadata(maybeChildIDs[i]).parents;
-
-    // if at root or no parents, stop
-    if (!currentParents || currentParents.length === 0) {
-      continue;
-    }
-
-    // check all parents
-    for (i = 0; i < currentParents.length; i++) {
-      if (currentParents[i].id === maybeParentID) {
+  /**
+   * Determines if maybeChildID is a descendant of maybeParentID
+   * @param {Array<String>} maybeChildIDs
+   * @param {String} maybeParentID
+   * @returns {boolean}
+   */
+  static isDescendant(maybeChildIDs, maybeParentID) {
+    // cannot select same folder
+    for (var i = 0; i < maybeChildIDs.length; i++) {
+      if (maybeChildIDs[i] === maybeParentID) {
         return true;
       }
     }
 
-    // recursively check the parents of the parents
-    results.push(
-      FileService.isDescendant(
-        currentParents.map(function(f) {
-          return f.id;
-        }),
-        maybeParentID
-      )
-    );
-  }
+    var results = [];
 
-  // check results array for any positives
-  for (i = 0; i < results.length; i++) {
-    if (results[i]) {
-      return true;
+    for (i = 0; i < maybeChildIDs.length; i++) {
+      // get parents of maybeChildID
+      var currentParents = getMetadata(maybeChildIDs[i]).parents;
+
+      // if at root or no parents, stop
+      if (!currentParents || currentParents.length === 0) {
+        continue;
+      }
+
+      // check all parents
+      for (i = 0; i < currentParents.length; i++) {
+        if (currentParents[i].id === maybeParentID) {
+          return true;
+        }
+      }
+
+      // recursively check the parents of the parents
+      results.push(
+        FileService.isDescendant(
+          currentParents.map(function(f) {
+            return f.id;
+          }),
+          maybeParentID
+        )
+      );
     }
-  }
-  return false;
-};
 
-/**
- * @param {string} id
- * @param {string} title
- * @returns {string}
- */
-FileService.getFileLinkForSheet = function(id, title) {
-  if (id) {
-    return 'https://drive.google.com/open?id=' + id;
+    // check results array for any positives
+    for (i = 0; i < results.length; i++) {
+      if (results[i]) {
+        return true;
+      }
+    }
+    return false;
   }
-  return '';
-  // 2018-12-01: different locales use different delimiters. Simplify link so it works everywhere
-  // return (
-  //   '=HYPERLINK("https://drive.google.com/open?id=' + id + '","' + title + '")'
-  // );
-};
+
+  /**
+   * @param {string} id
+   * @param {string} title
+   * @returns {string}
+   */
+  static getFileLinkForSheet(id, title) {
+    if (id) {
+      return 'https://drive.google.com/open?id=' + id;
+    }
+    return '';
+    // 2018-12-01: different locales use different delimiters. Simplify link so it works everywhere
+    // return (
+    //   '=HYPERLINK("https://drive.google.com/open?id=' + id + '","' + title + '")'
+    // );
+  }
+}
+
+// STATIC METHODS
+//===============
