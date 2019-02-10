@@ -25,10 +25,8 @@ import {
  * Get parameters from userProperties,
  * Loop until time runs out,
  * then call timeout methods, save and createTrigger.
- *
- * @param {boolean} resuming whether or not the copy call is resuming an existing folder copy or starting fresh
  */
-function copy() {
+function copy(): void {
   // initialize vars
   var gDriveService: GDriveService = new GDriveService(),
     properties: Properties = new Properties(gDriveService),
@@ -36,10 +34,10 @@ function copy() {
     ss: GoogleAppsScript.Spreadsheet.Sheet,
     query: string,
     fileList: gapi.client.drive.FileList,
-    currFolder, // {object} metadata of folder whose children are currently being processed
-    userProperties = PropertiesService.getUserProperties(), // reference to userProperties store
-    triggerId = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
-    fileService = new FileService(gDriveService, timer, properties);
+    currFolder: string,
+    userProperties: GoogleAppsScript.Properties.UserProperties = PropertiesService.getUserProperties(), // reference to userProperties store
+    triggerId: string = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
+    fileService: FileService = new FileService(gDriveService, timer, properties);
 
   // Delete previous trigger
   TriggerService.deleteTrigger(triggerId);

@@ -5,6 +5,7 @@
 import TriggerService from './TriggerService';
 import Properties from './Properties';
 import FileService from './FileService';
+import GDriveService from './GDriveService';
 
 export default class Util {
   static msgs = {
@@ -20,10 +21,8 @@ export default class Util {
 
   /**
    * Logs values to the logger spreadsheet
-   * @param {object} ss instance of Sheet class representing the logger spreadsheet
-   * @param {Array} values array of values to be written to the spreadsheet
    */
-  static log(ss, values) {
+  static log(ss: GoogleAppsScript.Spreadsheet.Sheet, values: string[]): void {
     if (ss === null || ss === undefined) {
       ss = SpreadsheetApp.openById(
         PropertiesService.getUserProperties().getProperty('spreadsheetId')
@@ -66,13 +65,7 @@ export default class Util {
     }
   }
 
-  /**
-   * @param {Spreadsheet} ss
-   * @param {Error} error
-   * @param {File} item
-   * @param {string} timeZone
-   */
-  static logCopyError(ss, error, item, timeZone) {
+  static logCopyError(ss: GoogleAppsScript.Spreadsheet.Sheet, error: Error, item: gapi.client.drive.File, timeZone: string): void {
     var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
     Util.log(ss, [
       Util.composeErrorMsg(error)[0],
@@ -84,7 +77,7 @@ export default class Util {
     ]);
   }
 
-  static logCopySuccess(ss, item, timeZone) {
+  static logCopySuccess(ss: GoogleAppsScript.Spreadsheet.Sheet, item: gapi.client.drive.File, timeZone: string): void {
     var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
     Util.log(ss, [
       'Copied',
@@ -102,11 +95,8 @@ export default class Util {
    * about 32 seconds before it gives up and rethrows the last error.
    * See: https://developers.google.com/google-apps/documents-list/#implementing_exponential_backoff
    * Author: peter.herrmann@gmail.com (Peter Herrmann)
-   * @param {Function} func The anonymous or named function to call.
-   * @param {string} errorMsg Message to output in case of error
-   * @return {*} The value returned by the called function.
    */
-  static exponentialBackoff(func, errorMsg) {
+  static exponentialBackoff(func: (a?: any) => any, errorMsg: string): any {
     for (var n = 0; n < 6; n++) {
       try {
         return func();
@@ -131,12 +121,8 @@ export default class Util {
 
   /**
    * Save properties and update log
-   * @param {Properties} properties
-   * @param {File List} fileList
-   * @param {string} logMessage - The message to output to the log when state is saved
-   * @param {Sheet} ss spreadsheet instance
    */
-  static saveState(properties, fileList, logMessage, ss, gDriveService) {
+  static saveState(properties: Properties, fileList: gapi.client.drive.FileList, logMessage: string, ss: GoogleAppsScript.Spreadsheet.Sheet, gDriveService: GDriveService) {
     // save, create trigger, and assign pageToken for continuation
     try {
       properties.leftovers =
@@ -193,13 +179,13 @@ export default class Util {
   }
 
   static cleanup(
-    properties,
-    fileList,
-    userProperties,
-    timer,
-    ss,
-    gDriveService
-  ) {
+    properties: Properties,
+    fileList: gapi.client.drive.FileList,
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    timer: Timer,
+    ss: GoogleAppsScript.Spreadsheet.Sheet,
+    gDriveService: GDriveService
+  ): void {
     // track totalRuntime to avoid exceeding quota
     properties.incrementTotalRuntime(timer.runtime);
 
@@ -249,10 +235,8 @@ export default class Util {
 
   /**
    * Returns a reasonable error message wrapped in an array which is required by Util.log
-   * @returns {Array}
    */
-  static composeErrorMsg(e: Error, customMsg?: string) {
-    customMsg = customMsg || 'Error: ';
+  static composeErrorMsg(e: Error, customMsg: string = 'Error: '): string[] {
     return [
       customMsg +
         e.message +
@@ -263,15 +247,15 @@ export default class Util {
     ];
   }
 
-  static isNone(obj) {
+  static isNone(obj: any): boolean {
     return obj === null || obj === undefined;
   }
 
-  static isSome(obj) {
+  static isSome(obj: any): boolean {
     return !Util.isNone(obj);
   }
 
-  static hasSome(obj, prop) {
+  static hasSome(obj: object, prop: string): boolean {
     return obj && obj[prop] && obj[prop].length > 0;
   }
 }

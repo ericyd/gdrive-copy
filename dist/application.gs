@@ -118,8 +118,8 @@ var Properties = (function () {
         });
         return this;
     };
-    Properties.prototype.incrementTotalRuntime = function (ms) {
-        this.totalRuntime += ms;
+    Properties.prototype.incrementTotalRuntime = function (duration) {
+        this.totalRuntime += duration;
     };
     Properties.prototype.checkMaxRuntime = function () {
         this.isOverMaxRuntime =
@@ -290,7 +290,7 @@ var Util = (function () {
         }
     };
     Util.composeErrorMsg = function (e, customMsg) {
-        customMsg = customMsg || 'Error: ';
+        if (customMsg === void 0) { customMsg = 'Error: '; }
         return [
             customMsg +
                 e.message +
@@ -485,11 +485,7 @@ function getMetadata(id, url) {
         return Drive.Files.get(id);
     }
     catch (e) {
-        var errMsg = 'Unable to find a folder with the supplied URL. ' +
-            'You submitted ' +
-            url +
-            '. ' +
-            'Please verify that you are using a valid folder URL and try again.';
+        var errMsg = "Unable to find a folder with the supplied URL. You submitted " + url + ". Please verify that you are using a valid folder URL and try again.";
         throw new Error(errMsg);
     }
 }

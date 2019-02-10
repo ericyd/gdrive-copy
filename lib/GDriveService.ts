@@ -26,7 +26,7 @@ export default class GDriveService {
    * in the future.
    * @param {closure} func
    */
-  throttle(func) {
+  throttle(func: () => any): any {
     var elapsed = Timer.now() - this.lastRequest;
     if (elapsed < this.minElapsed) {
       // Util.log(null, ['sleeping for ' + (this.minElapsed - elapsed).toString()])
@@ -38,10 +38,8 @@ export default class GDriveService {
 
   /**
    * Returns metadata for input file ID
-   * @param {string} id the folder ID for which to return metadata
-   * @return {object} the permissions for the folder
    */
-  getPermissions(id): gapi.client.drive.PermissionList {
+  getPermissions(id: string): gapi.client.drive.PermissionList {
     return this.throttle(function() {
       return Drive.Permissions.list(id);
     });
@@ -68,12 +66,7 @@ export default class GDriveService {
     });
   }
 
-  /**
-   * Download contents of file
-   * @param {string} id
-   * @returns {File Resource}
-   */
-  downloadFile(id): string {
+  downloadFile(id: string): string {
     return this.throttle(function() {
       return DriveApp.getFileById(id)
         .getBlob()
@@ -158,7 +151,7 @@ export default class GDriveService {
     });
   }
 
-  openSpreadsheet(spreadsheetId): GoogleAppsScript.Spreadsheet.Sheet {
+  openSpreadsheet(spreadsheetId: string): GoogleAppsScript.Spreadsheet.Sheet {
     var ss: GoogleAppsScript.Spreadsheet.Sheet;
     try {
       ss = SpreadsheetApp.openById(spreadsheetId).getSheetByName('Log');

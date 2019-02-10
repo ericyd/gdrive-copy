@@ -41,7 +41,7 @@ export default class FileService {
   /**
    * Try to copy file to destination parent, or add new folder if it's a folder
    */
-  copyFile(file: gapi.client.drive.File) {
+  copyFile(file: gapi.client.drive.File): gapi.client.drive.File {
     // if folder, use insert, else use copy
     if (file.mimeType == 'application/vnd.google-apps.folder') {
       var r = this.gDriveService.insertFolder({
@@ -86,7 +86,7 @@ export default class FileService {
     srcId: string,
     owners: gapi.client.drive.User[],
     destId: string
-  ) {
+  ): void {
     var permissions, destPermissions, i, j;
 
     try {
@@ -186,17 +186,15 @@ export default class FileService {
    * that weren't processed before script timed out.
    * Destination folder must be set to the parent of the first leftover item.
    * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
-   * @param {UserPropertiesStore} userProperties
-   * @param {Spreadsheet} ss
    */
-  handleLeftovers(userProperties, ss) {
+  handleLeftovers(userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
       this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
       this.processFileList(this.properties.leftovers.items, userProperties, ss);
     }
   }
 
-  handleRetries(userProperties, ss) {
+  handleRetries(userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
       this.processFileList(this.properties.retryQueue, userProperties, ss);
@@ -209,10 +207,8 @@ export default class FileService {
    * Logs result,
    * Copies permissions if selected and if file is a Drive document,
    * Get current runtime and decide if processing needs to stop.
-   *
-   * @param {Array} items the list of files over which to iterate
    */
-  processFileList(items, userProperties, ss) {
+  processFileList(items: gapi.client.drive.File[], userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
     while (items.length > 0 && this.timer.canContinue()) {
       // Get next file from passed file list.
       var item = items.pop();
@@ -336,17 +332,13 @@ export default class FileService {
    * Create document that is used to store temporary properties information when the app pauses.
    * Create document as plain text.
    * This will be deleted upon script completion.
-   * @return {File Resource} metadata for the properties document, or error on fail.
    */
-  createPropertiesDocument(destId: string) {
+  createPropertiesDocument(destId: string): string {
     var propertiesDoc = this.gDriveService.insertBlankFile(destId);
     return propertiesDoc.id;
   }
 
-  /**
-   * @returns {object} copy log ID and properties doc ID from a paused folder copy
-   */
-  findPriorCopy(folderId: string) {
+  findPriorCopy(folderId: string): { spreadsheetId: string, propertiesDocId: string} {
     // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
     var query =
       "'" +
@@ -380,11 +372,8 @@ export default class FileService {
 
   /**
    * Determines if maybeChildID is a descendant of maybeParentID
-   * @param {Array<String>} maybeChildIDs
-   * @param {String} maybeParentID
-   * @returns {boolean}
    */
-  static isDescendant(maybeChildIDs, maybeParentID) {
+  static isDescendant(maybeChildIDs: string[], maybeParentID: string): boolean {
     // cannot select same folder
     for (var i = 0; i < maybeChildIDs.length; i++) {
       if (maybeChildIDs[i] === maybeParentID) {
@@ -430,12 +419,7 @@ export default class FileService {
     return false;
   }
 
-  /**
-   * @param {string} id
-   * @param {string} title
-   * @returns {string}
-   */
-  static getFileLinkForSheet(id, title) {
+  static getFileLinkForSheet(id: string, title?: string): string {
     if (id) {
       return 'https://drive.google.com/open?id=' + id;
     }
@@ -446,6 +430,3 @@ export default class FileService {
     // );
   }
 }
-
-// STATIC METHODS
-//===============

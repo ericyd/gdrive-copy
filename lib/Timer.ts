@@ -1,3 +1,5 @@
+import Properties from "./Properties";
+
 /**********************************************
  * Tracks runtime of application to avoid
  * exceeding Google quotas
@@ -28,36 +30,27 @@ export default class Timer {
 
   /**
    * Update current time
-   * @param {UserPropertiesService} userProperties
    */
-  update(userProperties) {
+  update(userProperties: GoogleAppsScript.Properties.UserProperties): void {
     this.runtime = Timer.now() - this.START_TIME;
     this.timeIsUp = this.runtime >= Timer.MAX_RUNTIME;
     this.stop = userProperties.getProperty('stop') == 'true';
   }
 
-  /**
-   * @returns {boolean}
-   */
-  canContinue() {
+  canContinue(): boolean {
     return !this.timeIsUp && !this.stop;
   }
 
   /**
    * Calculate how far in the future the trigger should be set
-   * @param {Properties} properties
-   * @returns {number}
    */
-  calculateTriggerDuration(properties) {
+  calculateTriggerDuration(properties: Properties): number {
     return properties.checkMaxRuntime()
       ? Timer.oneDay
       : Timer.sixMinutes - this.runtime;
   }
 
-  /**
-   * @returns {number}
-   */
-  static now() {
+  static now(): number {
     return new Date().getTime();
   }
 }

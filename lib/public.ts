@@ -36,7 +36,11 @@ export function doGet(e) {
  * Add link for destination folder to logger spreadsheet.
  * Return IDs of created destination folder and logger spreadsheet
  */
-export function initialize(options: FrontEndOptions) {
+export function initialize(options: FrontEndOptions): {
+  spreadsheetId: string,
+  destFolderId: string,
+  resuming: boolean
+} {
   var destFolder, // {Object} instance of Folder class representing destination folder
     spreadsheet: File,
     propertiesDocId: string,
@@ -128,41 +132,24 @@ export function initialize(options: FrontEndOptions) {
   };
 }
 
-/**
- * @param {string} id the folder ID for which to return metadata
- * @param {string} url the folder URL
- * @returns {object} the metadata for the folder (File Resource)
- */
-export function getMetadata(id: string, url?: string) {
+export function getMetadata(id: string, url?: string): gapi.client.drive.File {
   try {
     return Drive.Files.get(id);
   } catch (e) {
-    var errMsg =
-      'Unable to find a folder with the supplied URL. ' +
-      'You submitted ' +
-      url +
-      '. ' +
-      'Please verify that you are using a valid folder URL and try again.';
+    var errMsg = `Unable to find a folder with the supplied URL. You submitted ${url}. Please verify that you are using a valid folder URL and try again.`
     throw new Error(errMsg);
   }
 }
 
-/**
- * @returns {string} email of the active user
- */
-export function getUserEmail() {
+export function getUserEmail(): string {
   return Session.getActiveUser().getEmail();
 }
 
 /**
  * Find prior copy folder instance.
  * Find propertiesDoc and logger spreadsheet, and save IDs to userProperties, which will be used by load.
- *
- * @param options object containing information on folder selected in app
- * @returns {{spreadsheetId: string, destId: string, resuming: boolean}}
  */
-
-export function resume(options) {
+export function resume(options: FrontEndOptions): {spreadsheetId: string, destFolderId: string, resuming: boolean} {
   var gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
@@ -186,7 +173,7 @@ export function resume(options) {
 /**
  * Set a flag in the userProperties store that will cancel the current copy folder process
  */
-export function setStopFlag() {
+export function setStopFlag(): GoogleAppsScript.Properties.Properties {
   return PropertiesService.getUserProperties().setProperty('stop', 'true');
 }
 

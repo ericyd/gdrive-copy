@@ -1,3 +1,6 @@
+/**
+ * Represents the options sent from the front end client when initiating a copy
+ */
 type FrontEndOptions = {
   srcFolderID: string;
   srcParentId: string;
@@ -15,4 +18,13 @@ type FrontEndOptions = {
   map?: object;
   remaining?: string[];
   timeZone?: string;
+  destFolderId?: string;
 };
+
+/**
+ * Drive must be declared since we aren't using the gapi library but using it for typings
+ */
+declare namespace Drive {
+  const Files: gapi.client.drive.FilesResource;
+  const Permissions: gapi.client.drive.PermissionsResource;
+}

@@ -15,17 +15,17 @@ export default class Properties {
   copyTo: string;
   destParentID: string;
   destId: string;
-  currFolderId: string | null;
+  currFolderId?: string;
   spreadsheetId: string;
   propertiesDocId: string;
-  leftovers: gapi.client.drive.FileList | null;
+  leftovers?: gapi.client.drive.FileList;
   retryQueue: gapi.client.drive.File[];
   map: object;
   remaining: string[];
   timeZone: string;
   totalRuntime: number;
-  pageToken: string | null;
-  isOverMaxRuntime: boolean | null;
+  pageToken?: string;
+  isOverMaxRuntime?: boolean;
 
   constructor(gDriveService: GDriveService) {
     this.gDriveService = gDriveService;
@@ -50,9 +50,8 @@ export default class Properties {
   }
   /**
    * Load properties document from user's drive and parse.
-   * @return {object} properties object
    */
-  load() {
+  load(): Properties {
     var _this = this;
     try {
       var propertiesDocId = PropertiesService.getUserProperties().getProperties()
@@ -91,21 +90,16 @@ export default class Properties {
     return this;
   }
 
-  /**
-   * Increment `totalRuntime` property
-   * @param {number} ms amount in milliseconds to increment
-   */
-  incrementTotalRuntime(ms) {
-    this.totalRuntime += ms;
+  incrementTotalRuntime(duration: number): void {
+    this.totalRuntime += duration;
   }
 
   /**
    * Determine if script has exceeded max daily runtime
    * If yes, need to sleep for one day to avoid throwing
    * "Script using too much computer time" error
-   * @returns {boolean}
    */
-  checkMaxRuntime() {
+  checkMaxRuntime(): boolean {
     this.isOverMaxRuntime =
       this.totalRuntime + Timer.MAX_RUNTIME >= Timer.MAX_RUNTIME_PER_DAY;
     return this.isOverMaxRuntime;
@@ -113,10 +107,8 @@ export default class Properties {
 
   /**
    * Stringify properties argument and save to file in user's Drive
-   *
-   * @param {object} properties - contains all properties that need to be saved to userProperties
    */
-  static save(properties, gDriveService) {
+  static save(properties: Properties | FrontEndOptions, gDriveService: GDriveService): gapi.client.drive.File {
     try {
       var stringifiedProps = JSON.stringify(properties);
     } catch (e) {
@@ -141,11 +133,11 @@ export default class Properties {
    * properties document will not be known.
    */
   static setUserPropertiesStore(
-    spreadsheetId,
-    propertiesDocId,
-    destId,
-    resuming
-  ) {
+    spreadsheetId: string,
+    propertiesDocId: string,
+    destId: string,
+    resuming: string
+  ): void {
     var userProperties = PropertiesService.getUserProperties();
     userProperties.setProperty('destId', destId);
     userProperties.setProperty('spreadsheetId', spreadsheetId);
