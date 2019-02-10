@@ -6,6 +6,7 @@ import TriggerService from './TriggerService';
 import Properties from './Properties';
 import FileService from './FileService';
 import GDriveService from './GDriveService';
+import Timer from './Timer';
 
 export default class Util {
   static msgs = {
@@ -65,7 +66,7 @@ export default class Util {
     }
   }
 
-  static logCopyError(ss: GoogleAppsScript.Spreadsheet.Sheet, error: Error, item: gapi.client.drive.File, timeZone: string): void {
+  static logCopyError(ss: GoogleAppsScript.Spreadsheet.Sheet, error: Error, item: gapi.client.drive.FileResource, timeZone: string): void {
     var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
     Util.log(ss, [
       Util.composeErrorMsg(error)[0],
@@ -77,7 +78,7 @@ export default class Util {
     ]);
   }
 
-  static logCopySuccess(ss: GoogleAppsScript.Spreadsheet.Sheet, item: gapi.client.drive.File, timeZone: string): void {
+  static logCopySuccess(ss: GoogleAppsScript.Spreadsheet.Sheet, item: gapi.client.drive.FileResource, timeZone: string): void {
     var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
     Util.log(ss, [
       'Copied',
@@ -122,7 +123,7 @@ export default class Util {
   /**
    * Save properties and update log
    */
-  static saveState(properties: Properties, fileList: gapi.client.drive.FileList, logMessage: string, ss: GoogleAppsScript.Spreadsheet.Sheet, gDriveService: GDriveService) {
+  static saveState(properties: Properties, fileList: gapi.client.drive.FileListResource, logMessage: string, ss: GoogleAppsScript.Spreadsheet.Sheet, gDriveService: GDriveService) {
     // save, create trigger, and assign pageToken for continuation
     try {
       properties.leftovers =
@@ -180,7 +181,7 @@ export default class Util {
 
   static cleanup(
     properties: Properties,
-    fileList: gapi.client.drive.FileList,
+    fileList: gapi.client.drive.FileListResource,
     userProperties: GoogleAppsScript.Properties.UserProperties,
     timer: Timer,
     ss: GoogleAppsScript.Spreadsheet.Sheet,

@@ -41,7 +41,7 @@ export default class FileService {
   /**
    * Try to copy file to destination parent, or add new folder if it's a folder
    */
-  copyFile(file: gapi.client.drive.File): gapi.client.drive.File {
+  copyFile(file: gapi.client.drive.FileResource): gapi.client.drive.FileResource {
     // if folder, use insert, else use copy
     if (file.mimeType == 'application/vnd.google-apps.folder') {
       var r = this.gDriveService.insertFolder({
@@ -84,7 +84,7 @@ export default class FileService {
    */
   copyPermissions(
     srcId: string,
-    owners: gapi.client.drive.User[],
+    owners: {emailAddress: string}[],
     destId: string
   ): void {
     var permissions, destPermissions, i, j;
@@ -208,7 +208,7 @@ export default class FileService {
    * Copies permissions if selected and if file is a Drive document,
    * Get current runtime and decide if processing needs to stop.
    */
-  processFileList(items: gapi.client.drive.File[], userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  processFileList(items: gapi.client.drive.FileResource[], userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
     while (items.length > 0 && this.timer.canContinue()) {
       // Get next file from passed file list.
       var item = items.pop();
@@ -264,7 +264,7 @@ export default class FileService {
   initializeDestinationFolder(
     options: FrontEndOptions,
     today: string
-  ): gapi.client.drive.File {
+  ): gapi.client.drive.FileResource {
     var destFolder;
     var destParentID;
     switch (options.copyTo) {
@@ -313,7 +313,7 @@ export default class FileService {
   createLoggerSpreadsheet(
     today: string,
     destId: string
-  ): gapi.client.drive.File {
+  ): gapi.client.drive.FileResource {
     return this.gDriveService.copyFile(
       {
         title: 'Copy Folder Log ' + today,

@@ -42,7 +42,7 @@ export function initialize(options: FrontEndOptions): {
   resuming: boolean
 } {
   var destFolder, // {Object} instance of Folder class representing destination folder
-    spreadsheet: File,
+    spreadsheet: gapi.client.drive.FileResource,
     propertiesDocId: string,
     today: string = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'),
     gDriveService = new GDriveService(),
@@ -61,8 +61,7 @@ export function initialize(options: FrontEndOptions): {
   options.propertiesDocId = propertiesDocId;
 
   // initialize map with top level source and destination folder
-  options.leftovers = {}; // {Object} FileList object (returned from Files.list) for items not processed in prior execution (filled in saveState)
-  options.map = {}; // {Object} map of source ids (keys) to destination ids (values)
+  options.map = {};
   options.map[options.srcFolderID] = options.destId;
   options.remaining = [options.srcFolderID];
 
@@ -132,7 +131,7 @@ export function initialize(options: FrontEndOptions): {
   };
 }
 
-export function getMetadata(id: string, url?: string): gapi.client.drive.File {
+export function getMetadata(id: string, url?: string): gapi.client.drive.FileResource {
   try {
     return Drive.Files.get(id);
   } catch (e) {

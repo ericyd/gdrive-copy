@@ -39,7 +39,7 @@ export default class GDriveService {
   /**
    * Returns metadata for input file ID
    */
-  getPermissions(id: string): gapi.client.drive.PermissionList {
+  getPermissions(id: string): {items: gapi.client.drive.PermissionResource[]} {
     return this.throttle(function() {
       return Drive.Permissions.list(id);
     });
@@ -55,7 +55,7 @@ export default class GDriveService {
     query: string,
     pageToken: string | null,
     orderBy?: string
-  ): gapi.client.drive.FileList {
+  ): gapi.client.drive.FileListResource {
     return this.throttle(function() {
       return Drive.Files.list({
         q: query,
@@ -80,8 +80,8 @@ export default class GDriveService {
   updateFile(
     metadata: object,
     fileID: string,
-    mediaData: object
-  ): gapi.client.drive.File {
+    mediaData?: object
+  ): gapi.client.drive.FileResource {
     return this.throttle(function() {
       return Drive.Files.update(metadata, fileID, mediaData);
     });
@@ -90,7 +90,7 @@ export default class GDriveService {
   /**
    * Insert a file with metadata defined by `body`
    */
-  insertFolder(body: object): gapi.client.drive.File {
+  insertFolder(body: object): gapi.client.drive.FileResource {
     return this.throttle(function() {
       return Drive.Files.insert(body);
     });
@@ -99,7 +99,7 @@ export default class GDriveService {
   /**
    * Insert file with fixed metadata used to store properties
    */
-  insertBlankFile(parentID: string): gapi.client.drive.File {
+  insertBlankFile(parentID: string): gapi.client.drive.FileResource {
     // doesn't need to be throttled because it returns a throttled function
     return this.insertFolder({
       description:
@@ -116,7 +116,7 @@ export default class GDriveService {
     });
   }
 
-  copyFile(body: gapi.client.drive.File, id: string): gapi.client.drive.File {
+  copyFile(body: gapi.client.drive.FileResource, id: string): gapi.client.drive.FileResource {
     return this.throttle(function() {
       return Drive.Files.copy(body, id);
     });
@@ -130,7 +130,7 @@ export default class GDriveService {
     body: object,
     id: string,
     options: object
-  ): gapi.client.drive.Permission {
+  ): gapi.client.drive.PermissionResource {
     return this.throttle(function() {
       return Drive.Permissions.insert(body, id, options);
     });

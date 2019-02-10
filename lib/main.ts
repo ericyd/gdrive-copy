@@ -33,7 +33,7 @@ function copy(): void {
     timer: Timer = new Timer(),
     ss: GoogleAppsScript.Spreadsheet.Sheet,
     query: string,
-    fileList: gapi.client.drive.FileList,
+    fileList: gapi.client.drive.FileListResource,
     currFolder: string,
     userProperties: GoogleAppsScript.Properties.UserProperties = PropertiesService.getUserProperties(), // reference to userProperties store
     triggerId: string = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger

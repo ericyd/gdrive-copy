@@ -433,7 +433,6 @@ function initialize(options) {
     options.destId = destFolder.id;
     options.spreadsheetId = spreadsheet.id;
     options.propertiesDocId = propertiesDocId;
-    options.leftovers = {};
     options.map = {};
     options.map[options.srcFolderID] = options.destId;
     options.remaining = [options.srcFolderID];

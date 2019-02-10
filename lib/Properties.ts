@@ -18,8 +18,8 @@ export default class Properties {
   currFolderId?: string;
   spreadsheetId: string;
   propertiesDocId: string;
-  leftovers?: gapi.client.drive.FileList;
-  retryQueue: gapi.client.drive.File[];
+  leftovers?: gapi.client.drive.FileListResource;
+  retryQueue: gapi.client.drive.FileResource[];
   map: object;
   remaining: string[];
   timeZone: string;
@@ -108,7 +108,7 @@ export default class Properties {
   /**
    * Stringify properties argument and save to file in user's Drive
    */
-  static save(properties: Properties | FrontEndOptions, gDriveService: GDriveService): gapi.client.drive.File {
+  static save(properties: Properties | FrontEndOptions, gDriveService: GDriveService): gapi.client.drive.FileResource {
     try {
       var stringifiedProps = JSON.stringify(properties);
     } catch (e) {

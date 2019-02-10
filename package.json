@@ -5,7 +5,7 @@
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {
-    "@types/gapi.client.drive": "^3.0.2",
+    "@types/gapi.drive": "0.0.1",
     "@types/google-apps-script": "0.0.37",
     "autoprefixer": "^9.4.6",
     "babel-core": "^6.26.3",
