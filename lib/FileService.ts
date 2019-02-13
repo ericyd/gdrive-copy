@@ -8,12 +8,13 @@ import Properties from './Properties';
 import Timer from './Timer';
 import GDriveService from './GDriveService';
 import API from './API';
+import MimeType from './MimeType';
+import Constants from './Constants';
 
 export default class FileService {
   gDriveService: GDriveService;
   timer: Timer;
   properties: Properties;
-  baseCopyLogID: string;
   nativeMimeTypes: string[];
   maxNumberOfAttempts: number;
 
@@ -25,15 +26,14 @@ export default class FileService {
     this.gDriveService = gDriveService;
     this.timer = timer;
     this.properties = properties;
-    this.baseCopyLogID = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
     this.nativeMimeTypes = [
-      'application/vnd.google-apps.document',
-      'application/vnd.google-apps.folder',
-      'application/vnd.google-apps.spreadsheet',
-      'application/vnd.google-apps.presentation',
-      'application/vnd.google-apps.drawing',
-      'application/vnd.google-apps.form',
-      'application/vnd.google-apps.script'
+      MimeType.DOC,
+      MimeType.DRAWING,
+      MimeType.FOLDER,
+      MimeType.FORM,
+      MimeType.SCRIPT,
+      MimeType.SHEET,
+      MimeType.SLIDES
     ];
     this.maxNumberOfAttempts = 3; // this is arbitrary, could go up or down
     return this;
@@ -46,12 +46,12 @@ export default class FileService {
     file: gapi.client.drive.FileResource
   ): gapi.client.drive.FileResource {
     // if folder, use insert, else use copy
-    if (file.mimeType == 'application/vnd.google-apps.folder') {
+    if (file.mimeType == MimeType.FOLDER) {
       var r = this.gDriveService.insertFolder(
         API.copyFileBody(
           this.properties.map[file.parents[0].id],
           file.title,
-          'application/vnd.google-apps.folder',
+          MimeType.FOLDER,
           file.description
         )
       );
@@ -311,7 +311,7 @@ export default class FileService {
   ): gapi.client.drive.FileResource {
     return this.gDriveService.copyFile(
       API.copyFileBody(destId, `Copy Folder Log ${today}`),
-      this.baseCopyLogID
+      Constants.BaseCopyLogId
     );
   }
 
@@ -329,10 +329,9 @@ export default class FileService {
     folderId: string
   ): { spreadsheetId: string; propertiesDocId: string } {
     // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
-    var query =
-      "'" +
-      folderId +
-      "' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = 'text/plain'";
+    var query = `'${folderId}' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '${
+      MimeType.PLAINTEXT
+    }'`;
     var p = this.gDriveService.getFiles(
       query,
       null,
@@ -340,10 +339,9 @@ export default class FileService {
     );
 
     // find copy log
-    query =
-      "'" +
-      folderId +
-      "' in parents and title contains 'Copy Folder Log' and mimeType = 'application/vnd.google-apps.spreadsheet'";
+    query = `'${folderId}' in parents and title contains 'Copy Folder Log' and mimeType = '${
+      MimeType.SHEET
+    }'`;
     var s = this.gDriveService.getFiles(query, null, 'title desc');
 
     try {

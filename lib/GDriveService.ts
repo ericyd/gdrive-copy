@@ -1,4 +1,7 @@
 import Timer from './Timer';
+import MimeType from './MimeType';
+import API from './API';
+import Constants from './Constants';
 
 /**********************************************
  * Namespace to wrap calls to Drive API
@@ -39,7 +42,9 @@ export default class GDriveService {
   /**
    * Returns metadata for input file ID
    */
-  getPermissions(id: string): {items: gapi.client.drive.PermissionResource[]} {
+  getPermissions(
+    id: string
+  ): { items: gapi.client.drive.PermissionResource[] } {
     return this.throttle(function() {
       return Drive.Permissions.list(id);
     });
@@ -101,22 +106,20 @@ export default class GDriveService {
    */
   insertBlankFile(parentID: string): gapi.client.drive.FileResource {
     // doesn't need to be throttled because it returns a throttled function
-    return this.insertFolder({
-      description:
-        'This document will be deleted after the folder copy is complete. It is only used to store properties necessary to complete the copying procedure',
-      title:
-        'DO NOT DELETE OR MODIFY - will be deleted after copying completes',
-      parents: [
-        {
-          kind: 'drive#fileLink',
-          id: parentID
-        }
-      ],
-      mimeType: 'text/plain'
-    });
+    return this.insertFolder(
+      API.copyFileBody(
+        parentID,
+        Constants.PropertiesDocTitle,
+        MimeType.PLAINTEXT,
+        Constants.PropertiesDocDescription
+      )
+    );
   }
 
-  copyFile(body: gapi.client.drive.FileResource, id: string): gapi.client.drive.FileResource {
+  copyFile(
+    body: gapi.client.drive.FileResource,
+    id: string
+  ): gapi.client.drive.FileResource {
     return this.throttle(function() {
       return Drive.Files.copy(body, id);
     });
