@@ -7,6 +7,7 @@ import { getMetadata } from './public';
 import Properties from './Properties';
 import Timer from './Timer';
 import GDriveService from './GDriveService';
+import API from './API';
 
 export default class FileService {
   gDriveService: GDriveService;
@@ -41,20 +42,19 @@ export default class FileService {
   /**
    * Try to copy file to destination parent, or add new folder if it's a folder
    */
-  copyFile(file: gapi.client.drive.FileResource): gapi.client.drive.FileResource {
+  copyFile(
+    file: gapi.client.drive.FileResource
+  ): gapi.client.drive.FileResource {
     // if folder, use insert, else use copy
     if (file.mimeType == 'application/vnd.google-apps.folder') {
-      var r = this.gDriveService.insertFolder({
-        description: file.description,
-        title: file.title,
-        parents: [
-          {
-            kind: 'drive#parentReference',
-            id: this.properties.map[file.parents[0].id]
-          }
-        ],
-        mimeType: 'application/vnd.google-apps.folder'
-      });
+      var r = this.gDriveService.insertFolder(
+        API.copyFileBody(
+          this.properties.map[file.parents[0].id],
+          file.title,
+          'application/vnd.google-apps.folder',
+          file.description
+        )
+      );
 
       // Update list of remaining folders
       this.properties.remaining.push(file.id);
@@ -65,15 +65,7 @@ export default class FileService {
       return r;
     } else {
       return this.gDriveService.copyFile(
-        {
-          title: file.title,
-          parents: [
-            {
-              kind: 'drive#parentReference',
-              id: this.properties.map[file.parents[0].id]
-            }
-          ]
-        },
+        API.copyFileBody(this.properties.map[file.parents[0].id], file.title),
         file.id
       );
     }
@@ -84,7 +76,7 @@ export default class FileService {
    */
   copyPermissions(
     srcId: string,
-    owners: {emailAddress: string}[],
+    owners: { emailAddress: string }[],
     destId: string
   ): void {
     var permissions, destPermissions, i, j;
@@ -107,11 +99,11 @@ export default class FileService {
             if (permissions[i].role == 'owner') continue;
 
             this.gDriveService.insertPermission(
-              {
-                role: permissions[i].role,
-                type: permissions[i].type,
-                value: permissions[i].emailAddress
-              },
+              API.permissionBodyValue(
+                permissions[i].role,
+                permissions[i].type,
+                permissions[i].emailAddress
+              ),
               destId,
               {
                 sendNotificationEmails: 'false'
@@ -119,12 +111,12 @@ export default class FileService {
             );
           } else {
             this.gDriveService.insertPermission(
-              {
-                role: permissions[i].role,
-                type: permissions[i].type,
-                id: permissions[i].id,
-                withLink: permissions[i].withLink
-              },
+              API.permissionBodyId(
+                permissions[i].role,
+                permissions[i].type,
+                permissions[i].id,
+                permissions[i].withLink
+              ),
               destId,
               {
                 sendNotificationEmails: 'false'
@@ -140,11 +132,7 @@ export default class FileService {
       for (i = 0; i < owners.length; i++) {
         try {
           this.gDriveService.insertPermission(
-            {
-              role: 'writer',
-              type: 'user',
-              value: owners[i].emailAddress
-            },
+            API.permissionBodyValue('writer', 'user', owners[i].emailAddress),
             destId,
             {
               sendNotificationEmails: 'false'
@@ -187,14 +175,20 @@ export default class FileService {
    * Destination folder must be set to the parent of the first leftover item.
    * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
    */
-  handleLeftovers(userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  handleLeftovers(
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
       this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
       this.processFileList(this.properties.leftovers.items, userProperties, ss);
     }
   }
 
-  handleRetries(userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  handleRetries(
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
       this.processFileList(this.properties.retryQueue, userProperties, ss);
@@ -208,7 +202,11 @@ export default class FileService {
    * Copies permissions if selected and if file is a Drive document,
    * Get current runtime and decide if processing needs to stop.
    */
-  processFileList(items: gapi.client.drive.FileResource[], userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  processFileList(
+    items: gapi.client.drive.FileResource[],
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
     while (items.length > 0 && this.timer.canContinue()) {
       // Get next file from passed file list.
       var item = items.pop();
@@ -287,17 +285,14 @@ export default class FileService {
       );
     }
 
-    destFolder = this.gDriveService.insertFolder({
-      description: 'Copy of ' + options.srcFolderName + ', created ' + today,
-      title: options.destFolderName,
-      parents: [
-        {
-          kind: 'drive#fileLink',
-          id: destParentID
-        }
-      ],
-      mimeType: 'application/vnd.google-apps.folder'
-    });
+    destFolder = this.gDriveService.insertFolder(
+      API.copyFileBody(
+        destParentID,
+        options.destFolderName,
+        'application/vnd.google-apps.folder',
+        `Copy of ${options.srcFolderName}, created ${today}`
+      )
+    );
 
     if (options.copyPermissions) {
       this.copyPermissions(options.srcFolderID, null, destFolder.id);
@@ -315,15 +310,7 @@ export default class FileService {
     destId: string
   ): gapi.client.drive.FileResource {
     return this.gDriveService.copyFile(
-      {
-        title: 'Copy Folder Log ' + today,
-        parents: [
-          {
-            kind: 'drive#parentReference',
-            id: destId
-          }
-        ]
-      },
+      API.copyFileBody(destId, `Copy Folder Log ${today}`),
       this.baseCopyLogID
     );
   }
@@ -338,7 +325,9 @@ export default class FileService {
     return propertiesDoc.id;
   }
 
-  findPriorCopy(folderId: string): { spreadsheetId: string, propertiesDocId: string} {
+  findPriorCopy(
+    folderId: string
+  ): { spreadsheetId: string; propertiesDocId: string } {
     // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
     var query =
       "'" +

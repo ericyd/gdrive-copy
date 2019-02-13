@@ -517,6 +517,45 @@ function getOAuthToken() {
     return ScriptApp.getOAuthToken();
 }
 
+var API = (function () {
+    function API() {
+    }
+    API.copyFileBody = function (parentId, title, mimeType, description) {
+        if (mimeType === void 0) { mimeType = null; }
+        if (description === void 0) { description = null; }
+        var body = {
+            title: title,
+            description: description,
+            parents: [
+                {
+                    kind: 'drive#parentReference',
+                    id: parentId
+                }
+            ]
+        };
+        if (mimeType) {
+            body = Object.assign(body, { mimeType: mimeType });
+        }
+        return body;
+    };
+    API.permissionBodyValue = function (role, type, value) {
+        return {
+            role: role,
+            type: type,
+            value: value
+        };
+    };
+    API.permissionBodyId = function (role, type, id, withLink) {
+        return {
+            role: role,
+            type: type,
+            id: id,
+            withLink: withLink
+        };
+    };
+    return API;
+}());
+
 var FileService = (function () {
     function FileService(gDriveService, timer, properties) {
         this.gDriveService = gDriveService;
@@ -537,31 +576,13 @@ var FileService = (function () {
     }
     FileService.prototype.copyFile = function (file) {
         if (file.mimeType == 'application/vnd.google-apps.folder') {
-            var r = this.gDriveService.insertFolder({
-                description: file.description,
-                title: file.title,
-                parents: [
-                    {
-                        kind: 'drive#parentReference',
-                        id: this.properties.map[file.parents[0].id]
-                    }
-                ],
-                mimeType: 'application/vnd.google-apps.folder'
-            });
+            var r = this.gDriveService.insertFolder(API.copyFileBody(this.properties.map[file.parents[0].id], file.title, 'application/vnd.google-apps.folder', file.description));
             this.properties.remaining.push(file.id);
             this.properties.map[file.id] = r.id;
             return r;
         }
         else {
-            return this.gDriveService.copyFile({
-                title: file.title,
-                parents: [
-                    {
-                        kind: 'drive#parentReference',
-                        id: this.properties.map[file.parents[0].id]
-                    }
-                ]
-            }, file.id);
+            return this.gDriveService.copyFile(API.copyFileBody(this.properties.map[file.parents[0].id], file.title), file.id);
         }
     };
     FileService.prototype.copyPermissions = function (srcId, owners, destId) {
@@ -578,21 +599,12 @@ var FileService = (function () {
                     if (permissions[i].emailAddress) {
                         if (permissions[i].role == 'owner')
                             continue;
-                        this.gDriveService.insertPermission({
-                            role: permissions[i].role,
-                            type: permissions[i].type,
-                            value: permissions[i].emailAddress
-                        }, destId, {
+                        this.gDriveService.insertPermission(API.permissionBodyValue(permissions[i].role, permissions[i].type, permissions[i].emailAddress), destId, {
                             sendNotificationEmails: 'false'
                         });
                     }
                     else {
-                        this.gDriveService.insertPermission({
-                            role: permissions[i].role,
-                            type: permissions[i].type,
-                            id: permissions[i].id,
-                            withLink: permissions[i].withLink
-                        }, destId, {
+                        this.gDriveService.insertPermission(API.permissionBodyId(permissions[i].role, permissions[i].type, permissions[i].id, permissions[i].withLink), destId, {
                             sendNotificationEmails: 'false'
                         });
                     }
@@ -603,11 +615,7 @@ var FileService = (function () {
         if (owners && owners.length > 0) {
             for (i = 0; i < owners.length; i++) {
                 try {
-                    this.gDriveService.insertPermission({
-                        role: 'writer',
-                        type: 'user',
-                        value: owners[i].emailAddress
-                    }, destId, {
+                    this.gDriveService.insertPermission(API.permissionBodyValue('writer', 'user', owners[i].emailAddress), destId, {
                         sendNotificationEmails: 'false'
                     });
                 }
@@ -700,32 +708,14 @@ var FileService = (function () {
             FileService.isDescendant([options.destParentID], options.srcFolderID)) {
             throw new Error('Cannot select destination folder that exists within the source folder');
         }
-        destFolder = this.gDriveService.insertFolder({
-            description: 'Copy of ' + options.srcFolderName + ', created ' + today,
-            title: options.destFolderName,
-            parents: [
-                {
-                    kind: 'drive#fileLink',
-                    id: destParentID
-                }
-            ],
-            mimeType: 'application/vnd.google-apps.folder'
-        });
+        destFolder = this.gDriveService.insertFolder(API.copyFileBody(destParentID, options.destFolderName, 'application/vnd.google-apps.folder', "Copy of " + options.srcFolderName + ", created " + today));
         if (options.copyPermissions) {
             this.copyPermissions(options.srcFolderID, null, destFolder.id);
         }
         return destFolder;
     };
     FileService.prototype.createLoggerSpreadsheet = function (today, destId) {
-        return this.gDriveService.copyFile({
-            title: 'Copy Folder Log ' + today,
-            parents: [
-                {
-                    kind: 'drive#parentReference',
-                    id: destId
-                }
-            ]
-        }, this.baseCopyLogID);
+        return this.gDriveService.copyFile(API.copyFileBody(destId, "Copy Folder Log " + today), this.baseCopyLogID);
     };
     FileService.prototype.createPropertiesDocument = function (destId) {
         var propertiesDoc = this.gDriveService.insertBlankFile(destId);
