@@ -19,6 +19,7 @@ import {
   getTriggersQuantity,
   getOAuthToken
 } from './public';
+import { ErrorMessages } from './ErrorMessages';
 
 /**
  * Copy folders and files from source to destination.
@@ -52,7 +53,7 @@ function copy(): void {
   try {
     Util.exponentialBackoff(
       properties.load.bind(properties),
-      'Error restarting script, trying again...'
+      ErrorMessages.Restarting
     );
   } catch (e) {
     var n = Number(userProperties.getProperties().trials);
@@ -64,9 +65,7 @@ function copy(): void {
 
       Util.exponentialBackoff(
         TriggerService.createTrigger,
-        'Error setting trigger.  There has been a server error with Google Apps Script.' +
-          'To successfully finish copying, please refresh the app and click "Resume Copying"' +
-          'and follow the instructions on the page.'
+        ErrorMessages.SettingTrigger
       );
     }
     return;
@@ -100,7 +99,7 @@ function copy(): void {
       try {
         currFolder = properties.remaining.shift();
       } catch (e) {
-        console.error('properties.remaining is not parsed correctly');
+        console.error(ErrorMessages.ParseErrorRemaining);
         console.error(e);
         properties.remaining = JSON.parse(properties.remaining);
         currFolder = properties.remaining.shift();

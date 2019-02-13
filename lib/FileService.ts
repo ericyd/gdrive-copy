@@ -10,6 +10,7 @@ import GDriveService from './GDriveService';
 import API from './API';
 import MimeType from './MimeType';
 import Constants from './Constants';
+import { ErrorMessages } from './ErrorMessages';
 
 export default class FileService {
   gDriveService: GDriveService;
@@ -280,9 +281,7 @@ export default class FileService {
       options.copyTo === 'custom' &&
       FileService.isDescendant([options.destParentID], options.srcFolderID)
     ) {
-      throw new Error(
-        'Cannot select destination folder that exists within the source folder'
-      );
+      throw new Error(ErrorMessages.Descendant);
     }
 
     destFolder = this.gDriveService.insertFolder(
@@ -350,10 +349,7 @@ export default class FileService {
         propertiesDocId: p.items[0].id
       };
     } catch (e) {
-      throw new Error(
-        'Could not find the necessary data files in the selected folder. ' +
-          'Please ensure that you selected the in-progress copy and not the original folder.'
-      );
+      throw new Error(ErrorMessages.DataFilesNotFound);
     }
   }
 

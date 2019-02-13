@@ -4,6 +4,7 @@
 
 import Timer from './Timer';
 import GDriveService from './GDriveService';
+import { ErrorMessages, ComputedErrorMessages } from './ErrorMessages';
 
 export default class Properties {
   gDriveService: GDriveService;
@@ -59,9 +60,7 @@ export default class Properties {
       var propertiesDoc = this.gDriveService.downloadFile(propertiesDocId);
     } catch (e) {
       if (e.message.indexOf('Unsupported Output Format') !== -1) {
-        throw new Error(
-          'Could not determine properties document ID. Please try running the script again'
-        );
+        throw new Error(ErrorMessages.NoPropertiesDocumentId);
       }
       throw e;
     }
@@ -69,9 +68,7 @@ export default class Properties {
     try {
       var properties = JSON.parse(propertiesDoc);
     } catch (e) {
-      throw new Error(
-        "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke."
-      );
+      throw new Error(ErrorMessages.ParseError);
     }
 
     Object.keys(properties).forEach(function(prop) {
@@ -79,10 +76,7 @@ export default class Properties {
         _this[prop] = properties[prop];
       } catch (e) {
         throw new Error(
-          'Error loading property ' +
-            prop +
-            ' to properties object. Attempted to save: ' +
-            properties[prop]
+          ComputedErrorMessages.LoadingProp(prop, properties[prop])
         );
       }
     });
@@ -115,9 +109,7 @@ export default class Properties {
     try {
       var stringifiedProps = JSON.stringify(properties);
     } catch (e) {
-      throw new Error(
-        'Failed to serialize script properties. This is a critical failure. Please start your copy again.'
-      );
+      throw new Error(ErrorMessages.SerializeError);
     }
     return gDriveService.updateFile(
       {

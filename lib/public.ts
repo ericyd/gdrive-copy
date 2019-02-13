@@ -10,6 +10,7 @@ import FileService from './FileService';
 import Properties from './Properties';
 import Timer from './Timer';
 import Constants from './Constants';
+import { ComputedErrorMessages } from './ErrorMessages';
 
 /**
  * Serves HTML of the application for HTTP GET requests.
@@ -141,7 +142,7 @@ export function getMetadata(
   try {
     return Drive.Files.get(id);
   } catch (e) {
-    var errMsg = `Unable to find a folder with the supplied URL. You submitted ${url}. Please verify that you are using a valid folder URL and try again.`;
+    var errMsg = ComputedErrorMessages.NotFound(url);
     throw new Error(errMsg);
   }
 }
