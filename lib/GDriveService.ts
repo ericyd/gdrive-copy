@@ -39,7 +39,9 @@ export default class GDriveService {
   /**
    * Returns metadata for input file ID
    */
-  getPermissions(id: string): {items: gapi.client.drive.PermissionResource[]} {
+  getPermissions(
+    id: string
+  ): { items: gapi.client.drive.PermissionResource[] } {
     return this.throttle(function() {
       return Drive.Permissions.list(id);
     });
@@ -116,7 +118,10 @@ export default class GDriveService {
     });
   }
 
-  copyFile(body: gapi.client.drive.FileResource, id: string): gapi.client.drive.FileResource {
+  copyFile(
+    body: gapi.client.drive.FileResource,
+    id: string
+  ): gapi.client.drive.FileResource {
     return this.throttle(function() {
       return Drive.Files.copy(body, id);
     });

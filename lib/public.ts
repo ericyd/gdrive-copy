@@ -36,10 +36,12 @@ export function doGet(e) {
  * Add link for destination folder to logger spreadsheet.
  * Return IDs of created destination folder and logger spreadsheet
  */
-export function initialize(options: FrontEndOptions): {
-  spreadsheetId: string,
-  destFolderId: string,
-  resuming: boolean
+export function initialize(
+  options: FrontEndOptions
+): {
+  spreadsheetId: string;
+  destFolderId: string;
+  resuming: boolean;
 } {
   var destFolder, // {Object} instance of Folder class representing destination folder
     spreadsheet: gapi.client.drive.FileResource,
@@ -131,11 +133,14 @@ export function initialize(options: FrontEndOptions): {
   };
 }
 
-export function getMetadata(id: string, url?: string): gapi.client.drive.FileResource {
+export function getMetadata(
+  id: string,
+  url?: string
+): gapi.client.drive.FileResource {
   try {
     return Drive.Files.get(id);
   } catch (e) {
-    var errMsg = `Unable to find a folder with the supplied URL. You submitted ${url}. Please verify that you are using a valid folder URL and try again.`
+    var errMsg = `Unable to find a folder with the supplied URL. You submitted ${url}. Please verify that you are using a valid folder URL and try again.`;
     throw new Error(errMsg);
   }
 }
@@ -148,7 +153,9 @@ export function getUserEmail(): string {
  * Find prior copy folder instance.
  * Find propertiesDoc and logger spreadsheet, and save IDs to userProperties, which will be used by load.
  */
-export function resume(options: FrontEndOptions): {spreadsheetId: string, destFolderId: string, resuming: boolean} {
+export function resume(
+  options: FrontEndOptions
+): { spreadsheetId: string; destFolderId: string; resuming: boolean } {
   var gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),

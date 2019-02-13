@@ -41,7 +41,9 @@ export default class FileService {
   /**
    * Try to copy file to destination parent, or add new folder if it's a folder
    */
-  copyFile(file: gapi.client.drive.FileResource): gapi.client.drive.FileResource {
+  copyFile(
+    file: gapi.client.drive.FileResource
+  ): gapi.client.drive.FileResource {
     // if folder, use insert, else use copy
     if (file.mimeType == 'application/vnd.google-apps.folder') {
       var r = this.gDriveService.insertFolder({
@@ -84,7 +86,7 @@ export default class FileService {
    */
   copyPermissions(
     srcId: string,
-    owners: {emailAddress: string}[],
+    owners: { emailAddress: string }[],
     destId: string
   ): void {
     var permissions, destPermissions, i, j;
@@ -187,14 +189,20 @@ export default class FileService {
    * Destination folder must be set to the parent of the first leftover item.
    * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
    */
-  handleLeftovers(userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  handleLeftovers(
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
       this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
       this.processFileList(this.properties.leftovers.items, userProperties, ss);
     }
   }
 
-  handleRetries(userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  handleRetries(
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
       this.processFileList(this.properties.retryQueue, userProperties, ss);
@@ -208,7 +216,11 @@ export default class FileService {
    * Copies permissions if selected and if file is a Drive document,
    * Get current runtime and decide if processing needs to stop.
    */
-  processFileList(items: gapi.client.drive.FileResource[], userProperties: GoogleAppsScript.Properties.UserProperties, ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  processFileList(
+    items: gapi.client.drive.FileResource[],
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
     while (items.length > 0 && this.timer.canContinue()) {
       // Get next file from passed file list.
       var item = items.pop();
@@ -338,7 +350,9 @@ export default class FileService {
     return propertiesDoc.id;
   }
 
-  findPriorCopy(folderId: string): { spreadsheetId: string, propertiesDocId: string} {
+  findPriorCopy(
+    folderId: string
+  ): { spreadsheetId: string; propertiesDocId: string } {
     // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
     var query =
       "'" +

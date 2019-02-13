@@ -1,4 +1,4 @@
-import Properties from "./Properties";
+import Properties from './Properties';
 
 /**********************************************
  * Tracks runtime of application to avoid

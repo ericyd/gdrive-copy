@@ -37,7 +37,11 @@ function copy(): void {
     currFolder: string,
     userProperties: GoogleAppsScript.Properties.UserProperties = PropertiesService.getUserProperties(), // reference to userProperties store
     triggerId: string = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
-    fileService: FileService = new FileService(gDriveService, timer, properties);
+    fileService: FileService = new FileService(
+      gDriveService,
+      timer,
+      properties
+    );
 
   // Delete previous trigger
   TriggerService.deleteTrigger(triggerId);

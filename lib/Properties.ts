@@ -108,7 +108,10 @@ export default class Properties {
   /**
    * Stringify properties argument and save to file in user's Drive
    */
-  static save(properties: Properties | FrontEndOptions, gDriveService: GDriveService): gapi.client.drive.FileResource {
+  static save(
+    properties: Properties | FrontEndOptions,
+    gDriveService: GDriveService
+  ): gapi.client.drive.FileResource {
     try {
       var stringifiedProps = JSON.stringify(properties);
     } catch (e) {
