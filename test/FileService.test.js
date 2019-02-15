@@ -34,7 +34,7 @@ describe('FileService', function() {
       title: 'myTitle',
       parents: [
         {
-          kind: 'drive#fileLink',
+          kind: 'drive#parentReference',
           id: 'myParentID'
         }
       ],
@@ -46,7 +46,7 @@ describe('FileService', function() {
       title: 'myTitle',
       parents: [
         {
-          kind: 'drive#fileLink',
+          kind: 'drive#parentReference',
           id: 'myParentID'
         }
       ],
@@ -128,7 +128,7 @@ describe('FileService', function() {
         title: options.destFolderName,
         parents: [
           {
-            kind: 'drive#fileLink',
+            kind: 'drive#parentReference',
             id: options.srcParentID
           }
         ],
@@ -176,7 +176,7 @@ describe('FileService', function() {
         title: options.destFolderName,
         parents: [
           {
-            kind: 'drive#fileLink',
+            kind: 'drive#parentReference',
             id: expectedRootID
           }
         ],
@@ -229,7 +229,7 @@ describe('FileService', function() {
         title: options.destFolderName,
         parents: [
           {
-            kind: 'drive#fileLink',
+            kind: 'drive#parentReference',
             id: options.destParentID
           }
         ],
