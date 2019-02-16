@@ -72,10 +72,7 @@ describe('FileService', function() {
         expected.destID
       );
       assert.equal(copy, mockCopy, 'returns wrong value');
-      assert.equal(
-        stub.getCall(0).args[1],
-        Constants.BaseCopyLogId
-      );
+      assert.equal(stub.getCall(0).args[1], Constants.BaseCopyLogId);
       const requestBody = {
         description: null,
         title: 'Copy Folder Log ' + expected.today,
@@ -86,10 +83,7 @@ describe('FileService', function() {
           }
         ]
       };
-      assert.deepEqual(
-        stub.getCall(0).args[0],
-        requestBody
-      );
+      assert.deepEqual(stub.getCall(0).args[0], requestBody);
 
       stub.restore();
     });
