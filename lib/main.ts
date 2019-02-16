@@ -92,8 +92,8 @@ function copy() {
     timer.canContinue()
   ) {
     // if pages remained in the previous query, use them first
-    if (properties.pageToken) {
-      currFolder = properties.destFolder;
+    if (properties.pageToken && properties.currFolderId) {
+      currFolder = properties.currFolderId;
     } else {
       try {
         currFolder = properties.remaining.shift();

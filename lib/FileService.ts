@@ -174,16 +174,14 @@ FileService.prototype.copyPermissions = function(srcId, owners, destId) {
  */
 FileService.prototype.handleLeftovers = function(userProperties, ss) {
   if (Util.hasSome(this.properties.leftovers, 'items')) {
-    // Commented out on 2018-01-05 because I don't think this is necessary
-    // properties.destFolder = properties.leftovers.items[0].parents[0].id;
+    this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
     this.processFileList(this.properties.leftovers.items, userProperties, ss);
   }
 };
 
 FileService.prototype.handleRetries = function(userProperties, ss) {
   if (Util.hasSome(this.properties, 'retryQueue')) {
-    // Commented out on 2018-01-05 because I don't think this is necessary
-    // this.properties.destFolder = this.properties.retryQueue[0].parents[0].id;
+    this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
     this.processFileList(this.properties.retryQueue, userProperties, ss);
   }
 };

@@ -618,11 +618,13 @@ FileService.prototype.copyPermissions = function (srcId, owners, destId) {
 };
 FileService.prototype.handleLeftovers = function (userProperties, ss) {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
+        this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
         this.processFileList(this.properties.leftovers.items, userProperties, ss);
     }
 };
 FileService.prototype.handleRetries = function (userProperties, ss) {
     if (Util.hasSome(this.properties, 'retryQueue')) {
+        this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
         this.processFileList(this.properties.retryQueue, userProperties, ss);
     }
 };
@@ -790,8 +792,8 @@ function copy() {
     timer.update(userProperties);
     while ((properties.remaining.length > 0 || Util.isSome(properties.pageToken)) &&
         timer.canContinue()) {
-        if (properties.pageToken) {
-            currFolder = properties.destFolder;
+        if (properties.pageToken && properties.currFolderId) {
+            currFolder = properties.currFolderId;
         }
         else {
             try {
