@@ -3,6 +3,7 @@ import Util from '../lib/Util';
 import Timer from '../lib/Timer';
 import TriggerService from '../lib/TriggerService';
 import Properties from '../lib/Properties';
+import Constants from '../lib/Constants';
 const userProperties = require('./mocks/PropertiesService').getUserProperties();
 const sinon = require('sinon');
 const assert = require('assert');
@@ -72,7 +73,7 @@ describe('Util', function() {
       // scenarios
 
       // normal pause
-      let stopMsg = Util.msgs.singleRunExceeded;
+      let stopMsg = Constants.SingleRunExceeded;
       Util.cleanup(properties, fileList, userProperties, timer, {});
       assert(stubSaveState.calledOnce, 'saveState not called');
       assert.equal(
@@ -84,7 +85,7 @@ describe('Util', function() {
       // user set stop flag
       userProperties.setProperty('stop', 'true');
       timer.update(userProperties);
-      stopMsg = Util.msgs.userStoppedScript;
+      stopMsg = Constants.UserStoppedScript;
       Util.cleanup(properties, fileList, userProperties, timer, {});
       assert.equal(stubSaveState.callCount, 2, 'saveState not called twice');
       assert.equal(
@@ -98,7 +99,7 @@ describe('Util', function() {
       // max runtime exceeded
       properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
       properties.checkMaxRuntime();
-      stopMsg = Util.msgs.maxRuntimeExceeded;
+      stopMsg = Constants.MaxRuntimeExceeded;
       Util.cleanup(properties, fileList, userProperties, timer, {});
       assert.equal(stubSaveState.callCount, 3, 'saveState not called thrice');
       assert.equal(
