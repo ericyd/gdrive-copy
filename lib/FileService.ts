@@ -7,12 +7,15 @@ import { getMetadata } from './public';
 import Properties from './Properties';
 import Timer from './Timer';
 import GDriveService from './GDriveService';
+import API from './API';
+import MimeType from './MimeType';
+import Constants from './Constants';
+import { ErrorMessages } from './ErrorMessages';
 
 export default class FileService {
   gDriveService: GDriveService;
   timer: Timer;
   properties: Properties;
-  baseCopyLogID: string;
   nativeMimeTypes: string[];
   maxNumberOfAttempts: number;
 
@@ -24,15 +27,14 @@ export default class FileService {
     this.gDriveService = gDriveService;
     this.timer = timer;
     this.properties = properties;
-    this.baseCopyLogID = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
     this.nativeMimeTypes = [
-      'application/vnd.google-apps.document',
-      'application/vnd.google-apps.folder',
-      'application/vnd.google-apps.spreadsheet',
-      'application/vnd.google-apps.presentation',
-      'application/vnd.google-apps.drawing',
-      'application/vnd.google-apps.form',
-      'application/vnd.google-apps.script'
+      MimeType.DOC,
+      MimeType.DRAWING,
+      MimeType.FOLDER,
+      MimeType.FORM,
+      MimeType.SCRIPT,
+      MimeType.SHEET,
+      MimeType.SLIDES
     ];
     this.maxNumberOfAttempts = 3; // this is arbitrary, could go up or down
     return this;
@@ -45,18 +47,15 @@ export default class FileService {
     file: gapi.client.drive.FileResource
   ): gapi.client.drive.FileResource {
     // if folder, use insert, else use copy
-    if (file.mimeType == 'application/vnd.google-apps.folder') {
-      var r = this.gDriveService.insertFolder({
-        description: file.description,
-        title: file.title,
-        parents: [
-          {
-            kind: 'drive#parentReference',
-            id: this.properties.map[file.parents[0].id]
-          }
-        ],
-        mimeType: 'application/vnd.google-apps.folder'
-      });
+    if (file.mimeType == MimeType.FOLDER) {
+      var r = this.gDriveService.insertFolder(
+        API.copyFileBody(
+          this.properties.map[file.parents[0].id],
+          file.title,
+          MimeType.FOLDER,
+          file.description
+        )
+      );
 
       // Update list of remaining folders
       this.properties.remaining.push(file.id);
@@ -67,15 +66,7 @@ export default class FileService {
       return r;
     } else {
       return this.gDriveService.copyFile(
-        {
-          title: file.title,
-          parents: [
-            {
-              kind: 'drive#parentReference',
-              id: this.properties.map[file.parents[0].id]
-            }
-          ]
-        },
+        API.copyFileBody(this.properties.map[file.parents[0].id], file.title),
         file.id
       );
     }
@@ -109,11 +100,11 @@ export default class FileService {
             if (permissions[i].role == 'owner') continue;
 
             this.gDriveService.insertPermission(
-              {
-                role: permissions[i].role,
-                type: permissions[i].type,
-                value: permissions[i].emailAddress
-              },
+              API.permissionBodyValue(
+                permissions[i].role,
+                permissions[i].type,
+                permissions[i].emailAddress
+              ),
               destId,
               {
                 sendNotificationEmails: 'false'
@@ -121,12 +112,12 @@ export default class FileService {
             );
           } else {
             this.gDriveService.insertPermission(
-              {
-                role: permissions[i].role,
-                type: permissions[i].type,
-                id: permissions[i].id,
-                withLink: permissions[i].withLink
-              },
+              API.permissionBodyId(
+                permissions[i].role,
+                permissions[i].type,
+                permissions[i].id,
+                permissions[i].withLink
+              ),
               destId,
               {
                 sendNotificationEmails: 'false'
@@ -142,11 +133,7 @@ export default class FileService {
       for (i = 0; i < owners.length; i++) {
         try {
           this.gDriveService.insertPermission(
-            {
-              role: 'writer',
-              type: 'user',
-              value: owners[i].emailAddress
-            },
+            API.permissionBodyValue('writer', 'user', owners[i].emailAddress),
             destId,
             {
               sendNotificationEmails: 'false'
@@ -294,22 +281,17 @@ export default class FileService {
       options.copyTo === 'custom' &&
       FileService.isDescendant([options.destParentID], options.srcFolderID)
     ) {
-      throw new Error(
-        'Cannot select destination folder that exists within the source folder'
-      );
+      throw new Error(ErrorMessages.Descendant);
     }
 
-    destFolder = this.gDriveService.insertFolder({
-      description: 'Copy of ' + options.srcFolderName + ', created ' + today,
-      title: options.destFolderName,
-      parents: [
-        {
-          kind: 'drive#fileLink',
-          id: destParentID
-        }
-      ],
-      mimeType: 'application/vnd.google-apps.folder'
-    });
+    destFolder = this.gDriveService.insertFolder(
+      API.copyFileBody(
+        destParentID,
+        options.destFolderName,
+        'application/vnd.google-apps.folder',
+        `Copy of ${options.srcFolderName}, created ${today}`
+      )
+    );
 
     if (options.copyPermissions) {
       this.copyPermissions(options.srcFolderID, null, destFolder.id);
@@ -327,16 +309,8 @@ export default class FileService {
     destId: string
   ): gapi.client.drive.FileResource {
     return this.gDriveService.copyFile(
-      {
-        title: 'Copy Folder Log ' + today,
-        parents: [
-          {
-            kind: 'drive#parentReference',
-            id: destId
-          }
-        ]
-      },
-      this.baseCopyLogID
+      API.copyFileBody(destId, `Copy Folder Log ${today}`),
+      Constants.BaseCopyLogId
     );
   }
 
@@ -354,10 +328,9 @@ export default class FileService {
     folderId: string
   ): { spreadsheetId: string; propertiesDocId: string } {
     // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
-    var query =
-      "'" +
-      folderId +
-      "' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = 'text/plain'";
+    var query = `'${folderId}' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '${
+      MimeType.PLAINTEXT
+    }'`;
     var p = this.gDriveService.getFiles(
       query,
       null,
@@ -365,10 +338,9 @@ export default class FileService {
     );
 
     // find copy log
-    query =
-      "'" +
-      folderId +
-      "' in parents and title contains 'Copy Folder Log' and mimeType = 'application/vnd.google-apps.spreadsheet'";
+    query = `'${folderId}' in parents and title contains 'Copy Folder Log' and mimeType = '${
+      MimeType.SHEET
+    }'`;
     var s = this.gDriveService.getFiles(query, null, 'title desc');
 
     try {
@@ -377,10 +349,7 @@ export default class FileService {
         propertiesDocId: p.items[0].id
       };
     } catch (e) {
-      throw new Error(
-        'Could not find the necessary data files in the selected folder. ' +
-          'Please ensure that you selected the in-progress copy and not the original folder.'
-      );
+      throw new Error(ErrorMessages.DataFilesNotFound);
     }
   }
 

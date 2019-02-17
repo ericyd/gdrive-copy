@@ -1,4 +1,8 @@
 import Timer from './Timer';
+import MimeType from './MimeType';
+import API from './API';
+import Constants from './Constants';
+import { ErrorMessages } from './ErrorMessages';
 
 /**********************************************
  * Namespace to wrap calls to Drive API
@@ -103,19 +107,14 @@ export default class GDriveService {
    */
   insertBlankFile(parentID: string): gapi.client.drive.FileResource {
     // doesn't need to be throttled because it returns a throttled function
-    return this.insertFolder({
-      description:
-        'This document will be deleted after the folder copy is complete. It is only used to store properties necessary to complete the copying procedure',
-      title:
-        'DO NOT DELETE OR MODIFY - will be deleted after copying completes',
-      parents: [
-        {
-          kind: 'drive#fileLink',
-          id: parentID
-        }
-      ],
-      mimeType: 'text/plain'
-    });
+    return this.insertFolder(
+      API.copyFileBody(
+        parentID,
+        Constants.PropertiesDocTitle,
+        MimeType.PLAINTEXT,
+        Constants.PropertiesDocDescription
+      )
+    );
   }
 
   copyFile(
@@ -168,7 +167,7 @@ export default class GDriveService {
       } catch (e) {
         // if the spreadsheet cannot be accessed, this should be considered a fatal error
         // and the script should not continue
-        throw new Error('Cannot locate spreadsheet. Please try again.');
+        throw new Error(ErrorMessages.SpreadsheetNotFound);
       }
     }
     return ss;

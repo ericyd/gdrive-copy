@@ -7,19 +7,10 @@ import Properties from './Properties';
 import FileService from './FileService';
 import GDriveService from './GDriveService';
 import Timer from './Timer';
+import Constants from './Constants';
+import { ErrorMessages } from './ErrorMessages';
 
 export default class Util {
-  static msgs = {
-    maxRuntimeExceeded:
-      'Script has reached daily maximum run time of 90 minutes. ' +
-      'Script must pause for 24 hours to reset Google Quotas, and will resume at that time. ' +
-      'For more information, please see https://developers.google.com/apps-script/guides/services/quotas',
-    userStoppedScript:
-      'Stopped manually by user. Please use "Resume" button to restart copying',
-    singleRunExceeded:
-      'Paused due to Google quota limits - copy will resume in 1-2 minutes'
-  };
-
   /**
    * Logs values to the logger spreadsheet
    */
@@ -59,9 +50,7 @@ export default class Util {
     } catch (e) {
       // Google sheets doesn't allow inserting more than 2,000,000 rows into a spreadsheet
       ss.getRange(lastRow, startColumn, numRows, 1).setValues([
-        [
-          'The spreadsheet is too large to continue logging, but the service will continue to run in the background'
-        ]
+        [ErrorMessages.SpreadsheetTooLarge]
       ]);
     }
   }
@@ -145,13 +134,7 @@ export default class Util {
         fileList && fileList.items ? fileList : properties.leftovers;
       properties.pageToken = properties.leftovers.nextPageToken;
     } catch (e) {
-      Util.log(
-        ss,
-        Util.composeErrorMsg(
-          e,
-          'Failed to set leftover file list. Error Message: '
-        )
-      );
+      Util.log(ss, Util.composeErrorMsg(e, ErrorMessages.FailedSetLeftovers));
     }
 
     try {
@@ -168,27 +151,12 @@ export default class Util {
         } catch (e) {
           // likely already deleted, shouldn't be a big deal
         }
-        Util.log(ss, [
-          'You have run out of space in your Drive! ' +
-            'You should delete some files and then come back ' +
-            'and use the "Resume" feature to restart your copy.'
-        ]);
-        Util.log(ss, [
-          'HEADS UP! Your most recently copied files WILL BE DUPLICATED if you resume. ' +
-            'To avoid duplicating, you will need to restart your copy from the beginning'
-        ]);
+        Util.log(ss, [ErrorMessages.OutOfSpace]);
+        Util.log(ss, [ErrorMessages.WillDuplicateOnResume]);
         // return early to prevent logging `logMessage`
         return;
       }
-      Util.log(
-        ss,
-        Util.composeErrorMsg(
-          e,
-          'Failed to save properties. ' +
-            'This could affect script performance and may require restarting the copy. ' +
-            'Error Message: '
-        )
-      );
+      Util.log(ss, Util.composeErrorMsg(e, ErrorMessages.FailedSaveProperties));
     }
 
     Util.log(ss, [logMessage]);
@@ -206,14 +174,14 @@ export default class Util {
     properties.incrementTotalRuntime(timer.runtime);
 
     // Set the stop message that will be displayed to user on script pause
-    var stopMsg = Util.msgs.singleRunExceeded;
+    var stopMsg = Constants.SingleRunExceeded;
     if (timer.stop) {
       // user manually stopped script
-      stopMsg = Util.msgs.userStoppedScript;
+      stopMsg = Constants.UserStoppedScript;
       TriggerService.deleteTrigger(userProperties.getProperty('triggerId'));
     } else if (properties.isOverMaxRuntime) {
       // daily runtime exceeded.
-      stopMsg = Util.msgs.maxRuntimeExceeded;
+      stopMsg = Constants.MaxRuntimeExceeded;
       // Reset totalRuntime - next trigger will be 24 hours in future
       properties.totalRuntime = 0;
     }
