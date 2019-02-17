@@ -546,8 +546,7 @@ function getMetadata(id, url) {
         return Drive.Files.get(id);
     }
     catch (e) {
-        var errMsg = ComputedErrorMessages.NotFound(url);
-        throw new Error(errMsg);
+        throw new Error(ComputedErrorMessages.NotFound(url));
     }
 }
 function getUserEmail() {
