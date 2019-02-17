@@ -142,8 +142,7 @@ export function getMetadata(
   try {
     return Drive.Files.get(id);
   } catch (e) {
-    var errMsg = ComputedErrorMessages.NotFound(url);
-    throw new Error(errMsg);
+    throw new Error(ComputedErrorMessages.NotFound(url));
   }
 }
 
