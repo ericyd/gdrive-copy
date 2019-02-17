@@ -1,12 +1,10 @@
-enum MimeType {
-  PLAINTEXT = 'text/plain',
-  DOC = 'application/vnd.google-apps.document',
-  FOLDER = 'application/vnd.google-apps.folder',
-  SHEET = 'application/vnd.google-apps.spreadsheet',
-  SLIDES = 'application/vnd.google-apps.presentation',
-  DRAWING = 'application/vnd.google-apps.drawing',
-  FORM = 'application/vnd.google-apps.form',
-  SCRIPT = 'application/vnd.google-apps.script'
+export default class MimeType {
+  static PLAINTEXT = 'text/plain';
+  static DOC = 'application/vnd.google-apps.document';
+  static FOLDER = 'application/vnd.google-apps.folder';
+  static SHEET = 'application/vnd.google-apps.spreadsheet';
+  static SLIDES = 'application/vnd.google-apps.presentation';
+  static DRAWING = 'application/vnd.google-apps.drawing';
+  static FORM = 'application/vnd.google-apps.form';
+  static SCRIPT = 'application/vnd.google-apps.script';
 }
-
-export default MimeType;

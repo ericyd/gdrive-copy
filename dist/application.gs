@@ -65,23 +65,25 @@ var TriggerService = (function () {
     return TriggerService;
 }());
 
-var ErrorMessages;
-(function (ErrorMessages) {
-    ErrorMessages["DataFilesNotFound"] = "Could not find the necessary data files in the selected folder. Please ensure that you selected the in-progress copy and not the original folder.";
-    ErrorMessages["Descendant"] = "Cannot select destination folder that exists within the source folder";
-    ErrorMessages["FailedSaveProperties"] = "Failed to save properties. This could affect script performance and may require restarting the copy. Error Message: ";
-    ErrorMessages["FailedSetLeftovers"] = "Failed to set leftover file list. Error Message: ";
-    ErrorMessages["NoPropertiesDocumentId"] = "Could not determine properties document ID. Please try running the script again";
-    ErrorMessages["OutOfSpace"] = "You have run out of space in your Drive! You should delete some files and then come back and use the \"Resume\" feature to restart your copy.";
-    ErrorMessages["ParseError"] = "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke.";
-    ErrorMessages["ParseErrorRemaining"] = "properties.remaining is not parsed correctly";
-    ErrorMessages["Restarting"] = "Error restarting script, trying again...";
-    ErrorMessages["SerializeError"] = "Failed to serialize script properties. This is a critical failure. Please start your copy again.";
-    ErrorMessages["SettingTrigger"] = "Error setting trigger.  There has been a server error with Google Apps Script. To successfully finish copying, please refresh the app and click \"Resume Copying\" and follow the instructions on the page.";
-    ErrorMessages["SpreadsheetTooLarge"] = "The spreadsheet is too large to continue logging, but the service will continue to run in the background";
-    ErrorMessages["SpreadsheetNotFound"] = "Cannot locate spreadsheet. Please try again.";
-    ErrorMessages["WillDuplicateOnResume"] = "HEADS UP! Your most recently copied files WILL BE DUPLICATED if you resume. To avoid duplicating, you will need to restart your copy from the beginning";
-})(ErrorMessages || (ErrorMessages = {}));
+var ErrorMessages = (function () {
+    function ErrorMessages() {
+    }
+    ErrorMessages.DataFilesNotFound = 'Could not find the necessary data files in the selected folder. Please ensure that you selected the in-progress copy and not the original folder.';
+    ErrorMessages.Descendant = 'Cannot select destination folder that exists within the source folder';
+    ErrorMessages.FailedSaveProperties = 'Failed to save properties. This could affect script performance and may require restarting the copy. Error Message: ';
+    ErrorMessages.FailedSetLeftovers = 'Failed to set leftover file list. Error Message: ';
+    ErrorMessages.NoPropertiesDocumentId = 'Could not determine properties document ID. Please try running the script again';
+    ErrorMessages.OutOfSpace = 'You have run out of space in your Drive! You should delete some files and then come back and use the "Resume" feature to restart your copy.';
+    ErrorMessages.ParseError = "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke.";
+    ErrorMessages.ParseErrorRemaining = 'properties.remaining is not parsed correctly';
+    ErrorMessages.Restarting = 'Error restarting script, trying again...';
+    ErrorMessages.SerializeError = 'Failed to serialize script properties. This is a critical failure. Please start your copy again.';
+    ErrorMessages.SettingTrigger = 'Error setting trigger.  There has been a server error with Google Apps Script. To successfully finish copying, please refresh the app and click "Resume Copying" and follow the instructions on the page.';
+    ErrorMessages.SpreadsheetTooLarge = 'The spreadsheet is too large to continue logging, but the service will continue to run in the background';
+    ErrorMessages.SpreadsheetNotFound = 'Cannot locate spreadsheet. Please try again.';
+    ErrorMessages.WillDuplicateOnResume = 'HEADS UP! Your most recently copied files WILL BE DUPLICATED if you resume. To avoid duplicating, you will need to restart your copy from the beginning';
+    return ErrorMessages;
+}());
 var ComputedErrorMessages = (function () {
     function ComputedErrorMessages() {
     }
@@ -176,17 +178,18 @@ var Properties = (function () {
     return Properties;
 }());
 
-var Constants;
-(function (Constants) {
-    Constants["BaseCopyLogId"] = "17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg";
-    Constants["PropertiesDocTitle"] = "DO NOT DELETE OR MODIFY - will be deleted after copying completes";
-    Constants["PropertiesDocDescription"] = "This document will be deleted after the folder copy is complete. It is only used to store properties necessary to complete the copying procedure";
-    Constants["MaxRuntimeExceeded"] = "Script has reached daily maximum run time of 90 minutes. Script must pause for 24 hours to reset Google Quotas, and will resume at that time. For more information, please see https://developers.google.com/apps-script/guides/services/quotas";
-    Constants["SingleRunExceeded"] = "Paused due to Google quota limits - copy will resume in 1-2 minutes";
-    Constants["StartCopyingText"] = "Started copying";
-    Constants["UserStoppedScript"] = "Stopped manually by user. Please use \"Resume\" button to restart copying";
-})(Constants || (Constants = {}));
-var Constants$1 = Constants;
+var Constants = (function () {
+    function Constants() {
+    }
+    Constants.BaseCopyLogId = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
+    Constants.PropertiesDocTitle = 'DO NOT DELETE OR MODIFY - will be deleted after copying completes';
+    Constants.PropertiesDocDescription = 'This document will be deleted after the folder copy is complete. It is only used to store properties necessary to complete the copying procedure';
+    Constants.MaxRuntimeExceeded = 'Script has reached daily maximum run time of 90 minutes. Script must pause for 24 hours to reset Google Quotas, and will resume at that time. For more information, please see https://developers.google.com/apps-script/guides/services/quotas';
+    Constants.SingleRunExceeded = 'Paused due to Google quota limits - copy will resume in 1-2 minutes';
+    Constants.StartCopyingText = 'Started copying';
+    Constants.UserStoppedScript = 'Stopped manually by user. Please use "Resume" button to restart copying';
+    return Constants;
+}());
 
 var Util = (function () {
     function Util() {
@@ -290,13 +293,13 @@ var Util = (function () {
     };
     Util.cleanup = function (properties, fileList, userProperties, timer, ss, gDriveService) {
         properties.incrementTotalRuntime(timer.runtime);
-        var stopMsg = Constants$1.SingleRunExceeded;
+        var stopMsg = Constants.SingleRunExceeded;
         if (timer.stop) {
-            stopMsg = Constants$1.UserStoppedScript;
+            stopMsg = Constants.UserStoppedScript;
             TriggerService.deleteTrigger(userProperties.getProperty('triggerId'));
         }
         else if (properties.isOverMaxRuntime) {
-            stopMsg = Constants$1.MaxRuntimeExceeded;
+            stopMsg = Constants.MaxRuntimeExceeded;
             properties.totalRuntime = 0;
         }
         if (!timer.canContinue() || properties.retryQueue.length > 0) {
@@ -339,18 +342,19 @@ var Util = (function () {
     return Util;
 }());
 
-var MimeType;
-(function (MimeType) {
-    MimeType["PLAINTEXT"] = "text/plain";
-    MimeType["DOC"] = "application/vnd.google-apps.document";
-    MimeType["FOLDER"] = "application/vnd.google-apps.folder";
-    MimeType["SHEET"] = "application/vnd.google-apps.spreadsheet";
-    MimeType["SLIDES"] = "application/vnd.google-apps.presentation";
-    MimeType["DRAWING"] = "application/vnd.google-apps.drawing";
-    MimeType["FORM"] = "application/vnd.google-apps.form";
-    MimeType["SCRIPT"] = "application/vnd.google-apps.script";
-})(MimeType || (MimeType = {}));
-var MimeType$1 = MimeType;
+var MimeType = (function () {
+    function MimeType() {
+    }
+    MimeType.PLAINTEXT = 'text/plain';
+    MimeType.DOC = 'application/vnd.google-apps.document';
+    MimeType.FOLDER = 'application/vnd.google-apps.folder';
+    MimeType.SHEET = 'application/vnd.google-apps.spreadsheet';
+    MimeType.SLIDES = 'application/vnd.google-apps.presentation';
+    MimeType.DRAWING = 'application/vnd.google-apps.drawing';
+    MimeType.FORM = 'application/vnd.google-apps.form';
+    MimeType.SCRIPT = 'application/vnd.google-apps.script';
+    return MimeType;
+}());
 
 var API = (function () {
     function API() {
@@ -440,7 +444,7 @@ var GDriveService = (function () {
         });
     };
     GDriveService.prototype.insertBlankFile = function (parentID) {
-        return this.insertFolder(API.copyFileBody(parentID, Constants$1.PropertiesDocTitle, MimeType$1.PLAINTEXT, Constants$1.PropertiesDocDescription));
+        return this.insertFolder(API.copyFileBody(parentID, Constants.PropertiesDocTitle, MimeType.PLAINTEXT, Constants.PropertiesDocDescription));
     };
     GDriveService.prototype.copyFile = function (body, id) {
         return this.throttle(function () {
@@ -520,7 +524,7 @@ function initialize(options) {
             .getRange(5, 1, 1, 5)
             .setValues([
             [
-                Constants$1.StartCopyingText,
+                Constants.StartCopyingText,
                 '',
                 '',
                 '',
@@ -584,20 +588,20 @@ var FileService = (function () {
         this.timer = timer;
         this.properties = properties;
         this.nativeMimeTypes = [
-            MimeType$1.DOC,
-            MimeType$1.DRAWING,
-            MimeType$1.FOLDER,
-            MimeType$1.FORM,
-            MimeType$1.SCRIPT,
-            MimeType$1.SHEET,
-            MimeType$1.SLIDES
+            MimeType.DOC,
+            MimeType.DRAWING,
+            MimeType.FOLDER,
+            MimeType.FORM,
+            MimeType.SCRIPT,
+            MimeType.SHEET,
+            MimeType.SLIDES
         ];
         this.maxNumberOfAttempts = 3;
         return this;
     }
     FileService.prototype.copyFile = function (file) {
-        if (file.mimeType == MimeType$1.FOLDER) {
-            var r = this.gDriveService.insertFolder(API.copyFileBody(this.properties.map[file.parents[0].id], file.title, MimeType$1.FOLDER, file.description));
+        if (file.mimeType == MimeType.FOLDER) {
+            var r = this.gDriveService.insertFolder(API.copyFileBody(this.properties.map[file.parents[0].id], file.title, MimeType.FOLDER, file.description));
             this.properties.remaining.push(file.id);
             this.properties.map[file.id] = r.id;
             return r;
@@ -736,16 +740,16 @@ var FileService = (function () {
         return destFolder;
     };
     FileService.prototype.createLoggerSpreadsheet = function (today, destId) {
-        return this.gDriveService.copyFile(API.copyFileBody(destId, "Copy Folder Log " + today), Constants$1.BaseCopyLogId);
+        return this.gDriveService.copyFile(API.copyFileBody(destId, "Copy Folder Log " + today), Constants.BaseCopyLogId);
     };
     FileService.prototype.createPropertiesDocument = function (destId) {
         var propertiesDoc = this.gDriveService.insertBlankFile(destId);
         return propertiesDoc.id;
     };
     FileService.prototype.findPriorCopy = function (folderId) {
-        var query = "'" + folderId + "' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '" + MimeType$1.PLAINTEXT + "'";
+        var query = "'" + folderId + "' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '" + MimeType.PLAINTEXT + "'";
         var p = this.gDriveService.getFiles(query, null, 'modifiedDate,createdDate');
-        query = "'" + folderId + "' in parents and title contains 'Copy Folder Log' and mimeType = '" + MimeType$1.SHEET + "'";
+        query = "'" + folderId + "' in parents and title contains 'Copy Folder Log' and mimeType = '" + MimeType.SHEET + "'";
         var s = this.gDriveService.getFiles(query, null, 'title desc');
         try {
             return {
