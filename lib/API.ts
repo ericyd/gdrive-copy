@@ -16,7 +16,7 @@ export default class API {
       ]
     };
     if (mimeType) {
-      body = Object.assign(body, { mimeType });
+      body.mimeType = mimeType;
     }
     return body;
   }

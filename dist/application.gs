@@ -369,7 +369,7 @@ var API = (function () {
             ]
         };
         if (mimeType) {
-            body = Object.assign(body, { mimeType: mimeType });
+            body.mimeType = mimeType;
         }
         return body;
     };
