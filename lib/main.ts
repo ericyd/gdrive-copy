@@ -19,7 +19,7 @@ import {
   getTriggersQuantity,
   getOAuthToken
 } from './public';
-import { ErrorMessages } from './ErrorMessages';
+import ErrorMessages from './ErrorMessages';
 
 /**
  * Copy folders and files from source to destination.

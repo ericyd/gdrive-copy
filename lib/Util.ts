@@ -8,7 +8,7 @@ import FileService from './FileService';
 import GDriveService from './GDriveService';
 import Timer from './Timer';
 import Constants from './Constants';
-import { ErrorMessages } from './ErrorMessages';
+import ErrorMessages from './ErrorMessages';
 
 export default class Util {
   /**

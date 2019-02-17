@@ -1,3 +1,4 @@
+// An enum makes more sense here but the compiled enums don't play nicely with Google Apps Script
 export default class MimeType {
   static PLAINTEXT = 'text/plain';
   static DOC = 'application/vnd.google-apps.document';

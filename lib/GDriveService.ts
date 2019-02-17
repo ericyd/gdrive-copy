@@ -2,7 +2,7 @@ import Timer from './Timer';
 import MimeType from './MimeType';
 import API from './API';
 import Constants from './Constants';
-import { ErrorMessages } from './ErrorMessages';
+import ErrorMessages from './ErrorMessages';
 
 /**********************************************
  * Namespace to wrap calls to Drive API

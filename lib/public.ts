@@ -10,7 +10,7 @@ import FileService from './FileService';
 import Properties from './Properties';
 import Timer from './Timer';
 import Constants from './Constants';
-import { ComputedErrorMessages } from './ErrorMessages';
+import ErrorMessages from './ErrorMessages';
 
 /**
  * Serves HTML of the application for HTTP GET requests.
@@ -142,7 +142,7 @@ export function getMetadata(
   try {
     return Drive.Files.get(id);
   } catch (e) {
-    throw new Error(ComputedErrorMessages.NotFound(url));
+    throw new Error(ErrorMessages.NotFound(url));
   }
 }
 

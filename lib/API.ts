@@ -4,7 +4,7 @@ export default class API {
     title: string,
     mimeType: string = null,
     description: string = null
-  ) {
+  ): gapi.client.drive.FileResource {
     let body = {
       title: title,
       description: description,

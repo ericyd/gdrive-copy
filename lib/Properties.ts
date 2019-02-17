@@ -4,7 +4,7 @@
 
 import Timer from './Timer';
 import GDriveService from './GDriveService';
-import { ErrorMessages, ComputedErrorMessages } from './ErrorMessages';
+import ErrorMessages from './ErrorMessages';
 
 export default class Properties {
   gDriveService: GDriveService;
@@ -75,9 +75,7 @@ export default class Properties {
       try {
         _this[prop] = properties[prop];
       } catch (e) {
-        throw new Error(
-          ComputedErrorMessages.LoadingProp(prop, properties[prop])
-        );
+        throw new Error(ErrorMessages.LoadingProp(prop, properties[prop]));
       }
     });
 

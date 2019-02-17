@@ -72,7 +72,13 @@ var ErrorMessages = (function () {
     ErrorMessages.Descendant = 'Cannot select destination folder that exists within the source folder';
     ErrorMessages.FailedSaveProperties = 'Failed to save properties. This could affect script performance and may require restarting the copy. Error Message: ';
     ErrorMessages.FailedSetLeftovers = 'Failed to set leftover file list. Error Message: ';
+    ErrorMessages.LoadingProp = function (key, value) {
+        return "Error loading property " + key + " to properties object. Attempted to save: " + value;
+    };
     ErrorMessages.NoPropertiesDocumentId = 'Could not determine properties document ID. Please try running the script again';
+    ErrorMessages.NotFound = function (url) {
+        return "Unable to find a folder with the supplied URL. You submitted " + url + ". Please verify that you are using a valid folder URL and try again.";
+    };
     ErrorMessages.OutOfSpace = 'You have run out of space in your Drive! You should delete some files and then come back and use the "Resume" feature to restart your copy.';
     ErrorMessages.ParseError = "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke.";
     ErrorMessages.ParseErrorRemaining = 'properties.remaining is not parsed correctly';
@@ -83,17 +89,6 @@ var ErrorMessages = (function () {
     ErrorMessages.SpreadsheetNotFound = 'Cannot locate spreadsheet. Please try again.';
     ErrorMessages.WillDuplicateOnResume = 'HEADS UP! Your most recently copied files WILL BE DUPLICATED if you resume. To avoid duplicating, you will need to restart your copy from the beginning';
     return ErrorMessages;
-}());
-var ComputedErrorMessages = (function () {
-    function ComputedErrorMessages() {
-    }
-    ComputedErrorMessages.NotFound = function (url) {
-        return "Unable to find a folder with the supplied URL. You submitted " + url + ". Please verify that you are using a valid folder URL and try again.";
-    };
-    ComputedErrorMessages.LoadingProp = function (key, value) {
-        return "Error loading property " + key + " to properties object. Attempted to save: " + value;
-    };
-    return ComputedErrorMessages;
 }());
 
 var Properties = (function () {
@@ -141,7 +136,7 @@ var Properties = (function () {
                 _this[prop] = properties[prop];
             }
             catch (e) {
-                throw new Error(ComputedErrorMessages.LoadingProp(prop, properties[prop]));
+                throw new Error(ErrorMessages.LoadingProp(prop, properties[prop]));
             }
         });
         return this;
@@ -550,7 +545,7 @@ function getMetadata(id, url) {
         return Drive.Files.get(id);
     }
     catch (e) {
-        throw new Error(ComputedErrorMessages.NotFound(url));
+        throw new Error(ErrorMessages.NotFound(url));
     }
 }
 function getUserEmail() {

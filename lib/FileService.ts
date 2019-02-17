@@ -10,7 +10,7 @@ import GDriveService from './GDriveService';
 import API from './API';
 import MimeType from './MimeType';
 import Constants from './Constants';
-import { ErrorMessages } from './ErrorMessages';
+import ErrorMessages from './ErrorMessages';
 
 export default class FileService {
   gDriveService: GDriveService;
