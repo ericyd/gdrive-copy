@@ -75,14 +75,34 @@ export default class Util {
     parentId?: string;
     fileSize?: number;
   }) {
-    Util._log(ss, [
-      status,
-      title,
-      FileService.getFileLinkForSheet(id, title),
-      id,
-      Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
-      parentId === '' ? parentId : FileService.getFileLinkForSheet(parentId, '')
-    ]);
+    // map column names to indices
+    const columns = {
+      status: 0,
+      name: 1,
+      link: 2,
+      id: 3,
+      timeCompleted: 4,
+      parentFolderLink: 5
+    };
+
+    // set values to array of empty strings, then assign value based on column index
+    const values = Object.keys(columns).map(_ => '');
+    values[columns.status] = status;
+    values[columns.name] = name;
+    values[columns.link] = FileService.getFileLinkForSheet(id, title);
+    values[columns.id] = id;
+    values[columns.timeCompleted] = Utilities.formatDate(
+      new Date(),
+      timeZone,
+      'MM-dd-yy hh:mm:ss aaa'
+    );
+    values[columns.parentFolderLink] =
+      parentId === ''
+        ? parentId
+        : FileService.getFileLinkForSheet(parentId, '');
+
+    // log values
+    Util._log(ss, values);
   }
 
   static logCopyError(

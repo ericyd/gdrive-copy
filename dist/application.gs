@@ -219,14 +219,25 @@ var Util = (function () {
     };
     Util.log = function (_a) {
         var _b = _a.ss, ss = _b === void 0 ? Util.getDefaultSheet() : _b, _c = _a.status, status = _c === void 0 ? '' : _c, _d = _a.title, title = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.timeZone, timeZone = _f === void 0 ? 'GMT-7' : _f, _g = _a.parentId, parentId = _g === void 0 ? '' : _g, _h = _a.fileSize;
-        Util._log(ss, [
-            status,
-            title,
-            FileService.getFileLinkForSheet(id, title),
-            id,
-            Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
-            parentId === '' ? parentId : FileService.getFileLinkForSheet(parentId, '')
-        ]);
+        var columns = {
+            status: 0,
+            name: 1,
+            link: 2,
+            id: 3,
+            timeCompleted: 4,
+            parentFolderLink: 5
+        };
+        var values = Object.keys(columns).map(function (_) { return ''; });
+        values[columns.status] = status;
+        values[columns.name] = name;
+        values[columns.link] = FileService.getFileLinkForSheet(id, title);
+        values[columns.id] = id;
+        values[columns.timeCompleted] = Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa');
+        values[columns.parentFolderLink] =
+            parentId === ''
+                ? parentId
+                : FileService.getFileLinkForSheet(parentId, '');
+        Util._log(ss, values);
     };
     Util.logCopyError = function (ss, error, item, timeZone) {
         var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
