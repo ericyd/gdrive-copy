@@ -46,7 +46,7 @@ export default class TriggerService {
           }
         }
       } catch (e) {
-        Util.log(null, Util.composeErrorMsg(e));
+        Util.log({ status: Util.composeErrorMsg(e) });
       }
     }
   }

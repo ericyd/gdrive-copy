@@ -58,7 +58,7 @@ var TriggerService = (function () {
                 }
             }
             catch (e) {
-                Util.log(null, Util.composeErrorMsg(e));
+                Util.log({ status: Util.composeErrorMsg(e) });
             }
         }
     };
@@ -189,10 +189,8 @@ var Constants = (function () {
 var Util = (function () {
     function Util() {
     }
-    Util.log = function (ss, values) {
-        if (ss === null || ss === undefined) {
-            ss = SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperty('spreadsheetId')).getSheetByName('Log');
-        }
+    Util._log = function (ss, values) {
+        if (ss === void 0) { ss = Util.getDefaultSheet(); }
         values = values.map(function (cell) {
             if (cell && typeof cell == 'string') {
                 return cell.slice(0, 4999);
@@ -216,27 +214,41 @@ var Util = (function () {
             ]);
         }
     };
+    Util.getDefaultSheet = function () {
+        return SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperty('spreadsheetId')).getSheetByName('Log');
+    };
+    Util.log = function (_a) {
+        var _b = _a.ss, ss = _b === void 0 ? Util.getDefaultSheet() : _b, _c = _a.status, status = _c === void 0 ? '' : _c, _d = _a.title, title = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.timeZone, timeZone = _f === void 0 ? 'GMT-7' : _f, _g = _a.parentId, parentId = _g === void 0 ? '' : _g, _h = _a.fileSize;
+        Util._log(ss, [
+            status,
+            title,
+            FileService.getFileLinkForSheet(id, title),
+            id,
+            Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
+            parentId === '' ? parentId : FileService.getFileLinkForSheet(parentId, '')
+        ]);
+    };
     Util.logCopyError = function (ss, error, item, timeZone) {
         var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
-        Util.log(ss, [
-            Util.composeErrorMsg(error)[0],
-            item.title,
-            FileService.getFileLinkForSheet(item.id, item.title),
-            item.id,
-            Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
-            FileService.getFileLinkForSheet(parentId, '')
-        ]);
+        Util.log({
+            ss: ss,
+            status: Util.composeErrorMsg(error),
+            title: item.title,
+            id: item.id,
+            timeZone: timeZone,
+            parentId: parentId
+        });
     };
     Util.logCopySuccess = function (ss, item, timeZone) {
         var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
-        Util.log(ss, [
-            'Copied',
-            item.title,
-            FileService.getFileLinkForSheet(item.id, item.title),
-            item.id,
-            Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
-            FileService.getFileLinkForSheet(parentId, '')
-        ]);
+        Util.log({
+            ss: ss,
+            status: 'Copied',
+            title: item.title,
+            id: item.id,
+            timeZone: timeZone,
+            parentId: parentId
+        });
     };
     Util.exponentialBackoff = function (func, errorMsg) {
         for (var n = 0; n < 6; n++) {
@@ -244,15 +256,11 @@ var Util = (function () {
                 return func();
             }
             catch (e) {
-                Util.log(null, Util.composeErrorMsg(e));
+                Util.log({ status: Util.composeErrorMsg(e) });
                 if (n == 5) {
-                    Util.log(null, [
-                        errorMsg,
-                        '',
-                        '',
-                        '',
-                        Utilities.formatDate(new Date(), 'GMT-7', 'MM-dd-yy hh:mm:ss aaa')
-                    ]);
+                    Util.log({
+                        status: errorMsg
+                    });
                     throw e;
                 }
                 Utilities.sleep(Math.pow(2, n) * 1000 + Math.round(Math.random() * 1000));
@@ -266,7 +274,10 @@ var Util = (function () {
             properties.pageToken = properties.leftovers.nextPageToken;
         }
         catch (e) {
-            Util.log(ss, Util.composeErrorMsg(e, ErrorMessages.FailedSetLeftovers));
+            Util.log({
+                ss: ss,
+                status: Util.composeErrorMsg(e, ErrorMessages.FailedSetLeftovers)
+            });
         }
         try {
             Properties.save(properties, gDriveService);
@@ -278,13 +289,19 @@ var Util = (function () {
                 }
                 catch (e) {
                 }
-                Util.log(ss, [ErrorMessages.OutOfSpace]);
-                Util.log(ss, [ErrorMessages.WillDuplicateOnResume]);
+                Util.log({ ss: ss, status: ErrorMessages.OutOfSpace });
+                Util.log({ ss: ss, status: ErrorMessages.WillDuplicateOnResume });
                 return;
             }
-            Util.log(ss, Util.composeErrorMsg(e, ErrorMessages.FailedSaveProperties));
+            Util.log({
+                ss: ss,
+                status: Util.composeErrorMsg(e, ErrorMessages.FailedSaveProperties)
+            });
         }
-        Util.log(ss, [logMessage]);
+        Util.log({
+            ss: ss,
+            status: logMessage
+        });
     };
     Util.cleanup = function (properties, fileList, userProperties, timer, ss, gDriveService) {
         properties.incrementTotalRuntime(timer.runtime);
@@ -306,7 +323,10 @@ var Util = (function () {
                 gDriveService.updateFile({ labels: { trashed: true } }, properties.propertiesDocId);
             }
             catch (e) {
-                Util.log(ss, Util.composeErrorMsg(e));
+                Util.log({
+                    ss: ss,
+                    status: Util.composeErrorMsg(e)
+                });
             }
             ss.getRange(2, 3, 1, 1)
                 .setValue('Complete')
@@ -316,14 +336,7 @@ var Util = (function () {
     };
     Util.composeErrorMsg = function (e, customMsg) {
         if (customMsg === void 0) { customMsg = 'Error: '; }
-        return [
-            customMsg +
-                e.message +
-                '. File: ' +
-                e.fileName +
-                '. Line: ' +
-                e.lineNumber
-        ];
+        return customMsg + " " + e.message + ". File: " + e.fileName + ". Line: " + e.lineNumber;
     };
     Util.isNone = function (obj) {
         return obj === null || obj === undefined;
@@ -611,7 +624,7 @@ var FileService = (function () {
             permissions = this.gDriveService.getPermissions(srcId).items;
         }
         catch (e) {
-            Util.log(null, Util.composeErrorMsg(e));
+            Util.log({ status: Util.composeErrorMsg(e) });
         }
         if (permissions && permissions.length > 0) {
             for (i = 0; i < permissions.length; i++) {
@@ -646,7 +659,7 @@ var FileService = (function () {
             destPermissions = this.gDriveService.getPermissions(destId).items;
         }
         catch (e) {
-            Util.log(null, Util.composeErrorMsg(e));
+            Util.log({ status: Util.composeErrorMsg(e) });
         }
         if (destPermissions && destPermissions.length > 0) {
             for (i = 0; i < destPermissions.length; i++) {
@@ -837,7 +850,7 @@ function copy() {
                 fileList = gDriveService.getFiles(query, properties.pageToken);
             }
             catch (e) {
-                Util.log(ss, Util.composeErrorMsg(e));
+                Util.log({ ss: ss, status: Util.composeErrorMsg(e) });
             }
             if (!fileList) {
                 console.log('fileList is undefined. currFolder:', currFolder);
