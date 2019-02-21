@@ -4,7 +4,7 @@
 
 import FileService from './FileService';
 import GDriveService from './GDriveService';
-import Util from './Util';
+import { Util } from './Util';
 import Properties from './Properties';
 import Timer from './Timer';
 import TriggerService from './TriggerService';

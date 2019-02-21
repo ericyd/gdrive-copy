@@ -2,7 +2,7 @@
  * Namespace for file-related functions
  **********************************************/
 
-import Util from './Util';
+import { Util } from './Util';
 import { getMetadata } from './public';
 import Properties from './Properties';
 import Timer from './Timer';

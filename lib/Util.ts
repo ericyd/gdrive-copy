@@ -10,7 +10,30 @@ import Timer from './Timer';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
 
-export default class Util {
+// credit: https://stackoverflow.com/a/18650828
+export function bytesToHumanReadable(bytes: number = 0, decimals: number = 2) {
+  if (bytes === 0 || bytes === null || bytes === undefined) return '';
+  const unit = 1024;
+  const abbreviations = [
+    'bytes',
+    'KB',
+    'MB',
+    'GB',
+    'TB',
+    'PB',
+    'EB',
+    'ZB',
+    'YB'
+  ];
+  const size = Math.floor(Math.log(bytes) / Math.log(unit));
+  return (
+    parseFloat((bytes / Math.pow(unit, size)).toFixed(decimals)) +
+    ' ' +
+    abbreviations[size]
+  );
+}
+
+export class Util {
   /**
    * Logs values to the logger spreadsheet
    */
@@ -82,7 +105,8 @@ export default class Util {
       link: 2,
       id: 3,
       timeCompleted: 4,
-      parentFolderLink: 5
+      parentFolderLink: 5,
+      fileSize: 6
     };
 
     // set values to array of empty strings, then assign value based on column index
@@ -100,6 +124,7 @@ export default class Util {
       parentId === ''
         ? parentId
         : FileService.getFileLinkForSheet(parentId, '');
+    values[columns.fileSize] = bytesToHumanReadable(fileSize);
 
     // log values
     Util._log(ss, values);

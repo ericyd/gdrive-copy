@@ -1,5 +1,5 @@
 global.Utilities = require('./mocks/Utilities');
-import Util from '../lib/Util';
+import { Util } from '../lib/Util';
 import Timer from '../lib/Timer';
 import TriggerService from '../lib/TriggerService';
 import Properties from '../lib/Properties';

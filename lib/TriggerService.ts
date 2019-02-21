@@ -2,7 +2,7 @@
  * Namespace for trigger-related methods
  **********************************************/
 
-import Util from './Util';
+import { Util } from './Util';
 import Timer from './Timer';
 
 export default class TriggerService {
