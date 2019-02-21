@@ -186,6 +186,28 @@ var Constants = (function () {
     return Constants;
 }());
 
+function bytesToHumanReadable(bytes, decimals) {
+    if (bytes === void 0) { bytes = 0; }
+    if (decimals === void 0) { decimals = 2; }
+    if (bytes === 0 || bytes === null || bytes === undefined)
+        return '';
+    var unit = 1024;
+    var abbreviations = [
+        'bytes',
+        'KB',
+        'MB',
+        'GB',
+        'TB',
+        'PB',
+        'EB',
+        'ZB',
+        'YB'
+    ];
+    var size = Math.floor(Math.log(bytes) / Math.log(unit));
+    return (parseFloat((bytes / Math.pow(unit, size)).toFixed(decimals)) +
+        ' ' +
+        abbreviations[size]);
+}
 var Util = (function () {
     function Util() {
     }
@@ -218,14 +240,15 @@ var Util = (function () {
         return SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperty('spreadsheetId')).getSheetByName('Log');
     };
     Util.log = function (_a) {
-        var _b = _a.ss, ss = _b === void 0 ? Util.getDefaultSheet() : _b, _c = _a.status, status = _c === void 0 ? '' : _c, _d = _a.title, title = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.timeZone, timeZone = _f === void 0 ? 'GMT-7' : _f, _g = _a.parentId, parentId = _g === void 0 ? '' : _g, _h = _a.fileSize;
+        var _b = _a.ss, ss = _b === void 0 ? Util.getDefaultSheet() : _b, _c = _a.status, status = _c === void 0 ? '' : _c, _d = _a.title, title = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.timeZone, timeZone = _f === void 0 ? 'GMT-7' : _f, _g = _a.parentId, parentId = _g === void 0 ? '' : _g, _h = _a.fileSize, fileSize = _h === void 0 ? 0 : _h;
         var columns = {
             status: 0,
             name: 1,
             link: 2,
             id: 3,
             timeCompleted: 4,
-            parentFolderLink: 5
+            parentFolderLink: 5,
+            fileSize: 6
         };
         var values = Object.keys(columns).map(function (_) { return ''; });
         values[columns.status] = status;
@@ -237,6 +260,7 @@ var Util = (function () {
             parentId === ''
                 ? parentId
                 : FileService.getFileLinkForSheet(parentId, '');
+        values[columns.fileSize] = bytesToHumanReadable(fileSize);
         Util._log(ss, values);
     };
     Util.logCopyError = function (ss, error, item, timeZone) {
