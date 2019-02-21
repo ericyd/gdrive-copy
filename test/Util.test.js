@@ -136,15 +136,15 @@ describe('Util', function() {
     });
   });
   describe('composeErrorMsg()', function() {
-    it('should return an array', function() {
+    it('should return a string', function() {
       const actual = Util.composeErrorMsg({});
-      assert(Array.isArray(actual), 'did not return array');
+      assert(typeof actual === 'string', 'did not return string');
     });
     it('should prepend message with customMsg parap', function() {
       const customMsg = 'my custom message';
       const actual = Util.composeErrorMsg({}, customMsg);
       assert.notEqual(
-        actual[0].indexOf(customMsg),
+        actual.indexOf(customMsg),
         -1,
         'did not find custom message in result'
       );
@@ -152,12 +152,12 @@ describe('Util', function() {
     it('should include line and file identifiers in the error message', function() {
       const actual = Util.composeErrorMsg({});
       assert.notEqual(
-        actual[0].indexOf('Line:'),
+        actual.indexOf('Line:'),
         -1,
         "did not find 'Line:' message in result"
       );
       assert.notEqual(
-        actual[0].indexOf('File:'),
+        actual.indexOf('File:'),
         -1,
         "did not find 'File:' message in result"
       );
