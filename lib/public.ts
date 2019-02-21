@@ -9,6 +9,8 @@ import GDriveService from './GDriveService';
 import FileService from './FileService';
 import Properties from './Properties';
 import Timer from './Timer';
+import Constants from './Constants';
+import ErrorMessages from './ErrorMessages';
 
 /**
  * Serves HTML of the application for HTTP GET requests.
@@ -35,24 +37,18 @@ export function doGet(e) {
  * Set UserProperties values and save properties to propertiesDoc.
  * Add link for destination folder to logger spreadsheet.
  * Return IDs of created destination folder and logger spreadsheet
- *
- * @param {object} options
- *  {
- *    srcFolderID: string,
- *    srcParentId: string,
- *    srcFolderName: string,
- *    srcFolderURL: string,
- *    destFolderName: string,
- *    copyPermissions: boolean,
- *    copyTo: number,
- *    destParentID: string,
- *  }
  */
-export function initialize(options) {
+export function initialize(
+  options: FrontEndOptions
+): {
+  spreadsheetId: string;
+  destFolderId: string;
+  resuming: boolean;
+} {
   var destFolder, // {Object} instance of Folder class representing destination folder
-    spreadsheet, // {Object} instance of Spreadsheet class
-    propertiesDocId, // {Object} metadata for Google Document created to hold properties
-    today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'), // {string} date of copy
+    spreadsheet: gapi.client.drive.FileResource,
+    propertiesDocId: string,
+    today: string = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'),
     gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
@@ -69,8 +65,7 @@ export function initialize(options) {
   options.propertiesDocId = propertiesDocId;
 
   // initialize map with top level source and destination folder
-  options.leftovers = {}; // {Object} FileList object (returned from Files.list) for items not processed in prior execution (filled in saveState)
-  options.map = {}; // {Object} map of source ids (keys) to destination ids (values)
+  options.map = {};
   options.map[options.srcFolderID] = options.destId;
   options.remaining = [options.srcFolderID];
 
@@ -104,7 +99,7 @@ export function initialize(options) {
       .getRange(5, 1, 1, 5)
       .setValues([
         [
-          'Started copying',
+          Constants.StartCopyingText,
           '',
           '',
           '',
@@ -140,41 +135,28 @@ export function initialize(options) {
   };
 }
 
-/**
- * @param {string} id the folder ID for which to return metadata
- * @param {string} url the folder URL
- * @returns {object} the metadata for the folder (File Resource)
- */
-export function getMetadata(id, url) {
+export function getMetadata(
+  id: string,
+  url?: string
+): gapi.client.drive.FileResource {
   try {
     return Drive.Files.get(id);
   } catch (e) {
-    var errMsg =
-      'Unable to find a folder with the supplied URL. ' +
-      'You submitted ' +
-      url +
-      '. ' +
-      'Please verify that you are using a valid folder URL and try again.';
-    throw new Error(errMsg);
+    throw new Error(ErrorMessages.NotFound(url));
   }
 }
 
-/**
- * @returns {string} email of the active user
- */
-export function getUserEmail() {
+export function getUserEmail(): string {
   return Session.getActiveUser().getEmail();
 }
 
 /**
  * Find prior copy folder instance.
  * Find propertiesDoc and logger spreadsheet, and save IDs to userProperties, which will be used by load.
- *
- * @param options object containing information on folder selected in app
- * @returns {{spreadsheetId: string, destId: string, resuming: boolean}}
  */
-
-export function resume(options) {
+export function resume(
+  options: FrontEndOptions
+): { spreadsheetId: string; destFolderId: string; resuming: boolean } {
   var gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
@@ -198,7 +180,7 @@ export function resume(options) {
 /**
  * Set a flag in the userProperties store that will cancel the current copy folder process
  */
-export function setStopFlag() {
+export function setStopFlag(): GoogleAppsScript.Properties.Properties {
   return PropertiesService.getUserProperties().setProperty('stop', 'true');
 }
 

@@ -4,6 +4,7 @@ import GDriveService from '../lib/GDriveService';
 import Util from '../lib/Util';
 import Timer from '../lib/Timer';
 import Properties from '../lib/Properties';
+import Constants from '../lib/Constants';
 const PropertiesService = require('./mocks/PropertiesService');
 const assert = require('assert');
 const fs = require('fs');
@@ -34,7 +35,7 @@ describe('FileService', function() {
       title: 'myTitle',
       parents: [
         {
-          kind: 'drive#fileLink',
+          kind: 'drive#parentReference',
           id: 'myParentID'
         }
       ],
@@ -46,7 +47,7 @@ describe('FileService', function() {
       title: 'myTitle',
       parents: [
         {
-          kind: 'drive#fileLink',
+          kind: 'drive#parentReference',
           id: 'myParentID'
         }
       ],
@@ -71,12 +72,9 @@ describe('FileService', function() {
         expected.destID
       );
       assert.equal(copy, mockCopy, 'returns wrong value');
-      assert.equal(
-        stub.getCall(0).args[1],
-        this.fileService.baseCopyLogID,
-        'this.gDriveService.copyFile called with wrong id'
-      );
+      assert.equal(stub.getCall(0).args[1], Constants.BaseCopyLogId);
       const requestBody = {
+        description: null,
         title: 'Copy Folder Log ' + expected.today,
         parents: [
           {
@@ -85,11 +83,7 @@ describe('FileService', function() {
           }
         ]
       };
-      assert.deepEqual(
-        stub.getCall(0).args[0],
-        requestBody,
-        'this.gDriveService.copyFile called with wrong body'
-      );
+      assert.deepEqual(stub.getCall(0).args[0], requestBody);
 
       stub.restore();
     });
@@ -128,7 +122,7 @@ describe('FileService', function() {
         title: options.destFolderName,
         parents: [
           {
-            kind: 'drive#fileLink',
+            kind: 'drive#parentReference',
             id: options.srcParentID
           }
         ],
@@ -176,7 +170,7 @@ describe('FileService', function() {
         title: options.destFolderName,
         parents: [
           {
-            kind: 'drive#fileLink',
+            kind: 'drive#parentReference',
             id: expectedRootID
           }
         ],
@@ -229,7 +223,7 @@ describe('FileService', function() {
         title: options.destFolderName,
         parents: [
           {
-            kind: 'drive#fileLink',
+            kind: 'drive#parentReference',
             id: options.destParentID
           }
         ],
@@ -422,6 +416,7 @@ describe('FileService', function() {
         const stubCopy = sinon.stub(this.gDriveService, 'copyFile');
         stubCopy.returns(this.mockFile);
         const request = {
+          description: null,
           title: this.mockFileResource.title,
           parents: [
             {

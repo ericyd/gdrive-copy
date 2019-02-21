@@ -19,27 +19,30 @@ import {
   getTriggersQuantity,
   getOAuthToken
 } from './public';
+import ErrorMessages from './ErrorMessages';
 
 /**
  * Copy folders and files from source to destination.
  * Get parameters from userProperties,
  * Loop until time runs out,
  * then call timeout methods, save and createTrigger.
- *
- * @param {boolean} resuming whether or not the copy call is resuming an existing folder copy or starting fresh
  */
-function copy() {
+function copy(): void {
   // initialize vars
-  var gDriveService = new GDriveService(),
-    properties = new Properties(gDriveService),
-    timer = new Timer(),
-    ss, // {object} instance of Sheet class
-    query, // {string} query to generate Files list
-    fileList, // {object} list of files within Drive folder
-    currFolder, // {object} metadata of folder whose children are currently being processed
-    userProperties = PropertiesService.getUserProperties(), // reference to userProperties store
-    triggerId = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
-    fileService = new FileService(gDriveService, timer, properties);
+  var gDriveService: GDriveService = new GDriveService(),
+    properties: Properties = new Properties(gDriveService),
+    timer: Timer = new Timer(),
+    ss: GoogleAppsScript.Spreadsheet.Sheet,
+    query: string,
+    fileList: gapi.client.drive.FileListResource,
+    currFolder: string,
+    userProperties: GoogleAppsScript.Properties.UserProperties = PropertiesService.getUserProperties(), // reference to userProperties store
+    triggerId: string = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
+    fileService: FileService = new FileService(
+      gDriveService,
+      timer,
+      properties
+    );
 
   // Delete previous trigger
   TriggerService.deleteTrigger(triggerId);
@@ -50,7 +53,7 @@ function copy() {
   try {
     Util.exponentialBackoff(
       properties.load.bind(properties),
-      'Error restarting script, trying again...'
+      ErrorMessages.Restarting
     );
   } catch (e) {
     var n = Number(userProperties.getProperties().trials);
@@ -62,9 +65,7 @@ function copy() {
 
       Util.exponentialBackoff(
         TriggerService.createTrigger,
-        'Error setting trigger.  There has been a server error with Google Apps Script.' +
-          'To successfully finish copying, please refresh the app and click "Resume Copying"' +
-          'and follow the instructions on the page.'
+        ErrorMessages.SettingTrigger
       );
     }
     return;
@@ -98,7 +99,7 @@ function copy() {
       try {
         currFolder = properties.remaining.shift();
       } catch (e) {
-        console.error('properties.remaining is not parsed correctly');
+        console.error(ErrorMessages.ParseErrorRemaining);
         console.error(e);
         properties.remaining = JSON.parse(properties.remaining);
         currFolder = properties.remaining.shift();

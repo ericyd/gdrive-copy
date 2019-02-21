@@ -5,6 +5,8 @@
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {
+    "@types/gapi.drive": "0.0.1",
+    "@types/google-apps-script": "0.0.37",
     "autoprefixer": "^9.4.6",
     "babel-core": "^6.26.3",
     "babel-eslint": "^7.1.0",
@@ -37,6 +39,7 @@
   },
   "scripts": {
     "pretest": "tsc lib/*.ts --module commonjs || true",
+    "posttest": "rm lib/*.js",
     "test": "nyc mocha --grep formatting --invert --compilers js:babel-core/register",
     "prettier-test": "mocha test/formatting/prettier.test.js --compilers js:babel-core/register",
     "watch": "gulp watch",
