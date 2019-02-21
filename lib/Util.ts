@@ -101,7 +101,7 @@ export class Util {
     // map column names to indices
     const columns = {
       status: 0,
-      name: 1,
+      title: 1,
       link: 2,
       id: 3,
       timeCompleted: 4,
@@ -112,7 +112,7 @@ export class Util {
     // set values to array of empty strings, then assign value based on column index
     const values = Object.keys(columns).map(_ => '');
     values[columns.status] = status;
-    values[columns.name] = name;
+    values[columns.title] = title;
     values[columns.link] = FileService.getFileLinkForSheet(id, title);
     values[columns.id] = id;
     values[columns.timeCompleted] = Utilities.formatDate(
@@ -159,7 +159,8 @@ export class Util {
       title: item.title,
       id: item.id,
       timeZone,
-      parentId
+      parentId,
+      fileSize: item.fileSize
     });
   }
 

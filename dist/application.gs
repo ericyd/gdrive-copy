@@ -243,7 +243,7 @@ var Util = (function () {
         var _b = _a.ss, ss = _b === void 0 ? Util.getDefaultSheet() : _b, _c = _a.status, status = _c === void 0 ? '' : _c, _d = _a.title, title = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.timeZone, timeZone = _f === void 0 ? 'GMT-7' : _f, _g = _a.parentId, parentId = _g === void 0 ? '' : _g, _h = _a.fileSize, fileSize = _h === void 0 ? 0 : _h;
         var columns = {
             status: 0,
-            name: 1,
+            title: 1,
             link: 2,
             id: 3,
             timeCompleted: 4,
@@ -252,7 +252,7 @@ var Util = (function () {
         };
         var values = Object.keys(columns).map(function (_) { return ''; });
         values[columns.status] = status;
-        values[columns.name] = name;
+        values[columns.title] = title;
         values[columns.link] = FileService.getFileLinkForSheet(id, title);
         values[columns.id] = id;
         values[columns.timeCompleted] = Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa');
@@ -282,7 +282,8 @@ var Util = (function () {
             title: item.title,
             id: item.id,
             timeZone: timeZone,
-            parentId: parentId
+            parentId: parentId,
+            fileSize: item.fileSize
         });
     };
     Util.exponentialBackoff = function (func, errorMsg) {
