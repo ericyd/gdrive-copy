@@ -10,6 +10,7 @@ import Timer from './Timer';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
 import Logging from './util/Logging';
+import QuotaManager from './QuotaManager';
 
 export class Util {
   /**
@@ -96,6 +97,7 @@ export class Util {
     fileList: gapi.client.drive.FileListResource,
     userProperties: GoogleAppsScript.Properties.UserProperties,
     timer: Timer,
+    quotaManager: QuotaManager,
     ss: GoogleAppsScript.Spreadsheet.Sheet,
     gDriveService: GDriveService
   ): void {
@@ -104,7 +106,7 @@ export class Util {
 
     // Set the stop message that will be displayed to user on script pause
     var stopMsg = Constants.SingleRunExceeded;
-    if (timer.stop) {
+    if (quotaManager.stop) {
       // user manually stopped script
       stopMsg = Constants.UserStoppedScript;
       TriggerService.deleteTrigger(userProperties.getProperty('triggerId'));
@@ -116,7 +118,7 @@ export class Util {
     }
 
     // Either stop flag or runtime exceeded. Must save state
-    if (!timer.canContinue() || properties.retryQueue.length > 0) {
+    if (!quotaManager.canContinue() || properties.retryQueue.length > 0) {
       Util.saveState(properties, fileList, stopMsg, ss, gDriveService);
     } else {
       // The copy is complete!

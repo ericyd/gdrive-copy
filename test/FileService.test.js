@@ -1,11 +1,11 @@
 global.Utilities = require('./mocks/Utilities');
 import FileService from '../lib/FileService';
 import GDriveService from '../lib/GDriveService';
-import { Util } from '../lib/Util';
-import Timer from '../lib/Timer';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
 import Logging from '../lib/util/Logging';
+import QuotaManager from '../lib/QuotaManager';
+import Timer from '../lib/Timer';
 const PropertiesService = require('./mocks/PropertiesService');
 const assert = require('assert');
 const fs = require('fs');
@@ -14,14 +14,18 @@ const sinon = require('sinon');
 describe('FileService', function() {
   beforeEach(function() {
     this.gDriveService = new GDriveService();
-    this.timer = new Timer();
+    const timer = new Timer();
+    this.quotaManager = new QuotaManager(
+      timer,
+      PropertiesService.getUserProperties()
+    );
     this.properties = new Properties(this.gDriveService);
     this.properties.map = {
       myParentID: 'newParentID'
     };
     this.fileService = new FileService(
       this.gDriveService,
-      this.timer,
+      this.quotaManager,
       this.properties
     );
     this.mockFolder = JSON.parse(
@@ -457,11 +461,11 @@ describe('FileService', function() {
     it('should return if !timer.canContinue()', function() {
       // set up mocks
       this.userProperties.getProperties().stop = 'true';
-      this.timer.update(this.userProperties);
+      this.quotaManager.update();
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      this.fileService.processFileList([1, 2, 3], this.userProperties, {});
+      this.fileService.processFileList([1, 2, 3], {});
 
       // assertions
       assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
@@ -476,7 +480,7 @@ describe('FileService', function() {
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      this.fileService.processFileList([], this.userProperties, {});
+      this.fileService.processFileList([], {});
 
       // assertions
       assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
@@ -498,7 +502,7 @@ describe('FileService', function() {
       this.properties.copyPermissions = true;
       this.fileService.processFileList(
         [{ mimeType: 'application/vnd.google-apps.document' }],
-        this.userProperties,
+
         {}
       );
 
@@ -530,7 +534,7 @@ describe('FileService', function() {
       this.properties.copyPermissions = true;
       this.fileService.processFileList(
         [{ mimeType: 'application/json' }],
-        this.userProperties,
+
         {}
       );
 
@@ -557,17 +561,17 @@ describe('FileService', function() {
         this.fileService,
         'copyPermissions'
       );
-      const stubTimerUpdate = sinon.stub(this.timer, 'update');
+      const stubTimerUpdate = sinon.stub(this.quotaManager, 'update');
 
       // run actual
       const items = [1, 2, 3];
-      this.fileService.processFileList(items, this.userProperties, {});
+      this.fileService.processFileList(items, {});
 
       // assertions
-      assert(
+      assert.equal(
         stubTimerUpdate.callCount,
         items.length,
-        'timer.update called incorrect number of times'
+        'quotaManager.update called incorrect number of times'
       );
 
       // restore mocks
@@ -588,7 +592,7 @@ describe('FileService', function() {
       });
       const items = [this.mockFile, previouslyRetriedFile, this.mockFile];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(items, this.userProperties, {});
+      this.fileService.processFileList(items, {});
 
       assert.equal(
         this.properties.retryQueue.length,
@@ -614,7 +618,7 @@ describe('FileService', function() {
       // run actual
       const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(items, this.userProperties, {});
+      this.fileService.processFileList(items, {});
 
       assert.equal(
         this.properties.retryQueue.length,
@@ -643,7 +647,7 @@ describe('FileService', function() {
         error: new Error(errMsg)
       });
       const items = [previouslyRetriedFile, this.mockFile, this.mockFile];
-      this.fileService.processFileList(items, this.userProperties, {
+      this.fileService.processFileList(items, {
         spreadsheetStub: true
       });
 
@@ -687,7 +691,7 @@ describe('FileService', function() {
       // run actual
       const items = [1, 2, 3];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(items, this.userProperties, {
+      this.fileService.processFileList(items, {
         spreadsheetStub: true
       });
 

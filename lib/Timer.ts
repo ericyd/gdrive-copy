@@ -17,13 +17,11 @@ export default class Timer {
   START_TIME: number;
   runtime: number;
   timeIsUp: boolean;
-  stop: boolean;
 
   constructor() {
     this.START_TIME = new Date().getTime();
     this.runtime = 0;
     this.timeIsUp = false;
-    this.stop = false;
 
     return this;
   }
@@ -31,14 +29,13 @@ export default class Timer {
   /**
    * Update current time
    */
-  update(userProperties: GoogleAppsScript.Properties.UserProperties): void {
+  update(): void {
     this.runtime = Timer.now() - this.START_TIME;
     this.timeIsUp = this.runtime >= Timer.MAX_RUNTIME;
-    this.stop = userProperties.getProperty('stop') == 'true';
   }
 
   canContinue(): boolean {
-    return !this.timeIsUp && !this.stop;
+    return !this.timeIsUp;
   }
 
   /**

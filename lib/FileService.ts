@@ -6,7 +6,7 @@ import { Util } from './Util';
 import Logging from './util/Logging';
 import { getMetadata } from './public';
 import Properties from './Properties';
-import Timer from './Timer';
+import QuotaManager from './QuotaManager';
 import GDriveService from './GDriveService';
 import API from './API';
 import MimeType from './MimeType';
@@ -15,18 +15,18 @@ import ErrorMessages from './ErrorMessages';
 
 export default class FileService {
   gDriveService: GDriveService;
-  timer: Timer;
+  quotaManager: QuotaManager;
   properties: Properties;
   nativeMimeTypes: string[];
   maxNumberOfAttempts: number;
 
   constructor(
     gDriveService: GDriveService,
-    timer: Timer,
+    quotaManager: QuotaManager,
     properties: Properties
   ) {
     this.gDriveService = gDriveService;
-    this.timer = timer;
+    this.quotaManager = quotaManager;
     this.properties = properties;
     this.nativeMimeTypes = [
       MimeType.DOC,
@@ -177,23 +177,17 @@ export default class FileService {
    * Destination folder must be set to the parent of the first leftover item.
    * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
    */
-  handleLeftovers(
-    userProperties: GoogleAppsScript.Properties.UserProperties,
-    ss: GoogleAppsScript.Spreadsheet.Sheet
-  ): void {
+  handleLeftovers(ss: GoogleAppsScript.Spreadsheet.Sheet): void {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
       this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
-      this.processFileList(this.properties.leftovers.items, userProperties, ss);
+      this.processFileList(this.properties.leftovers.items, ss);
     }
   }
 
-  handleRetries(
-    userProperties: GoogleAppsScript.Properties.UserProperties,
-    ss: GoogleAppsScript.Spreadsheet.Sheet
-  ): void {
+  handleRetries(ss: GoogleAppsScript.Spreadsheet.Sheet): void {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
-      this.processFileList(this.properties.retryQueue, userProperties, ss);
+      this.processFileList(this.properties.retryQueue, ss);
     }
   }
 
@@ -206,10 +200,9 @@ export default class FileService {
    */
   processFileList(
     items: gapi.client.drive.FileResource[],
-    userProperties: GoogleAppsScript.Properties.UserProperties,
     ss: GoogleAppsScript.Spreadsheet.Sheet
   ): void {
-    while (items.length > 0 && this.timer.canContinue()) {
+    while (items.length > 0 && this.quotaManager.canContinue()) {
       // Get next file from passed file list.
       var item = items.pop();
 
@@ -253,7 +246,7 @@ export default class FileService {
       }
 
       // Update current runtime and user stop flag
-      this.timer.update(userProperties);
+      this.quotaManager.update;
     }
   }
 

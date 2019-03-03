@@ -7,16 +7,14 @@ var Timer = (function () {
         this.START_TIME = new Date().getTime();
         this.runtime = 0;
         this.timeIsUp = false;
-        this.stop = false;
         return this;
     }
-    Timer.prototype.update = function (userProperties) {
+    Timer.prototype.update = function () {
         this.runtime = Timer.now() - this.START_TIME;
         this.timeIsUp = this.runtime >= Timer.MAX_RUNTIME;
-        this.stop = userProperties.getProperty('stop') == 'true';
     };
     Timer.prototype.canContinue = function () {
-        return !this.timeIsUp && !this.stop;
+        return !this.timeIsUp;
     };
     Timer.prototype.calculateTriggerDuration = function (properties) {
         return properties.checkMaxRuntime()
@@ -345,10 +343,10 @@ var Util = (function () {
             status: logMessage
         });
     };
-    Util.cleanup = function (properties, fileList, userProperties, timer, ss, gDriveService) {
+    Util.cleanup = function (properties, fileList, userProperties, timer, quotaManager, ss, gDriveService) {
         properties.incrementTotalRuntime(timer.runtime);
         var stopMsg = Constants.SingleRunExceeded;
-        if (timer.stop) {
+        if (quotaManager.stop) {
             stopMsg = Constants.UserStoppedScript;
             TriggerService.deleteTrigger(userProperties.getProperty('triggerId'));
         }
@@ -356,7 +354,7 @@ var Util = (function () {
             stopMsg = Constants.MaxRuntimeExceeded;
             properties.totalRuntime = 0;
         }
-        if (!timer.canContinue() || properties.retryQueue.length > 0) {
+        if (!quotaManager.canContinue() || properties.retryQueue.length > 0) {
             Util.saveState(properties, fileList, stopMsg, ss, gDriveService);
         }
         else {
@@ -534,6 +532,22 @@ var GDriveService = (function () {
     return GDriveService;
 }());
 
+var QuotaManager = (function () {
+    function QuotaManager(timer, userProperties) {
+        this.timer = timer;
+        this.userProperties = userProperties;
+        this.stop = false;
+    }
+    QuotaManager.prototype.update = function () {
+        this.timer.update();
+        this.stop = this.userProperties.getProperty('stop') == 'true';
+    };
+    QuotaManager.prototype.canContinue = function () {
+        return this.timer.canContinue() && !this.stop;
+    };
+    return QuotaManager;
+}());
+
 function doGet(e) {
     var template = HtmlService.createTemplateFromFile('Index');
     return template
@@ -542,7 +556,7 @@ function doGet(e) {
         .setSandboxMode(HtmlService.SandboxMode.IFRAME);
 }
 function initialize(options) {
-    var destFolder, spreadsheet, propertiesDocId, today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'), gDriveService = new GDriveService(), timer = new Timer(), properties = new Properties(gDriveService), fileService = new FileService(gDriveService, timer, properties);
+    var destFolder, spreadsheet, propertiesDocId, today = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'), gDriveService = new GDriveService(), timer = new Timer(), properties = new Properties(gDriveService), quotaManager = new QuotaManager(timer, PropertiesService.getUserProperties()), fileService = new FileService(gDriveService, quotaManager, properties);
     destFolder = fileService.initializeDestinationFolder(options, today);
     spreadsheet = fileService.createLoggerSpreadsheet(today, destFolder.id);
     propertiesDocId = fileService.createPropertiesDocument(destFolder.id);
@@ -607,7 +621,7 @@ function getUserEmail() {
     return Session.getActiveUser().getEmail();
 }
 function resume(options) {
-    var gDriveService = new GDriveService(), timer = new Timer(), properties = new Properties(gDriveService), fileService = new FileService(gDriveService, timer, properties);
+    var gDriveService = new GDriveService(), timer = new Timer(), properties = new Properties(gDriveService), quotaManager = new QuotaManager(timer, PropertiesService.getUserProperties()), fileService = new FileService(gDriveService, quotaManager, properties);
     var priorCopy = fileService.findPriorCopy(options.srcFolderID);
     Properties.setUserPropertiesStore(priorCopy.spreadsheetId, priorCopy.propertiesDocId, options.destFolderId, 'true');
     return {
@@ -633,9 +647,9 @@ function getOAuthToken() {
 }
 
 var FileService = (function () {
-    function FileService(gDriveService, timer, properties) {
+    function FileService(gDriveService, quotaManager, properties) {
         this.gDriveService = gDriveService;
-        this.timer = timer;
+        this.quotaManager = quotaManager;
         this.properties = properties;
         this.nativeMimeTypes = [
             MimeType.DOC,
@@ -717,20 +731,20 @@ var FileService = (function () {
             }
         }
     };
-    FileService.prototype.handleLeftovers = function (userProperties, ss) {
+    FileService.prototype.handleLeftovers = function (ss) {
         if (Util.hasSome(this.properties.leftovers, 'items')) {
             this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
-            this.processFileList(this.properties.leftovers.items, userProperties, ss);
+            this.processFileList(this.properties.leftovers.items, ss);
         }
     };
-    FileService.prototype.handleRetries = function (userProperties, ss) {
+    FileService.prototype.handleRetries = function (ss) {
         if (Util.hasSome(this.properties, 'retryQueue')) {
             this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
-            this.processFileList(this.properties.retryQueue, userProperties, ss);
+            this.processFileList(this.properties.retryQueue, ss);
         }
     };
-    FileService.prototype.processFileList = function (items, userProperties, ss) {
-        while (items.length > 0 && this.timer.canContinue()) {
+    FileService.prototype.processFileList = function (items, ss) {
+        while (items.length > 0 && this.quotaManager.canContinue()) {
             var item = items.pop();
             if (item.numberOfAttempts &&
                 item.numberOfAttempts > this.maxNumberOfAttempts) {
@@ -763,7 +777,7 @@ var FileService = (function () {
             }
             catch (e) {
             }
-            this.timer.update(userProperties);
+            this.quotaManager.update;
         }
     };
     FileService.prototype.initializeDestinationFolder = function (options, today) {
@@ -849,7 +863,7 @@ var FileService = (function () {
 }());
 
 function copy() {
-    var gDriveService = new GDriveService(), properties = new Properties(gDriveService), timer = new Timer(), ss, query, fileList, currFolder, userProperties = PropertiesService.getUserProperties(), triggerId = userProperties.getProperty('triggerId'), fileService = new FileService(gDriveService, timer, properties);
+    var gDriveService = new GDriveService(), properties = new Properties(gDriveService), timer = new Timer(), ss, query, fileList, currFolder, userProperties = PropertiesService.getUserProperties(), quotaManager = new QuotaManager(timer, userProperties), triggerId = userProperties.getProperty('triggerId'), fileService = new FileService(gDriveService, quotaManager, properties);
     TriggerService.deleteTrigger(triggerId);
     try {
         Util.exponentialBackoff(properties.load.bind(properties), ErrorMessages.Restarting);
@@ -865,13 +879,13 @@ function copy() {
         return;
     }
     ss = gDriveService.openSpreadsheet(properties.spreadsheetId);
-    timer.update(userProperties);
+    quotaManager.update();
     var duration = timer.calculateTriggerDuration(properties);
     TriggerService.createTrigger(duration);
-    fileService.handleLeftovers(userProperties, ss);
-    timer.update(userProperties);
+    fileService.handleLeftovers(ss);
+    quotaManager.update();
     while ((properties.remaining.length > 0 || Util.isSome(properties.pageToken)) &&
-        timer.canContinue()) {
+        quotaManager.canContinue()) {
         if (properties.pageToken && properties.currFolderId) {
             currFolder = properties.currFolderId;
         }
@@ -898,17 +912,17 @@ function copy() {
                 console.log('fileList is undefined. currFolder:', currFolder);
             }
             if (Util.hasSome(fileList, 'items')) {
-                fileService.processFileList(fileList.items, userProperties, ss);
+                fileService.processFileList(fileList.items, ss);
             }
             else {
                 Logger.log('No children found.');
             }
             properties.pageToken = fileList ? fileList.nextPageToken : null;
-            timer.update(userProperties);
-        } while (properties.pageToken && timer.canContinue());
+            quotaManager.update();
+        } while (properties.pageToken && quotaManager.canContinue());
     }
-    fileService.handleRetries(userProperties, ss);
-    Util.cleanup(properties, fileList, userProperties, timer, ss, gDriveService);
+    fileService.handleRetries(ss);
+    Util.cleanup(properties, fileList, userProperties, timer, quotaManager, ss, gDriveService);
 }
 
 exports.doGet = doGet;

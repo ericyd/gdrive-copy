@@ -5,6 +5,7 @@ import Timer from '../lib/Timer';
 import TriggerService from '../lib/TriggerService';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
+import QuotaManager from '../lib/QuotaManager';
 const userProperties = require('./mocks/PropertiesService').getUserProperties();
 const sinon = require('sinon');
 const assert = require('assert');
@@ -60,8 +61,9 @@ describe('Util', function() {
       const stubSaveState = sinon.stub(Util, 'saveState');
       const stubDeleteTrigger = sinon.stub(TriggerService, 'deleteTrigger');
       const timer = new Timer();
+      const quotaManager = new QuotaManager(timer, userProperties);
       this.clock.tick(Timer.sixMinutes);
-      timer.update(userProperties);
+      quotaManager.update();
       const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const properties = new Properties();
 
@@ -69,45 +71,66 @@ describe('Util', function() {
 
       // normal pause
       let stopMsg = Constants.SingleRunExceeded;
-      Util.cleanup(properties, fileList, userProperties, timer, {});
+      Util.cleanup(
+        properties,
+        fileList,
+        userProperties,
+        timer,
+        quotaManager,
+        {}
+      );
       assert(stubSaveState.calledOnce, 'saveState not called');
       assert.equal(
         stubSaveState.getCall(0).args[2],
         stopMsg,
-        'saveState called with wrong stopMsg'
+        'saveState called with wrong stopMsg 1'
       );
 
       // user set stop flag
       userProperties.setProperty('stop', 'true');
-      timer.update(userProperties);
+      quotaManager.update();
       stopMsg = Constants.UserStoppedScript;
-      Util.cleanup(properties, fileList, userProperties, timer, {});
+      Util.cleanup(
+        properties,
+        fileList,
+        userProperties,
+        timer,
+        quotaManager,
+        {}
+      );
       assert.equal(stubSaveState.callCount, 2, 'saveState not called twice');
       assert.equal(
         stubSaveState.getCall(1).args[2],
         stopMsg,
-        'saveState called with wrong stopMsg'
+        'saveState called with wrong stopMsg 2'
       );
       userProperties.setProperty('stop', false);
-      timer.update(userProperties);
+      quotaManager.update();
 
       // max runtime exceeded
       properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
       properties.checkMaxRuntime();
       stopMsg = Constants.MaxRuntimeExceeded;
-      Util.cleanup(properties, fileList, userProperties, timer, {});
+      Util.cleanup(
+        properties,
+        fileList,
+        userProperties,
+        timer,
+        quotaManager,
+        {}
+      );
       assert.equal(stubSaveState.callCount, 3, 'saveState not called thrice');
       assert.equal(
         stubSaveState.getCall(2).args[2],
         stopMsg,
-        'saveState called with wrong stopMsg'
+        'saveState called with wrong stopMsg 3'
       );
 
       // restore mocks
       stubSaveState.restore();
       stubDeleteTrigger.restore();
       userProperties.setProperty('stop', false);
-      timer.update(userProperties);
+      quotaManager.update();
     });
 
     it('should save state if retryQueue is not empty', function() {
@@ -115,19 +138,27 @@ describe('Util', function() {
       const stubSaveState = sinon.stub(Util, 'saveState');
       const stubDeleteTrigger = sinon.stub(TriggerService, 'deleteTrigger');
       const timer = new Timer();
+      const quotaManager = new QuotaManager(timer, userProperties);
       const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const properties = new Properties();
       properties.retryQueue.push(...fileList);
 
       // normal pause
-      Util.cleanup(properties, fileList, userProperties, timer, {});
+      Util.cleanup(
+        properties,
+        fileList,
+        userProperties,
+        timer,
+        quotaManager,
+        {}
+      );
       assert.equal(stubSaveState.callCount, 1, 'saveState not called once');
 
       // restore mocks
       stubSaveState.restore();
       stubDeleteTrigger.restore();
       userProperties.setProperty('stop', false);
-      timer.update(userProperties);
+      quotaManager.update();
     });
   });
   describe('composeErrorMsg()', function() {
