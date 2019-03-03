@@ -11,3 +11,4 @@ dist/test.js
 dist/styles.css
 dist/styles.css.map
 lib/*.js
+.clasp.json
