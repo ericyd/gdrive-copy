@@ -1,7 +1,7 @@
 global.Utilities = require('./mocks/Utilities');
 import FileService from '../lib/FileService';
 import GDriveService from '../lib/GDriveService';
-import Util from '../lib/Util';
+import { Util } from '../lib/Util';
 import Timer from '../lib/Timer';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';

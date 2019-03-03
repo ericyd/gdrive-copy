@@ -2,7 +2,7 @@
  * Namespace for file-related functions
  **********************************************/
 
-import Util from './Util';
+import { Util } from './Util';
 import { getMetadata } from './public';
 import Properties from './Properties';
 import Timer from './Timer';
@@ -85,7 +85,7 @@ export default class FileService {
     try {
       permissions = this.gDriveService.getPermissions(srcId).items;
     } catch (e) {
-      Util.log(null, Util.composeErrorMsg(e));
+      Util.log({ status: Util.composeErrorMsg(e) });
     }
 
     // copy editors, viewers, and commenters from src file to dest file
@@ -149,7 +149,7 @@ export default class FileService {
     try {
       destPermissions = this.gDriveService.getPermissions(destId).items;
     } catch (e) {
-      Util.log(null, Util.composeErrorMsg(e));
+      Util.log({ status: Util.composeErrorMsg(e) });
     }
 
     if (destPermissions && destPermissions.length > 0) {

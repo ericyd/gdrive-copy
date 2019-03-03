@@ -4,7 +4,7 @@
 
 import FileService from './FileService';
 import GDriveService from './GDriveService';
-import Util from './Util';
+import { Util } from './Util';
 import Properties from './Properties';
 import Timer from './Timer';
 import TriggerService from './TriggerService';
@@ -115,7 +115,7 @@ function copy(): void {
       try {
         fileList = gDriveService.getFiles(query, properties.pageToken);
       } catch (e) {
-        Util.log(ss, Util.composeErrorMsg(e));
+        Util.log({ ss, status: Util.composeErrorMsg(e) });
       }
       if (!fileList) {
         console.log('fileList is undefined. currFolder:', currFolder);

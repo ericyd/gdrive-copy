@@ -2,7 +2,7 @@
  * Namespace for trigger-related methods
  **********************************************/
 
-import Util from './Util';
+import { Util } from './Util';
 import Timer from './Timer';
 
 export default class TriggerService {
@@ -46,7 +46,7 @@ export default class TriggerService {
           }
         }
       } catch (e) {
-        Util.log(null, Util.composeErrorMsg(e));
+        Util.log({ status: Util.composeErrorMsg(e) });
       }
     }
   }

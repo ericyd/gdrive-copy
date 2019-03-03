@@ -33,7 +33,6 @@ export default class GDriveService {
   throttle(func: () => any): any {
     var elapsed = Timer.now() - this.lastRequest;
     if (elapsed < this.minElapsed) {
-      // Util.log(null, ['sleeping for ' + (this.minElapsed - elapsed).toString()])
       Utilities.sleep(this.minElapsed - elapsed);
     }
     this.lastRequest = Timer.now();

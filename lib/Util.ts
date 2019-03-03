@@ -10,17 +10,37 @@ import Timer from './Timer';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
 
-export default class Util {
+// credit: https://stackoverflow.com/a/18650828
+export function bytesToHumanReadable(bytes: number = 0, decimals: number = 2) {
+  if (bytes === 0 || bytes === null || bytes === undefined) return '';
+  const unit = 1024;
+  const abbreviations = [
+    'bytes',
+    'KB',
+    'MB',
+    'GB',
+    'TB',
+    'PB',
+    'EB',
+    'ZB',
+    'YB'
+  ];
+  const size = Math.floor(Math.log(bytes) / Math.log(unit));
+  return (
+    parseFloat((bytes / Math.pow(unit, size)).toFixed(decimals)) +
+    ' ' +
+    abbreviations[size]
+  );
+}
+
+export class Util {
   /**
    * Logs values to the logger spreadsheet
    */
-  static log(ss: GoogleAppsScript.Spreadsheet.Sheet, values: string[]): void {
-    if (ss === null || ss === undefined) {
-      ss = SpreadsheetApp.openById(
-        PropertiesService.getUserProperties().getProperty('spreadsheetId')
-      ).getSheetByName('Log');
-    }
-
+  static _log(
+    ss: GoogleAppsScript.Spreadsheet.Sheet = Util.getDefaultSheet(),
+    values: string[]
+  ): void {
     // avoid placing entries that are too long
     values = values.map(function(cell) {
       if (cell && typeof cell == 'string') {
@@ -55,6 +75,61 @@ export default class Util {
     }
   }
 
+  static getDefaultSheet(): GoogleAppsScript.Spreadsheet.Sheet {
+    return SpreadsheetApp.openById(
+      PropertiesService.getUserProperties().getProperty('spreadsheetId')
+    ).getSheetByName('Log');
+  }
+
+  static log({
+    ss = Util.getDefaultSheet(),
+    status = '',
+    title = '',
+    id = '',
+    timeZone = 'GMT-7',
+    parentId = '',
+    fileSize = 0
+  }: {
+    ss?: GoogleAppsScript.Spreadsheet.Sheet;
+    status?: string;
+    title?: string;
+    id?: string;
+    timeZone?: string;
+    parentId?: string;
+    fileSize?: number;
+  }) {
+    // map column names to indices
+    const columns = {
+      status: 0,
+      title: 1,
+      link: 2,
+      id: 3,
+      timeCompleted: 4,
+      parentFolderLink: 5,
+      fileSize: 6
+    };
+
+    // set values to array of empty strings, then assign value based on column index
+    const values = Object.keys(columns).map(_ => '');
+    values[columns.status] = status;
+    values[columns.title] = title;
+    values[columns.link] = FileService.getFileLinkForSheet(id, title);
+    values[columns.id] = id;
+    values[columns.timeCompleted] = Utilities.formatDate(
+      new Date(),
+      timeZone,
+      'MM-dd-yy hh:mm:ss aaa'
+    );
+    values[columns.parentFolderLink] =
+      parentId === ''
+        ? parentId
+        : FileService.getFileLinkForSheet(parentId, '');
+    values[columns.fileSize] = bytesToHumanReadable(fileSize);
+
+    // log values
+    Util._log(ss, values);
+  }
+
   static logCopyError(
     ss: GoogleAppsScript.Spreadsheet.Sheet,
     error: Error,
@@ -62,14 +137,14 @@ export default class Util {
     timeZone: string
   ): void {
     var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
-    Util.log(ss, [
-      Util.composeErrorMsg(error)[0],
-      item.title,
-      FileService.getFileLinkForSheet(item.id, item.title),
-      item.id,
-      Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
-      FileService.getFileLinkForSheet(parentId, '')
-    ]);
+    Util.log({
+      ss,
+      status: Util.composeErrorMsg(error),
+      title: item.title,
+      id: item.id,
+      timeZone,
+      parentId
+    });
   }
 
   static logCopySuccess(
@@ -78,14 +153,15 @@ export default class Util {
     timeZone: string
   ): void {
     var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
-    Util.log(ss, [
-      'Copied',
-      item.title,
-      FileService.getFileLinkForSheet(item.id, item.title),
-      item.id,
-      Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa'),
-      FileService.getFileLinkForSheet(parentId, '')
-    ]);
+    Util.log({
+      ss,
+      status: 'Copied',
+      title: item.title,
+      id: item.id,
+      timeZone,
+      parentId,
+      fileSize: item.fileSize
+    });
   }
 
   /**
@@ -100,15 +176,11 @@ export default class Util {
       try {
         return func();
       } catch (e) {
-        Util.log(null, Util.composeErrorMsg(e));
+        Util.log({ status: Util.composeErrorMsg(e) });
         if (n == 5) {
-          Util.log(null, [
-            errorMsg,
-            '',
-            '',
-            '',
-            Utilities.formatDate(new Date(), 'GMT-7', 'MM-dd-yy hh:mm:ss aaa')
-          ]);
+          Util.log({
+            status: errorMsg
+          });
           throw e;
         }
         Utilities.sleep(
@@ -134,7 +206,10 @@ export default class Util {
         fileList && fileList.items ? fileList : properties.leftovers;
       properties.pageToken = properties.leftovers.nextPageToken;
     } catch (e) {
-      Util.log(ss, Util.composeErrorMsg(e, ErrorMessages.FailedSetLeftovers));
+      Util.log({
+        ss,
+        status: Util.composeErrorMsg(e, ErrorMessages.FailedSetLeftovers)
+      });
     }
 
     try {
@@ -151,15 +226,21 @@ export default class Util {
         } catch (e) {
           // likely already deleted, shouldn't be a big deal
         }
-        Util.log(ss, [ErrorMessages.OutOfSpace]);
-        Util.log(ss, [ErrorMessages.WillDuplicateOnResume]);
+        Util.log({ ss, status: ErrorMessages.OutOfSpace });
+        Util.log({ ss, status: ErrorMessages.WillDuplicateOnResume });
         // return early to prevent logging `logMessage`
         return;
       }
-      Util.log(ss, Util.composeErrorMsg(e, ErrorMessages.FailedSaveProperties));
+      Util.log({
+        ss,
+        status: Util.composeErrorMsg(e, ErrorMessages.FailedSaveProperties)
+      });
     }
 
-    Util.log(ss, [logMessage]);
+    Util.log({
+      ss,
+      status: logMessage
+    });
   }
 
   static cleanup(
@@ -202,7 +283,10 @@ export default class Util {
           properties.propertiesDocId
         );
       } catch (e) {
-        Util.log(ss, Util.composeErrorMsg(e));
+        Util.log({
+          ss,
+          status: Util.composeErrorMsg(e)
+        });
       }
       ss.getRange(2, 3, 1, 1)
         .setValue('Complete')
@@ -217,18 +301,10 @@ export default class Util {
     }
   }
 
-  /**
-   * Returns a reasonable error message wrapped in an array which is required by Util.log
-   */
-  static composeErrorMsg(e: Error, customMsg: string = 'Error: '): string[] {
-    return [
-      customMsg +
-        e.message +
-        '. File: ' +
-        e.fileName +
-        '. Line: ' +
-        e.lineNumber
-    ];
+  static composeErrorMsg(e: Error, customMsg: string = 'Error: '): string {
+    return `${customMsg} ${e.message}. File: ${e.fileName}. Line: ${
+      e.lineNumber
+    }`;
   }
 
   static isNone(obj: any): boolean {
