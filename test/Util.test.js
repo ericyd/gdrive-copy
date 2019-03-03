@@ -1,5 +1,6 @@
 global.Utilities = require('./mocks/Utilities');
 import { Util } from '../lib/Util';
+import Logging from '../lib/util/Logging';
 import Timer from '../lib/Timer';
 import TriggerService from '../lib/TriggerService';
 import Properties from '../lib/Properties';
@@ -14,7 +15,7 @@ describe('Util', function() {
       // set up mocks
       const errMsg = 'i failed';
       const failingFunc = sinon.stub().throws(errMsg);
-      const stubLog = sinon.stub(Util, 'log');
+      Logging.log = sinon.stub();
 
       const failingFunc2 = () => {
         throw new Error(errMsg);
@@ -27,15 +28,12 @@ describe('Util', function() {
 
       // assertions
       assert.equal(failingFunc.callCount, 6, 'failing func not called 6 times');
-      assert.equal(stubLog.callCount, 7, 'Util.log not called 7 times');
-
-      // reset mocks
-      stubLog.restore();
+      assert.equal(Logging.log.callCount, 7, 'Logging.log not called 7 times');
     });
     it('should rethrow error after 6 tries', function() {
       // set up mocks
       const errMsg = 'i failed';
-      const stubLog = sinon.stub(Util, 'log');
+      const Logging = { log: sinon.stub() };
       const failingFunc2 = () => {
         throw new Error(errMsg);
       };
@@ -48,9 +46,6 @@ describe('Util', function() {
         Error,
         'threw wrong error after 6 attempts'
       );
-
-      // reset mocks
-      stubLog.restore();
     });
   });
   describe('cleanup()', function() {
@@ -163,10 +158,7 @@ describe('Util', function() {
       );
     });
   });
-  describe('log()', function() {
-    xit('should log to spreadsheet', function() {});
-    xit('should get spreadsheet if not passed as arg', function() {});
-  });
+
   describe('saveState()', function() {
     xit('should save properties', function() {});
     xit('should log result', function() {});

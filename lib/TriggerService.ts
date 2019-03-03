@@ -4,6 +4,7 @@
 
 import { Util } from './Util';
 import Timer from './Timer';
+import Logging from './util/Logging';
 
 export default class TriggerService {
   /**
@@ -46,7 +47,7 @@ export default class TriggerService {
           }
         }
       } catch (e) {
-        Util.log({ status: Util.composeErrorMsg(e) });
+        Logging.log({ status: Util.composeErrorMsg(e) });
       }
     }
   }

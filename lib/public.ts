@@ -92,7 +92,7 @@ export function initialize(
     options.timeZone = 'GMT-7';
   }
 
-  // Adding a row to status list prevents weird style copying in Util.log
+  // Adding a row to status list prevents weird style copying in Logging.log
   try {
     SpreadsheetApp.openById(spreadsheet.id)
       .getSheetByName('Log')

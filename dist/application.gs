@@ -33,6 +33,135 @@ var Timer = (function () {
     return Timer;
 }());
 
+var ErrorMessages = (function () {
+    function ErrorMessages() {
+    }
+    ErrorMessages.DataFilesNotFound = 'Could not find the necessary data files in the selected folder. Please ensure that you selected the in-progress copy and not the original folder.';
+    ErrorMessages.Descendant = 'Cannot select destination folder that exists within the source folder';
+    ErrorMessages.FailedSaveProperties = 'Failed to save properties. This could affect script performance and may require restarting the copy. Error Message: ';
+    ErrorMessages.FailedSetLeftovers = 'Failed to set leftover file list. Error Message: ';
+    ErrorMessages.LoadingProp = function (key, value) {
+        return "Error loading property " + key + " to properties object. Attempted to save: " + value;
+    };
+    ErrorMessages.NoPropertiesDocumentId = 'Could not determine properties document ID. Please try running the script again';
+    ErrorMessages.NotFound = function (url) {
+        return "Unable to find a folder with the supplied URL. You submitted " + url + ". Please verify that you are using a valid folder URL and try again.";
+    };
+    ErrorMessages.OutOfSpace = 'You have run out of space in your Drive! You should delete some files and then come back and use the "Resume" feature to restart your copy.';
+    ErrorMessages.ParseError = "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke.";
+    ErrorMessages.ParseErrorRemaining = 'properties.remaining is not parsed correctly';
+    ErrorMessages.Restarting = 'Error restarting script, trying again...';
+    ErrorMessages.SerializeError = 'Failed to serialize script properties. This is a critical failure. Please start your copy again.';
+    ErrorMessages.SettingTrigger = 'Error setting trigger.  There has been a server error with Google Apps Script. To successfully finish copying, please refresh the app and click "Resume Copying" and follow the instructions on the page.';
+    ErrorMessages.SpreadsheetTooLarge = 'The spreadsheet is too large to continue logging, but the service will continue to run in the background';
+    ErrorMessages.SpreadsheetNotFound = 'Cannot locate spreadsheet. Please try again.';
+    ErrorMessages.WillDuplicateOnResume = 'HEADS UP! Your most recently copied files WILL BE DUPLICATED if you resume. To avoid duplicating, you will need to restart your copy from the beginning';
+    return ErrorMessages;
+}());
+
+var Logging = (function () {
+    function Logging() {
+    }
+    Logging._log = function (ss, values) {
+        if (ss === void 0) { ss = Logging.getDefaultSheet(); }
+        values = values.map(function (cell) {
+            if (cell && typeof cell == 'string') {
+                return cell.slice(0, 4999);
+            }
+            return '';
+        });
+        var lastRow = ss.getLastRow();
+        var startRow = lastRow + 1;
+        var startColumn = 1;
+        var numRows = 1;
+        var numColumns = values.length;
+        try {
+            ss
+                .insertRowAfter(lastRow)
+                .getRange(startRow, startColumn, numRows, numColumns)
+                .setValues([values]);
+        }
+        catch (e) {
+            ss.getRange(lastRow, startColumn, numRows, 1).setValues([
+                [ErrorMessages.SpreadsheetTooLarge]
+            ]);
+        }
+    };
+    Logging.getDefaultSheet = function () {
+        return SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperty('spreadsheetId')).getSheetByName('Log');
+    };
+    Logging.log = function (_a) {
+        var _b = _a.ss, ss = _b === void 0 ? Logging.getDefaultSheet() : _b, _c = _a.status, status = _c === void 0 ? '' : _c, _d = _a.title, title = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.timeZone, timeZone = _f === void 0 ? 'GMT-7' : _f, _g = _a.parentId, parentId = _g === void 0 ? '' : _g, _h = _a.fileSize, fileSize = _h === void 0 ? 0 : _h;
+        var columns = {
+            status: 0,
+            title: 1,
+            link: 2,
+            id: 3,
+            timeCompleted: 4,
+            parentFolderLink: 5,
+            fileSize: 6
+        };
+        var values = Object.keys(columns).map(function (_) { return ''; });
+        values[columns.status] = status;
+        values[columns.title] = title;
+        values[columns.link] = FileService.getFileLinkForSheet(id, title);
+        values[columns.id] = id;
+        values[columns.timeCompleted] = Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa');
+        values[columns.parentFolderLink] =
+            parentId === ''
+                ? parentId
+                : FileService.getFileLinkForSheet(parentId, '');
+        values[columns.fileSize] = Logging.bytesToHumanReadable(fileSize);
+        Logging._log(ss, values);
+    };
+    Logging.logCopyError = function (ss, error, item, timeZone) {
+        var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
+        Logging.log({
+            ss: ss,
+            status: Util.composeErrorMsg(error),
+            title: item.title,
+            id: item.id,
+            timeZone: timeZone,
+            parentId: parentId
+        });
+    };
+    Logging.logCopySuccess = function (ss, item, timeZone) {
+        var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
+        Logging.log({
+            ss: ss,
+            status: 'Copied',
+            title: item.title,
+            id: item.id,
+            timeZone: timeZone,
+            parentId: parentId,
+            fileSize: item.fileSize
+        });
+    };
+    Logging.bytesToHumanReadable = function (bytes, decimals) {
+        if (bytes === void 0) { bytes = 0; }
+        if (decimals === void 0) { decimals = 2; }
+        if (bytes === 0 || bytes === null || bytes === undefined)
+            return '';
+        var unit = 1024;
+        var abbreviations = [
+            'bytes',
+            'KB',
+            'MB',
+            'GB',
+            'TB',
+            'PB',
+            'EB',
+            'ZB',
+            'YB'
+        ];
+        var size = Math.floor(Math.log(bytes) / Math.log(unit));
+        return (parseFloat((bytes / Math.pow(unit, size)).toFixed(decimals)) +
+            ' ' +
+            abbreviations[size]);
+    };
+    return Logging;
+}());
+
 var TriggerService = (function () {
     function TriggerService() {
     }
@@ -58,37 +187,11 @@ var TriggerService = (function () {
                 }
             }
             catch (e) {
-                Util.log({ status: Util.composeErrorMsg(e) });
+                Logging.log({ status: Util.composeErrorMsg(e) });
             }
         }
     };
     return TriggerService;
-}());
-
-var ErrorMessages = (function () {
-    function ErrorMessages() {
-    }
-    ErrorMessages.DataFilesNotFound = 'Could not find the necessary data files in the selected folder. Please ensure that you selected the in-progress copy and not the original folder.';
-    ErrorMessages.Descendant = 'Cannot select destination folder that exists within the source folder';
-    ErrorMessages.FailedSaveProperties = 'Failed to save properties. This could affect script performance and may require restarting the copy. Error Message: ';
-    ErrorMessages.FailedSetLeftovers = 'Failed to set leftover file list. Error Message: ';
-    ErrorMessages.LoadingProp = function (key, value) {
-        return "Error loading property " + key + " to properties object. Attempted to save: " + value;
-    };
-    ErrorMessages.NoPropertiesDocumentId = 'Could not determine properties document ID. Please try running the script again';
-    ErrorMessages.NotFound = function (url) {
-        return "Unable to find a folder with the supplied URL. You submitted " + url + ". Please verify that you are using a valid folder URL and try again.";
-    };
-    ErrorMessages.OutOfSpace = 'You have run out of space in your Drive! You should delete some files and then come back and use the "Resume" feature to restart your copy.';
-    ErrorMessages.ParseError = "Unable to parse the properties document. This is likely a bug, but it is worth trying one more time to make sure it wasn't a fluke.";
-    ErrorMessages.ParseErrorRemaining = 'properties.remaining is not parsed correctly';
-    ErrorMessages.Restarting = 'Error restarting script, trying again...';
-    ErrorMessages.SerializeError = 'Failed to serialize script properties. This is a critical failure. Please start your copy again.';
-    ErrorMessages.SettingTrigger = 'Error setting trigger.  There has been a server error with Google Apps Script. To successfully finish copying, please refresh the app and click "Resume Copying" and follow the instructions on the page.';
-    ErrorMessages.SpreadsheetTooLarge = 'The spreadsheet is too large to continue logging, but the service will continue to run in the background';
-    ErrorMessages.SpreadsheetNotFound = 'Cannot locate spreadsheet. Please try again.';
-    ErrorMessages.WillDuplicateOnResume = 'HEADS UP! Your most recently copied files WILL BE DUPLICATED if you resume. To avoid duplicating, you will need to restart your copy from the beginning';
-    return ErrorMessages;
 }());
 
 var Properties = (function () {
@@ -186,115 +289,18 @@ var Constants = (function () {
     return Constants;
 }());
 
-function bytesToHumanReadable(bytes, decimals) {
-    if (bytes === void 0) { bytes = 0; }
-    if (decimals === void 0) { decimals = 2; }
-    if (bytes === 0 || bytes === null || bytes === undefined)
-        return '';
-    var unit = 1024;
-    var abbreviations = [
-        'bytes',
-        'KB',
-        'MB',
-        'GB',
-        'TB',
-        'PB',
-        'EB',
-        'ZB',
-        'YB'
-    ];
-    var size = Math.floor(Math.log(bytes) / Math.log(unit));
-    return (parseFloat((bytes / Math.pow(unit, size)).toFixed(decimals)) +
-        ' ' +
-        abbreviations[size]);
-}
 var Util = (function () {
     function Util() {
     }
-    Util._log = function (ss, values) {
-        if (ss === void 0) { ss = Util.getDefaultSheet(); }
-        values = values.map(function (cell) {
-            if (cell && typeof cell == 'string') {
-                return cell.slice(0, 4999);
-            }
-            return '';
-        });
-        var lastRow = ss.getLastRow();
-        var startRow = lastRow + 1;
-        var startColumn = 1;
-        var numRows = 1;
-        var numColumns = values.length;
-        try {
-            ss
-                .insertRowAfter(lastRow)
-                .getRange(startRow, startColumn, numRows, numColumns)
-                .setValues([values]);
-        }
-        catch (e) {
-            ss.getRange(lastRow, startColumn, numRows, 1).setValues([
-                [ErrorMessages.SpreadsheetTooLarge]
-            ]);
-        }
-    };
-    Util.getDefaultSheet = function () {
-        return SpreadsheetApp.openById(PropertiesService.getUserProperties().getProperty('spreadsheetId')).getSheetByName('Log');
-    };
-    Util.log = function (_a) {
-        var _b = _a.ss, ss = _b === void 0 ? Util.getDefaultSheet() : _b, _c = _a.status, status = _c === void 0 ? '' : _c, _d = _a.title, title = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.timeZone, timeZone = _f === void 0 ? 'GMT-7' : _f, _g = _a.parentId, parentId = _g === void 0 ? '' : _g, _h = _a.fileSize, fileSize = _h === void 0 ? 0 : _h;
-        var columns = {
-            status: 0,
-            title: 1,
-            link: 2,
-            id: 3,
-            timeCompleted: 4,
-            parentFolderLink: 5,
-            fileSize: 6
-        };
-        var values = Object.keys(columns).map(function (_) { return ''; });
-        values[columns.status] = status;
-        values[columns.title] = title;
-        values[columns.link] = FileService.getFileLinkForSheet(id, title);
-        values[columns.id] = id;
-        values[columns.timeCompleted] = Utilities.formatDate(new Date(), timeZone, 'MM-dd-yy hh:mm:ss aaa');
-        values[columns.parentFolderLink] =
-            parentId === ''
-                ? parentId
-                : FileService.getFileLinkForSheet(parentId, '');
-        values[columns.fileSize] = bytesToHumanReadable(fileSize);
-        Util._log(ss, values);
-    };
-    Util.logCopyError = function (ss, error, item, timeZone) {
-        var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
-        Util.log({
-            ss: ss,
-            status: Util.composeErrorMsg(error),
-            title: item.title,
-            id: item.id,
-            timeZone: timeZone,
-            parentId: parentId
-        });
-    };
-    Util.logCopySuccess = function (ss, item, timeZone) {
-        var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
-        Util.log({
-            ss: ss,
-            status: 'Copied',
-            title: item.title,
-            id: item.id,
-            timeZone: timeZone,
-            parentId: parentId,
-            fileSize: item.fileSize
-        });
-    };
     Util.exponentialBackoff = function (func, errorMsg) {
         for (var n = 0; n < 6; n++) {
             try {
                 return func();
             }
             catch (e) {
-                Util.log({ status: Util.composeErrorMsg(e) });
+                Logging.log({ status: Util.composeErrorMsg(e) });
                 if (n == 5) {
-                    Util.log({
+                    Logging.log({
                         status: errorMsg
                     });
                     throw e;
@@ -310,7 +316,7 @@ var Util = (function () {
             properties.pageToken = properties.leftovers.nextPageToken;
         }
         catch (e) {
-            Util.log({
+            Logging.log({
                 ss: ss,
                 status: Util.composeErrorMsg(e, ErrorMessages.FailedSetLeftovers)
             });
@@ -325,16 +331,16 @@ var Util = (function () {
                 }
                 catch (e) {
                 }
-                Util.log({ ss: ss, status: ErrorMessages.OutOfSpace });
-                Util.log({ ss: ss, status: ErrorMessages.WillDuplicateOnResume });
+                Logging.log({ ss: ss, status: ErrorMessages.OutOfSpace });
+                Logging.log({ ss: ss, status: ErrorMessages.WillDuplicateOnResume });
                 return;
             }
-            Util.log({
+            Logging.log({
                 ss: ss,
                 status: Util.composeErrorMsg(e, ErrorMessages.FailedSaveProperties)
             });
         }
-        Util.log({
+        Logging.log({
             ss: ss,
             status: logMessage
         });
@@ -359,7 +365,7 @@ var Util = (function () {
                 gDriveService.updateFile({ labels: { trashed: true } }, properties.propertiesDocId);
             }
             catch (e) {
-                Util.log({
+                Logging.log({
                     ss: ss,
                     status: Util.composeErrorMsg(e)
                 });
@@ -660,7 +666,7 @@ var FileService = (function () {
             permissions = this.gDriveService.getPermissions(srcId).items;
         }
         catch (e) {
-            Util.log({ status: Util.composeErrorMsg(e) });
+            Logging.log({ status: Util.composeErrorMsg(e) });
         }
         if (permissions && permissions.length > 0) {
             for (i = 0; i < permissions.length; i++) {
@@ -695,7 +701,7 @@ var FileService = (function () {
             destPermissions = this.gDriveService.getPermissions(destId).items;
         }
         catch (e) {
-            Util.log({ status: Util.composeErrorMsg(e) });
+            Logging.log({ status: Util.composeErrorMsg(e) });
         }
         if (destPermissions && destPermissions.length > 0) {
             for (i = 0; i < destPermissions.length; i++) {
@@ -728,12 +734,12 @@ var FileService = (function () {
             var item = items.pop();
             if (item.numberOfAttempts &&
                 item.numberOfAttempts > this.maxNumberOfAttempts) {
-                Util.logCopyError(ss, item.error, item, this.properties.timeZone);
+                Logging.logCopyError(ss, item.error, item, this.properties.timeZone);
                 continue;
             }
             try {
                 var newfile = this.copyFile(item);
-                Util.logCopySuccess(ss, newfile, this.properties.timeZone);
+                Logging.logCopySuccess(ss, newfile, this.properties.timeZone);
             }
             catch (e) {
                 this.properties.retryQueue.unshift({
@@ -886,7 +892,7 @@ function copy() {
                 fileList = gDriveService.getFiles(query, properties.pageToken);
             }
             catch (e) {
-                Util.log({ ss: ss, status: Util.composeErrorMsg(e) });
+                Logging.log({ ss: ss, status: Util.composeErrorMsg(e) });
             }
             if (!fileList) {
                 console.log('fileList is undefined. currFolder:', currFolder);

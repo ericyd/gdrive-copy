@@ -1,4 +1,4 @@
-import Timer from "./Timer";
+import Timer from './Timer';
 
 export default class QuotaManager {
   timer: Timer;
@@ -11,7 +11,5 @@ export default class QuotaManager {
     return true;
   }
 
-  isRunningTooLong() {
-
-  }
+  isRunningTooLong() {}
 }
