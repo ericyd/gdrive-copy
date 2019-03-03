@@ -39,7 +39,7 @@
   },
   "scripts": {
     "pretest": "tsc lib/*.ts --module commonjs || true",
-    "posttest": "rm lib/*.js",
+    "posttest": "rm lib/*.js && rm lib/**/*.js",
     "test": "nyc mocha --grep formatting --invert --compilers js:babel-core/register",
     "prettier-test": "mocha test/formatting/prettier.test.js --compilers js:babel-core/register",
     "watch": "gulp watch",
