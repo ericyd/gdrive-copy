@@ -46,7 +46,7 @@ gulp.task('html', function() {
   return gulp
     .src('src/templates/index.html')
     .pipe(gulpHogan({ isProd: true }))
-    .pipe(rename('index.html'))
+    .pipe(rename('Index.html'))
     .pipe(gulp.dest('dist'));
 });
 
@@ -62,7 +62,7 @@ gulp.task('html-test-site', function() {
 gulp.task('img', buildImages);
 
 function buildImages() {
-  let img_path = './dist/icons/';
+  let img_path = './icons/';
   fs.stat(img_path, (err, stat) => {
     if (err) fs.mkdir(img_path);
   });
