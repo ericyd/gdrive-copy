@@ -9,17 +9,6 @@ import { Util } from './Util';
 import Properties from './Properties';
 import Timer from './Timer';
 import TriggerService from './TriggerService';
-import {
-  doGet,
-  initialize,
-  getMetadata,
-  getUserEmail,
-  resume,
-  setStopFlag,
-  deleteAllTriggers,
-  getTriggersQuantity,
-  getOAuthToken
-} from './public';
 import ErrorMessages from './ErrorMessages';
 import QuotaManager from './QuotaManager';
 
@@ -29,7 +18,7 @@ import QuotaManager from './QuotaManager';
  * Loop until time runs out,
  * then call timeout methods, save and createTrigger.
  */
-function copy(): void {
+export function copy(): void {
   // initialize vars
   var gDriveService: GDriveService = new GDriveService(),
     properties: Properties = new Properties(gDriveService),
@@ -152,16 +141,3 @@ function copy(): void {
     gDriveService
   );
 }
-
-export {
-  doGet,
-  initialize,
-  getMetadata,
-  getUserEmail,
-  resume,
-  setStopFlag,
-  deleteAllTriggers,
-  getTriggersQuantity,
-  getOAuthToken,
-  copy
-};
