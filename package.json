@@ -55,6 +55,7 @@
     "clasp:deploy": "clasp deploy",
     "clasp:pull": "clasp pull",
     "clasp:login": "clasp login",
+    "clasp:status": "clasp status",
     "prettier": "prettier --write --single-quote \"{,!(node_modules),!(public),!(dist)/**/}*.{ts,js,css,scss}\""
   },
   "repository": {
