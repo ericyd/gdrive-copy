@@ -3,6 +3,7 @@
  **********************************************/
 
 import FileService from './FileService';
+import Logging from './util/Logging';
 import GDriveService from './GDriveService';
 import { Util } from './Util';
 import Properties from './Properties';
@@ -20,6 +21,7 @@ import {
   getOAuthToken
 } from './public';
 import ErrorMessages from './ErrorMessages';
+import QuotaManager from './QuotaManager';
 
 /**
  * Copy folders and files from source to destination.
@@ -37,10 +39,11 @@ function copy(): void {
     fileList: gapi.client.drive.FileListResource,
     currFolder: string,
     userProperties: GoogleAppsScript.Properties.UserProperties = PropertiesService.getUserProperties(), // reference to userProperties store
+    quotaManager: QuotaManager = new QuotaManager(timer, userProperties),
     triggerId: string = userProperties.getProperty('triggerId'), // {string} Unique ID for the most recently created trigger
     fileService: FileService = new FileService(
       gDriveService,
-      timer,
+      quotaManager,
       properties
     );
 
@@ -77,20 +80,20 @@ function copy(): void {
   // Create trigger for next run.
   // This trigger will be deleted if script finishes successfully
   // or if the stop flag is set.
-  timer.update(userProperties);
+  quotaManager.update();
   var duration = timer.calculateTriggerDuration(properties);
   TriggerService.createTrigger(duration);
 
   // Process leftover files from prior query results
-  fileService.handleLeftovers(userProperties, ss);
+  fileService.handleLeftovers(ss);
 
   // Update current runtime and user stop flag
-  timer.update(userProperties);
+  quotaManager.update();
 
   // When leftovers are complete, query next folder from properties.remaining
   while (
     (properties.remaining.length > 0 || Util.isSome(properties.pageToken)) &&
-    timer.canContinue()
+    quotaManager.canContinue()
   ) {
     // if pages remained in the previous query, use them first
     if (properties.pageToken && properties.currFolderId) {
@@ -115,7 +118,7 @@ function copy(): void {
       try {
         fileList = gDriveService.getFiles(query, properties.pageToken);
       } catch (e) {
-        Util.log({ ss, status: Util.composeErrorMsg(e) });
+        Logging.log({ ss, status: Util.composeErrorMsg(e) });
       }
       if (!fileList) {
         console.log('fileList is undefined. currFolder:', currFolder);
@@ -123,7 +126,7 @@ function copy(): void {
 
       // Send items to processFileList() to copy if there is anything to copy
       if (Util.hasSome(fileList, 'items')) {
-        fileService.processFileList(fileList.items, userProperties, ss);
+        fileService.processFileList(fileList.items, ss);
       } else {
         Logger.log('No children found.');
       }
@@ -131,15 +134,23 @@ function copy(): void {
       // get next page token to continue iteration
       properties.pageToken = fileList ? fileList.nextPageToken : null;
 
-      timer.update(userProperties);
-    } while (properties.pageToken && timer.canContinue());
+      quotaManager.update();
+    } while (properties.pageToken && quotaManager.canContinue());
   }
 
   // Retry files that errored during initial run
-  fileService.handleRetries(userProperties, ss);
+  fileService.handleRetries(ss);
 
   // Cleanup
-  Util.cleanup(properties, fileList, userProperties, timer, ss, gDriveService);
+  Util.cleanup(
+    properties,
+    fileList,
+    userProperties,
+    timer,
+    quotaManager,
+    ss,
+    gDriveService
+  );
 }
 
 export {

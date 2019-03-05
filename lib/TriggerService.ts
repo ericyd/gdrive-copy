@@ -4,6 +4,7 @@
 
 import { Util } from './Util';
 import Timer from './Timer';
+import Logging from './util/Logging';
 
 export default class TriggerService {
   /**
@@ -13,7 +14,7 @@ export default class TriggerService {
   static createTrigger(duration: number): void {
     // default is 6.2 minutes from now
     // Timer will stop execution after 4.7 minutes, so this gives about 1.5 minutes buffer
-    duration = duration || Timer.sixMinutes;
+    duration = duration || Timer.SIX_MINUTES;
     var trigger = ScriptApp.newTrigger('copy')
       .timeBased()
       .after(duration)
@@ -46,7 +47,7 @@ export default class TriggerService {
           }
         }
       } catch (e) {
-        Util.log({ status: Util.composeErrorMsg(e) });
+        Logging.log({ status: Util.composeErrorMsg(e) });
       }
     }
   }

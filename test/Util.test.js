@@ -1,9 +1,11 @@
 global.Utilities = require('./mocks/Utilities');
 import { Util } from '../lib/Util';
+import Logging from '../lib/util/Logging';
 import Timer from '../lib/Timer';
 import TriggerService from '../lib/TriggerService';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
+import QuotaManager from '../lib/QuotaManager';
 const userProperties = require('./mocks/PropertiesService').getUserProperties();
 const sinon = require('sinon');
 const assert = require('assert');
@@ -14,7 +16,7 @@ describe('Util', function() {
       // set up mocks
       const errMsg = 'i failed';
       const failingFunc = sinon.stub().throws(errMsg);
-      const stubLog = sinon.stub(Util, 'log');
+      Logging.log = sinon.stub();
 
       const failingFunc2 = () => {
         throw new Error(errMsg);
@@ -27,15 +29,12 @@ describe('Util', function() {
 
       // assertions
       assert.equal(failingFunc.callCount, 6, 'failing func not called 6 times');
-      assert.equal(stubLog.callCount, 7, 'Util.log not called 7 times');
-
-      // reset mocks
-      stubLog.restore();
+      assert.equal(Logging.log.callCount, 7, 'Logging.log not called 7 times');
     });
     it('should rethrow error after 6 tries', function() {
       // set up mocks
       const errMsg = 'i failed';
-      const stubLog = sinon.stub(Util, 'log');
+      const Logging = { log: sinon.stub() };
       const failingFunc2 = () => {
         throw new Error(errMsg);
       };
@@ -48,9 +47,6 @@ describe('Util', function() {
         Error,
         'threw wrong error after 6 attempts'
       );
-
-      // reset mocks
-      stubLog.restore();
     });
   });
   describe('cleanup()', function() {
@@ -65,8 +61,9 @@ describe('Util', function() {
       const stubSaveState = sinon.stub(Util, 'saveState');
       const stubDeleteTrigger = sinon.stub(TriggerService, 'deleteTrigger');
       const timer = new Timer();
-      this.clock.tick(Timer.sixMinutes);
-      timer.update(userProperties);
+      const quotaManager = new QuotaManager(timer, userProperties);
+      this.clock.tick(Timer.SIX_MINUTES);
+      quotaManager.update();
       const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const properties = new Properties();
 
@@ -74,45 +71,66 @@ describe('Util', function() {
 
       // normal pause
       let stopMsg = Constants.SingleRunExceeded;
-      Util.cleanup(properties, fileList, userProperties, timer, {});
+      Util.cleanup(
+        properties,
+        fileList,
+        userProperties,
+        timer,
+        quotaManager,
+        {}
+      );
       assert(stubSaveState.calledOnce, 'saveState not called');
       assert.equal(
         stubSaveState.getCall(0).args[2],
         stopMsg,
-        'saveState called with wrong stopMsg'
+        'saveState called with wrong stopMsg 1'
       );
 
       // user set stop flag
       userProperties.setProperty('stop', 'true');
-      timer.update(userProperties);
+      quotaManager.update();
       stopMsg = Constants.UserStoppedScript;
-      Util.cleanup(properties, fileList, userProperties, timer, {});
+      Util.cleanup(
+        properties,
+        fileList,
+        userProperties,
+        timer,
+        quotaManager,
+        {}
+      );
       assert.equal(stubSaveState.callCount, 2, 'saveState not called twice');
       assert.equal(
         stubSaveState.getCall(1).args[2],
         stopMsg,
-        'saveState called with wrong stopMsg'
+        'saveState called with wrong stopMsg 2'
       );
       userProperties.setProperty('stop', false);
-      timer.update(userProperties);
+      quotaManager.update();
 
       // max runtime exceeded
       properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
       properties.checkMaxRuntime();
       stopMsg = Constants.MaxRuntimeExceeded;
-      Util.cleanup(properties, fileList, userProperties, timer, {});
+      Util.cleanup(
+        properties,
+        fileList,
+        userProperties,
+        timer,
+        quotaManager,
+        {}
+      );
       assert.equal(stubSaveState.callCount, 3, 'saveState not called thrice');
       assert.equal(
         stubSaveState.getCall(2).args[2],
         stopMsg,
-        'saveState called with wrong stopMsg'
+        'saveState called with wrong stopMsg 3'
       );
 
       // restore mocks
       stubSaveState.restore();
       stubDeleteTrigger.restore();
       userProperties.setProperty('stop', false);
-      timer.update(userProperties);
+      quotaManager.update();
     });
 
     it('should save state if retryQueue is not empty', function() {
@@ -120,19 +138,27 @@ describe('Util', function() {
       const stubSaveState = sinon.stub(Util, 'saveState');
       const stubDeleteTrigger = sinon.stub(TriggerService, 'deleteTrigger');
       const timer = new Timer();
+      const quotaManager = new QuotaManager(timer, userProperties);
       const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const properties = new Properties();
       properties.retryQueue.push(...fileList);
 
       // normal pause
-      Util.cleanup(properties, fileList, userProperties, timer, {});
+      Util.cleanup(
+        properties,
+        fileList,
+        userProperties,
+        timer,
+        quotaManager,
+        {}
+      );
       assert.equal(stubSaveState.callCount, 1, 'saveState not called once');
 
       // restore mocks
       stubSaveState.restore();
       stubDeleteTrigger.restore();
       userProperties.setProperty('stop', false);
-      timer.update(userProperties);
+      quotaManager.update();
     });
   });
   describe('composeErrorMsg()', function() {
@@ -163,10 +189,7 @@ describe('Util', function() {
       );
     });
   });
-  describe('log()', function() {
-    xit('should log to spreadsheet', function() {});
-    xit('should get spreadsheet if not passed as arg', function() {});
-  });
+
   describe('saveState()', function() {
     xit('should save properties', function() {});
     xit('should log result', function() {});
