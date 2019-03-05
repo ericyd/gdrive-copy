@@ -31,7 +31,7 @@ describe('TriggerService', function() {
       const triggerId = JSON.parse(
         PropertiesService.getUserProperties().getProperty('triggerId')
       );
-      assert.equal(triggerId.duration, Timer.sixMinutes);
+      assert.equal(triggerId.duration, Timer.SIX_MINUTES);
       assert.equal(triggerId.basis, 'time');
       assert.equal(triggerId.created, true);
       assert.equal(triggerId.name, 'copy');
