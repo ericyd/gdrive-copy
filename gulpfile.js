@@ -35,9 +35,8 @@ gulp.task('js', function() {
 
 gulp.task('css-prod', function() {
   return gulp
-    .src('./dist/styles.css')
+    .src('./dist/css.html')
     .pipe(insert.wrap('<style>', '</style>'))
-    .pipe(rename('css.html'))
     .pipe(gulp.dest('dist'));
 });
 

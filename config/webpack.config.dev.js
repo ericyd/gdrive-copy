@@ -17,7 +17,7 @@ let plugins = [
     sourceMap: false,
     comments: false
   }),
-  new ExtractTextPlugin('styles.css')
+  new ExtractTextPlugin('css.html')
 ];
 
 module.exports = {

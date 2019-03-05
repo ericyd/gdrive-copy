@@ -49,7 +49,7 @@
     "webpack:prod": "webpack --config ./config/webpack.config.prod.js",
     "gulp:prod": "gulp build",
     "build:prod": "npm run webpack:prod && npm run gulp:prod && npm run copylib",
-    "postbuild:prod": "rm ./dist/bundle.js && rm ./dist/styles.css && rm ./dist/styles.css.map",
+    "postbuild:prod": "rm ./dist/bundle.js",
     "copylib": "cp lib/**/* dist && cp lib/* dist || true",
     "clasp:push": "npm run copylib && clasp push",
     "clean": "rm dist/*.ts && rm dist/*.html",
