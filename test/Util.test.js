@@ -62,7 +62,7 @@ describe('Util', function() {
       const stubDeleteTrigger = sinon.stub(TriggerService, 'deleteTrigger');
       const timer = new Timer();
       const quotaManager = new QuotaManager(timer, userProperties);
-      this.clock.tick(Timer.sixMinutes);
+      this.clock.tick(Timer.SIX_MINUTES);
       quotaManager.update();
       const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const properties = new Properties();

@@ -18,16 +18,16 @@ var Timer = (function () {
     };
     Timer.prototype.calculateTriggerDuration = function (properties) {
         return properties.checkMaxRuntime()
-            ? Timer.oneDay
-            : Timer.sixMinutes - this.runtime;
+            ? Timer.ONE_DAY
+            : Timer.SIX_MINUTES - this.runtime;
     };
     Timer.now = function () {
         return new Date().getTime();
     };
     Timer.MAX_RUNTIME_PER_DAY = 88 * 1000 * 60;
     Timer.MAX_RUNTIME = 4.7 * 1000 * 60;
-    Timer.oneDay = 24 * 60 * 60 * 1000;
-    Timer.sixMinutes = 6.2 * 1000 * 60;
+    Timer.ONE_DAY = 24 * 60 * 60 * 1000;
+    Timer.SIX_MINUTES = 6.2 * 1000 * 60;
     return Timer;
 }());
 
@@ -164,7 +164,7 @@ var TriggerService = (function () {
     function TriggerService() {
     }
     TriggerService.createTrigger = function (duration) {
-        duration = duration || Timer.sixMinutes;
+        duration = duration || Timer.SIX_MINUTES;
         var trigger = ScriptApp.newTrigger('copy')
             .timeBased()
             .after(duration)

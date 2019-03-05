@@ -11,8 +11,8 @@ export default class Timer {
   static MAX_RUNTIME_PER_DAY: number = 88 * 1000 * 60;
   static MAX_RUNTIME: number = 4.7 * 1000 * 60;
   // durations used for setting Triggers
-  static oneDay: number = 24 * 60 * 60 * 1000;
-  static sixMinutes: number = 6.2 * 1000 * 60;
+  static ONE_DAY: number = 24 * 60 * 60 * 1000;
+  static SIX_MINUTES: number = 6.2 * 1000 * 60;
 
   START_TIME: number;
   runtime: number;
@@ -43,8 +43,8 @@ export default class Timer {
    */
   calculateTriggerDuration(properties: Properties): number {
     return properties.checkMaxRuntime()
-      ? Timer.oneDay
-      : Timer.sixMinutes - this.runtime;
+      ? Timer.ONE_DAY
+      : Timer.SIX_MINUTES - this.runtime;
   }
 
   static now(): number {
