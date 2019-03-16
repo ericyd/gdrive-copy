@@ -15,6 +15,7 @@ describe('Properties', function() {
       .readFileSync('test/mocks/properties_document_stringified.txt')
       .toString();
   });
+
   describe('load()', function() {
     it('should assign properties to `this`', function() {
       // set up mocks
@@ -34,6 +35,7 @@ describe('Properties', function() {
       // reset mocks
       stubFile.restore();
     });
+
     it('should return parsing error if not JSON-parsable', function() {
       // set up mocks
       const stubFile = sinon.stub(this.gDriveService, 'downloadFile');
@@ -51,6 +53,7 @@ describe('Properties', function() {
       // reset mocks
       stubFile.restore();
     });
+
     it('should return human readable error if propertiesDocID is undefined', function() {
       // set up mocks
       const stubFile = sinon.stub(this.gDriveService, 'downloadFile');
@@ -69,6 +72,7 @@ describe('Properties', function() {
       stubFile.restore();
     });
   });
+
   describe('save()', function() {
     it('should throw critical error if properties cannot be serialized', function() {
       function Circular() {
@@ -84,6 +88,7 @@ describe('Properties', function() {
         'Failed to serialize script properties. This is a critical failure. Please start your copy again.'
       );
     });
+
     it('should update file with stringified props', function() {
       // set up mocks
       const stubUpdate = sinon.stub(this.gDriveService, 'updateFile');
@@ -111,6 +116,7 @@ describe('Properties', function() {
       );
     });
   });
+
   it('should increment totalRuntime', function() {
     this.properties.incrementTotalRuntime(50);
     assert.equal(
@@ -119,6 +125,7 @@ describe('Properties', function() {
       'totalRuntime not incremented properly'
     );
   });
+
   it('should determine if max runtime is exceeded', function() {
     assert(
       !this.properties.checkMaxRuntime(),

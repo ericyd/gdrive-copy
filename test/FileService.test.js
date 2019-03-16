@@ -689,7 +689,7 @@ describe('FileService', function() {
       Logging.logCopySuccess = sinon.stub();
 
       // run actual
-      const items = [1, 2, 3];
+      const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
       this.fileService.processFileList(items, {
         spreadsheetStub: true
@@ -703,7 +703,7 @@ describe('FileService', function() {
       assert.equal(
         Logging.logCopySuccess.callCount,
         itemsLength,
-        'Logging.logCopySuccess not called once'
+        `Logging.logCopySuccess not called ${itemsLength} times`
       );
       assert.equal(
         Logging.logCopySuccess.getCall(0).args[0].spreadsheetStub,
@@ -717,6 +717,26 @@ describe('FileService', function() {
         'Logging.logCopySuccess not called with "this.mockFile". Called with ' +
           Logging.logCopySuccess.getCall(0).args[1]
       );
+
+      // restore mocks
+      stubCopy.restore();
+    });
+
+    it('should not copy the same ID twice', function() {
+      // set up mocks
+      const stubCopy = sinon
+        .stub(this.fileService, 'copyFile')
+        .returns(this.mockFile);
+      Logging.logCopySuccess = sinon.stub();
+
+      // run actual
+      const items = [{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }];
+      this.fileService.processFileList(items, {
+        spreadsheetStub: true
+      });
+
+      // assertions
+      assert.equal(stubCopy.callCount, 3, `stubCopy not called 2 times`);
 
       // restore mocks
       stubCopy.restore();
