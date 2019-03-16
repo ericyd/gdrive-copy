@@ -214,9 +214,17 @@ export default class FileService {
         continue;
       }
 
+      // if item has already been completed, skip to avoid infinite loop bugs
+      if (this.properties.completed[item.id]) {
+        continue;
+      }
+
       // Copy each (files and folders are both represented the same in Google Drive)
       try {
         var newfile = this.copyFile(item);
+        // record that this file has been processed
+        this.properties.completed[item.id] = true;
+        // log the new file as successful
         Logging.logCopySuccess(ss, newfile, this.properties.timeZone);
       } catch (e) {
         this.properties.retryQueue.unshift({

@@ -27,6 +27,7 @@ export default class Properties {
   totalRuntime: number;
   pageToken?: string;
   isOverMaxRuntime?: boolean;
+  completed: object;
 
   constructor(gDriveService: GDriveService) {
     this.gDriveService = gDriveService;
@@ -46,6 +47,7 @@ export default class Properties {
     this.remaining = [];
     this.timeZone = 'GMT-7';
     this.totalRuntime = 0;
+    this.completed = {};
 
     return this;
   }

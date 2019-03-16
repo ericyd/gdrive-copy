@@ -211,6 +211,7 @@ var Properties = (function () {
         this.remaining = [];
         this.timeZone = 'GMT-7';
         this.totalRuntime = 0;
+        this.completed = {};
         return this;
     }
     Properties.prototype.load = function () {
@@ -751,8 +752,12 @@ var FileService = (function () {
                 Logging.logCopyError(ss, item.error, item, this.properties.timeZone);
                 continue;
             }
+            if (this.properties.completed[item.id]) {
+                continue;
+            }
             try {
                 var newfile = this.copyFile(item);
+                this.properties.completed[item.id] = true;
                 Logging.logCopySuccess(ss, newfile, this.properties.timeZone);
             }
             catch (e) {
