@@ -12,7 +12,6 @@
 	"timeZone": "GMT-7",
 	"retryQueue": [],
 	"totalRuntime": 0,
-	"completed": {},
 	"leftovers": {
 		"kind": "drive#fileList",
 		"selfLink": "https://www.googleapis.com/drive/v2/files?maxResults=1000&q=%220BylyXjPAb3M1NWNjUjBhZzhJOUE%22+in+parents+and+trashed+%3D+false&alt=json",
