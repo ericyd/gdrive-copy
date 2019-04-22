@@ -5,6 +5,7 @@ import { Util } from '../lib/Util';
 import Timer from '../lib/Timer';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
+import FeatureFlag from '../lib/FeatureFlag';
 const PropertiesService = require('./mocks/PropertiesService');
 const assert = require('assert');
 const fs = require('fs');
@@ -719,6 +720,7 @@ describe('FileService', function() {
     describe('when FeatureFlag.SKIP_DUPLICATE_ID is on', function() {
       it('should not copy the same ID twice', function() {
         // set up mocks
+        FeatureFlag.SKIP_DUPLICATE_ID = true
         const stubCopy = sinon
           .stub(this.fileService, 'copyFile')
           .returns(this.mockFile);
@@ -731,7 +733,30 @@ describe('FileService', function() {
         });
 
         // assertions
-        assert.equal(stubCopy.callCount, 3, `stubCopy not called 2 times`);
+        assert.equal(stubCopy.callCount, 3, `stubCopy not called 3 times`);
+
+        // restore mocks
+        stubCopy.restore();
+      });
+    });
+
+    describe('when FeatureFlag.SKIP_DUPLICATE_ID is off', function() {
+      it('should copy the same ID twice', function() {
+        // set up mocks
+        FeatureFlag.SKIP_DUPLICATE_ID = false
+        const stubCopy = sinon
+          .stub(this.fileService, 'copyFile')
+          .returns(this.mockFile);
+        Util.logCopySuccess = sinon.stub();
+
+        // run actual
+        const items = [{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }];
+        this.fileService.processFileList(items, this.userProperties, {
+          spreadsheetStub: true
+        });
+
+        // assertions
+        assert.equal(stubCopy.callCount, 4, `stubCopy not called 4 times`);
 
         // restore mocks
         stubCopy.restore();
