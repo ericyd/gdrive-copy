@@ -2,7 +2,7 @@
  * Namespace for file-related functions
  **********************************************/
 
-import { Util } from './Util';
+import Util from './Util';
 import { getMetadata } from './public';
 import Properties from './Properties';
 import Timer from './Timer';
@@ -11,6 +11,7 @@ import API from './API';
 import MimeType from './MimeType';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
+import Logging from './util/Logging';
 
 export default class FileService {
   gDriveService: GDriveService;
@@ -85,7 +86,7 @@ export default class FileService {
     try {
       permissions = this.gDriveService.getPermissions(srcId).items;
     } catch (e) {
-      Util.log({ status: Util.composeErrorMsg(e) });
+      Logging.log({ status: Util.composeErrorMsg(e) });
     }
 
     // copy editors, viewers, and commenters from src file to dest file
@@ -149,7 +150,7 @@ export default class FileService {
     try {
       destPermissions = this.gDriveService.getPermissions(destId).items;
     } catch (e) {
-      Util.log({ status: Util.composeErrorMsg(e) });
+      Logging.log({ status: Util.composeErrorMsg(e) });
     }
 
     if (destPermissions && destPermissions.length > 0) {
@@ -216,14 +217,14 @@ export default class FileService {
         item.numberOfAttempts &&
         item.numberOfAttempts > this.maxNumberOfAttempts
       ) {
-        Util.logCopyError(ss, item.error, item, this.properties.timeZone);
+        Logging.logCopyError(ss, item.error, item, this.properties.timeZone);
         continue;
       }
 
       // Copy each (files and folders are both represented the same in Google Drive)
       try {
         var newfile = this.copyFile(item);
-        Util.logCopySuccess(ss, newfile, this.properties.timeZone);
+        Logging.logCopySuccess(ss, newfile, this.properties.timeZone);
       } catch (e) {
         this.properties.retryQueue.unshift({
           id: item.id,
