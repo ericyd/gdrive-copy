@@ -716,24 +716,26 @@ describe('FileService', function() {
       stubLog.restore();
     });
 
-    it('should not copy the same ID twice', function() {
-      // set up mocks
-      const stubCopy = sinon
-        .stub(this.fileService, 'copyFile')
-        .returns(this.mockFile);
-      Logging.logCopySuccess = sinon.stub();
+    describe('when FeatureFlag.SKIP_DUPLICATE_ID is on', function() {
+      it('should not copy the same ID twice', function() {
+        // set up mocks
+        const stubCopy = sinon
+          .stub(this.fileService, 'copyFile')
+          .returns(this.mockFile);
+        Util.logCopySuccess = sinon.stub();
 
-      // run actual
-      const items = [{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }];
-      this.fileService.processFileList(items, {
-        spreadsheetStub: true
+        // run actual
+        const items = [{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }];
+        this.fileService.processFileList(items, this.userProperties, {
+          spreadsheetStub: true
+        });
+
+        // assertions
+        assert.equal(stubCopy.callCount, 3, `stubCopy not called 2 times`);
+
+        // restore mocks
+        stubCopy.restore();
       });
-
-      // assertions
-      assert.equal(stubCopy.callCount, 3, `stubCopy not called 2 times`);
-
-      // restore mocks
-      stubCopy.restore();
     });
   });
 
