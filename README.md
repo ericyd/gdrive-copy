@@ -51,10 +51,32 @@ contents.
   You can copy it to the root directory by selecting "Root directory" under
   "Copy folder to"
 
-## Building
+## Deploying app
 
-* Use Node 8
-* run `npm rebuild` if needed
+### Requirements
+
+* Node version 8
+
+Note: some build commands use commands which may not be available on standard Windows command line terminals.
+
+### Steps
+
+1. Clone repo: `git clone git@github.com:ericyd/gdrive-copy.git`
+2. Install dependencies: `cd gdrive-copy && npm i`
+3. Install clasp: `npm i -g @google/clasp`
+4. If needed, create a new clasp `webapp` project. See [clasp documentation](https://github.com/google/clasp#create) for more details. Use the `clasp.sample.json` as a template if needed.
+5. Login to Google Apps Script: `clasp login`
+6. Make changes locally if desired
+7. Build the app: `npm run build:prod`
+8. Push files to Apps Script project: `clasp push`
+9. Deploy: `clasp deploy`
+
+### References
+
+* [Google Apps Script reference](https://developers.google.com/apps-script/reference/drive/)
+* [Drive API reference](https://developers.google.com/drive/v2/reference/)
+* [clasp documentation](https://github.com/google/clasp)
+
 
 ## Bugs? Questions?
 

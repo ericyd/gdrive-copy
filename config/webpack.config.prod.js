@@ -30,7 +30,7 @@ let plugins = [
     // Google Apps Script works better if the code is not on a single line
     beautify: true
   }),
-  new ExtractTextPlugin('styles.css')
+  new ExtractTextPlugin('css.html')
 ];
 
 module.exports = {

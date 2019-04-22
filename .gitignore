@@ -7,7 +7,12 @@ node_modules
 dist/css.css
 dist/bundle.js
 dist/icons
+icons
 dist/test.js
 dist/styles.css
 dist/styles.css.map
+dist/*.ts
 lib/*.js
+
+# not sure if this needs to be private or not
+.clasp.json
