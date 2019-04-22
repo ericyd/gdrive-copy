@@ -50,7 +50,7 @@
     "gulp:prod": "gulp build",
     "build:prod": "npm run webpack:prod && npm run gulp:prod && npm run copylib",
     "postbuild:prod": "rm ./dist/bundle.js",
-    "copylib": "cp lib/**/* dist && cp lib/* dist || true",
+    "copylib": "cp -r lib/* dist",
     "clasp:push": "npm run copylib && clasp push",
     "clean": "rm dist/*.ts && rm dist/*.html",
     "clasp:deploy": "clasp deploy",
