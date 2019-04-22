@@ -1,11 +1,10 @@
 global.Utilities = require('./mocks/Utilities');
 import FileService from '../lib/FileService';
 import GDriveService from '../lib/GDriveService';
+import { Util } from '../lib/Util';
+import Timer from '../lib/Timer';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
-import Logging from '../lib/util/Logging';
-import QuotaManager from '../lib/QuotaManager';
-import Timer from '../lib/Timer';
 const PropertiesService = require('./mocks/PropertiesService');
 const assert = require('assert');
 const fs = require('fs');
@@ -14,18 +13,14 @@ const sinon = require('sinon');
 describe('FileService', function() {
   beforeEach(function() {
     this.gDriveService = new GDriveService();
-    const timer = new Timer();
-    this.quotaManager = new QuotaManager(
-      timer,
-      PropertiesService.getUserProperties()
-    );
+    this.timer = new Timer();
     this.properties = new Properties(this.gDriveService);
     this.properties.map = {
       myParentID: 'newParentID'
     };
     this.fileService = new FileService(
       this.gDriveService,
-      this.quotaManager,
+      this.timer,
       this.properties
     );
     this.mockFolder = JSON.parse(
@@ -461,11 +456,11 @@ describe('FileService', function() {
     it('should return if !timer.canContinue()', function() {
       // set up mocks
       this.userProperties.getProperties().stop = 'true';
-      this.quotaManager.update();
+      this.timer.update(this.userProperties);
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      this.fileService.processFileList([1, 2, 3], {});
+      this.fileService.processFileList([1, 2, 3], this.userProperties, {});
 
       // assertions
       assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
@@ -480,7 +475,7 @@ describe('FileService', function() {
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
       // set up actual
-      this.fileService.processFileList([], {});
+      this.fileService.processFileList([], this.userProperties, {});
 
       // assertions
       assert(stubCopy.notCalled, 'this.fileService.copyFile was called');
@@ -492,7 +487,7 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      const Logging = { log: sinon.stub() };
+      const stubLog = sinon.stub(Util, 'log');
       const stubCopyPermissions = sinon.stub(
         this.fileService,
         'copyPermissions'
@@ -502,7 +497,7 @@ describe('FileService', function() {
       this.properties.copyPermissions = true;
       this.fileService.processFileList(
         [{ mimeType: 'application/vnd.google-apps.document' }],
-
+        this.userProperties,
         {}
       );
 
@@ -515,6 +510,7 @@ describe('FileService', function() {
 
       // restore mocks
       stubCopy.restore();
+      stubLog.restore();
       stubCopyPermissions.restore();
       this.properties.copyPermissions = false;
     });
@@ -524,7 +520,7 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      const Logging = { log: sinon.stub() };
+      const stubLog = sinon.stub(Util, 'log');
       const stubCopyPermissions = sinon.stub(
         this.fileService,
         'copyPermissions'
@@ -534,7 +530,7 @@ describe('FileService', function() {
       this.properties.copyPermissions = true;
       this.fileService.processFileList(
         [{ mimeType: 'application/json' }],
-
+        this.userProperties,
         {}
       );
 
@@ -547,6 +543,7 @@ describe('FileService', function() {
 
       // restore mocks
       stubCopy.restore();
+      stubLog.restore();
       stubCopyPermissions.restore();
       this.properties.copyPermissions = false;
     });
@@ -556,26 +553,27 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      const Logging = { log: sinon.stub() };
+      const stubLog = sinon.stub(Util, 'log');
       const stubCopyPermissions = sinon.stub(
         this.fileService,
         'copyPermissions'
       );
-      const stubTimerUpdate = sinon.stub(this.quotaManager, 'update');
+      const stubTimerUpdate = sinon.stub(this.timer, 'update');
 
       // run actual
       const items = [1, 2, 3];
-      this.fileService.processFileList(items, {});
+      this.fileService.processFileList(items, this.userProperties, {});
 
       // assertions
-      assert.equal(
+      assert(
         stubTimerUpdate.callCount,
         items.length,
-        'quotaManager.update called incorrect number of times'
+        'timer.update called incorrect number of times'
       );
 
       // restore mocks
       stubCopy.restore();
+      stubLog.restore();
       stubCopyPermissions.restore();
       stubTimerUpdate.restore();
     });
@@ -592,7 +590,7 @@ describe('FileService', function() {
       });
       const items = [this.mockFile, previouslyRetriedFile, this.mockFile];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(items, {});
+      this.fileService.processFileList(items, this.userProperties, {});
 
       assert.equal(
         this.properties.retryQueue.length,
@@ -618,7 +616,7 @@ describe('FileService', function() {
       // run actual
       const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(items, {});
+      this.fileService.processFileList(items, this.userProperties, {});
 
       assert.equal(
         this.properties.retryQueue.length,
@@ -639,7 +637,7 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .throws(new Error(errMsg));
-      Logging.logCopyError = sinon.stub();
+      const stubLog = sinon.stub(Util, 'logCopyError');
 
       // run actual
       const previouslyRetriedFile = Object.assign({}, this.mockFile, {
@@ -647,37 +645,35 @@ describe('FileService', function() {
         error: new Error(errMsg)
       });
       const items = [previouslyRetriedFile, this.mockFile, this.mockFile];
-      this.fileService.processFileList(items, {
+      this.fileService.processFileList(items, this.userProperties, {
         spreadsheetStub: true
       });
 
       // assertions
-      assert(Logging.logCopyError.called, 'Logging.logCopyError not called');
+      assert(stubLog.called, 'Util.logCopyError not called');
       assert.equal(
-        Logging.logCopyError.callCount,
+        stubLog.callCount,
         1,
-        'Logging.log called incorrect number of times'
+        'Util.log called incorrect number of times'
       );
       assert(
-        Logging.logCopyError.getCall(0).args[0].spreadsheetStub,
-        'Logging.logCopyError not called with spreadsheetStub'
+        stubLog.getCall(0).args[0].spreadsheetStub,
+        'Util.logCopyError not called with spreadsheetStub'
       );
       assert.equal(
-        Logging.logCopyError.getCall(0).args[1].message,
+        stubLog.getCall(0).args[1].message,
         errMsg,
-        'Error not passed to Logging.logCopyError correctly'
+        'Error not passed to Util.logCopyError correctly'
       );
+      assert.equal(stubLog.getCall(0).args[2].id, previouslyRetriedFile.id);
       assert.equal(
-        Logging.logCopyError.getCall(0).args[2].id,
-        previouslyRetriedFile.id
-      );
-      assert.equal(
-        Logging.logCopyError.getCall(0).args[2].numberOfAttempts,
+        stubLog.getCall(0).args[2].numberOfAttempts,
         previouslyRetriedFile.numberOfAttempts
       );
 
       // restore mocks
       stubCopy.restore();
+      stubLog.restore();
     });
 
     it('should log copy details if successful', function() {
@@ -686,40 +682,38 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      Logging.logCopySuccess = sinon.stub();
+      const stubLog = sinon.stub(Util, 'logCopySuccess');
 
       // run actual
       const items = [1, 2, 3];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
-      this.fileService.processFileList(items, {
+      this.fileService.processFileList(items, this.userProperties, {
         spreadsheetStub: true
       });
 
       // assertions
-      assert(
-        Logging.logCopySuccess.called,
-        'Logging.logCopySuccess not called.'
-      );
+      assert(stubLog.called, 'Util.logCopySuccess not called.');
       assert.equal(
-        Logging.logCopySuccess.callCount,
+        stubLog.callCount,
         itemsLength,
-        'Logging.logCopySuccess not called once'
+        'Util.logCopySuccess not called once'
       );
       assert.equal(
-        Logging.logCopySuccess.getCall(0).args[0].spreadsheetStub,
+        stubLog.getCall(0).args[0].spreadsheetStub,
         true,
-        'Logging.logCopySuccess not called with "spreadsheetStub". Called with ' +
-          Logging.logCopySuccess.getCall(0).args[0]
+        'Util.logCopySuccess not called with "spreadsheetStub". Called with ' +
+          stubLog.getCall(0).args[0]
       );
       assert.deepEqual(
-        Logging.logCopySuccess.getCall(0).args[1],
+        stubLog.getCall(0).args[1],
         this.mockFile,
-        'Logging.logCopySuccess not called with "this.mockFile". Called with ' +
-          Logging.logCopySuccess.getCall(0).args[1]
+        'Util.logCopySuccess not called with "this.mockFile". Called with ' +
+          stubLog.getCall(0).args[1]
       );
 
       // restore mocks
       stubCopy.restore();
+      stubLog.restore();
     });
   });
 

@@ -11,7 +11,6 @@ import Properties from './Properties';
 import Timer from './Timer';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
-import QuotaManager from './QuotaManager';
 
 /**
  * Serves HTML of the application for HTTP GET requests.
@@ -53,11 +52,7 @@ export function initialize(
     gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
-    quotaManager: QuotaManager = new QuotaManager(
-      timer,
-      PropertiesService.getUserProperties()
-    ),
-    fileService = new FileService(gDriveService, quotaManager, properties);
+    fileService = new FileService(gDriveService, timer, properties);
 
   // Create Files used in copy process
   destFolder = fileService.initializeDestinationFolder(options, today);
@@ -97,7 +92,7 @@ export function initialize(
     options.timeZone = 'GMT-7';
   }
 
-  // Adding a row to status list prevents weird style copying in Logging.log
+  // Adding a row to status list prevents weird style copying in Util.log
   try {
     SpreadsheetApp.openById(spreadsheet.id)
       .getSheetByName('Log')
@@ -165,11 +160,7 @@ export function resume(
   var gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
-    quotaManager: QuotaManager = new QuotaManager(
-      timer,
-      PropertiesService.getUserProperties()
-    ),
-    fileService = new FileService(gDriveService, quotaManager, properties);
+    fileService = new FileService(gDriveService, timer, properties);
   var priorCopy = fileService.findPriorCopy(options.srcFolderID);
 
   Properties.setUserPropertiesStore(
