@@ -16,3 +16,5 @@ lib/*.js
 
 # not sure if this needs to be private or not
 .clasp.json
+.clasp.dev.json
+.clasp.prod.json
