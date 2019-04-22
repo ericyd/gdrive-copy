@@ -3,10 +3,9 @@
  **********************************************/
 
 import { Util } from './Util';
-import Logging from './util/Logging';
 import { getMetadata } from './public';
 import Properties from './Properties';
-import QuotaManager from './QuotaManager';
+import Timer from './Timer';
 import GDriveService from './GDriveService';
 import API from './API';
 import MimeType from './MimeType';
@@ -15,18 +14,18 @@ import ErrorMessages from './ErrorMessages';
 
 export default class FileService {
   gDriveService: GDriveService;
-  quotaManager: QuotaManager;
+  timer: Timer;
   properties: Properties;
   nativeMimeTypes: string[];
   maxNumberOfAttempts: number;
 
   constructor(
     gDriveService: GDriveService,
-    quotaManager: QuotaManager,
+    timer: Timer,
     properties: Properties
   ) {
     this.gDriveService = gDriveService;
-    this.quotaManager = quotaManager;
+    this.timer = timer;
     this.properties = properties;
     this.nativeMimeTypes = [
       MimeType.DOC,
@@ -86,7 +85,7 @@ export default class FileService {
     try {
       permissions = this.gDriveService.getPermissions(srcId).items;
     } catch (e) {
-      Logging.log({ status: Util.composeErrorMsg(e) });
+      Util.log({ status: Util.composeErrorMsg(e) });
     }
 
     // copy editors, viewers, and commenters from src file to dest file
@@ -150,7 +149,7 @@ export default class FileService {
     try {
       destPermissions = this.gDriveService.getPermissions(destId).items;
     } catch (e) {
-      Logging.log({ status: Util.composeErrorMsg(e) });
+      Util.log({ status: Util.composeErrorMsg(e) });
     }
 
     if (destPermissions && destPermissions.length > 0) {
@@ -177,17 +176,23 @@ export default class FileService {
    * Destination folder must be set to the parent of the first leftover item.
    * The list of leftover items is an equivalent array to fileList returned from the getFiles() query
    */
-  handleLeftovers(ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  handleLeftovers(
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
       this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
-      this.processFileList(this.properties.leftovers.items, ss);
+      this.processFileList(this.properties.leftovers.items, userProperties, ss);
     }
   }
 
-  handleRetries(ss: GoogleAppsScript.Spreadsheet.Sheet): void {
+  handleRetries(
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
-      this.processFileList(this.properties.retryQueue, ss);
+      this.processFileList(this.properties.retryQueue, userProperties, ss);
     }
   }
 
@@ -200,9 +205,10 @@ export default class FileService {
    */
   processFileList(
     items: gapi.client.drive.FileResource[],
+    userProperties: GoogleAppsScript.Properties.UserProperties,
     ss: GoogleAppsScript.Spreadsheet.Sheet
   ): void {
-    while (items.length > 0 && this.quotaManager.canContinue()) {
+    while (items.length > 0 && this.timer.canContinue()) {
       // Get next file from passed file list.
       var item = items.pop();
 
@@ -210,14 +216,14 @@ export default class FileService {
         item.numberOfAttempts &&
         item.numberOfAttempts > this.maxNumberOfAttempts
       ) {
-        Logging.logCopyError(ss, item.error, item, this.properties.timeZone);
+        Util.logCopyError(ss, item.error, item, this.properties.timeZone);
         continue;
       }
 
       // Copy each (files and folders are both represented the same in Google Drive)
       try {
         var newfile = this.copyFile(item);
-        Logging.logCopySuccess(ss, newfile, this.properties.timeZone);
+        Util.logCopySuccess(ss, newfile, this.properties.timeZone);
       } catch (e) {
         this.properties.retryQueue.unshift({
           id: item.id,
@@ -246,7 +252,7 @@ export default class FileService {
       }
 
       // Update current runtime and user stop flag
-      this.quotaManager.update;
+      this.timer.update(userProperties);
     }
   }
 
