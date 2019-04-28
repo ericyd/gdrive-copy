@@ -1,9 +1,10 @@
 global.Utilities = require('./mocks/Utilities');
-import { Util } from '../lib/Util';
+import Util from '../lib/Util';
 import Timer from '../lib/Timer';
 import TriggerService from '../lib/TriggerService';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
+import Logging from '../lib/util/Logging';
 const userProperties = require('./mocks/PropertiesService').getUserProperties();
 const sinon = require('sinon');
 const assert = require('assert');
@@ -14,7 +15,7 @@ describe('Util', function() {
       // set up mocks
       const errMsg = 'i failed';
       const failingFunc = sinon.stub().throws(errMsg);
-      const stubLog = sinon.stub(Util, 'log');
+      const stubLog = sinon.stub(Logging, 'log');
 
       const failingFunc2 = () => {
         throw new Error(errMsg);
@@ -27,7 +28,7 @@ describe('Util', function() {
 
       // assertions
       assert.equal(failingFunc.callCount, 6, 'failing func not called 6 times');
-      assert.equal(stubLog.callCount, 7, 'Util.log not called 7 times');
+      assert.equal(stubLog.callCount, 7, 'Logging.log not called 7 times');
 
       // reset mocks
       stubLog.restore();
@@ -35,7 +36,7 @@ describe('Util', function() {
     it('should rethrow error after 6 tries', function() {
       // set up mocks
       const errMsg = 'i failed';
-      const stubLog = sinon.stub(Util, 'log');
+      const stubLog = sinon.stub(Logging, 'log');
       const failingFunc2 = () => {
         throw new Error(errMsg);
       };

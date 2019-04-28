@@ -2,7 +2,7 @@
  * Namespace for file-related functions
  **********************************************/
 
-import { Util } from './Util';
+import Util from './Util';
 import { getMetadata } from './public';
 import Properties from './Properties';
 import Timer from './Timer';
@@ -12,6 +12,7 @@ import MimeType from './MimeType';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
 import FeatureFlag from './FeatureFlag';
+import Logging from './util/Logging';
 
 export default class FileService {
   gDriveService: GDriveService;
@@ -86,7 +87,7 @@ export default class FileService {
     try {
       permissions = this.gDriveService.getPermissions(srcId).items;
     } catch (e) {
-      Util.log({ status: Util.composeErrorMsg(e) });
+      Logging.log({ status: Util.composeErrorMsg(e) });
     }
 
     // copy editors, viewers, and commenters from src file to dest file
@@ -150,7 +151,7 @@ export default class FileService {
     try {
       destPermissions = this.gDriveService.getPermissions(destId).items;
     } catch (e) {
-      Util.log({ status: Util.composeErrorMsg(e) });
+      Logging.log({ status: Util.composeErrorMsg(e) });
     }
 
     if (destPermissions && destPermissions.length > 0) {
@@ -217,7 +218,7 @@ export default class FileService {
         item.numberOfAttempts &&
         item.numberOfAttempts > this.maxNumberOfAttempts
       ) {
-        Util.logCopyError(ss, item.error, item, this.properties.timeZone);
+        Logging.logCopyError(ss, item.error, item, this.properties.timeZone);
         continue;
       }
 
@@ -238,7 +239,7 @@ export default class FileService {
         }
 
         // log the new file as successful
-        Util.logCopySuccess(ss, newfile, this.properties.timeZone);
+        Logging.logCopySuccess(ss, newfile, this.properties.timeZone);
       } catch (e) {
         this.properties.retryQueue.unshift({
           id: item.id,

@@ -1,11 +1,11 @@
 global.Utilities = require('./mocks/Utilities');
 import FileService from '../lib/FileService';
 import GDriveService from '../lib/GDriveService';
-import { Util } from '../lib/Util';
 import Timer from '../lib/Timer';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
 import FeatureFlag from '../lib/FeatureFlag';
+import Logging from '../lib/util/Logging';
 const PropertiesService = require('./mocks/PropertiesService');
 const assert = require('assert');
 const fs = require('fs');
@@ -488,7 +488,7 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      const stubLog = sinon.stub(Util, 'log');
+      const stubLog = sinon.stub(Logging, 'log');
       const stubCopyPermissions = sinon.stub(
         this.fileService,
         'copyPermissions'
@@ -521,7 +521,7 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      const stubLog = sinon.stub(Util, 'log');
+      const stubLog = sinon.stub(Logging, 'log');
       const stubCopyPermissions = sinon.stub(
         this.fileService,
         'copyPermissions'
@@ -554,7 +554,7 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      const stubLog = sinon.stub(Util, 'log');
+      const stubLog = sinon.stub(Logging, 'log');
       const stubCopyPermissions = sinon.stub(
         this.fileService,
         'copyPermissions'
@@ -638,7 +638,7 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .throws(new Error(errMsg));
-      const stubLog = sinon.stub(Util, 'logCopyError');
+      const stubLog = sinon.stub(Logging, 'logCopyError');
 
       // run actual
       const previouslyRetriedFile = Object.assign({}, this.mockFile, {
@@ -651,20 +651,20 @@ describe('FileService', function() {
       });
 
       // assertions
-      assert(stubLog.called, 'Util.logCopyError not called');
+      assert(stubLog.called, 'Logging.logCopyError not called');
       assert.equal(
         stubLog.callCount,
         1,
-        'Util.log called incorrect number of times'
+        'Logging.log called incorrect number of times'
       );
       assert(
         stubLog.getCall(0).args[0].spreadsheetStub,
-        'Util.logCopyError not called with spreadsheetStub'
+        'Logging.logCopyError not called with spreadsheetStub'
       );
       assert.equal(
         stubLog.getCall(0).args[1].message,
         errMsg,
-        'Error not passed to Util.logCopyError correctly'
+        'Error not passed to Logging.logCopyError correctly'
       );
       assert.equal(stubLog.getCall(0).args[2].id, previouslyRetriedFile.id);
       assert.equal(
@@ -683,7 +683,7 @@ describe('FileService', function() {
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
         .returns(this.mockFile);
-      const stubLog = sinon.stub(Util, 'logCopySuccess');
+      const stubLog = sinon.stub(Logging, 'logCopySuccess');
 
       // run actual
       const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
@@ -693,22 +693,22 @@ describe('FileService', function() {
       });
 
       // assertions
-      assert(stubLog.called, 'Util.logCopySuccess not called.');
+      assert(stubLog.called, 'Logging.logCopySuccess not called.');
       assert.equal(
         stubLog.callCount,
         itemsLength,
-        `Util.logCopySuccess not called ${itemsLength} times`
+        `Logging.logCopySuccess not called ${itemsLength} times`
       );
       assert.equal(
         stubLog.getCall(0).args[0].spreadsheetStub,
         true,
-        'Util.logCopySuccess not called with "spreadsheetStub". Called with ' +
+        'Logging.logCopySuccess not called with "spreadsheetStub". Called with ' +
           stubLog.getCall(0).args[0]
       );
       assert.deepEqual(
         stubLog.getCall(0).args[1],
         this.mockFile,
-        'Util.logCopySuccess not called with "this.mockFile". Called with ' +
+        'Logging.logCopySuccess not called with "this.mockFile". Called with ' +
           stubLog.getCall(0).args[1]
       );
 
