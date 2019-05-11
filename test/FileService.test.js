@@ -728,7 +728,7 @@ describe('FileService', function() {
           const stubCopy = sinon
             .stub(this.fileService, 'copyFile')
             .returns(this.mockFile);
-          Util.logCopySuccess = sinon.stub();
+          Logging.logCopySuccess = sinon.stub();
 
           // run actual
           const items = [{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }];
