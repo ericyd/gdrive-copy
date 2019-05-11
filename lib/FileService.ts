@@ -11,6 +11,7 @@ import API from './API';
 import MimeType from './MimeType';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
+import FeatureFlag from './FeatureFlag';
 import Logging from './util/Logging';
 
 export default class FileService {
@@ -221,9 +222,23 @@ export default class FileService {
         continue;
       }
 
+      if (FeatureFlag.SKIP_DUPLICATE_ID) {
+        // if item has already been completed, skip to avoid infinite loop bugs
+        if (this.properties.completed[item.id]) {
+          continue;
+        }
+      }
+
       // Copy each (files and folders are both represented the same in Google Drive)
       try {
         var newfile = this.copyFile(item);
+
+        if (FeatureFlag.SKIP_DUPLICATE_ID) {
+          // record that this file has been processed
+          this.properties.completed[item.id] = true;
+        }
+
+        // log the new file as successful
         Logging.logCopySuccess(ss, newfile, this.properties.timeZone);
       } catch (e) {
         this.properties.retryQueue.unshift({

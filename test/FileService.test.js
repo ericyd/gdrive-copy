@@ -4,6 +4,7 @@ import GDriveService from '../lib/GDriveService';
 import Timer from '../lib/Timer';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
+import FeatureFlag from '../lib/FeatureFlag';
 import Logging from '../lib/util/Logging';
 const PropertiesService = require('./mocks/PropertiesService');
 const assert = require('assert');
@@ -685,7 +686,7 @@ describe('FileService', function() {
       const stubLog = sinon.stub(Logging, 'logCopySuccess');
 
       // run actual
-      const items = [1, 2, 3];
+      const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const itemsLength = items.length; // must set here because items is mutated in processFileList
       this.fileService.processFileList(items, this.userProperties, {
         spreadsheetStub: true
@@ -696,7 +697,7 @@ describe('FileService', function() {
       assert.equal(
         stubLog.callCount,
         itemsLength,
-        'Logging.logCopySuccess not called once'
+        `Logging.logCopySuccess not called ${itemsLength} times`
       );
       assert.equal(
         stubLog.getCall(0).args[0].spreadsheetStub,
@@ -715,6 +716,34 @@ describe('FileService', function() {
       stubCopy.restore();
       stubLog.restore();
     });
+
+    [
+      [true, 'not ', 3],
+      [false, '', 4],
+    ].forEach(([featureFlag, not, numberCopies]) => {
+      describe(`when FeatureFlag.SKIP_DUPLICATE_ID is ${featureFlag}`, function() {
+        it(`should ${not}copy the same ID twice`, function() {
+          // set up mocks
+          FeatureFlag.SKIP_DUPLICATE_ID = featureFlag
+          const stubCopy = sinon
+            .stub(this.fileService, 'copyFile')
+            .returns(this.mockFile);
+          Util.logCopySuccess = sinon.stub();
+
+          // run actual
+          const items = [{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }];
+          this.fileService.processFileList(items, this.userProperties, {
+            spreadsheetStub: true
+          });
+
+          // assertions
+          assert.equal(stubCopy.callCount, numberCopies, `stubCopy not called ${numberCopies} times`);
+
+          // restore mocks
+          stubCopy.restore();
+        })
+      })
+    })
   });
 
   describe('isDescendant()', function() {
