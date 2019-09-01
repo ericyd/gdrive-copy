@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import Logging from '../lib/util/Logging';
+import Logging from '../lib/Logging';
 
 describe('bytesToHumanReadable', function() {
   it('should return bytes when less than 1 KB', () => {

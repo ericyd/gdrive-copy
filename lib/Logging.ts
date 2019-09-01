@@ -1,6 +1,6 @@
-import FileService from '../FileService';
-import Util from '../Util';
-import ErrorMessages from '../ErrorMessages';
+import FileService from './FileService';
+import Util from './Util';
+import ErrorMessages from './ErrorMessages';
 
 // would be nice to call this "Logger" but that already exists in the Google Apps Script namespace
 export default class Logging {

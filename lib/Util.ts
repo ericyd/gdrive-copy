@@ -9,7 +9,7 @@ import GDriveService from './GDriveService';
 import Timer from './Timer';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
-import Logging from './util/Logging';
+import Logging from './Logging';
 
 export default class Util {
   /**

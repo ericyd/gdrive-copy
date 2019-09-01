@@ -12,7 +12,7 @@ import MimeType from './MimeType';
 import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
 import FeatureFlag from './FeatureFlag';
-import Logging from './util/Logging';
+import Logging from './Logging';
 
 export default class FileService {
   gDriveService: GDriveService;

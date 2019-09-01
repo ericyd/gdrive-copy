@@ -5,7 +5,7 @@ import Timer from '../lib/Timer';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
 import FeatureFlag from '../lib/FeatureFlag';
-import Logging from '../lib/util/Logging';
+import Logging from '../lib/Logging';
 const PropertiesService = require('./mocks/PropertiesService');
 const assert = require('assert');
 const fs = require('fs');

@@ -4,7 +4,7 @@ import Timer from '../lib/Timer';
 import TriggerService from '../lib/TriggerService';
 import Properties from '../lib/Properties';
 import Constants from '../lib/Constants';
-import Logging from '../lib/util/Logging';
+import Logging from '../lib/Logging';
 const userProperties = require('./mocks/PropertiesService').getUserProperties();
 const sinon = require('sinon');
 const assert = require('assert');

@@ -4,7 +4,7 @@
 
 import Util from './Util';
 import Timer from './Timer';
-import Logging from './util/Logging';
+import Logging from './Logging';
 
 export default class TriggerService {
   /**

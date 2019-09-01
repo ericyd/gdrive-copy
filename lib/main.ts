@@ -9,7 +9,7 @@ import Properties from './Properties';
 import Timer from './Timer';
 import TriggerService from './TriggerService';
 import ErrorMessages from './ErrorMessages';
-import Logging from './util/Logging';
+import Logging from './Logging';
 
 /**
  * Copy folders and files from source to destination.
