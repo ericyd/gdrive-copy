@@ -66,7 +66,7 @@ describe('Util', function() {
       const stubSaveState = sinon.stub(Util, 'saveState');
       const stubDeleteTrigger = sinon.stub(TriggerService, 'deleteTrigger');
       const timer = new Timer();
-      this.clock.tick(Timer.sixMinutes);
+      this.clock.tick(Timer.TRIGGER_TIME);
       timer.update(userProperties);
       const fileList = [{ id: 1 }, { id: 2 }, { id: 3 }];
       const properties = new Properties();

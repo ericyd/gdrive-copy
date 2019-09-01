@@ -64,7 +64,7 @@ describe('timers', function() {
     const duration = this.timer.calculateTriggerDuration(properties);
     assert.equal(
       duration,
-      Timer.sixMinutes,
+      Timer.TRIGGER_TIME,
       'duration not equal to six minutes'
     );
   });
@@ -77,7 +77,7 @@ describe('timers', function() {
     const duration = this.timer.calculateTriggerDuration(properties);
     assert.equal(
       duration,
-      Timer.sixMinutes - runtime,
+      Timer.TRIGGER_TIME - runtime,
       'duration not equal to six minutes'
     );
   });
@@ -86,6 +86,6 @@ describe('timers', function() {
     const properties = new Properties();
     properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
     const duration = this.timer.calculateTriggerDuration(properties);
-    assert.equal(duration, Timer.oneDay, 'duration not equal to one day');
+    assert.equal(duration, Timer.SLEEP_TIME_ONE_DAY, 'duration not equal to one day');
   });
 });
