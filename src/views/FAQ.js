@@ -44,9 +44,6 @@ export default function FAQ() {
           </a>
         </li>
         <li>
-          <a href="#openissue">How do I report a bug in the app?</a>
-        </li>
-        <li>
           <a href="#teamdrives">Does this app support Team Drives?</a>
         </li>
       </ul>
@@ -121,25 +118,12 @@ export default function FAQ() {
       </h3>
       <div>
         There isn't a handy Account Switcher like you'll find in native Google
-        Apps.* However, you can try to use the link at the top of the page which
+        Apps. However, you can try to use the link at the top of the page which
         should re-direct you and allow you to sign if from a different account.
         <br />
         <br />
         If that fails, I would recommend signing in from another browser, or
         opening an incognito/private window and accessing the app that way.
-        <br />
-        <br />
-        *If you think this is a good feature, please feel free to open an{' '}
-        <a
-          className="github-button"
-          href="https://github.com/ericyd/gdrive-copy/issues"
-          aria-label="Issue ericyd/gdrive-copy on GitHub"
-          target="_blank"
-        >
-          <Warning /> Issue
-        </a>{' '}
-        on Github., or better yet, contribute to the repo! 'Cuz I don't know how
-        to add an Account Switcher, otherwise I would have done it already :)
       </div>
       <a href="#top">Top</a>
       <h3>
@@ -181,24 +165,6 @@ export default function FAQ() {
           </li>
           <li>Select app you want &amp; click REMOVE button</li>
         </ol>
-      </div>
-      <a href="#top">Top</a>
-      <h3>
-        <a name="openissue" />
-        How do I report a bug in the app?
-      </h3>
-      <div>
-        If you have found a bug that is not covered in these FAQs, please open
-        an
-        <a
-          className="github-button"
-          href="https://github.com/ericyd/gdrive-copy/issues"
-          aria-label="Issue ericyd/gdrive-copy on GitHub"
-          target="_blank"
-        >
-          <Warning /> Issue
-        </a>{' '}
-        on Github.
       </div>
       <a href="#top">Top</a>
 

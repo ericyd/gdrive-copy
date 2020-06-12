@@ -63,13 +63,12 @@ Note: some build commands use commands which may not be available on standard Wi
 
 1. Clone repo: `git clone git@github.com:ericyd/gdrive-copy.git`
 2. Install dependencies: `cd gdrive-copy && npm i`
-3. Install clasp: `npm i -g @google/clasp`
-4. If needed, create a new clasp `webapp` project. See [clasp documentation](https://github.com/google/clasp#create) for more details. Use the `clasp.sample.json` as a template if needed.
-5. Login to Google Apps Script: `clasp login`
-6. Make changes locally if desired
-7. Build the app: `npm run build:prod`
-8. Push files to Apps Script project: `clasp push`
-9. Deploy: `clasp deploy`
+3. If needed, create a new clasp `webapp` project. See [clasp documentation](https://github.com/google/clasp#create) for more details. Use the `clasp.sample.json` as a template if needed.
+4. Login to Google Apps Script: `npm run clasp:login`
+5. Make changes locally if desired
+6. Build the app: `npm run build:prod`
+7. Push files to Apps Script project: `npm run clasp:push`
+8. Deploy: `npm run clasp:deploy`
 
 ### References
 

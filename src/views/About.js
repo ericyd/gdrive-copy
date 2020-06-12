@@ -23,14 +23,6 @@ export default function About() {
       </p>
 
       <p>
-        This app is built and maintained for free by one person, and is in no
-        way affiliated with or supported by Google (other than hosting, which
-        they provide for free). While reporting issues is appreciated, please be
-        aware that the developer's time is limited, and this product does not
-        come with any warranties or guarantees of service.
-      </p>
-
-      <p>
         This app is licensed under the{' '}
         <a href="https://opensource.org/licenses/MIT" target="_blank">
           MIT License
@@ -44,15 +36,22 @@ export default function About() {
       </p>
 
       <p>
-        If you would like to run your own version of the code but do not come
-        from a technical background, you can follow{' '}
+        If you would like to run your own version of the code, please follow
+        deployment instructions at{' '}
         <a
-          href="https://github.com/ericyd/gdrive-copy/blob/master/howto_for_non-developers.md"
+          href="https://github.com/ericyd/gdrive-copy#deploying-app"
           target="_blank"
         >
-          this guide
-        </a>{' '}
-        to launch your own, private version of the app.
+          https://github.com/ericyd/gdrive-copy#deploying-app
+        </a>
+      </p>
+
+      <h2>Bugs</h2>
+
+      <p>
+        This app is <b><i>not maintained</i></b> and any bugs are just
+        gonna stay there. The developer apologizes for the inconvenience.
+        This product does not come with any warranties or guarantees of service.
       </p>
 
       <h2>Getting started</h2>

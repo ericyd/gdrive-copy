@@ -10,13 +10,13 @@ export default class Timer {
   // https://developers.google.com/apps-script/guides/services/quotas
   static MAX_RUNTIME_PER_DAY: number = 88 * 1000 * 60;
   static MAX_RUNTIME: number = 4.7 * 1000 * 60;
-  
+
   // durations used for setting Triggers
   static SLEEP_TIME_ONE_DAY: number = 24 * 60 * 60 * 1000;
 
   // Trigger time includes runtime and sleep time (1.5 mins) because the trigger
   // is set at the beginning of execution, not the end.
-  static TRIGGER_TIME: number = Timer.MAX_RUNTIME + (1.5 * 1000 * 60);
+  static TRIGGER_TIME: number = Timer.MAX_RUNTIME + 1.5 * 1000 * 60;
 
   START_TIME: number;
   runtime: number;

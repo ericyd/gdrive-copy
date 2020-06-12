@@ -717,33 +717,36 @@ describe('FileService', function() {
       stubLog.restore();
     });
 
-    [
-      [true, 'not ', 3],
-      [false, '', 4],
-    ].forEach(([featureFlag, not, numberCopies]) => {
-      describe(`when FeatureFlag.SKIP_DUPLICATE_ID is ${featureFlag}`, function() {
-        it(`should ${not}copy the same ID twice`, function() {
-          // set up mocks
-          FeatureFlag.SKIP_DUPLICATE_ID = featureFlag
-          const stubCopy = sinon
-            .stub(this.fileService, 'copyFile')
-            .returns(this.mockFile);
-          Logging.logCopySuccess = sinon.stub();
+    [[true, 'not ', 3], [false, '', 4]].forEach(
+      ([featureFlag, not, numberCopies]) => {
+        describe(`when FeatureFlag.SKIP_DUPLICATE_ID is ${featureFlag}`, function() {
+          it(`should ${not}copy the same ID twice`, function() {
+            // set up mocks
+            FeatureFlag.SKIP_DUPLICATE_ID = featureFlag;
+            const stubCopy = sinon
+              .stub(this.fileService, 'copyFile')
+              .returns(this.mockFile);
+            Logging.logCopySuccess = sinon.stub();
 
-          // run actual
-          const items = [{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }];
-          this.fileService.processFileList(items, this.userProperties, {
-            spreadsheetStub: true
+            // run actual
+            const items = [{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }];
+            this.fileService.processFileList(items, this.userProperties, {
+              spreadsheetStub: true
+            });
+
+            // assertions
+            assert.equal(
+              stubCopy.callCount,
+              numberCopies,
+              `stubCopy not called ${numberCopies} times`
+            );
+
+            // restore mocks
+            stubCopy.restore();
           });
-
-          // assertions
-          assert.equal(stubCopy.callCount, numberCopies, `stubCopy not called ${numberCopies} times`);
-
-          // restore mocks
-          stubCopy.restore();
-        })
-      })
-    })
+        });
+      }
+    );
   });
 
   describe('isDescendant()', function() {

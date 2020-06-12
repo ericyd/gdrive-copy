@@ -86,6 +86,10 @@ describe('timers', function() {
     const properties = new Properties();
     properties.incrementTotalRuntime(Timer.MAX_RUNTIME_PER_DAY);
     const duration = this.timer.calculateTriggerDuration(properties);
-    assert.equal(duration, Timer.SLEEP_TIME_ONE_DAY, 'duration not equal to one day');
+    assert.equal(
+      duration,
+      Timer.SLEEP_TIME_ONE_DAY,
+      'duration not equal to one day'
+    );
   });
 });
