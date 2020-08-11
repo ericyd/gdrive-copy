@@ -16,4 +16,4 @@ I'm not proud of it but I'm convinced that life will go on. -->
 
 ### Oath of good faith
 
-[ ] I, the author of this Issue, do solemnly swear that I've looked _real hard_ for duplicate issues and I came up empty!! 
+* [ ] I, the author of this Issue, do solemnly swear that I've looked _real hard_ for duplicate issues and I came up empty!! 
