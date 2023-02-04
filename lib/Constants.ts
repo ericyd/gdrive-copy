@@ -8,7 +8,7 @@ export default class Constants {
   static MaxRuntimeExceeded =
     'Script has reached daily maximum run time of 90 minutes. Script must pause for 24 hours to reset Google Quotas, and will resume at that time. For more information, please see https://developers.google.com/apps-script/guides/services/quotas';
   static SingleRunExceeded =
-    'Paused due to Google quota limits - copy will resume in 1-2 minutes';
+    'Paused due to Google quota limits - copy will resume in some seconds';
   static StartCopyingText = 'Started copying';
   static UserStoppedScript =
     'Stopped manually by user. Please use "Resume" button to restart copying';
