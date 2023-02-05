@@ -78,6 +78,12 @@ Optional workflow with [Docker](https://www.docker.com/) installed:
 4. Install dependencies and build the app: `bash build.sh`
 5. Push files and open the Apps Script project: `clasp push && clasp open`
 
+After the initial build, there is an even faster way to deploy a new instance:
+
+```
+bash instance.js
+```
+
 ### References
 
 * [Google Apps Script reference](https://developers.google.com/apps-script/reference/drive/)
