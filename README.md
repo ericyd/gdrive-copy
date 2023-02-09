@@ -70,6 +70,20 @@ Note: some build commands use commands which may not be available on standard Wi
 7. Push files to Apps Script project: `npm run clasp:push`
 8. Deploy: `npm run clasp:deploy`
 
+Optional workflow with [Docker](https://www.docker.com/) installed:
+
+1. Clone repo: `git clone git@github.com:ericyd/gdrive-copy.git`
+2. Login to Google Apps Script: `clasp login`
+3. Create a new CLASP webapp project: `clasp create --type webapp`
+4. Install dependencies and build the app: `bash build.sh`
+5. Push files and open the Apps Script project: `clasp push && clasp open`
+
+After the initial build, there is an even faster way to deploy a new instance:
+
+```
+bash instance.js
+```
+
 ### References
 
 * [Google Apps Script reference](https://developers.google.com/apps-script/reference/drive/)

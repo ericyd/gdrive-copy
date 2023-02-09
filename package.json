@@ -3,7 +3,6 @@
   "version": "6.1.0",
   "description": "Web app to recursively copy Google Drive folder and contents",
   "main": "gulpfile.js",
-  "dependencies": {},
   "devDependencies": {
     "@google/clasp": "^2.0.1",
     "@types/gapi.drive": "0.0.1",
@@ -16,6 +15,7 @@
     "babel-preset-react": "^6.16.0",
     "css-loader": "^0.25.0",
     "extract-text-webpack-plugin": "^2.1.2",
+    "fs-extra": "^8.0.0",
     "gulp": "~3.9.0",
     "gulp-hogan": "^2.0.0",
     "gulp-insert": "~0.5.0",
@@ -23,6 +23,7 @@
     "material-ui": "^0.19.4",
     "mocha": "^3.1.2",
     "nyc": "^11.9.0",
+    "phantomjs-prebuilt": "^2.1.16",
     "postcss-loader": "^3.0.0",
     "precss": "^4.0.0",
     "prettier": "^1.15.3",
